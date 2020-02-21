@@ -39,7 +39,7 @@ const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
         }
 
         //@ts-ignore
-        let check = equalityCheck(val1.head, val2.head)
+        let check = twoValueCompare(val1.head, val2.head)
 
         for (let i = 0; i < val1.tail.length; i++) {
             if (!check) {
@@ -47,7 +47,7 @@ const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
             }
 
             //@ts-ignore
-            check = equalityCheck(val1.tail[i], val2.tail[i])
+            check = twoValueCompare(val1.tail[i], val2.tail[i])
         }
 
         return check
@@ -68,7 +68,7 @@ const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
             }
 
             //@ts-ignore
-            check = equalityCheck(val1.members[i], val2.members[i])
+            check = twoValueCompare(val1.members[i], val2.members[i])
         }
 
         return check
@@ -80,20 +80,24 @@ const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
             return false
         }
 
-        //@ts-ignore
-        for (const key of val1.table.keys()) {
-            //@ts-ignore
-            if (val1.table.get(key) !== val2.table.get(key)) {
-                return false
-            }
-        }
+        let result = true
 
-        return true
+        val1.table.forEach((value, key) => {
+            //@ts-ignore
+            if (!val2.table.has(key)) {
+                result = false
+            }
+
+            //@ts-ignore
+            result = result && twoValueCompare(val2.table.get(key), value)
+        })
+
+        return result
     }
 
     else if (val1.kind === SlangTypes.Quoted) {
         //@ts-ignore
-        return equalityCheck(val1.quoted, val2.quoted)
+        return twoValueCompare(val1.quoted, val2.quoted)
     }
 
     else if (val1.kind === SlangTypes.Optional) {
@@ -107,7 +111,7 @@ const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
         }
 
         //@ts-ignore
-        return equalityCheck(val1.boxed, val2.boxed)
+        return twoValueCompare(val1.boxed, val2.boxed)
     }
 
     else /* val1.kind === SlangTypes.Function */ {

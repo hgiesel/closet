@@ -42,7 +42,8 @@ start -> prog {% id %}
 
 prog -> exprs {% ([exprs]) => mkDo(exprs) %}
 
-exprs -> _ (expr _):* {% ([, exprs]) => exprs.map(([lit]) => lit) %}
+exprs -> _ (expr _):* {% ([,exprs]) => exprs.map(id) %}
+
 expr -> stmt {% id %}
       | lit {% id %}
 
@@ -100,9 +101,9 @@ for -> %lparen _ %forSym _ vector[(symbol _ expr _):*] _ expr _ %rparen {%
 
 #################################
 
-lit -> list[(expr _):+] {% ([[,,vals]]) => mkList(vals[0][0][0], vals[0].slice(1).map(v => v[0])) %}
-     | vector[(expr _):*] {% ([[,,vals]]) => mkVector(vals.map(v => v[0][0])) %}
-     | map[(mapIdentifier _ expr _):*] {% id %}
+lit -> list[(expr _):+] {% ([[,,[vals]]]) => mkList(vals[0][0], vals.slice(1).map(id)) %}
+     | vector[(expr _):*] {% ([[,,[vals]]]) => mkVector(vals.map(id)) %}
+     | map[(mapIdentifier _ expr _):*] {% ([[,,[vals]]]) => mkMap(vals.map(v => [v[0], v[2]])) %}
      | quoted {% id %}
      | optional {% id %}
      | number {% id %}
@@ -128,14 +129,6 @@ number -> %number {% ([num]) => mkNumber(num.value) %}
 string -> %string {% ([str]) => mkString(str.value) %}
 
 symbol -> %symbol {% ([sym]) => mkSymbol(sym.value) %}
-        | %defSym {% ([sym]) => mkSymbol(sym.value) %}
-        | %fnSym {% ([sym]) => mkSymbol(sym.value) %}
-        | %defnSym {% ([sym]) => mkSymbol(sym.value) %}
-        | %caseSym {% ([sym]) => mkSymbol(sym.value) %}
-        | %condSym {% ([sym]) => mkSymbol(sym.value) %}
-        | %doSym {% ([sym]) => mkSymbol(sym.value) %}
-        | %dotimesSym {% ([sym]) => mkSymbol(sym.value) %}
-
 keyword -> %keyword {% ([kw]) => mkKeyword(kw.value) %}
 
 _ -> %ws:* {% function() { return null } %}

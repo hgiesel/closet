@@ -28,7 +28,7 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
         case SlangTypes.Symbol:
             const lookedup = lookup.localLookup(expr, ctx)
-            console.log('ll', expr, lookedup)
+            console.log('lookup', expr, lookedup)
 
             return lookedup ? lookedup : expr
 
@@ -60,7 +60,7 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
             return mkUnit()
 
         case SlangTypes.Def:
-            lookup.globalDefine(expr.identifier.value, execute(expr.value, ctx))
+            ctx.set(expr.identifier.value, execute(expr.value, ctx))
             return mkUnit()
 
         default:

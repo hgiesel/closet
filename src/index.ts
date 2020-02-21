@@ -5,6 +5,8 @@ import {
     execute,
 } from './executor'
 
+import lexer from './genpar/tokenizer'
+
 const parseCode = (code: string) => {
     const p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
     const result = p.feed(code).results[0]
@@ -14,7 +16,6 @@ const parseCode = (code: string) => {
     return result
 }
 
-import lexer from './genpar/tokenizer'
 
 globalThis.parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
 globalThis.lexer = lexer
@@ -36,7 +37,7 @@ btn.addEventListener('click', (_e) => {
     // }
 
     // const templateField: HTMLDivElement = document.querySelector('div#setlang-template')
-    // const templateOutput = getTemplate(templateElement.value)
+    // const templateOutput = Array.from(lexer.reset(codeElement.value)) // getTemplate(templateElement.value)
     // display(templateField, templateOutput)
 
     const outputField: HTMLDivElement = document.querySelector('div#setlang-code')

@@ -55,6 +55,7 @@ btn.addEventListener('click', (_e) => {
     }
     catch (e) {
         display(execField, e.toString())
+        throw e
     }
     finally {
         console.timeEnd('code execute')

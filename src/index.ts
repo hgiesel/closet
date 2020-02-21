@@ -44,12 +44,19 @@ btn.addEventListener('click', (_e) => {
     console.time('code parse')
     const codeOutput = parseCode(codeElement.value)
     console.timeEnd('code parse')
-
     display(outputField, JSON.stringify(codeOutput, null, 4))
-    const execField: HTMLDivElement = document.querySelector('div#setlang-executed')
-    console.time('code execute')
-    const executed = execute(codeOutput, new Map())
-    console.timeEnd('code execute')
 
-    display(execField, toString(executed).value)
+    const execField: HTMLDivElement = document.querySelector('div#setlang-executed')
+
+    try {
+        console.time('code execute')
+        const executed = execute(codeOutput, new Map())
+        display(execField, toString(executed).value)
+    }
+    catch (e) {
+        display(execField, e.toString())
+    }
+    finally {
+        console.timeEnd('code execute')
+    }
 })

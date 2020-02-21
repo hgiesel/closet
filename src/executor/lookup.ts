@@ -1,11 +1,28 @@
-import {
+import type {
     Slang,
     SlangSymbol,
 } from '../types'
 
 import {
-    wrap
+    isNumber,
+    isMap,
+    isMapKey,
+    isExecutable,
+} from '../reflection'
+
+import {
+    wrap,
 } from './functions'
+
+import {
+    typecheck,
+} from './exception'
+
+import * as equality from './equality'
+import * as bool from './bool'
+import * as math from './math'
+import * as map from './map'
+import * as higherorder from './higherorder'
 
 const globalTable = new Map()
 
@@ -25,16 +42,10 @@ const localLookup = (ctx: Map<string, Slang>, key: SlangSymbol): Slang | null =>
         : null
 }
 
-import * as equality from './equality'
-import * as bool from './bool'
-import * as math from './math'
-import * as map from './map'
-import * as higherorder from './higherorder'
-
 export const lookup = (key: SlangSymbol, ctx: Map<string, Slang>): Slang => {
     switch (key.value) {
         case '=':
-            return wrap(equality.equality)
+            return wrap(typecheck('=', equality.equality, {}))
         case 'not=':
             return wrap(equality.unequality)
 
@@ -46,20 +57,74 @@ export const lookup = (key: SlangSymbol, ctx: Map<string, Slang>): Slang => {
             return wrap(bool.or)
 
         case '+':
-            return wrap(math.addition)
+            return wrap(typecheck('+', math.addition, {
+                args: (args) => args.every(isNumber),
+            }))
         case '-':
-            return wrap(math.subtraction)
+            return wrap(typecheck('-', math.subtraction, {
+                argc: (count) => count > 0,
+                args: (args) => args.every(isNumber),
+            }))
         case '*':
-            return wrap(math.multiplication)
+            return wrap(typecheck('*', math.multiplication, {
+                args: (args) => args.every(isNumber),
+            }))
         case '/':
-            return wrap(math.division)
+            return wrap(typecheck('/', math.division, {
+                argc: (count) => count > 0,
+                args: (args) => args.every(isNumber),
+            }))
+
+
+        case '<':
+            return wrap(typecheck('<', math.lt, {
+                argc: (count) => count > 0,
+                args: (args) => args.every(isNumber),
+            }))
+        case '<=':
+            return wrap(typecheck('<=', math.le, {
+                argc: (count) => count > 0,
+                args: (args) => args.every(isNumber),
+            }))
+        case '>':
+            return wrap(typecheck('>', math.gt, {
+                argc: (count) => count > 0,
+                args: (args) => args.every(isNumber),
+            }))
+        case '>=':
+            return wrap(typecheck('>=', math.ge, {
+                argc: (count) => count > 0,
+                args: (args) => args.every(isNumber),
+            }))
 
         case 'merge':
-            return wrap(map.merge)
+            return wrap(typecheck('merge', map.merge, {
+                argc: (count) => count >= 1,
+                args: (args) => args.every(isMap),
+            }))
+        case 'merge-with':
+            return wrap(typecheck('merge-with', map.mergeWith, {
+                argc: (count) => count >= 2,
+                arg0: (arg) => isExecutable(arg),
+                args: (args) => args.slice(1).every(isMap),
+            }))
         case 'assoc':
-            return wrap(map.assoc)
+            return wrap(typecheck('assoc', map.assoc, {
+                argc: (count) => count >= 1,
+                arg0: (v) => isMap(v),
+                args: (args) => args
+                    .filter((_v, i) => i > 1 && i % 2 === 1)
+                    .every(v => isMapKey(v)),
+            }))
         case 'dissoc':
-            return wrap(map.dissoc)
+            return wrap(typecheck('dissoc', map.dissoc, {
+                argc: (count) => count >= 1,
+                arg0: (v) => isMap(v),
+                args: (args) => args
+                    .filter((_v, i) => i > 1)
+                    .every(v => isMapKey(v)),
+            }))
+
 
         case 'map':
             return wrap(higherorder.map)

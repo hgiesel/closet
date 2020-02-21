@@ -155,6 +155,13 @@ export interface SlangFor {
 }
 
 //////////////////
+//
+export type SlangMapKey = SlangString
+                        | SlangKeyword
+
+export type SlangExecutable = SlangFunction
+                            | SlangShcutFunction
+                            | SlangArmedFunction
 
 // everything but SlangProg
 export type Slang = SlangString

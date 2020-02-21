@@ -1,5 +1,4 @@
 import type {
-    SlangTypes,
     SlangBool,
     SlangString,
     Slang,
@@ -62,13 +61,16 @@ const pureToString = (val: Slang): string => {
     else if (reflection.isMap(val)) {
         const mapStrings = []
         val.table.forEach((v, k) => {
-            mapStrings.push(typeof k === 'symbol'
-                ? `:${k.description}`
-                : k)
-            mapStrings.push(pureToString(v))
+            mapStrings.push([
+                typeof k === 'symbol'
+                    //@ts-ignore
+                    ? `:${k.description}`
+                    : `"${k}"`,
+                pureToString(v),
+            ])
         })
 
-        return `{${mapStrings.join(' ')}}`
+        return `{${mapStrings.map(v => v.join(' ')).join(', ')}}`
     }
 }
 

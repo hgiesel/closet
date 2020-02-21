@@ -1,6 +1,7 @@
 import {
     Slang,
     SlangMap,
+    SlangExecutable,
 } from '../types'
 
 import {
@@ -19,9 +20,13 @@ import {
     SlangTypeError,
 } from './exception'
 
+import {
+    arm,
+} from './functions'
+
 export const indexing = (mapArg: SlangMap, args: Slang[]) => {
     if (args.length !== 1) {
-        throw new SlangArityError(args.length)
+        throw new SlangArityError('f', args.length)
     }
 
     if (isString(args[0])) {
@@ -34,25 +39,36 @@ export const indexing = (mapArg: SlangMap, args: Slang[]) => {
         return mkOptional(maybeResult ? maybeResult : null)
     }
 
-    throw new SlangTypeError('Value needs to be a string or number')
+    throw new SlangTypeError('Value needs to be a string or number', 'f', 4)
 }
 
-export const merge = (args: Slang[]) => {
-    const newMap: SlangMap = mkMap([])
-
-    for (const arg of args) {
-        if (!isMap(arg)) {
-            throw new SlangTypeError('Value needs to be a map')
-        }
-
-        arg.table.forEach((v, k) => {
-            newMap.table.set(k, v)
+export const merge = ([headMap, ...args]: [SlangMap, ...SlangMap[]]): SlangMap => {
+    for (const map of args) {
+        map.table.forEach((v, k) => {
+            headMap.table.set(k, v)
         })
     }
 
-    return newMap
+    return headMap
 }
 
+export const mergeWith = ([func, headMap, ...args]: [SlangExecutable, SlangMap, ...SlangMap[]], ctx: Map<string, Slang>) => {
+    const armed = arm('merge-withfunc', func)
+
+    for (const map of args) {
+        map.table.forEach((v, k) => {
+            if (headMap.table.has(k)) {
+                headMap.table.set(k, armed.apply([headMap.table.get(k), v], ctx))
+            }
+
+            else {
+                headMap.table.set(k, v)
+            }
+        })
+    }
+
+    return headMap
+}
 
 const reshape = (arr: any[], columnSize: number): any[][] => {
     var newArr = [];
@@ -66,10 +82,10 @@ const reshape = (arr: any[], columnSize: number): any[][] => {
 
 export const assoc = (args: Slang[]) => {
     if (args.length % 2 !== 1) {
-        throw new SlangArityError(args.length)
+        throw new SlangArityError('f', args.length)
     }
     else if (!isMap(args[0])) {
-        throw new SlangTypeError(args.length)
+        throw new SlangTypeError('f', 'f',  args.length)
     }
 
     const theMap = args[0]
@@ -84,7 +100,7 @@ export const assoc = (args: Slang[]) => {
         }
 
         else {
-            throw new SlangTypeError('Map key needs to be a string or keyword')
+            throw new SlangTypeError('Map key needs to be a string or keyword', 'f', 4)
         }
     }
 
@@ -93,10 +109,10 @@ export const assoc = (args: Slang[]) => {
 
 export const dissoc = (args: Slang[]) => {
     if (args.length === 0) {
-        throw new SlangArityError(args.length)
+        throw new SlangArityError('f', args.length)
     }
     else if (!isMap(args[0])) {
-        throw new SlangTypeError(args.length)
+        throw new SlangTypeError('f', 'f', args.length)
     }
 
     const theMap = args[0]
@@ -111,7 +127,7 @@ export const dissoc = (args: Slang[]) => {
         }
 
         else {
-            throw new SlangTypeError('Map key needs to be a string or keyword')
+            throw new SlangTypeError('Map key needs to be a string or keyword', 'f', 4)
         }
     }
 

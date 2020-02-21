@@ -105,10 +105,10 @@ const executeList = function(lst: SlangList, ctx: Map<string, Slang>) {
 
     switch (resolvedHead.kind) {
         case SlangTypes.Function:
-            return functions.armFunc(resolvedHead).apply(lst.tail, ctx)
+            return functions.armFunc('test', resolvedHead).apply(lst.tail, ctx)
 
         case SlangTypes.ShcutFunction:
-            return functions.armShcut(resolvedHead).apply(lst.tail, ctx)
+            return functions.armShcut('foo', resolvedHead).apply(lst.tail, ctx)
 
         case SlangTypes.ArmedFunction:
             return resolvedHead.apply(lst.tail, ctx)

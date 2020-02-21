@@ -30,7 +30,6 @@ export type Slang = SlangExpr
            | SlangSymbol
            | SlangString
 
-
 export const mkProg = (xs: Slang[]): SlangProg => ({
     kind: SlangTypes.Prog,
     nodes: xs,

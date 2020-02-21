@@ -1,3 +1,3 @@
 export {
     parseProg
-} from './prog'
+} from './recursive'

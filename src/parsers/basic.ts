@@ -1,5 +1,6 @@
 import {
     optionalWhitespace,
+    many,
     many1,
     letter,
     str,
@@ -9,6 +10,7 @@ import {
     between,
     sequenceOf,
     possibly,
+    anythingExcept,
 } from 'arcsecond'
 
 import {
@@ -46,10 +48,10 @@ export const mkBool = (v: string): SlangBool => ({
 })
 
 export const parseBool = (takeRight(str('#'))(choice([
-    str('t'),
     str('true'),
-    str('f'),
     str('false'),
+    str('t'),
+    str('f'),
 ]))).map((x: string) => mkBool(x))
 
 //////////// NUMBER
@@ -133,3 +135,22 @@ export const mkKeyword = (x: string): SlangKeyword => ({
 
 export const parseKeyword = takeRight(str(':'))(many1(letter))
     .map((x: string[]) => mkKeyword(x.join('')))
+
+//////////// STRINGS
+
+export interface SlangString {
+    kind: SlangTypes.String
+    value: string,
+}
+
+export const mkString = (x: string): SlangString => ({
+    kind: SlangTypes.String,
+    value: x,
+})
+
+const doubleQuoted = between (str('"'))(str('"'))
+
+export const parseString = doubleQuoted(many(choice([
+    str('\\"'),
+    anythingExcept(str('"')),
+]))).map((xs: string[]) => mkString(xs.join('')))

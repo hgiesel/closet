@@ -1,10 +1,16 @@
 import {
     parseProg,
-//     parseToken,
-//     parseList,
-//     parseBool,
-//     parseString,
 } from './parsers'
+
+import {
+    parseList,
+    // parseBool,
+    // parseString,
+} from './parsers/recursive'
+
+import {
+    parseSymbol,
+} from './parsers/basic'
 
 
 //////////////////////////
@@ -20,7 +26,7 @@ btn.addEventListener('click', (_e) => {
 
     console.log(input.value)
 
-    const output = parseProg.run(input.value)
+    const output = parseList.run(input.value)
 
     document
         .querySelector('#setlang-output')

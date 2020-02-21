@@ -8,6 +8,7 @@ export enum SlangTypes {
     Keyword = 'keyword',
 
     Quoted = 'quoted',
+    Optional = 'optional',
 
     List = 'list',
     Vector = 'vector',
@@ -17,41 +18,21 @@ export enum SlangTypes {
 }
 
 import {
-    SlangString,
-} from './string'
-
-import {
-    SlangNumber,
-} from './number'
-
-import {
-    SlangBool,
-} from './bool'
-
-import {
     SlangUnit,
-} from './unit'
-
-import {
+    SlangBool,
+    SlangNumber,
     SlangSymbol,
     SlangKeyword,
-} from './symbol'
+    SlangString,
+} from './basic'
 
 import {
     SlangQuoted,
-} from './quoted'
-
-import {
+    SlangOptional,
     SlangList,
-} from './list'
-
-// import {
-//     SlangVector,
-// } from './vector'
-
-// import {
-//     SlangMap,
-// } from './map'
+    SlangVector,
+    SlangMap,
+} from './recursive'
 
 export type Slang = SlangString
                   | SlangNumber
@@ -62,7 +43,8 @@ export type Slang = SlangString
                   | SlangKeyword
 
                   | SlangQuoted
+                  | SlangOptional
 
                   | SlangList
-                  // | SlangVector
-                  // | SlangMap
+                  | SlangVector
+                  | SlangMap

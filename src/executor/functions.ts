@@ -73,42 +73,44 @@ export const wrap = (name: string, func: (a: Slang[], ctx: Map<string, Slang>) =
 )
 
 export const armFunc = (func: SlangFunction): SlangArmedFunction => (
-    mkArmedFunction(func.name, typecheck((args, ctx) => execute(
-        func.body,
-        joinEnvs(ctx, createEnv(
-            func.params,
-            args.map(t => execute(t, ctx)),
-        )),
-    ), {
+    mkArmedFunction(func.name, typecheck({
+        f: (args, ctx) => execute(
+            func.body,
+            joinEnvs(ctx, createEnv(
+                func.params,
+                args.map(t => execute(t, ctx)),
+            )),
+        ),
         argc: (count) => count === func.params.length,
     }))
 )
 
 export const armShcut = (func: SlangShcutFunction): SlangArmedFunction => (
-    mkArmedFunction(func.name, typecheck((args, ctx) => execute(
-        func.body,
-        joinEnvs(ctx, createNumberedEnv(
-            args.map(t => execute(t, ctx)),
-        )),
-    ), {
+    mkArmedFunction(func.name, typecheck({
+        f: (args, ctx) => execute(
+            func.body,
+            joinEnvs(ctx, createNumberedEnv(
+                args.map(t => execute(t, ctx)),
+            )),
+        ),
         argc: (count) => count === func.params,
     }))
 )
 
 const armVector = (vec: SlangVector): SlangArmedFunction => (
-    mkArmedFunction('vectorIndexing', typecheck(
-        (args: [SlangNumber], _ctx) => vectorIndexing([vec, ...args] as any), {
-            argc: (count) => count === 1,
-            arg0: (s) => isNumber(s),
-        }))
+    mkArmedFunction('vectorIndexing', typecheck({
+        f: (args: [SlangNumber], _ctx) => vectorIndexing([vec, ...args] as any),
+        argc: (count) => count === 1,
+        arg0: (s) => isNumber(s),
+    }))
 )
 
 const armMap = (map: SlangMap): SlangArmedFunction => (
-    mkArmedFunction('mapIndexing', typecheck(
-        (args: [SlangMapKey], _ctx) => mapIndexing([map, ...args] as any), {
-            argc: (count) => count === 1,
-            arg0: (s) => isMapKey(s),
-        }))
+    mkArmedFunction('mapIndexing', typecheck({
+        f: (args: [SlangMapKey], _ctx) => mapIndexing([map, ...args] as any),
+        argc: (count) => count === 1,
+        arg0: (s) => isMapKey(s),
+    }))
 )
 
 export const arm = (exec: Slang): SlangArmedFunction => (

@@ -5,8 +5,8 @@ if ! type nearleyc &> /dev/null; then
   exit
 fi
 
-from='./slang.ne'
-to='slang.ts'
+from='./template.ne'
+to='template.ts'
 
 rm -f $filename
 nearleyc "$from" > "$to"

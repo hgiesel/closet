@@ -3,6 +3,7 @@
 enum Element {
     Text,
     ValueSet,
+    AltSet,
 }
 
 const getSub = (valueSetName: string) => 0

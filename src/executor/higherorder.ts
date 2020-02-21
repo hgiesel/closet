@@ -8,7 +8,7 @@ import {
     mkVector,
 } from '../constructors'
 
-import { arm, apply } as functions from './functions'
+import { arm, apply } from './functions'
 
 const transpose = (arrs: any[][]) => {
     const result = arrs.length === 0
@@ -23,13 +23,11 @@ const transpose = (arrs: any[][]) => {
 }
 
 export const map = ([func, ...params]: [SlangExecutable, ...SlangMappable[]], ctx: Map<string, Slang>) => {
-    //@ts-ignore
-    const newParams = transpose(params.map(p => p.members))
+    // const newParams = transpose(params.map(p => p.members))
 
-    const armed = arm(func)
+    // const armed = arm(func)
 
-    if (isVector(params
-
-    return mkVector(newParams.map(np => apply(armed, np, ctx)))
-
+    return mkVector([])
+    // return mkVector(newParams.map(np => apply(armed, np, ctx)))
 }
+

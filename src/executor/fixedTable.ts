@@ -95,7 +95,8 @@ export const fixedTable = {
         arg0: (arg) => isExecutable(arg),
         args: (args) => args.slice(1).every(isMap),
     })),
-    'get': wrap('get', typecheck(seq.getFunc, {
+    'get': wrap('get', typecheck({
+        f: seq.getFunc,
         argc: (count) => count === 3,
         args: ([seqArg, idxArg]) =>
             (isMap(seqArg) && isMapKey(idxArg)) ||
@@ -103,33 +104,39 @@ export const fixedTable = {
             (isList(seqArg) && isNumber(idxArg)) ||
             (isOptional(seqArg) && isNumber(idxArg))
     })),
-    'contains?': wrap('contains?', typecheck(map.containsQ, {
+    'contains?': wrap('contains?', typecheck({
+        f: map.containsQ,
         argc: (count) => count === 2,
         arg0: (arg) => isMap(arg),
         arg1: (arg) => isMapKey(arg),
     })),
-    'find': wrap('find', typecheck(map.find, {
+    'find': wrap('find', typecheck({
+        f: map.find,
         argc: (count) => count === 2,
         arg0: (arg) => isMap(arg),
         arg1: (arg) => isMapKey(arg),
     })),
-    'keys': wrap('keys', typecheck(map.keys, {
+    'keys': wrap('keys', typecheck({
+        f: map.keys,
         argc: (count) => count === 1,
         arg0: (arg) => isMap(arg),
     })),
-    'vals': wrap('vals', typecheck(map.vals, {
+    'vals': wrap('vals', typecheck({
+        f: map.vals,
         argc: (count) => count === 1,
         arg0: (arg) => isMap(arg),
     })),
 
-    'assoc': wrap('assoc', typecheck(map.assoc, {
+    'assoc': wrap('assoc', typecheck({
+        f: map.assoc,
         argc: (count) => count >= 1,
         arg0: (v) => isMap(v),
         args: (args) => args
         .filter((_v, i) => i > 1 && i % 2 === 1)
         .every(v => isMapKey(v)),
     })),
-    'dissoc': wrap('dissoc', typecheck(map.dissoc, {
+    'dissoc': wrap('dissoc', typecheck({
+        f: map.dissoc,
         argc: (count) => count >= 1,
         arg0: (v) => isMap(v),
         args: (args) => args
@@ -138,14 +145,17 @@ export const fixedTable = {
     })),
 
 
-    'atom': wrap('atom', typecheck(atoms.atom, {
+    'atom': wrap('atom', typecheck({
+        f: atoms.atom,
         argc: (count) => count === 1,
     })),
-    'deref': wrap('deref', typecheck(atoms.deref, {
+    'deref': wrap('deref', typecheck({
+        f: atoms.deref,
         argc: (count) => count === 1,
         arg0: (val) => isAtom(val),
     })),
-    'swap!': wrap('swap!', typecheck(atoms.swap, {
+    'swap!': wrap('swap!', typecheck({
+        f: atoms.swap,
         argc: (count) => count >= 2,
         arg0: (val) => isAtom(val),
         arg1: (val) => (console.log('fojiosf', val, isExecutable(val)),isExecutable(val)),

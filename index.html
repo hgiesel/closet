@@ -11,24 +11,37 @@ body {
   zoom: 1.5;
 }
 
-#output {
-  font-size: 800em;
+.output {
+  font-size: 1em;
   font-family: monospace;
+}
+
+hr.output {
+  margin: 5px 0px;
 }
 
   </style>
 </head>
 <body>
+  <textarea id="setlang-template" name="Code Area" cols="30" rows="10"></textarea>
+
   <textarea id="setlang-code" name="Code Area" cols="30" rows="10"></textarea>
 
   <div id="btn-group">
     <button id="btn-parse" type="button">Parse!</button>
   </div>
 
-  <div id="setlang-output">
+  <div class="output" id="setlang-template">
   </div>
 
-  <div id="setlang-executed">
+  <hr class="output"/>
+
+  <div class="output" id="setlang-code">
+  </div>
+
+  <hr class="output"/>
+
+  <div class="output" id="setlang-executed">
   </div>
 
   <script src="./dist/Main.js"></script>

@@ -3,12 +3,14 @@ import {
     SlangProg,
     SlangSymbol,
     SlangList,
+    SlangFunction,
     Slang,
 } from '../types'
 
 import {
     isSymbol,
     isVector,
+    mkList,
 } from '../constructors'
 
 import {
@@ -21,89 +23,115 @@ import * as map from './map'
 import * as vector from './vector'
 
 import * as lookup from './lookup'
+import * as functions from './functions'
 
 export const execute = function(prog: SlangProg) {
     const results = []
 
     for (const statement of prog.statements) {
-        results.push(executeStatement(statement))
+        results.push(executeStatement(statement, lookup.getGlobalContext()))
     }
 
     return results
 }
 
-const executeStatement = function(stmt: Slang) {
+const executeStatement = function(stmt: Slang, ctx: Map<string, Slang>): Slang {
 
     switch (stmt.kind) {
 
         case SlangTypes.List:
-            return executeList(stmt)
+            return executeList(stmt, ctx)
 
         case SlangTypes.Symbol:
-            return lookup.globalLookup(stmt)
+            const lookedup = lookup.localLookup(stmt, ctx)
+            console.log('ll', stmt, lookedup)
+
+            return lookedup ? lookedup : stmt
 
         default:
-            // case SlangTypes.Number:
             // case SlangTypes.String:
+            // case SlangTypes.Number:
+            // case SlangTypes.Unit:
             // case SlangTypes.Bool:
+
+            // case SlangTypes.Keyword:
+            // case SlangTypes.Quoted:
+            // case SlangTypes.Optional:
+
+            // case SlangTypes.Vector:
+            // case SlangTypes.Map:
+            // case SlangTypes.Function:
             return stmt
     }
 }
 
-const executeList = function(lst: SlangList) {
+const executeList = function(lst: SlangList, ctx: Map<string, Slang>) {
     switch (lst.head.kind) {
         case SlangTypes.Symbol:
-            return symbolSwitch(lst.head, lst.tail)
+            const resolve = resolveSymbol(lst.head, ctx) as (args: Slang[], ctx: Map<string, Slang>) => Slang
+
+            return resolve(lst.tail, ctx)
 
         case SlangTypes.Vector:
             return vector.indexing(lst.head, lst.tail)
         case SlangTypes.Map:
             return map.indexing(lst.head, lst.tail)
 
+        case SlangTypes.Function:
+            console.log('foo2')
+            return functions.executeFunction(lst.head, executeStatement)(lst.tail, ctx)
+
+        case SlangTypes.List:
+            const evaluatedHead = executeStatement(lst.head, ctx)
+            const newList = mkList(evaluatedHead, lst.tail)
+            console.log('foo', evaluatedHead)
+
+            return executeList(newList, ctx)
+
         default:
             return null
     }
 }
 
-const symbolSwitch = (head: SlangSymbol, tail: Slang[]) => {
+const builtin = (
+    b: (a: Slang[]) => Slang,
+) => (
+    args: Slang[],
+    ctx: Map<string, Slang>,
+) => b(args.map(t => executeStatement(t, ctx)))
+
+const resolveSymbol = (head: SlangSymbol, ctx: Map<string, Slang>): (args: Slang[], ctx: Map<string, Slang>) => Slang => {
+
+    const lookedup = lookup.localLookup(head, ctx)
+
+    if (lookedup) {
+        return (args, ctx) => executeStatement(mkList(lookedup, args.map(t => executeStatement(t, ctx))), ctx)
+    }
+
     switch (head.value) {
         case 'def':
-            if (tail.length !== 2) {
-                throw new SlangArityError(tail.length)
-            }
-            else if (!isSymbol(tail[0])) {
-                throw new SlangTypeError('Value needs to be a symbol')
+            return (args, ctx) => {
+                if (args.length !== 2) {
+                    throw new SlangArityError(args.length)
+                }
+                else if (!isSymbol(args[0])) {
+                    throw new SlangTypeError('Value needs to be a symbol')
+                }
+
+                return lookup.globalDefine(args[0].value, executeStatement(args[1], ctx))
             }
 
-            return lookup.globalDefine(tail[0].value, executeStatement(tail[1]))
+        case 'fn':
+            return (args, _ctx) => functions.createFunction(args)
 
-        case 'defn':
-            if (tail.length !== 3) {
-                throw new SlangArityError(tail.length)
-            }
-            else if (!isSymbol(tail[0])) {
-                throw new SlangTypeError('Value needs to be a symbol')
-            }
-            else if (!isVector(tail[1])) {
-                throw new SlangTypeError('Value needs to be a symbol')
-            }
-            return
+        case '+':
+            return builtin(math.addition)
+        case '-':
+            return builtin(math.subtraction)
+        case '*':
+            return builtin(math.multiplication)
 
         default:
-            // head must implement a function interface
-            const proc = lookupHeadSymbol(head)
-
-            return proc(tail.map(executeStatement))
-    }
-}
-
-const lookupHeadSymbol = (headSymbol: SlangSymbol) => {
-    switch (headSymbol.value) {
-        case '+':
-            return math.addition
-        case '-':
-            return math.subtraction
-        case '*':
-            return math.multiplication
+            return null
     }
 }

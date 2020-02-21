@@ -9,11 +9,12 @@ import {
     SlangKeyword,
     SlangString,
 
+    SlangQuoted,
+    SlangOptional,
     SlangList,
     SlangVector,
     SlangMap,
-    SlangQuoted,
-    SlangOptional,
+    SlangFunction,
     SlangProg,
 } from './types'
 
@@ -174,6 +175,16 @@ export const mkOptional = (x: Slang | null): SlangOptional => ({
 
 export const isOptional = (val: Slang): val is SlangOptional => {
     return val.kind === SlangTypes.Optional
+}
+
+export const mkFunction = (params: SlangSymbol[], body: Slang): SlangFunction => ({
+    kind: SlangTypes.Function,
+    params: params,
+    body: body,
+})
+
+export const isFunction = (val: Slang): val is SlangFunction => {
+    return val.kind === SlangTypes.Function
 }
 
 export const mkProg = (xs: Slang[]): SlangProg => ({

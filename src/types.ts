@@ -13,6 +13,7 @@ export enum SlangTypes {
     List = 'list',
     Vector = 'vector',
     Map = 'map',
+    Function = 'function',
 
     Prog = 'prog',
 }
@@ -26,11 +27,6 @@ export interface SlangUnit {
 export interface SlangBool {
     kind: SlangTypes.Bool
     value: boolean,
-}
-
-export enum Sign {
-    Positive,
-    Negative,
 }
 
 export interface SlangNumber {
@@ -81,6 +77,12 @@ export interface SlangOptional {
     boxed: Slang | null,
 }
 
+export interface SlangFunction {
+    kind: SlangTypes.Function,
+    params: SlangSymbol[],
+    body: Slang,
+}
+
 export interface SlangProg {
     kind: SlangTypes.Prog
     statements: Slang[]
@@ -102,3 +104,4 @@ export type Slang = SlangString
                   | SlangList
                   | SlangVector
                   | SlangMap
+                  | SlangFunction

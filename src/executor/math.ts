@@ -14,6 +14,8 @@ import {
 } from './exception'
 
 export const addition = (args: Slang[]) => {
+    console.log('bla', args)
+
     let sum = 0
 
     for (const arg of args) {

@@ -13,6 +13,7 @@ import {
 } from '../constructors'
 
 import * as math from './math'
+import * as bool from './bool'
 import * as equality from './equality'
 import * as map from './map'
 import * as vector from './vector'
@@ -34,8 +35,10 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
             return mkUnit()
 
         case SlangTypes.Let:
-            expr.bindings
-            return null
+            return execute(
+                expr.body,
+                lookup.joinEnvs(ctx, expr.bindings),
+            )
 
         case SlangTypes.Do:
             let result: Slang = mkUnit()
@@ -59,6 +62,19 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
             for (const test of expr.tests) {
                 if (coerce.toBool(execute(test[0], ctx)).value) {
                     return execute(test[1], ctx)
+                }
+            }
+
+            return mkUnit()
+
+        case SlangTypes.Case:
+            expr.variable
+            for (const [test, then] of expr.tests) {
+                if (equality.equality([
+                    execute(expr.variable, ctx),
+                    test,
+                ]).value) {
+                    return execute(then, ctx)
                 }
             }
 
@@ -127,6 +143,13 @@ const resolveSymbol = (head: SlangSymbol, ctx: Map<string, Slang>): (args: Slang
         case 'not=':
             return builtin(equality.unequality)
 
+        case 'not':
+            return builtin(bool.not)
+        case 'and':
+            return builtin(bool.and)
+        case 'or':
+            return builtin(bool.or)
+
 
         case '+':
             return builtin(math.addition)
@@ -134,6 +157,8 @@ const resolveSymbol = (head: SlangSymbol, ctx: Map<string, Slang>): (args: Slang
             return builtin(math.subtraction)
         case '*':
             return builtin(math.multiplication)
+        case '/':
+            return builtin(math.division)
 
         default:
             return null

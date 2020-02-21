@@ -1,7 +1,10 @@
 import moo from 'moo'
 
 export const lexer = moo.compile({
-    ws: /(?:&nbsp;|,|<[^>]*?>|[ \t])+/u,
+    ws: {
+        match: /(?:&nbsp;|,|<[^>]*?>|[ \t\n])+/u,
+        lineBreaks: true,
+    },
 
     lparen: '(',
     rparen: ')',

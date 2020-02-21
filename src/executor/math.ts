@@ -14,8 +14,6 @@ import {
 } from './exception'
 
 export const addition = (args: Slang[]) => {
-    console.log('bla', args)
-
     let sum = 0
 
     for (const arg of args) {
@@ -63,4 +61,26 @@ export const multiplication = (args: Slang[]) => {
     }
 
     return mkNumber(prod)
+}
+
+export const division = (args: Slang[]) => {
+    const headArg = args[0]
+
+    if (!headArg) {
+        throw new SlangArityError('Subtraction needs at least one operand')
+    } else if (!isNumber(headArg)) {
+        throw new SlangTypeError('Value needs to be a number')
+    }
+
+    let quot = headArg.value
+
+    for (const arg of args.slice(1)) {
+        if (!isNumber(arg)) {
+            throw new SlangTypeError('Value needs to be a number')
+        }
+
+        quot /= arg.value
+    }
+
+    return mkNumber(quot)
 }

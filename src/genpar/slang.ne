@@ -58,7 +58,7 @@ stmt -> def {% id %}
       | for {% id %}
 
 def -> %lparen _ %defSym _ symbol _ expr _ %rparen {%
-    ([,,,,id,,val]) => mkDef(id, val)
+    ([,,,,ident,,val]) => mkDef(ident, val)
 %}
 
 fn -> %lparen _ %fnSym _ vector[(symbol _):*] _ expr _ %rparen {%
@@ -66,7 +66,7 @@ fn -> %lparen _ %fnSym _ vector[(symbol _):*] _ expr _ %rparen {%
 %}
 
 defn -> %lparen _ %defnSym _ symbol _ vector[(symbol _):*] _ expr _ %rparen {%
-    ([,,,,id,,[,,params],,body]) => mkDef(id, mkFunction(params[0].map(id), body))
+    ([,,,,ident,,[,,params],,body]) => mkDef(ident, mkFunction(params[0].map(id), body))
 %}
 
 do -> %lparen _ %doSym _ (expr _):* %rparen {%

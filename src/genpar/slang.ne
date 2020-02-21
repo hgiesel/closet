@@ -37,57 +37,96 @@ import tokenizer from './tokenizer'
 @preprocessor typescript
 @lexer tokenizer
 
-list[X] -> %lparen _ $X %rparen
-vector[X] -> %lbracket _ $X %rbracket
-map[X] -> %lbrace _ $X  %rbrace
+inParens[X]   -> %lparen   _ $X %rparen
+inBrackets[X] -> %lbracket _ $X %rbracket
+inBraces[X]   -> %lbrace   _ $X %rbrace
 
 #################################
 
 start -> prog {% id %}
 
-prog -> exprs {% ([exprs]) => mkDo(exprs) %}
+prog -> _ (expr _):* {%
+    ([,vals]) => mkDo(vals.map(id))
+%}
 
-exprs -> _ (expr _):* {% ([,exprs]) => exprs.map(id) %}
-
-expr -> expr1 {% id %}
+expr -> lit {% id %}
       | shCutFn {% id %}
 
-# no shcut function allowed within another shcut function (!)
-expr1 -> stmt {% id %}
-       | lit {% id %}
+#################################
 
-stmt -> def {% id %}
-      | fn {% id %}
+lit -> inParens[list] {% ([[,,[val]]]) => val %}
+     | vector         {% id %}
+     | map            {% id %}
+     | quoted         {% id %}
+     | optional       {% id %}
+     | number         {% id %}
+     | string         {% id %}
+     | symbol         {% id %}
+     | keyword        {% id %}
+     | bool           {% id %}
+
+vector -> inBrackets[(expr _):*] {%
+    ([[,,[vals]]]) => mkVector(vals.map(id))
+%}
+
+map -> inBraces[(mapIdentifier _ expr _):*] {%
+    ([[,,[vals]]]) => mkMap(vals.map(v => [v[0], v[2]]))
+%}
+
+mapIdentifier -> string  {% id %}
+               | keyword {% id %}
+               | number  {% id %}
+
+optional -> %nilLit   {% () => mkOptional() %}
+          | %amp expr {% ([val]) => mkOptional(val) %}
+
+quoted -> %quote expr {% ([, quot]) => mkQuoted(quot) %}
+
+bool    -> %trueLit  {% () => mkBool(true) %}
+         | %falseLit {% () => mkBool(false) %}
+
+number  -> %number   {% ([num]) => mkNumber(num.value) %}
+string  -> %string   {% ([str]) => mkString(str.value) %}
+
+symbol  -> %symbol   {% ([sym]) => mkSymbol(sym.value) %}
+keyword -> %keyword  {% ([kw]) => mkKeyword(kw.value) %}
+
+#################################
+
+list -> def  {% id %}
+      | fn   {% id %}
       | defn {% id %}
-      | do {% id %}
-      | let {% id %}
-      | if {% id %}
+      | do   {% id %}
+      | let  {% id %}
+      | if   {% id %}
       | case {% id %}
       | cond {% id %}
-      | for {% id %}
+      | for  {% id %}
+      | op   {% id %}
+      | unit {% id %}
 
-def -> %lparen _ %defSym _ symbol _ expr _ %rparen {%
-    ([,,,,ident,,val]) => mkDef(ident, val)
+def -> %defSym _ symbol _ expr _ {%
+    ([,,ident,,val]) => mkDef(ident, val)
 %}
 
-fn -> %lparen _ %fnSym _ vector[(symbol _):*] _ expr _ %rparen {%
-    ([,,,,[,,params],,body]) => mkFunction(params[0].map(id), body)
+fn -> %fnSym _ inBrackets[(symbol _):*] _ expr _ {%
+    ([,,[,,params],,body]) => mkFunction(params[0].map(id), body)
 %}
 
-defn -> %lparen _ %defnSym _ symbol _ vector[(symbol _):*] _ expr _ %rparen {%
-    ([,,,,ident,,[,,params],,body]) => mkDef(ident, mkFunction(params[0].map(id), body))
+defn -> %defnSym _ symbol _ inBrackets[(symbol _):*] _ expr _ {%
+    ([,,ident,,[,,params],,body]) => mkDef(ident, mkFunction(params[0].map(id), body))
 %}
 
-do -> %lparen _ %doSym _ (expr _):* %rparen {%
-    ([,,,,vals]) => mkDo(vals.map(id))
+do -> %doSym _ (expr _):* {%
+    ([,,vals]) => mkDo(vals.map(id))
 %}
 
-let -> %lparen _ %letSym _ vector[(symbol _ expr _):*] _ (expr _):* %rparen {%
-    ([,,,,[,,[params]],,body]) => mkLet(params.map(v => [v[0], v[2]]), mkDo(body.map(v => v[0])))
+let -> %letSym _ inBrackets[(symbol _ expr _):*] _ (expr _):* {%
+    ([,,[,,[params]],,body]) => mkLet(params.map(v => [v[0], v[2]]), mkDo(body.map(v => v[0])))
 %}
 
-if -> %lparen _ %ifSym _ expr _ expr _ (expr _):? %rparen {%
-    ([,,,,pred,,thenClause,,maybeElseClause]) => mkIf(
+if -> %ifSym _ expr _ expr _ (expr _):? {%
+    ([,,pred,,thenClause,,maybeElseClause]) => mkIf(
         pred,
         thenClause,
         maybeElseClause
@@ -96,58 +135,35 @@ if -> %lparen _ %ifSym _ expr _ expr _ (expr _):? %rparen {%
     )
 %}
 
-cond -> %lparen _ %condSym _ (expr _ expr _):* %rparen {%
-    ([,,,,vals]) => mkCond(vals.map(v => [v[0], v[2]]))
+cond -> %condSym _ (expr _ expr _):* {%
+    ([,,vals]) => mkCond(vals.map(v => [v[0], v[2]]))
 %}
 
-case -> %lparen _ %caseSym _ symbol _ (expr _ expr _):* %rparen {%
-    ([,,,,sym,,vals]) => mkCase(sym, vals.map(v => [v[0], v[2]]))
+case -> %caseSym _ symbol _ (expr _ expr _):* {%
+    ([,,sym,,vals]) => mkCase(sym, vals.map(v => [v[0], v[2]]))
 %}
 
-for -> %lparen _ %forSym _ vector[(symbol _ expr _):*] _ expr _ %rparen {%
-    ([,,,,[,,[params]],,body]) => mkFor(params.map(v => [v[0], v[2]]), body)
+for -> %forSym _ inBrackets[(symbol _ expr _):*] _ expr _ {%
+    ([,,[,,[params]],,body]) => mkFor(params.map(v => [v[0], v[2]]), body)
+%}
+
+op -> (expr _):+ {%
+    ([vals]) => mkList(id(id(vals)), vals.slice(1).map(id))
+%}
+
+unit -> _ {%
+    () => mkUnit()
 %}
 
 #################################
 
-lit -> list[(expr _):+] {% ([[,,[vals]]]) => mkList(vals[0][0], vals.slice(1).map(id)) %}
-     | vector[(expr _):*] {% ([[,,[vals]]]) => mkVector(vals.map(id)) %}
-     | map[(mapIdentifier _ expr _):*] {% ([[,,[vals]]]) => mkMap(vals.map(v => [v[0], v[2]])) %}
-     | quoted {% id %}
-     | optional {% id %}
-     | number {% id %}
-     | string {% id %}
-     | symbol {% id %}
-     | keyword {% id %}
-     | bool {% id %}
-     | unit {% id %}
-
-mapIdentifier -> string {% id %}
-               | keyword {% id %}
-               | number {% id %}
-
-unit -> %lparen _ %rparen {% () => mkUnit() %}
-
-optional -> %nilLit {% () => mkOptional() %}
-          | %amp expr {% ([val]) => mkOptional(val) %}
-quoted -> %quote expr {% ([, l]) => mkQuoted(l) %}
-
-bool -> %trueLit {% () => mkBool(true) %}
-      | %falseLit {% () => mkBool(false) %}
-
-number -> %number {% ([num]) => mkNumber(num.value) %}
-string -> %string {% ([str]) => mkString(str.value) %}
-
-symbol -> %symbol {% ([sym]) => mkSymbol(sym.value) %}
-keyword -> %keyword {% ([kw]) => mkKeyword(kw.value) %}
-
-#################################
-
-shCutFn -> %hashParen _ (expr1 _):+ %rparen {%
+shCutFn -> %hashParen _ (lit _):+ %rparen {%
     ([,,vals]) => {
         const lst = mkList(vals[0][0], vals.slice(1).map(id))
         return mkShcutFunction(shcutFuncArity(lst), lst)
     }
 %}
 
-_ -> %ws:* {% function() { return null } %}
+_ -> %ws:* {% () => null %}
+
+__ -> %ws:+ {% () => null %}

@@ -43,7 +43,6 @@ btn.addEventListener('click', (_e) => {
     const outputField: HTMLDivElement = document.querySelector('div#setlang-code')
     console.time('code parse')
     const codeOutput = parseCode(codeElement.value)
-
     console.timeEnd('code parse')
 
     display(outputField, JSON.stringify(codeOutput, null, 4))

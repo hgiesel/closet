@@ -100,10 +100,21 @@ export interface SlangProg {
     expressions: Slang[]
 }
 
+export interface SlangDo {
+    kind: SlangTypes.Do,
+    expressions: Slang[]
+}
+
 export interface SlangDef {
     kind: SlangTypes.Def,
     identifier: SlangSymbol,
     value: Slang,
+}
+
+export interface SlangLet {
+    kind: SlangTypes.Let,
+    bindings: Map<string, Slang>,
+    body: Slang,
 }
 
 // defaults to Unit
@@ -112,17 +123,6 @@ export interface SlangIf {
     condition: Slang,
     thenClause: Slang,
     elseClause: Slang,
-}
-
-export interface SlangDo {
-    kind: SlangTypes.Do,
-    expressions: Slang[]
-}
-
-export interface SlangLet {
-    kind: SlangTypes.Let,
-    bindings: Map<string, Slang>,
-    body: Slang,
 }
 
 // defaults to Unit
@@ -142,12 +142,6 @@ export interface SlangCase {
 export interface SlangFor {
     kind: SlangTypes.For,
     bindings: Map<string, Slang>,
-    body: Slang,
-}
-
-export interface SlangDotimes {
-    kind: SlangTypes.Dotimes,
-    binding: [string, Slang],
     body: Slang,
 }
 
@@ -172,10 +166,9 @@ export type Slang = SlangString
                   | SlangFunction
 
                   | SlangDef
-                  | SlangIf
+                  | SlangLet
                   | SlangDo
+                  | SlangIf
                   | SlangCond
                   | SlangCase
                   | SlangFor
-                  | SlangDotimes
-                  | SlangLet

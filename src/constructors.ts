@@ -25,7 +25,6 @@ import {
     SlangLet,
 
     SlangFor,
-    SlangDotimes,
 } from './types'
 
 ////////// CONSTRUCTORS FOR BASIC TYPES
@@ -148,6 +147,7 @@ export const isLet = (val: Slang): val is SlangLet => val.kind === SlangTypes.Le
 export const mkLet = (vs: [SlangSymbol, Slang][], body: Slang): SlangLet => {
     const theBindings: Map<string, Slang> = new Map()
 
+    console.log(vs)
     for (const v of vs) {
         theBindings.set(mapKey(v[0]), v[1])
     }
@@ -199,10 +199,3 @@ export const mkFor = (vs: [SlangSymbol, Slang][], body: Slang): SlangFor => {
         body: body,
     }
 }
-
-export const isDotimes = (val: Slang): val is SlangDotimes => val.kind === SlangTypes.Dotimes
-export const mkDotimes = (binding: [string, Slang], body: Slang): SlangDotimes => ({
-    kind: SlangTypes.Dotimes,
-    binding: binding,
-    body: body,
-})

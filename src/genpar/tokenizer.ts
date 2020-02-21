@@ -26,12 +26,15 @@ export const lexer = moo.compile({
         match: /(?:[_-~./!?+<=>*%@$|^a-zA-Z]|&lt;|&gt;)(?:[_-~./!?+<=>*%@$|^a-zA-Z0-9]|&lt;|&gt;)*/u,
         type: moo.keywords({
             'defSym': 'def',
+            'doSym': 'do',
+            'letSym': 'let',
+
             'fnSym': 'fn',
             'defnSym': 'defn',
+
+            'ifSym': 'if',
             'caseSym': 'case',
             'condSym': 'cond',
-            'doSym': 'do',
-            'dotimesSym': 'dotimes',
         }),
     },
 

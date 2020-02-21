@@ -6,7 +6,6 @@ import {
     SlangBool,
     SlangNumber,
     SlangSymbol,
-    SlangUnsymbol,
     SlangKeyword,
     SlangString,
 
@@ -90,11 +89,6 @@ export const mkSymbol = (x: string): SlangSymbol => ({
     value: x,
 })
 
-export const mkUnsymbol = (x: string): SlangUnsymbol => ({
-    kind: SlangTypes.Unsymbol,
-    value: x,
-})
-
 export const isSymbol = (val: Slang): val is SlangSymbol => {
     return val.kind === SlangTypes.Symbol
 }
@@ -125,10 +119,18 @@ export const mkList = (head: Slang, tail: Slang[]): SlangList => ({
     tail: tail,
 })
 
+export const isList = (val: Slang): val is SlangList => {
+    return val.kind === SlangTypes.List
+}
+
 export const mkVector = (members: Slang[]): SlangVector => ({
     kind: SlangTypes.Vector,
     members: members,
 })
+
+export const isVector = (val: Slang): val is SlangVector => {
+    return val.kind === SlangTypes.Vector
+}
 
 const mapMapKey = (v: SlangString | SlangKeyword) => {
     if (v.kind === SlangTypes.String) {
@@ -151,15 +153,28 @@ export const mkMap = (vs: [SlangString | SlangKeyword, Slang][]): SlangMap => {
     }
 }
 
+export const isMap = (val: Slang): val is SlangMap => {
+    return val.kind === SlangTypes.Map
+}
+
 export const mkQuoted = (x: Slang): SlangQuoted => ({
     kind: SlangTypes.Quoted,
     quoted: x,
 })
 
+export const isQuoted = (val: Slang): val is SlangQuoted => {
+    return val.kind === SlangTypes.Quoted
+}
+
 export const mkOptional = (x: Slang | null): SlangOptional => ({
     kind: SlangTypes.Optional,
     boxed: x,
 })
+
+
+export const isOptional = (val: Slang): val is SlangOptional => {
+    return val.kind === SlangTypes.Optional
+}
 
 export const mkProg = (xs: Slang[]): SlangProg => ({
     kind: SlangTypes.Prog,

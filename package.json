@@ -1,5 +1,5 @@
 {
-  "name": "arcsecond_test",
+  "name": "setlang",
   "author": {
     "name": "Henrik Giesel",
     "email": "hengiesel@gmail.com",
@@ -24,6 +24,9 @@
   },
   "dependencies": {
     "arcsecond": "^2.0.3",
-    "eslint": "^6.6.0"
+    "eslint": "^6.6.0",
+    "moo": "^0.5.1",
+    "nearley": "^2.19.1",
+    "typescript": "^3.8.3"
   }
 }

@@ -18,45 +18,6 @@ import {
     SlangProg,
 } from './types'
 
-////////// CONSTRUCTORS FOR TEMPLATES
-
-enum Element {
-    Text,
-    ValueSet,
-}
-
-const getSub = (valueSetName: string) => 0
-
-const initialChars = /^[^0-9]+/u
-const trailingNumbers = /[0-9]*$/u
-
-const mkText = (text: string) => ({
-    kind: Element.Text,
-    value: text,
-})
-
-const mkValueSet = (values: string[]) => {
-    const name: string = values[0].match(initialChars)[0]
-
-    const idxString: string = values[0].match(trailingNumbers)[0]
-    const idx: number = idxString.length === 0 ? null : Number(idxString)
-
-    return {
-        kind: Element.ValueSet,
-        fullName: values[0],
-        name: name,
-        idx: idx,
-        sub: getSub(values[0]),
-        values: values.slice(1),
-    }
-}
-
-export const mkElement = (values: string[]) => {
-    return values.length === 1
-        ? mkText(values[0])
-        : mkValueSet(values)
-}
-
 ////////// CONSTRUCTORS FOR BASIC TYPES
 
 export const mkUnit = (): SlangUnit => ({
@@ -114,6 +75,24 @@ export const isString = (val: Slang): val is SlangString => {
 
 ////////// CONSTRUCTORS FOR RECURSIVE TYPES
 
+export const mkQuoted = (x: Slang): SlangQuoted => ({
+    kind: SlangTypes.Quoted,
+    quoted: x,
+})
+
+export const isQuoted = (val: Slang): val is SlangQuoted => {
+    return val.kind === SlangTypes.Quoted
+}
+
+export const mkOptional = (x?: Slang): SlangOptional => ({
+    kind: SlangTypes.Optional,
+    boxed: x ?? null,
+})
+
+export const isOptional = (val: Slang): val is SlangOptional => {
+    return val.kind === SlangTypes.Optional
+}
+
 export const mkList = (head: Slang, tail: Slang[]): SlangList => ({
     kind: SlangTypes.List,
     head: head,
@@ -158,25 +137,6 @@ export const isMap = (val: Slang): val is SlangMap => {
     return val.kind === SlangTypes.Map
 }
 
-export const mkQuoted = (x: Slang): SlangQuoted => ({
-    kind: SlangTypes.Quoted,
-    quoted: x,
-})
-
-export const isQuoted = (val: Slang): val is SlangQuoted => {
-    return val.kind === SlangTypes.Quoted
-}
-
-export const mkOptional = (x: Slang | null): SlangOptional => ({
-    kind: SlangTypes.Optional,
-    boxed: x,
-})
-
-
-export const isOptional = (val: Slang): val is SlangOptional => {
-    return val.kind === SlangTypes.Optional
-}
-
 export const mkFunction = (params: SlangSymbol[], body: Slang): SlangFunction => ({
     kind: SlangTypes.Function,
     params: params,
@@ -186,6 +146,8 @@ export const mkFunction = (params: SlangSymbol[], body: Slang): SlangFunction =>
 export const isFunction = (val: Slang): val is SlangFunction => {
     return val.kind === SlangTypes.Function
 }
+
+/////////////////
 
 export const mkProg = (xs: Slang[]): SlangProg => ({
     kind: SlangTypes.Prog,

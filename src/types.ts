@@ -95,6 +95,25 @@ export interface SlangFunction {
 
 //////////////////
 
+export type Slang = SlangString
+                  | SlangNumber
+                  | SlangBool
+                  | SlangUnit
+
+
+                  | SlangSymbol
+                  | SlangKeyword
+
+                  | SlangQuoted
+                  | SlangOptional
+
+                  | SlangList
+                  | SlangVector
+                  | SlangMap
+                  | SlangFunction
+
+//////////////////
+
 export interface SlangProg {
     kind: SlangTypes.Prog
     statements: Slang[]
@@ -153,19 +172,11 @@ export interface SlangDotimes {
 
 //////////////////
 
-export type Slang = SlangString
-                  | SlangNumber
-                  | SlangBool
-                  | SlangUnit
-
-
-                  | SlangSymbol
-                  | SlangKeyword
-
-                  | SlangQuoted
-                  | SlangOptional
-
-                  | SlangList
-                  | SlangVector
-                  | SlangMap
-                  | SlangFunction
+export type SlangConstructors = SlangProg
+                              | SlangDef
+                              | SlangIf
+                              | SlangDo
+                              | SlangCond
+                              | SlangCase
+                              | SlangFor
+                              | SlangDotimes

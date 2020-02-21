@@ -43,7 +43,13 @@ export const pureToString = (val: Slang): string => {
     }
 
     else if (reflection.isNumber(val)) {
-        return String(val.value)
+        return Number.isNaN(val.value)
+            ? '#nan'
+            : val.value === Infinity
+            ? '#inf'
+            : val.value === -Infinity
+            ? '#-inf'
+            : String(val.value)
     }
 
     else if (reflection.isSymbol(val)) {

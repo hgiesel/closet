@@ -33,6 +33,36 @@ export namespace String {
     export const join = ([sep, list]: [SlangString, SlangVector]): SlangString => {
         return mkString(list.members.map(v => pureToString(v)).join(sep.value))
     }
+
+    export const blankQ = ([str]: [SlangString]): SlangBool => {
+        return mkBool(str.value.length === 0)
+    }
+
+    export const capitalize = ([str]: [SlangString]): SlangString => {
+        return mkString(str.value.length === 0
+            ? ''
+            : str.value[0].toLocaleUpperCase + str.value.slice(1).toLocaleLowerCase())
+    }
+
+    export const lowerCase = ([str]: [SlangString]): SlangString => {
+        return mkString(str.value.toLocaleLowerCase())
+    }
+
+    export const upperCase = ([str]: [SlangString]): SlangString => {
+        return mkString(str.value.toLocaleUpperCase())
+    }
+
+    export const trim = ([str]: [SlangString]): SlangString => {
+        return mkString(str.value.trim())
+    }
+
+    export const triml = ([str]: [SlangString]): SlangString => {
+        return mkString(str.value.trimLeft())
+    }
+
+    export const trimr = ([str]: [SlangString]): SlangString => {
+        return mkString(str.value.trimRight())
+    }
 }
 
 export namespace Vector {

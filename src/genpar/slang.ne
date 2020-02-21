@@ -26,6 +26,9 @@ import {
     mkCase,
 
     mkFor,
+    mkDoseq,
+    mkThreadFirst,
+    mkThreadLast,
 } from '../constructors'
 
 import {
@@ -90,7 +93,11 @@ deref -> %at expr {% ([,expr]) => mkList(mkSymbol('deref'), [expr]) %}
 bool    -> %trueLit  {% () => mkBool(true) %}
          | %falseLit {% () => mkBool(false) %}
 
-number  -> %number   {% ([num]) => mkNumber(num.value) %}
+number  -> %number    {% ([num]) => mkNumber(num.value) %}
+         | %infLit    {% ([num]) => mkNumber(Infinity) %}
+         | %negInfLit {% ([num]) => mkNumber(-Infinity) %}
+         | %nanLit    {% ([num]) => mkNumber(NaN) %}
+ 
 string  -> %string   {% ([str]) => mkString(str.value) %}
 
 symbol  -> %symbol   {% ([sym]) => mkSymbol(sym.value) %}
@@ -100,17 +107,20 @@ regex -> %regex  {% ([re]) => mkRegex(re.value) %}
 
 #################################
 
-list -> def  {% id %}
-      | fn   {% id %}
-      | defn {% id %}
-      | do   {% id %}
-      | let  {% id %}
-      | if   {% id %}
-      | case {% id %}
-      | cond {% id %}
-      | for  {% id %}
-      | op   {% id %}
-      | unit {% id %}
+list -> def         {% id %}
+      | fn          {% id %}
+      | defn        {% id %}
+      | do          {% id %}
+      | let         {% id %}
+      | if          {% id %}
+      | case        {% id %}
+      | cond        {% id %}
+      | for         {% id %}
+      | doseq       {% id %}
+      | threadfirst {% id %}
+      | threadlast  {% id %}
+      | op          {% id %}
+      | unit        {% id %}
 
 def -> %defSym _ symbol _ expr _ {%
     ([,,ident,,val]) => mkDef(ident, val)
@@ -152,6 +162,18 @@ case -> %caseSym _ symbol _ (expr _ expr _):* {%
 
 for -> %forSym _ inBrackets[(symbol _ expr _):*] _ expr _ {%
     ([,,[,,[params]],,body]) => mkFor(params.map(v => [v[0], v[2]]), body)
+%}
+
+doseq -> %doseqSym _ inBrackets[(symbol _ expr _):*] _ expr _ {%
+    ([,,[,,[params]],,body]) => mkDoseq(params.map(v => [v[0], v[2]]), body)
+%}
+
+threadfirst -> %arrowSym _ expr _ (expr _):* {%
+    ([,,val,,pipes]) => mkThreadFirst(val, pipes.map(id))
+%}
+
+threadlast -> %darrowSym _ expr _ (expr _):* {%
+    ([,,val,,pipes]) => mkThreadLast(val, pipes.map(id))
 %}
 
 op -> (expr _):+ {%

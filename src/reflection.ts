@@ -31,6 +31,9 @@ import {
     SlangLet,
 
     SlangFor,
+    SlangDoseq,
+    SlangThreadFirst,
+    SlangThreadLast,
 
     SlangMapKey,
     SlangExecutable,
@@ -64,7 +67,11 @@ export const isLet = (val: Slang): val is SlangLet => val.kind === SlangTypes.Le
 export const isIf = (val: Slang): val is SlangIf => val.kind === SlangTypes.If
 export const isCond = (val: Slang): val is SlangCond => val.kind === SlangTypes.Cond
 export const isCase = (val: Slang): val is SlangCase => val.kind === SlangTypes.Case
+
 export const isFor = (val: Slang): val is SlangFor => val.kind === SlangTypes.For
+export const isDoseq = (val: Slang): val is SlangDoseq => val.kind === SlangTypes.Doseq
+export const isThreadFirst = (val: Slang): val is SlangThreadFirst => val.kind === SlangTypes.ThreadFirst
+export const isThreadLast = (val: Slang): val is SlangThreadLast => val.kind === SlangTypes.ThreadLast
 
 export const isExecutable = (val: Slang): val is SlangExecutable => (
     isFunction(val)      ||

@@ -34,6 +34,9 @@ import {
     SlangLet,
 
     SlangFor,
+    SlangDoseq,
+    SlangThreadFirst,
+    SlangThreadLast,
 } from './types'
 
 import { SlangError } from './executor/exception'
@@ -227,3 +230,29 @@ export const mkFor = (vs: [SlangSymbol, Slang][], body: Slang): SlangFor => {
         body: body,
     }
 }
+
+export const mkDoseq = (vs: [SlangSymbol, Slang][], body: Slang): SlangDoseq => {
+    const theBindings: Map<string, Slang> = new Map()
+
+    for (const v of vs) {
+        theBindings.set(getValue(v[0]), v[1])
+    }
+
+    return {
+        kind: SlangTypes.Doseq,
+        bindings: theBindings,
+        body: body,
+    }
+}
+
+export const mkThreadFirst = (value: Slang, pipes: Slang[]): SlangThreadFirst => ({
+    kind: SlangTypes.ThreadFirst,
+    value: value,
+    pipes: pipes,
+})
+
+export const mkThreadLast = (value: Slang, pipes: Slang[]): SlangThreadLast => ({
+    kind: SlangTypes.ThreadLast,
+    value: value,
+    pipes: pipes,
+})

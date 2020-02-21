@@ -29,7 +29,12 @@ export enum SlangTypes {
     Let = 'let',
     Cond = 'cond',
     Case = 'case',
+
     For = 'for',
+    Doseq = 'doseq',
+
+    ThreadFirst = 'threadfirst',
+    ThreadLast = 'threadlast',
 }
 
 ////////////////// BASIC TYPES
@@ -181,6 +186,24 @@ export interface SlangFor {
     body: Slang,
 }
 
+export interface SlangDoseq {
+    kind: SlangTypes.Doseq,
+    bindings: Map<string, Slang>,
+    body: Slang,
+}
+
+export interface SlangThreadFirst {
+    kind: SlangTypes.ThreadFirst,
+    value: Slang,
+    pipes: Slang[],
+}
+
+export interface SlangThreadLast {
+    kind: SlangTypes.ThreadLast,
+    value: Slang,
+    pipes: Slang[],
+}
+
 //////////////////
 export type SlangMappable = SlangList
                           | SlangVector
@@ -226,4 +249,9 @@ export type Slang = SlangUnit
                   | SlangIf
                   | SlangCond
                   | SlangCase
+
                   | SlangFor
+                  | SlangDoseq
+
+                  | SlangThreadFirst
+                  | SlangThreadLast

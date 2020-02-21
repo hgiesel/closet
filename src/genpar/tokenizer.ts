@@ -46,6 +46,10 @@ export const lexer = moo.compile({
             'caseSym': 'case',
 
             'forSym': 'for',
+            'doseqSym': 'doseq',
+
+            'arrowSym': '->',
+            'darrowSym': '->>',
         }),
     },
 
@@ -60,6 +64,9 @@ export const lexer = moo.compile({
             'trueLit': ['#true', '#t'],
             'falseLit': ['#false', '#f'],
             'nilLit': ['#nil', '#n'],
+            'infLit': ['#inf'],
+            'negInfLit': ['#-inf'],
+            'nanLit': ['#nan', '#NaN'],
         }),
         value: (x: string) => x.slice(1),
     },

@@ -8,7 +8,15 @@ import {
 
 import {
     mkUnit,
+    mkList,
+    mkOptional,
+    mkVector,
+    mkMapDirect,
 } from '../constructors'
+
+import {
+    isList,
+} from '../reflection'
 
 import * as lookup from './lookup'
 import * as coerce from './coerce'
@@ -24,6 +32,23 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
         case SlangTypes.Symbol:
             return lookup.lookup(expr, ctx) ?? expr
+
+        case SlangTypes.Optional:
+            return mkOptional(expr.boxed
+                ? execute(expr.boxed, ctx)
+                : null)
+
+        case SlangTypes.Vector:
+            return mkVector(expr.members.map(v => execute(v, ctx)))
+
+        case SlangTypes.Map:
+            const newMap = new Map()
+
+            for (const [key, value] of expr.table) {
+                newMap.set(key, execute(value, ctx))
+            }
+
+            return mkMapDirect(newMap)
 
         case SlangTypes.Quoted:
             return expr.quoted
@@ -78,6 +103,42 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
             return mkUnit()
 
+        case SlangTypes.For:
+            return mkUnit()
+
+        case SlangTypes.Doseq:
+            return mkUnit()
+
+        case SlangTypes.ThreadFirst:
+            let tfresult = execute(expr.value, ctx)
+
+            for (const pipe of expr.pipes) {
+                if (isList(pipe)) {
+                    pipe.tail.unshift(tfresult)
+                    tfresult = execute(pipe, ctx)
+                }
+                else {
+                    execute(mkList(pipe, [tfresult]), ctx)
+                }
+            }
+
+            return tfresult
+
+        case SlangTypes.ThreadLast:
+            let tlresult = execute(expr.value, ctx)
+
+            for (const pipe of expr.pipes) {
+                if (isList(pipe)) {
+                    pipe.tail.push(tlresult)
+                    tlresult = execute(pipe, ctx)
+                }
+                else {
+                    execute(mkList(pipe, [tlresult]), ctx)
+                }
+            }
+
+            return tlresult
+
         default:
             // case SlangTypes.String:
             // case SlangTypes.Number:
@@ -85,11 +146,6 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
             // case SlangTypes.Bool:
 
             // case SlangTypes.Keyword:
-            // case SlangTypes.Quoted:
-            // case SlangTypes.Optional:
-
-            // case SlangTypes.Vector:
-            // case SlangTypes.Map:
             // case SlangTypes.Function:
             // case SlangTypes.ShcutFunction:
             // case SlangTypes.ArmedFunction:

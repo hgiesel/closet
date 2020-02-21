@@ -445,6 +445,43 @@ export const fixedTable = {
         argc: (count) => count === 2,
         args: (args) => isString(args[0]) || isVector(args[1]),
     })),
+
+
+    'blank?': wrap('blank?', typecheck({
+        f: strings.String.blankQ,
+        argc: (count) => count === 1,
+        args: (args) => isString(args[0]),
+    })),
+    'capitalize': wrap('capitalize', typecheck({
+        f: strings.String.capitalize,
+        argc: (count) => count === 1,
+        args: (args) => isString(args[0]),
+    })),
+    'lower-case': wrap('lower-case', typecheck({
+        f: strings.String.lowerCase,
+        argc: (count) => count === 1,
+        args: (args) => isString(args[0]),
+    })),
+    'upper-case': wrap('upper-case', typecheck({
+        f: strings.String.upperCase,
+        argc: (count) => count === 1,
+        args: (args) => isString(args[0]),
+    })),
+    'trim': wrap('trim', typecheck({
+        f: strings.String.trim,
+        argc: (count) => count === 1,
+        args: (args) => isString(args[0]),
+    })),
+    'triml': wrap('triml', typecheck({
+        argc: (count) => count === 1,
+        args: (args) => isString(args[0]),
+    })),
+    'trimr': wrap('trimr', typecheck({
+        f: strings.String.trimr,
+        argc: (count) => count === 1,
+        args: (args) => isString(args[0]),
+    })),
 }
+
 
 export default fixedTable

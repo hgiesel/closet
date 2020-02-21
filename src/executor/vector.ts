@@ -1,4 +1,7 @@
 import type {
+    Slang,
+    SlangSeq,
+    SlangMap,
     SlangVector,
     SlangNumber,
     SlangOptional,
@@ -7,6 +10,13 @@ import type {
 import {
     mkOptional,
 } from '../constructors'
+
+import {
+    isString,
+    isOptional,
+    isVector,
+    isMap,
+} from '../reflection'
 
 
 export const indexing = ([listArg, idx]: [SlangVector, SlangNumber]): SlangOptional => {

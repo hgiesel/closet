@@ -7,7 +7,6 @@ import type {
     SlangNumber,
     SlangMap,
     SlangMapKey,
-    SlangExecutable,
     SlangEither,
 } from '../types'
 
@@ -67,7 +66,10 @@ const adapt = (sl: Slang): SlangEither => {
 }
 
 export const wrap = (name: string, func: (a: Slang[], ctx: Map<string, Slang>) => Slang): SlangArmedFunction => (
-    mkArmedFunction(name, (args, ctx) => adapt(func(args.map(t => execute(t, ctx)), ctx)))
+    mkArmedFunction(
+        name,
+        (args, ctx) => (console.log(args), adapt(func(args.map(t => execute(t, ctx)), ctx))),
+    )
 )
 
 export const armFunc = (func: SlangFunction): SlangArmedFunction => (
@@ -123,6 +125,6 @@ export const arm = (exec: Slang): SlangArmedFunction => (
     : throwException('list', notExecutable(exec.kind))
 )
 
-export const fire = (exec: Slang, args: Slang[], ctx: Map<string, Slang>) => {
+export const fire = (exec: Slang, args: Slang[], ctx: Map<string, Slang>): Slang => {
     return apply(arm(exec), args, ctx)
 }

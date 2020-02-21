@@ -1,12 +1,14 @@
 import type {
     Slang,
+    SlangExecutable,
+    SlangMappable,
 } from '../types'
 
 import {
     mkVector,
 } from '../constructors'
 
-import * as functions from './functions'
+import { arm, apply } as functions from './functions'
 
 const transpose = (arrs: any[][]) => {
     const result = arrs.length === 0
@@ -20,13 +22,14 @@ const transpose = (arrs: any[][]) => {
     return result
 }
 
-export const map = (args: Slang[], ctx: Map<string, Slang>) => {
-    const theFunction = args[0]
-    const params = args.slice(1)
-
+export const map = ([func, ...params]: [SlangExecutable, ...SlangMappable[]], ctx: Map<string, Slang>) => {
     //@ts-ignore
     const newParams = transpose(params.map(p => p.members))
 
-    const armed = functions.arm(theFunction)
-    return mkVector(newParams.map(np => armed.apply(np, ctx)))
+    const armed = arm(func)
+
+    if (isVector(params
+
+    return mkVector(newParams.map(np => apply(armed, np, ctx)))
+
 }

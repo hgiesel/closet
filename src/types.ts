@@ -176,7 +176,11 @@ export interface SlangFor {
 }
 
 //////////////////
-//
+export type SlangSeq = SlangList
+                     | SlangVector
+                     | SlangMap
+                     | SlangOptional
+
 export type SlangMapKey = SlangString
                         | SlangKeyword
 
@@ -185,6 +189,10 @@ export type SlangExecutable = SlangFunction
                             | SlangArmedFunction
                             | SlangVector
                             | SlangMap
+
+export type SlangMappable = SlangList
+                          | SlangVector
+                          | SlangOptional
 
 // everything but SlangProg
 export type Slang = SlangString

@@ -10,7 +10,11 @@ import {
 
 import {
     isNumber,
+    isAtom,
     isMap,
+    isVector,
+    isList,
+    isOptional,
     isMapKey,
     isExecutable,
 } from '../reflection'
@@ -18,64 +22,106 @@ import {
 import * as bool from './bool'
 import * as math from './math'
 import * as map from './map'
+import * as atoms from './atoms'
 import * as higherorder from './higherorder'
+import * as seq from './seq'
 
 export const fixedTable = {
-    '=': wrap('=', typecheck(equality.equality, {
+    '=': wrap('=', typecheck({
+        f: equality.equality,
         argc: (count) => count > 0,
     })),
-    'not=': wrap('not=', typecheck(equality.unequality, {
+    'not=': wrap('not=', typecheck({
+        f: equality.unequality,
         argc: (count) => count > 0,
     })),
 
-    'not': wrap('not', typecheck(bool.not, {
+    'not': wrap('not', typecheck({
+        f: bool.not,
         argc: (count) => count === 1,
     })),
     'and': wrap('and', bool.and),
     'or': wrap('or', bool.or),
 
-    '+': wrap('+', typecheck(math.addition, {
+    '+': wrap('+', typecheck({
+        f: math.addition,
         args: (args) => args.every(isNumber),
     })),
-    '-': wrap('-', typecheck(math.subtraction, {
+    '-': wrap('-', typecheck({
+        f: math.subtraction,
         argc: (count) => count > 0,
         args: (args) => args.every(isNumber),
     })),
-    '*': wrap('*', typecheck(math.multiplication, {
+    '*': wrap('*', typecheck({
+        f: math.multiplication,
         args: (args) => args.every(isNumber),
     })),
-    '/': wrap('/', typecheck(math.division, {
-        argc: (count) => count > 0,
-        args: (args) => args.every(isNumber),
-    })),
-
-
-    '<': wrap('<', typecheck(math.lt, {
-        argc: (count) => count > 0,
-        args: (args) => args.every(isNumber),
-    })),
-    '<=': wrap('<=', typecheck(math.le, {
-        argc: (count) => count > 0,
-        args: (args) => args.every(isNumber),
-    })),
-    '>': wrap('>', typecheck(math.gt, {
-        argc: (count) => count > 0,
-        args: (args) => args.every(isNumber),
-    })),
-    '>=': wrap('>=', typecheck(math.ge, {
+    '/': wrap('/', typecheck({
+        f: math.division,
         argc: (count) => count > 0,
         args: (args) => args.every(isNumber),
     })),
 
-    'merge': wrap('merge', typecheck(map.merge, {
+
+    '<': wrap('<', typecheck({
+        f: math.lt,
+        argc: (count) => count > 0,
+        args: (args) => args.every(isNumber),
+    })),
+    '<=': wrap('<=', typecheck({
+        f: math.le,
+        argc: (count) => count > 0,
+        args: (args) => args.every(isNumber),
+    })),
+    '>': wrap('>', typecheck({
+        f: math.gt,
+        argc: (count) => count > 0,
+        args: (args) => args.every(isNumber),
+    })),
+    '>=': wrap('>=', typecheck({
+        f: math.ge,
+        argc: (count) => count > 0,
+        args: (args) => args.every(isNumber),
+    })),
+
+    'merge': wrap('merge', typecheck({
+        f: map.merge,
         argc: (count) => count >= 1,
         args: (args) => args.every(isMap),
     })),
-    'merge-with': wrap('merge-with', typecheck(map.mergeWith, {
+    'merge-with': wrap('merge-with', typecheck({
+        f: map.mergeWith,
         argc: (count) => count >= 2,
         arg0: (arg) => isExecutable(arg),
         args: (args) => args.slice(1).every(isMap),
     })),
+    'get': wrap('get', typecheck(seq.getFunc, {
+        argc: (count) => count === 3,
+        args: ([seqArg, idxArg]) =>
+            (isMap(seqArg) && isMapKey(idxArg)) ||
+            (isVector(seqArg) && isNumber(idxArg)) ||
+            (isList(seqArg) && isNumber(idxArg)) ||
+            (isOptional(seqArg) && isNumber(idxArg))
+    })),
+    'contains?': wrap('contains?', typecheck(map.containsQ, {
+        argc: (count) => count === 2,
+        arg0: (arg) => isMap(arg),
+        arg1: (arg) => isMapKey(arg),
+    })),
+    'find': wrap('find', typecheck(map.find, {
+        argc: (count) => count === 2,
+        arg0: (arg) => isMap(arg),
+        arg1: (arg) => isMapKey(arg),
+    })),
+    'keys': wrap('keys', typecheck(map.keys, {
+        argc: (count) => count === 1,
+        arg0: (arg) => isMap(arg),
+    })),
+    'vals': wrap('vals', typecheck(map.vals, {
+        argc: (count) => count === 1,
+        arg0: (arg) => isMap(arg),
+    })),
+
     'assoc': wrap('assoc', typecheck(map.assoc, {
         argc: (count) => count >= 1,
         arg0: (v) => isMap(v),
@@ -91,6 +137,19 @@ export const fixedTable = {
         .every(v => isMapKey(v)),
     })),
 
+
+    'atom': wrap('atom', typecheck(atoms.atom, {
+        argc: (count) => count === 1,
+    })),
+    'deref': wrap('deref', typecheck(atoms.deref, {
+        argc: (count) => count === 1,
+        arg0: (val) => isAtom(val),
+    })),
+    'swap!': wrap('swap!', typecheck(atoms.swap, {
+        argc: (count) => count >= 2,
+        arg0: (val) => isAtom(val),
+        arg1: (val) => (console.log('fojiosf', val, isExecutable(val)),isExecutable(val)),
+    })),
 
     'map': wrap('map', higherorder.map),
 }

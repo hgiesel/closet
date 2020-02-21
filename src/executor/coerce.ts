@@ -24,7 +24,11 @@ export const toBool = (val: Slang): SlangBool => {
 }
 
 const pureToString = (val: Slang): string => {
-    if (reflection.isBool(val)) {
+    if (reflection.isUnit(val)) {
+        return '()'
+    }
+
+    else if (reflection.isBool(val)) {
         return val.value
             ? '#true'
             : '#false'
@@ -48,6 +52,10 @@ const pureToString = (val: Slang): string => {
 
     else if (reflection.isQuoted(val)) {
         return `'${pureToString(val.quoted)}`
+    }
+
+    else if (reflection.isAtom(val)) {
+        return `(atom ${pureToString(val.atom)})`
     }
 
     else if (reflection.isOptional(val)) {

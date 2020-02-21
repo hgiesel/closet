@@ -51,7 +51,7 @@ export const throwException = (name: string, e: SlangError) => {
             throw new TypeError( [
                 e.kind,
                 name,
-                `Wrong amount of arguments ${e.argc} passed.`,
+                `Wrong amount of arguments (${e.argc}) passed.`,
             ].join(': '))
 
         case 'TypeError':
@@ -71,6 +71,8 @@ export const throwException = (name: string, e: SlangError) => {
 }
 
 interface Typecheckers {
+    f?: (args: Slang[], ctx: Map<string, Slang>) => Slang,
+    inf?: (args: Slang[]) => (args: Slang[], ctx: Map<string, Slang>) => Slang,
     argc?: (count: number) => boolean,
     arg0?: (arg: Slang) => boolean,
     arg1?: (arg: Slang) => boolean,
@@ -81,10 +83,18 @@ interface Typecheckers {
     args?: (args: Slang[]) => boolean,
 }
 
-export const typecheck = (
-    f: (args: Slang[], ctx: Map<string, Slang>) => Slang,
-    {argc, arg0, arg1, arg2, arg3, arg4, arg5, args}: Typecheckers,
-) => (argums: Slang[], ctx: Map<string, Slang>): SlangEither => {
+export const typecheck = ({
+    f,
+    inf,
+    argc,
+    arg0,
+    arg1,
+    arg2,
+    arg3,
+    arg4,
+    arg5,
+    args
+}: Typecheckers) => (argums: Slang[], ctx: Map<string, Slang>): SlangEither => {
     if (argc && !argc(argums.length)) {
         return mkLeft(mkArityError(argums.length))
     }
@@ -117,7 +127,11 @@ export const typecheck = (
         return mkLeft(mkTypeError(`(${argums.map(v => v.kind).join(', ')})`, '*'))
     }
 
-    return mkRight(f(argums, ctx))
+    const exec = inf
+        ? inf(argums)
+        : f
+
+    return mkRight(exec(argums, ctx))
 }
 
 export const notExecutable = (kind: string): SlangError => {

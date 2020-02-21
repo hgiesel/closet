@@ -53,7 +53,7 @@ export const isList = (val: Slang): val is SlangList => val.kind === SlangTypes.
 export const isVector = (val: Slang): val is SlangVector => val.kind === SlangTypes.Vector
 export const isMap = (val: Slang): val is SlangMap => val.kind === SlangTypes.Map
 export const isFunction = (val: Slang): val is SlangFunction => val.kind === SlangTypes.Function
-export const isShcutFunction = (val: Slang): val is SlangShcutFunction => val.kind === SlangTypes.Function
+export const isShcutFunction = (val: Slang): val is SlangShcutFunction => val.kind === SlangTypes.ShcutFunction
 export const isArmedFunction = (val: Slang): val is SlangArmedFunction => val.kind === SlangTypes.ArmedFunction
 
 export const isDo = (val: Slang): val is SlangDo => val.kind === SlangTypes.Do
@@ -65,10 +65,10 @@ export const isCase = (val: Slang): val is SlangCase => val.kind === SlangTypes.
 export const isFor = (val: Slang): val is SlangFor => val.kind === SlangTypes.For
 
 export const isExecutable = (val: Slang): val is SlangExecutable => (
-    isFunction(val) ||
+    isFunction(val)      ||
     isShcutFunction(val) ||
     isArmedFunction(val) ||
-    isVector(val) ||
+    isVector(val)        ||
     isMap(val)
 )
 

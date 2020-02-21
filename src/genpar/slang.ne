@@ -59,6 +59,7 @@ lit -> inParens[list] {% ([[,,[val]]]) => val %}
      | map            {% id %}
      | quoted         {% id %}
      | optional       {% id %}
+     | deref          {% id %}
      | number         {% id %}
      | string         {% id %}
      | symbol         {% id %}
@@ -78,9 +79,11 @@ mapIdentifier -> string  {% id %}
                | number  {% id %}
 
 optional -> %nilLit   {% () => mkOptional(null) %}
-          | %amp expr {% ([val]) => mkOptional(val) %}
+          | %amp expr {% ([,val]) => mkOptional(val) %}
 
-quoted -> %quote expr {% ([, quot]) => mkQuoted(quot) %}
+quoted -> %quote expr {% ([,quot]) => mkQuoted(quot) %}
+
+deref -> %at expr {% ([,expr]) => mkList(mkSymbol('deref'), [expr]) %}
 
 bool    -> %trueLit  {% () => mkBool(true) %}
          | %falseLit {% () => mkBool(false) %}

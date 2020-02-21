@@ -25,6 +25,9 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
         case SlangTypes.Symbol:
             return lookup.lookup(expr, ctx) ?? expr
 
+        case SlangTypes.Quoted:
+            return expr.quoted
+
         case SlangTypes.Def:
             lookup.globalDefine(expr.identifier, execute(expr.value, ctx))
             return mkUnit()

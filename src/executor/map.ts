@@ -1,9 +1,11 @@
 import {
     Slang,
     SlangMap,
+    SlangVector,
     SlangOptional,
     SlangExecutable,
     SlangMapKey,
+    SlangBool,
 } from '../types'
 
 import {
@@ -13,19 +15,73 @@ import {
 
 import {
     mkOptional,
+    mkVector,
+    mkKeyword,
+    mkString,
+    mkBool,
 } from '../constructors'
 
 import {
-    arm, apply,
+    arm,
+    apply,
 } from './functions'
 
 export const indexing = ([mapArg, idx]: [SlangMap, SlangMapKey]): SlangOptional => {
-    const maybeResult = mapArg.table.get(isString(idx)
+    const key = isString(idx)
         ? idx.value
-        : Symbol.for(idx.value))
+        : Symbol.for(idx.value)
+
+    const maybeResult = mapArg.table.get(key)
 
     return mkOptional(maybeResult ?? null)
 }
+
+export const containsQ = ([mapArg, idx]: [SlangMap, SlangMapKey]): SlangBool => {
+    const key = isString(idx)
+        ? idx.value
+        : Symbol.for(idx.value)
+
+    const result = mkBool(mapArg.table.has(key))
+    return result
+}
+
+export const find = ([mapArg, idx]: [SlangMap, SlangMapKey]): SlangOptional => {
+    const key = isString(idx)
+        ? idx.value
+        : Symbol.for(idx.value)
+
+    return mapArg.table.has(key)
+        ? mkOptional(mkVector([idx, mapArg.table.get(key)]))
+        : mkOptional(null)
+}
+
+
+export const keys = ([mapArg]: [SlangMap]): SlangVector => {
+    const keys = []
+
+    mapArg.table.forEach((_v, k) => {
+        if (typeof k === 'symbol') {
+            //@ts-ignore
+            keys.push(mkKeyword(k.description))
+        }
+        else if (typeof k === 'string') {
+            keys.push(mkString(k))
+        }
+    })
+
+    return mkVector(keys)
+}
+
+export const vals = ([mapArg]: [SlangMap]): SlangVector => {
+    const keys = []
+
+    mapArg.table.forEach((v, _k) => {
+        keys.push(v)
+    })
+
+    return mkVector(keys)
+}
+
 
 export const merge = ([headMap, ...args]: [SlangMap, ...SlangMap[]]): SlangMap => {
     for (const map of args) {

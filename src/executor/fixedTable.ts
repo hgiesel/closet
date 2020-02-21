@@ -1,5 +1,3 @@
-import * as equality from './equality'
-
 import {
     wrap,
 } from './functions'
@@ -11,6 +9,7 @@ import {
 import {
     isNumber,
     isAtom,
+    isString,
     isMap,
     isVector,
     isList,
@@ -20,14 +19,18 @@ import {
     isExecutable,
 } from '../reflection'
 
+import * as combinators from './combinators'
+import * as equality from './equality'
 import * as bool from './bool'
 import * as math from './math'
 import * as map from './map'
 import * as atoms from './atoms'
 import * as seq from './seq'
-import * as combinators from './combinators'
+import * as random from './random'
+import * as strings from './strings'
 
 export const fixedTable = {
+    /////////////////// COMBINATORS
     'identity': wrap('identity', typecheck({
         f: combinators.identity,
         argc: (count) => count === 1,
@@ -37,6 +40,7 @@ export const fixedTable = {
         argc: (count) => count === 2,
     })),
 
+    /////////////////// EQUALITY
     '=': wrap('=', typecheck({
         f: equality.equality,
         argc: (count) => count > 0,
@@ -46,6 +50,7 @@ export const fixedTable = {
         argc: (count) => count > 0,
     })),
 
+    /////////////////// EQUALITY
     'not': wrap('not', typecheck({
         f: bool.not,
         argc: (count) => count === 1,
@@ -143,6 +148,27 @@ export const fixedTable = {
         args: (args) => isNumber(args[0]),
     })),
 
+    'rand': wrap('rand', typecheck({
+        f: random.rand,
+        argc: (count) => count <= 2,
+        args: (args) => args.every(isNumber),
+    })),
+    'rand-int': wrap('rand-int', typecheck({
+        f: random.randInt,
+        argc: (count) => count <= 2,
+        args: (args) => args.every(isNumber),
+    })),
+
+    'rand-nth': wrap('rand-nth', typecheck({
+        f: random.randNth,
+        argc: (count) => count === 1,
+        args: (args) => isVector(args[0]),
+    })),
+    'shuffle': wrap('shuffle', typecheck({
+        f: random.shuffle,
+        argc: (count) => count === 1,
+        args: (args) => isVector(args[0]),
+    })),
 
     'merge': wrap('merge', typecheck({
         f: map.merge,
@@ -255,12 +281,12 @@ export const fixedTable = {
 
     'every?': wrap('every?', typecheck({
         inf: (args) => isMap(args[1])
-        ? seq.Map.everyQ
-        : isVector(args[1])
-        ? seq.Vector.everyQ
-        : isList(args[1])
-        ? seq.List.everyQ
-        : seq.Optional.everyQ,
+            ? seq.Map.everyQ
+            : isVector(args[1])
+            ? seq.Vector.everyQ
+            : isList(args[1])
+            ? seq.List.everyQ
+            : seq.Optional.everyQ,
         argc: (count) => count === 2,
         args: ([pred, seqArg]) =>
         (isExecutable(pred) && isMap(seqArg)) ||
@@ -270,12 +296,12 @@ export const fixedTable = {
     })),
     'any?': wrap('any?', typecheck({
         inf: (args) => isMap(args[1])
-        ? seq.Map.anyQ
-        : isVector(args[1])
-        ? seq.Vector.anyQ
-        : isList(args[1])
-        ? seq.List.anyQ
-        : seq.Optional.anyQ,
+            ? seq.Map.anyQ
+            : isVector(args[1])
+            ? seq.Vector.anyQ
+            : isList(args[1])
+            ? seq.List.anyQ
+            : seq.Optional.anyQ,
         argc: (count) => count === 2,
         args: ([pred, seqArg]) => (
             isExecutable(pred) && (
@@ -358,11 +384,12 @@ export const fixedTable = {
         argc: (count) => count >= 1,
         arg0: (v) => isMap(v),
         args: (args) => args
-        .filter((_v, i) => i > 1)
-        .every(v => isMapKey(v)),
+            .filter((_v, i) => i > 1)
+            .every(v => isMapKey(v)),
     })),
 
 
+    /////////////////// ATOMS
     'atom': wrap('atom', typecheck({
         f: atoms.atom,
         argc: (count) => count === 1,
@@ -382,6 +409,41 @@ export const fixedTable = {
         f: atoms.resetX,
         argc: (count) => count === 2,
         arg0: (val) => isAtom(val),
+    })),
+
+    /////////////////// STRINGS
+    'starts-with?': wrap('starts-with?', typecheck({
+        inf: (args) => isString(args[0])
+            ? strings.String.startsWithQ
+            : strings.Vector.startsWithQ,
+        argc: (count) => count === 2,
+        args: (args) => args.every(isString) || args.every(isVector),
+    })),
+    'ends-with?': wrap('ends-with?', typecheck({
+        inf: (args) => isString(args[0])
+            ? strings.String.endsWithQ
+            : strings.Vector.endsWithQ,
+        argc: (count) => count === 2,
+        args: (args) => args.every(isString) || args.every(isVector)
+    })),
+    'includes?': wrap('includes?', typecheck({
+        inf: (args) => isString(args[0])
+            ? strings.String.includesQ
+            : strings.Vector.includesQ,
+        argc: (count) => count >= 2,
+        args: (args) => args.every(isString) || args.every(isVector)
+    })),
+    'reverse': wrap('reverse', typecheck({
+        inf: (args) => isString(args[0])
+            ? strings.String.reverse
+            : strings.Vector.reverse,
+        argc: (count) => count === 1,
+        args: (args) => isString(args[0]) || isVector(args[0])
+    })),
+    'join': wrap('join', typecheck({
+        f: strings.String.join,
+        argc: (count) => count === 2,
+        args: (args) => isString(args[0]) || isVector(args[1]),
     })),
 }
 

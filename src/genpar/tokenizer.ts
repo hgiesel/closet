@@ -32,7 +32,7 @@ export const lexer = moo.compile({
     ],
 
     symbol: {
-        match: /(?:[-_.!?+*/<=>%$|~^a-zA-Z]|&lt;|&gt;)(?:[-_.!?+*/<=>%$|~^a-zA-Z0-9]|&lt;|&gt;)*/u,
+        match: /(?:[-_.!?+*/<=>%|~^a-zA-Z]|&lt;|&gt;)(?:[-_.!?+*/<=>%|~^a-zA-Z0-9]|&lt;|&gt;)*/u,
         type: moo.keywords({
             'defSym': 'def',
             'fnSym': 'fn',
@@ -50,18 +50,23 @@ export const lexer = moo.compile({
     },
 
     keyword: {
-        match: /:(?:[-_.!?+*/<=>%$|~^a-zA-Z]|&lt;|&gt;)(?:[-_.!?+*/<=>%$|~^a-zA-Z0-9]|&lt;|&gt;)*/u,
+        match: /:(?:[-_.!?+*/<=>%|~^a-zA-Z]|&lt;|&gt;)(?:[-_.!?+*/<=>%|~^a-zA-Z0-9]|&lt;|&gt;)*/u,
         value: (x: string) => x.slice(1),
     },
 
     dispatch: {
-        match: /#(?:[-_.!?+*/<=>%$|~^a-zA-Z]|&lt;|&gt;)(?:[-_.!?+*/<=>%$|~^a-zA-Z0-9]|&lt;|&gt;)*/u,
+        match: /#(?:[-_.!?+*/<=>%|~^a-zA-Z]|&lt;|&gt;)(?:[-_.!?+*/<=>%|~^a-zA-Z0-9]|&lt;|&gt;)*/u,
         type: moo.keywords({
             'trueLit': ['#true', '#t'],
             'falseLit': ['#false', '#f'],
             'nilLit': ['#nil', '#n'],
         }),
         value: (x: string) => x.slice(1),
+    },
+
+    regex: {
+        match: /#"[\s\S]*"/u,
+        value: (x: string) => x.slice(2, -1),
     },
 })
 

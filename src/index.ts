@@ -21,7 +21,12 @@ const escapeHtml = (unsafe: string) => {
 }
 
 const display = (htmlElement: HTMLDivElement, obj: string) => {
-    htmlElement.innerHTML = escapeHtml(obj)
+    try {
+        htmlElement.innerHTML = escapeHtml(obj)
+    }
+    catch (e) {
+        htmlElement.innerHTML = obj
+    }
 }
 
 btn.addEventListener('click', (_e) => {

@@ -8,6 +8,9 @@ import {
     SlangSymbol,
     SlangKeyword,
     SlangString,
+    SlangRegex,
+
+    SlangMapKey,
 
     SlangQuoted,
     SlangOptional,
@@ -68,13 +71,18 @@ export const mkString = (x: string): SlangString => ({
     value: x,
 })
 
+export const mkRegex = (x: string): SlangRegex => ({
+    kind: SlangTypes.Regex,
+    value: new RegExp(x),
+})
+
 ////////// CONSTRUCTORS FOR RECURSIVE TYPES
 
-export const mapKey = (v: SlangKeyword | SlangString): string | symbol => v.kind === SlangTypes.String
+export const toMapKey = (v: SlangMapKey): string | symbol => v.kind === SlangTypes.String
     ? v.value
     : Symbol.for(v.value)
 
-export const fromMapKey = (v: string | symbol): SlangKeyword | SlangString => typeof v === 'string'
+export const fromMapKey = (v: string | symbol): SlangMapKey => typeof v === 'string'
     ? mkString(v)
     //@ts-ignore
     : mkKeyword(v.description)
@@ -120,11 +128,8 @@ export const mkVector = (members: Slang[]): SlangVector => ({
 export const mkMap = (vs: [SlangString | SlangKeyword, Slang][]): SlangMap => {
     const theMap: Map<string | symbol, Slang> = new Map()
 
-    for (const v of vs) {
-        theMap.set(
-            mapKey(v[0]),
-            v[1],
-        )
+    for (const [key, value] of vs) {
+        theMap.set(toMapKey(key), value)
     }
 
     return {
@@ -133,9 +138,9 @@ export const mkMap = (vs: [SlangString | SlangKeyword, Slang][]): SlangMap => {
     }
 }
 
-export const mkMapDirect = (map: Map<string | symbol, Slang>): SlangMap => ({
+export const mkMapDirect = (table: Map<string | symbol, Slang>): SlangMap => ({
     kind: SlangTypes.Map,
-    table: map,
+    table: table,
 })
 
 //////////////////// Functions

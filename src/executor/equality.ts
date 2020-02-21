@@ -8,7 +8,7 @@ import {
     mkBool,
 } from '../constructors'
 
-const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
+export const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
     if (val1.kind !== val2.kind) {
         return false
     }

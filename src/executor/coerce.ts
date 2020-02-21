@@ -38,6 +38,10 @@ export const pureToString = (val: Slang): string => {
         return `"${val.value}"`
     }
 
+    else if (reflection.isRegex(val)) {
+        return `#"${val.value.toString().slice(1, -1)}"`
+    }
+
     else if (reflection.isNumber(val)) {
         return String(val.value)
     }

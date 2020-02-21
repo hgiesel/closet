@@ -6,6 +6,7 @@ import {
     mkSymbol,
     mkKeyword,
     mkString,
+    mkRegex,
 
     mkQuoted,
     mkOptional,
@@ -62,6 +63,7 @@ lit -> inParens[list] {% ([[,,[val]]]) => val %}
      | deref          {% id %}
      | number         {% id %}
      | string         {% id %}
+     | regex          {% id %}
      | symbol         {% id %}
      | keyword        {% id %}
      | bool           {% id %}
@@ -93,6 +95,8 @@ string  -> %string   {% ([str]) => mkString(str.value) %}
 
 symbol  -> %symbol   {% ([sym]) => mkSymbol(sym.value) %}
 keyword -> %keyword  {% ([kw]) => mkKeyword(kw.value) %}
+
+regex -> %regex  {% ([re]) => mkRegex(re.value) %}
 
 #################################
 

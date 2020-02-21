@@ -19,6 +19,8 @@ import {
     mkKeyword,
     mkString,
     mkBool,
+    mkMapDirect,
+    toMapKey,
 } from '../constructors'
 
 import {
@@ -83,76 +85,73 @@ export const vals = ([mapArg]: [SlangMap]): SlangVector => {
 }
 
 
-export const merge = ([headMap, ...args]: [SlangMap, ...SlangMap[]]): SlangMap => {
-    for (const map of args) {
-        map.table.forEach((v, k) => {
-            headMap.table.set(k, v)
-        })
+export const merge = ([...maps]: [SlangMap, ...SlangMap[]]): SlangMap => {
+    const newMap = new Map()
+
+    for (const map of maps) {
+        for (const [key, value] of map.table) {
+            newMap.set(key, value)
+        }
     }
 
-    return headMap
+    return mkMapDirect(newMap)
 }
 
 export const mergeWith = ([func, headMap, ...args]: [SlangExecutable, SlangMap, ...SlangMap[]], ctx: Map<string, Slang>) => {
+    const newMap = new Map()
+
+    for (const [key, value] of headMap.table) {
+        newMap.set(key, value)
+    }
+
     const armed = arm(func)
 
     for (const map of args) {
-        map.table.forEach((v, k) => {
-            if (headMap.table.has(k)) {
-                headMap.table.set(k, apply(armed, [headMap.table.get(k), v], ctx))
+        for (const [key, value] of map.table) {
+            if (newMap.has(key)) {
+                newMap.set(key, apply(armed, [newMap.get(key), value], ctx))
             }
-
             else {
-                headMap.table.set(k, v)
+                newMap.set(key, value)
             }
-        })
+        }
     }
 
-    return headMap
+    return mkMapDirect(newMap)
 }
 
-const reshape = (arr: any[], columnSize: number): any[][] => {
-    var newArr = [];
-
-    while (arr.length > 0) {
-        newArr.push(arr.splice(0, columnSize))
+const reshape = function*(arr: any[], columnSize: number) {
+    let currIndex = 0
+    while (arr.length >= currIndex + columnSize) {
+        yield arr.slice(currIndex, currIndex + columnSize)
+        currIndex += columnSize
     }
-
-    return newArr
 }
 
-export const assoc = (args: Slang[]) => {
-    const theMap = args[0]
+export const assoc = ([headMap, ...args]: [SlangMap, ...Slang[]]): SlangMap => {
+    const newMap = new Map()
 
-    for (const pair of reshape(args.slice(1), 2)) {
-        if (isString(pair[0])) {
-            //@ts-ignore
-            theMap.table.set(pair[0].value, pair[1])
-        }
-
-        else if (isKeyword(pair[0])) {
-            //@ts-ignore
-            theMap.table.set(Symbol.for(pair[0].value), pair[1])
-        }
+    for (const [key, value] of headMap.table) {
+        newMap.set(key, value)
     }
 
-    return theMap
+    for (const [key, value] of reshape(args, 2)) {
+        newMap.set(toMapKey(key), value)
+    }
+    console.log(newMap, args)
+
+    return mkMapDirect(newMap)
 }
 
-export const dissoc = (args: Slang[]) => {
-    const theMap = args[0]
+export const dissoc = ([headMap, ...args]: [SlangMap, ...SlangMapKey[]]): SlangMap => {
+    const newMap = new Map()
+    const badKeys = args.map(a => toMapKey(a))
 
-    for (const val of args.slice(1)) {
-        if (isString(val)) {
-            //@ts-ignore
-            theMap.table.delete(val.value)
-        }
-
-        else if (isKeyword(val)) {
-            //@ts-ignore
-            theMap.table.delete(Symbol.for(val.value))
+    for (const [key, value] of headMap.table) {
+        if (!badKeys.some(bk => bk === key)) {
+            newMap.set(key, value)
         }
     }
 
-    return theMap
+    return mkMapDirect(newMap)
 }

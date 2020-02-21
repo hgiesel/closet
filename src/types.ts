@@ -1,10 +1,11 @@
 import { SlangError } from './executor/exception'
 
 export enum SlangTypes {
-    String = 'string',
-    Number = 'number',
-    Bool = 'bool',
     Unit = 'unit',
+    Bool = 'bool',
+    Number = 'number',
+    String = 'string',
+    Regex = 'regex',
 
     Symbol = 'symbol',
     Keyword = 'keyword',
@@ -60,6 +61,11 @@ export interface SlangKeyword {
 export interface SlangString {
     kind: SlangTypes.String
     value: string,
+}
+
+export interface SlangRegex {
+    kind: SlangTypes.Regex
+    value: RegExp,
 }
 
 ////////////////// RECURSIVE TYPES
@@ -193,10 +199,11 @@ export type SlangExecutable = SlangFunction
                             | SlangMap
 
 // everything but SlangProg
-export type Slang = SlangString
-                  | SlangNumber
+export type Slang = SlangUnit
                   | SlangBool
-                  | SlangUnit
+                  | SlangNumber
+                  | SlangString
+                  | SlangRegex
 
                   | SlangSymbol
                   | SlangKeyword

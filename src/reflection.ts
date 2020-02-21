@@ -8,6 +8,7 @@ import {
     SlangSymbol,
     SlangKeyword,
     SlangString,
+    SlangRegex,
 
     SlangQuoted,
     SlangOptional,
@@ -41,6 +42,7 @@ export const isNumber = (val: Slang): val is SlangNumber => val.kind === SlangTy
 export const isSymbol = (val: Slang): val is SlangSymbol => val.kind === SlangTypes.Symbol
 export const isKeyword = (val: Slang): val is SlangKeyword => val.kind === SlangTypes.Keyword
 export const isString = (val: Slang): val is SlangString => val.kind === SlangTypes.String
+export const isRegex = (val: Slang): val is SlangRegex => val.kind === SlangTypes.Regex
 
 export const isQuoted = (val: Slang): val is SlangQuoted => val.kind === SlangTypes.Quoted
 export const isOptional = (val: Slang): val is SlangOptional => val.kind === SlangTypes.Optional

@@ -99,7 +99,7 @@ import {
 
 export const parseOptional = choice([
     takeRight(str('&'))(parseToken),
-    choice([str('#none'), str('#n')]).map((_v: string) => null),
+    choice([str('#nil'), str('#n')]).map((_v: string) => null),
 ]).map((x: Slang) => mkOptional(x))
 
 ///////////////// PROG

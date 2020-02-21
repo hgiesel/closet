@@ -1,7 +1,5 @@
-
-
 export class SlangTypeError extends Error {
-  constructor(message, ...params) {
+  constructor(msg, ...params) {
     // Pass remaining arguments (including vendor specific ones) to parent constructor
     super(...params)
 
@@ -11,5 +9,17 @@ export class SlangTypeError extends Error {
     }
 
     this.name = 'SlangTypeError'
+  }
+}
+
+export class SlangArityError extends Error {
+  constructor(msg, ...params) {
+    super(...params)
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, SlangArityError)
+    }
+
+    this.name = 'SlangArityError'
   }
 }

@@ -47,40 +47,26 @@ import {
     mkNumber,
 } from '../constructors'
 
-import {
-    Sign,
-} from '../types'
-
 const sign = choice([
     str('+'),
     str('-'),
 ])
 
-const stringToSign = (str: string): Sign => {
-    return str === '-'
-        ? Sign.Negative
-        : Sign.Positive
-}
-
 const integer = many1(digit).map(joiner)
 
-const real = sequenceOf([
+const positiveReal = sequenceOf([
     integer,
-    possibly(
-        takeRight(str('.'))(integer)
-    )
-])
+    possibly(sequenceOf([
+        str('.'),
+        integer,
+    ]).map(joiner))
+]).map(joiner)
 
-export const parseNumber = sequenceOf([
-    possibly(sign),
-    real,
-    possibly(between(str('+'))(str('i'))(real)),
-])
-    .map((vs: [string | null, [string,string | null], [string,string | null] | null]) => mkNumber(
-        stringToSign(vs[0]),
-        Number(vs[1].join('.')),
-        vs[2] ? Number(vs[2].join('.')) : 0,
-    ))
+export const parseNumber =
+    sequenceOf([
+        possibly(sign),
+        positiveReal,
+    ]).map(joiner).map(mkNumber)
 
 //////////// SYMBOLS
 
@@ -90,7 +76,7 @@ import {
 
 
 // http://www.lispworks.com/documentation/HyperSpec/Body/02_ac.htm
-const lispChars = anyOfString('_-~./!?+<=>#*%@$\|^')
+const lispChars = anyOfString('_-~./!?+<=>*%@$\|^')
 const firstChar = choice([
     letter,
     lispChars,

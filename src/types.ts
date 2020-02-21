@@ -35,9 +35,7 @@ export enum Sign {
 
 export interface SlangNumber {
     kind: SlangTypes.Number
-    sign: Sign,
     real: number,
-    imaginary: number,
 }
 
 export interface SlangSymbol {

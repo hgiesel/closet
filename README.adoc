@@ -1,0 +1,28 @@
+= Set Lang
+
+* there are two kinds of sets:
+
+
+
+comand takes higher priority then alternative:
+
+----
+[[c1::cloze::hint||foo||bar]]
+----
+[[c1::]]
+
+alternative sets
+
+----
+[[option 1||[[c2::option 2]]]]
+----
+
+the difference is in their default behavior:
+.. command sets eval
+these can be stacked any way
+
+----
+[[c1::[[cloze 1||cloze 2]]::hint]]
+
+[[option 1||[[c1::cloze::hint]]]]
+----

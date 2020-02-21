@@ -8,7 +8,6 @@ import {
     SlangSymbol,
     SlangKeyword,
     SlangString,
-    Sign,
 
     SlangList,
     SlangVector,
@@ -63,32 +62,54 @@ export const mkUnit = (): SlangUnit => ({
     kind: SlangTypes.Unit,
 })
 
+export const isUnit = (val: Slang): val is SlangUnit => {
+    return val.kind === SlangTypes.Unit
+}
+
 export const mkBool = (v: boolean): SlangBool => ({
     kind: SlangTypes.Bool,
     value: v,
 })
 
-export const mkNumber = (sgn: Sign, re: number, im: number): SlangNumber => ({
+export const isBool = (val: Slang): val is SlangBool => {
+    return val.kind === SlangTypes.Bool
+}
+
+export const mkNumber = (re: number): SlangNumber => ({
     kind: SlangTypes.Number,
-    sign: sgn,
     real: Number(re),
-    imaginary: Number(im),
 })
+
+export const isNumber = (val: Slang): val is SlangNumber => {
+    return val.kind === SlangTypes.Number
+}
 
 export const mkSymbol = (x: string): SlangSymbol => ({
     kind: SlangTypes.Symbol,
     value: x,
 })
 
+export const isSymbol = (val: Slang): val is SlangSymbol => {
+    return val.kind === SlangTypes.Symbol
+}
+
 export const mkKeyword = (x: string): SlangKeyword => ({
     kind: SlangTypes.Keyword,
     value: x,
 })
 
+export const isKeyword = (val: Slang): val is SlangKeyword => {
+    return val.kind === SlangTypes.Keyword
+}
+
 export const mkString = (x: string): SlangString => ({
     kind: SlangTypes.String,
     value: x,
 })
+
+export const isString = (val: Slang): val is SlangString => {
+    return val.kind === SlangTypes.String
+}
 
 ////////// CONSTRUCTORS FOR RECURSIVE TYPES
 
@@ -138,4 +159,3 @@ export const mkProg = (xs: Slang[]): SlangProg => ({
     kind: SlangTypes.Prog,
     statements: xs,
 })
-

@@ -1,22 +1,16 @@
 import {
     SlangTypes,
     SlangProg,
-    SlangNumber,
-    SlangString,
-    SlangBool,
     SlangSymbol,
     SlangList,
     Slang,
-    Sign,
 } from '../types'
 
-import {
-    mkNumber,
-} from '../constructors'
+import * as math from './math'
+import * as map from './map'
+import * as vector from './vector'
 
-import {
-    SlangTypeError,
-} from './exception'
+import * as lookup from './lookup'
 
 export const execute = function(prog: SlangProg) {
     const results = []
@@ -35,7 +29,6 @@ const executeStatement = function(stmt: Slang) {
         case SlangTypes.List:
             return executeList(stmt)
 
-
         default:
         // case SlangTypes.Number:
         // case SlangTypes.String:
@@ -45,7 +38,10 @@ const executeStatement = function(stmt: Slang) {
 }
 
 const executeList = function(lst: SlangList) {
+    // head must implement a function interface
+    console.log(lst.head)
     const proc = lookupHead(lst.head)
+
     return proc(lst.tail.map(executeStatement))
 }
 
@@ -54,39 +50,30 @@ const lookupHead = function(head: Slang) {
     switch (head.kind) {
         case SlangTypes.Symbol:
             return lookupHeadSymbol(head)
+
+        case SlangTypes.Vector:
+            return vector.indexing(head)
+        case SlangTypes.Map:
+            return map.indexing(head)
+
         default:
-            return
+            return null
     }
 }
 
 const lookupHeadSymbol = function(headSymbol: SlangSymbol) {
     switch (headSymbol.value) {
+        case 'def':
+            return lookup.globalDefine
+
         case '+':
-            return (args: Slang[]) => {
-                let sum = 0
-
-                for (const arg of args) {
-                    if (arg.kind !== SlangTypes.Number) {
-                        throw new SlangTypeError('Expected number')
-                    }
-                    sum += arg.real
-                }
-
-                return mkNumber(Sign.Positive, sum, 0)
-            }
-
+            return math.addition
+        case '-':
+            return math.subtraction
         case '*':
-            return (args: Slang[]) => {
-                let prod = 0
+            return math.multiplication
 
-                for (const arg of args) {
-                    if (arg.kind !== SlangTypes.Number) {
-                        throw new SlangTypeError('Expected number')
-                    }
-                    prod *= arg.real
-                }
-
-                return mkNumber(Sign.Positive, prod, 0)
-            }
+        default:
+            return lookup.globalLookup(headSymbol)
     }
 }

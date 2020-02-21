@@ -13,10 +13,18 @@ import {
     parseSymbol,
 } from './parsers/basic'
 
+import {
+    execute,
+} from './executor'
+
 
 //////////////////////////
 
 const btn = document.querySelector('#btn-parse')
+
+const display = function(htmlElement, obj) {
+    htmlElement.innerHTML = JSON.stringify(obj, null, 4)
+}
 
 btn.addEventListener('click', (_e) => {
     const input: HTMLTextAreaElement | null = document.querySelector('#setlang-code')
@@ -25,11 +33,11 @@ btn.addEventListener('click', (_e) => {
         return void(0)
     }
 
-    console.log(input.value)
-
+    const outputField = document.querySelector('#setlang-output')
     const output = parseProg.run(input.value)
+    display(outputField, output)
 
-    document
-        .querySelector('#setlang-output')
-        .innerHTML = JSON.stringify(output, null, 4)
+    const execField = document.querySelector('#setlang-executed')
+    const executed = execute(output.result)
+    display(execField, executed)
 })

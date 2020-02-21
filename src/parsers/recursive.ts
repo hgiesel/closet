@@ -19,7 +19,6 @@ import {
 
 import {
     Slang,
-    SlangTypes,
 } from '../types'
 
 ///////////////// RECURSIVE TOKEN
@@ -53,32 +52,18 @@ export const parseToken = recursiveParser(() => choice([
 
 ///////////////// LIST
 
-export interface SlangList {
-    kind: SlangTypes.List
-    head: Slang,
-    tail: Slang[],
-}
-
-export const mkList = (head: Slang, tail: Slang[]): SlangList => ({
-    kind: SlangTypes.List,
-    head: head,
-    tail: tail,
-})
+import {
+    mkList,
+} from '../constructors'
 
 export const parseList = parenthesized(sandwiched1(ws)(parseToken))
     .map((xs: Slang[]) => mkList(xs[0], xs.slice(1)))
 
 ///////////////// VECTOR
 
-export interface SlangVector {
-    kind: SlangTypes.Vector
-    members: Slang[],
-}
-
-export const mkVector = (members: Slang[]): SlangVector => ({
-    kind: SlangTypes.Vector,
-    members: members,
-})
+import {
+    mkVector,
+} from '../constructors'
 
 export const parseVector = bracketed(sandwiched(ws)(parseToken))
     .map(mkVector)
@@ -86,35 +71,8 @@ export const parseVector = bracketed(sandwiched(ws)(parseToken))
 ///////////////// MAP
 
 import {
-    SlangString,
-    SlangKeyword,
-} from './basic'
-
-export interface SlangMap {
-    kind: SlangTypes.Map
-    table: Map<string | Symbol, Slang>,
-}
-
-const mapMapKey = (v: SlangString | SlangKeyword) => {
-    if (v.kind === SlangTypes.String) {
-        return v.value
-    }
-
-    return Symbol.for(v.value)
-}
-
-export const mkMap = (vs: [SlangString | SlangKeyword, Slang][]): SlangMap => {
-    const theMap: Map<string | Symbol, Slang> = new Map()
-
-    for (const v of vs) {
-        theMap.set(mapMapKey(v[0]), v[1])
-    }
-
-    return {
-        kind: SlangTypes.Map,
-        table: theMap,
-    }
-}
+    mkMap,
+} from '../constructors'
 
 export const keyValues = takeRight(ws)(many(sequenceOf([
     takeLeft(choice([parseKeyword, parseString]))(ws),
@@ -126,48 +84,29 @@ export const parseMap = braced(keyValues)
 
 ///////////////// QUOTED
 
-export interface SlangQuoted {
-    kind: SlangTypes.Quoted,
-    quoted: Slang,
-}
-
-export const mkQuoted = (x: Slang): SlangQuoted => ({
-    kind: SlangTypes.Quoted,
-    quoted: x,
-})
+import {
+    mkQuoted,
+} from '../constructors'
 
 export const parseQuoted = takeRight(str('\''))(parseToken)
     .map((x: Slang) => mkQuoted(x))
 
 ///////////////// OPTIONAL
 
-export interface SlangOptional {
-    kind: SlangTypes.Optional,
-    boxed: Slang | null,
-}
-
-export const mkOptional = (x: Slang | null): SlangOptional => ({
-    kind: SlangTypes.Optional,
-    boxed: x,
-})
+import {
+    mkOptional,
+} from '../constructors'
 
 export const parseOptional = choice([
     takeRight(str('&'))(parseToken),
     choice([str('#none'), str('#n')]).map((_v: string) => null),
 ]).map((x: Slang) => mkOptional(x))
 
-
 ///////////////// PROG
 
-export interface SlangProg {
-    kind: SlangTypes.Prog
-    statements: Slang[]
-}
-
-export const mkProg = (xs: Slang[]): SlangProg => ({
-    kind: SlangTypes.Prog,
-    statements: xs,
-})
+import {
+    mkProg,
+} from '../constructors'
 
 export const parseProg = sandwiched(ws)(parseToken)
     .map((xs: Slang[]) => mkProg(xs))

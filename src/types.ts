@@ -15,7 +15,17 @@ export enum SlangTypes {
     Map = 'map',
     Function = 'function',
 
+    // Statement blocks
     Prog = 'prog',
+
+    Def = 'def',
+    If = 'if',
+    Do = 'do',
+    Let = 'let',
+    Cond = 'cond',
+    Case = 'case',
+    For = 'for',
+    Dotimes = 'dotimes',
 }
 
 ////////////////// BASIC TYPES
@@ -83,9 +93,62 @@ export interface SlangFunction {
     body: Slang,
 }
 
+//////////////////
+
 export interface SlangProg {
     kind: SlangTypes.Prog
     statements: Slang[]
+}
+
+export interface SlangDef {
+    kind: SlangTypes.Def,
+    identifier: SlangSymbol,
+    value: Slang,
+}
+
+// defaults to Unit
+export interface SlangIf {
+    kind: SlangTypes.If,
+    condition: Slang,
+    thenClause: Slang,
+    elseClause: Slang,
+}
+
+export interface SlangDo {
+    kind: SlangTypes.Do,
+    statements: Slang[]
+}
+
+export interface SlangLet {
+    kind: SlangTypes.Let,
+    bindings: Map<string, Slang>,
+    body: Slang,
+}
+
+// defaults to Unit
+export interface SlangCond {
+    kind: SlangTypes.Cond,
+    tests: [Slang, Slang][],
+}
+
+export interface SlangCase {
+    kind: SlangTypes.Case,
+    variable: SlangSymbol,
+    tests: [Slang, Slang][],
+    // defaults to Unit
+    elseClause: Slang | null,
+}
+
+export interface SlangFor {
+    kind: SlangTypes.For,
+    bindings: Map<string, Slang>,
+    body: Slang,
+}
+
+export interface SlangDotimes {
+    kind: SlangTypes.Dotimes,
+    binding: [string, Slang],
+    body: Slang,
 }
 
 //////////////////
@@ -94,6 +157,7 @@ export type Slang = SlangString
                   | SlangNumber
                   | SlangBool
                   | SlangUnit
+
 
                   | SlangSymbol
                   | SlangKeyword

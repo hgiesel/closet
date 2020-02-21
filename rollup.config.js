@@ -24,10 +24,11 @@ export const terserOptions = {
 }
 
 export const typescriptOptions = {
-  'target': 'es5',
-  'lib': [
+  downlevelIteration: true,
+  target: 'es5',
+  lib: [
     'dom',
     'es2019',
-  ]
+  ],
 }
 

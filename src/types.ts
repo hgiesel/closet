@@ -77,7 +77,7 @@ export interface SlangVector {
 
 export interface SlangMap {
     kind: SlangTypes.Map
-    table: Map<string | Symbol, Slang>,
+    table: Map<string | symbol, Slang>,
 }
 
 export interface SlangQuoted {
@@ -176,10 +176,12 @@ export interface SlangFor {
 }
 
 //////////////////
-export type SlangSeq = SlangList
-                     | SlangVector
+export type SlangMappable = SlangList
+                          | SlangVector
+                          | SlangOptional
+
+export type SlangSeq = SlangMappable
                      | SlangMap
-                     | SlangOptional
 
 export type SlangMapKey = SlangString
                         | SlangKeyword
@@ -189,10 +191,6 @@ export type SlangExecutable = SlangFunction
                             | SlangArmedFunction
                             | SlangVector
                             | SlangMap
-
-export type SlangMappable = SlangList
-                          | SlangVector
-                          | SlangOptional
 
 // everything but SlangProg
 export type Slang = SlangString

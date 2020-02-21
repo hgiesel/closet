@@ -41,7 +41,7 @@ import {
 
 import {
     indexing as vectorIndexing,
-} from './vector'
+} from './seq'
 
 import {
     indexing as mapIndexing,
@@ -68,7 +68,7 @@ const adapt = (sl: Slang): SlangEither => {
 export const wrap = (name: string, func: (a: Slang[], ctx: Map<string, Slang>) => Slang): SlangArmedFunction => (
     mkArmedFunction(
         name,
-        (args, ctx) => (console.log(args), adapt(func(args.map(t => execute(t, ctx)), ctx))),
+        (args, ctx) => adapt(func(args.map(t => execute(t, ctx)), ctx)),
     )
 )
 
@@ -98,7 +98,7 @@ export const armShcut = (func: SlangShcutFunction): SlangArmedFunction => (
 )
 
 const armVector = (vec: SlangVector): SlangArmedFunction => (
-    mkArmedFunction('vectorIndexing', typecheck({
+    mkArmedFunction('vector-index', typecheck({
         f: (args: [SlangNumber], _ctx) => vectorIndexing([vec, ...args] as any),
         argc: (count) => count === 1,
         arg0: (s) => isNumber(s),
@@ -106,7 +106,7 @@ const armVector = (vec: SlangVector): SlangArmedFunction => (
 )
 
 const armMap = (map: SlangMap): SlangArmedFunction => (
-    mkArmedFunction('mapIndexing', typecheck({
+    mkArmedFunction('map-index', typecheck({
         f: (args: [SlangMapKey], _ctx) => mapIndexing([map, ...args] as any),
         argc: (count) => count === 1,
         arg0: (s) => isMapKey(s),

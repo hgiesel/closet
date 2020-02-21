@@ -91,3 +91,45 @@ export const lt = ([headArg, ...args]: SlangNumber[]): SlangBool => {
 
     return mkBool(result)
 }
+
+export const evenQ = ([headArg]: [SlangNumber]): SlangBool => {
+    return mkBool(headArg.value % 2 === 0)
+}
+
+export const oddQ = ([headArg]: [SlangNumber]): SlangBool => {
+    return mkBool(headArg.value % 2 === 1)
+}
+
+export const posQ = ([headArg]: [SlangNumber]): SlangBool => {
+    return mkBool(headArg.value >= 0)
+}
+
+export const negQ = ([headArg]: [SlangNumber]): SlangBool => {
+    return mkBool(headArg.value < 0)
+}
+
+export const round = ([headArg]: [SlangNumber]): SlangNumber => {
+    return mkNumber(Math.round(headArg.value))
+}
+
+export const floor = ([headArg]: [SlangNumber]): SlangNumber => {
+    return mkNumber(Math.floor(headArg.value))
+}
+
+export const ceil = ([headArg]: [SlangNumber]): SlangNumber => {
+    return mkNumber(Math.ceil(headArg.value))
+}
+
+export const min = ([...args]: SlangNumber[]): SlangNumber => {
+    return mkNumber(args.length === 0
+        ? Number.MAX_SAFE_INTEGER
+        : Math.min(...args.map(a => a.value))
+    )
+}
+
+export const max = ([...args]: SlangNumber[]): SlangNumber => {
+    return mkNumber(args.length === 0
+        ? Number.MIN_SAFE_INTEGER
+        : Math.max(...args.map(a => a.value))
+    )
+}

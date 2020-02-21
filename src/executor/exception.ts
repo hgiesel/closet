@@ -72,7 +72,6 @@ export const throwException = (name: string, e: SlangError) => {
 
 interface Typecheckers {
     f?: (args: Slang[], ctx: Map<string, Slang>) => Slang,
-    inf?: (args: Slang[]) => (args: Slang[], ctx: Map<string, Slang>) => Slang,
     argc?: (count: number) => boolean,
     arg0?: (arg: Slang) => boolean,
     arg1?: (arg: Slang) => boolean,
@@ -81,6 +80,7 @@ interface Typecheckers {
     arg4?: (arg: Slang) => boolean,
     arg5?: (arg: Slang) => boolean,
     args?: (args: Slang[]) => boolean,
+    inf?: (args: Slang[]) => (args: Slang[], ctx: Map<string, Slang>) => Slang,
 }
 
 export const typecheck = ({

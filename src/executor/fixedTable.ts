@@ -15,6 +15,7 @@ import {
     isVector,
     isList,
     isOptional,
+    isBool,
     isMapKey,
     isExecutable,
 } from '../reflection'
@@ -23,10 +24,19 @@ import * as bool from './bool'
 import * as math from './math'
 import * as map from './map'
 import * as atoms from './atoms'
-import * as higherorder from './higherorder'
 import * as seq from './seq'
+import * as combinators from './combinators'
 
 export const fixedTable = {
+    'identity': wrap('identity', typecheck({
+        f: combinators.identity,
+        argc: (count) => count === 1,
+    })),
+    'constant': wrap('constant', typecheck({
+        f: combinators.constant,
+        argc: (count) => count === 2,
+    })),
+
     '=': wrap('=', typecheck({
         f: equality.equality,
         argc: (count) => count > 0,
@@ -84,6 +94,56 @@ export const fixedTable = {
         args: (args) => args.every(isNumber),
     })),
 
+    'min': wrap('min', typecheck({
+        f: math.min,
+        argc: (count) => count > 0,
+        args: (args) => args.every(isNumber),
+    })),
+    'max': wrap('max', typecheck({
+        f: math.max,
+        argc: (count) => count > 0,
+        args: (args) => args.every(isNumber),
+    })),
+
+    'round': wrap('round', typecheck({
+        f: math.round,
+        argc: (count) => count === 1,
+        args: (args) => isNumber(args[0]),
+    })),
+    'floor': wrap('floor', typecheck({
+        f: math.floor,
+        argc: (count) => count === 1,
+        args: (args) => isNumber(args[0]),
+    })),
+    'ceil': wrap('ceil', typecheck({
+        f: math.ceil,
+        argc: (count) => count === 1,
+        args: (args) => isNumber(args[0]),
+    })),
+
+    'even?': wrap('even?', typecheck({
+        f: math.evenQ,
+        argc: (count) => count === 1,
+        args: (args) => isNumber(args[0]),
+    })),
+    'odd?': wrap('odd?', typecheck({
+        f: math.oddQ,
+        argc: (count) => count === 1,
+        args: (args) => isNumber(args[0]),
+    })),
+
+    'pos?': wrap('pos?', typecheck({
+        f: math.posQ,
+        argc: (count) => count === 1,
+        args: (args) => isNumber(args[0]),
+    })),
+    'neg?': wrap('neg?', typecheck({
+        f: math.negQ,
+        argc: (count) => count === 1,
+        args: (args) => isNumber(args[0]),
+    })),
+
+
     'merge': wrap('merge', typecheck({
         f: map.merge,
         argc: (count) => count >= 1,
@@ -95,15 +155,173 @@ export const fixedTable = {
         arg0: (arg) => isExecutable(arg),
         args: (args) => args.slice(1).every(isMap),
     })),
+
     'get': wrap('get', typecheck({
-        f: seq.getFunc,
+        inf: (args) => isMap(args[0])
+            ? seq.Map.getFunc
+            : isVector(args[0])
+            ? seq.Vector.getFunc
+            : isList(args[0])
+            ? seq.List.getFunc
+            : seq.Optional.getFunc,
         argc: (count) => count === 3,
         args: ([seqArg, idxArg]) =>
             (isMap(seqArg) && isMapKey(idxArg)) ||
             (isVector(seqArg) && isNumber(idxArg)) ||
             (isList(seqArg) && isNumber(idxArg)) ||
-            (isOptional(seqArg) && isNumber(idxArg))
+            (isOptional(seqArg) && isBool(idxArg))
     })),
+
+    'take': wrap('take', typecheck({
+        inf: (args) => isMap(args[1])
+            ? seq.Map.take
+            : isVector(args[1])
+            ? seq.Vector.take
+            : seq.List.take,
+        argc: (count) => count === 2,
+        args: ([count, seqArg]) =>
+            (isMap(seqArg) && isNumber(count)) ||
+            (isVector(seqArg) && isNumber(count)) ||
+            (isList(seqArg) && isNumber(count))
+    })),
+    'take-while': wrap('take-while', typecheck({
+        inf: (args) => isMap(args[1])
+            ? seq.Map.takeWhile
+            : isVector(args[1])
+            ? seq.Vector.takeWhile
+            : seq.List.takeWhile,
+        argc: (count) => count === 2,
+        args: ([func, seqArg]) =>
+            (isMap(seqArg) && isExecutable(func)) ||
+            (isVector(seqArg) && isExecutable(func)) ||
+            (isList(seqArg) && isExecutable(func))
+    })),
+
+    'drop': wrap('drop', typecheck({
+        inf: (args) => isMap(args[1])
+            ? seq.Map.drop
+            : isVector(args[1])
+            ? seq.Vector.drop
+            : seq.List.drop,
+        argc: (count) => count === 2,
+        args: ([count, seqArg]) =>
+            (isMap(seqArg) && isNumber(count)) ||
+            (isVector(seqArg) && isNumber(count)) ||
+            (isList(seqArg) && isNumber(count))
+    })),
+    'drop-while': wrap('drop-while', typecheck({
+        inf: (args) => isMap(args[1])
+            ? seq.Map.dropWhile
+            : isVector(args[1])
+            ? seq.Vector.dropWhile
+            : seq.List.dropWhile,
+        argc: (count) => count === 2,
+        args: ([func, seqArg]) =>
+            (isMap(seqArg) && isExecutable(func)) ||
+            (isVector(seqArg) && isExecutable(func)) ||
+            (isList(seqArg) && isExecutable(func))
+    })),
+
+    'count': wrap('count', typecheck({
+        inf: (args) => isMap(args[0])
+            ? seq.Map.count
+            : isVector(args[0])
+            ? seq.Vector.count
+            : isList(args[0])
+            ? seq.List.count
+            : seq.Optional.count,
+        argc: (count) => count === 1,
+        args: ([seqArg]) =>
+            isMap(seqArg) ||
+            isVector(seqArg) ||
+            isList(seqArg) ||
+            isOptional(seqArg),
+    })),
+    'empty?': wrap('empty?', typecheck({
+        inf: (args) => isMap(args[0])
+            ? seq.Map.emptyQ
+            : isVector(args[0])
+            ? seq.Vector.emptyQ
+            : isList(args[0])
+            ? seq.List.emptyQ
+            : seq.Optional.emptyQ,
+        argc: (count) => count === 1,
+        args: ([seqArg]) =>
+            isMap(seqArg) ||
+            isVector(seqArg) ||
+            isList(seqArg)  ||
+            isOptional(seqArg),
+    })),
+
+    'every?': wrap('every?', typecheck({
+        inf: (args) => isMap(args[1])
+        ? seq.Map.everyQ
+        : isVector(args[1])
+        ? seq.Vector.everyQ
+        : isList(args[1])
+        ? seq.List.everyQ
+        : seq.Optional.everyQ,
+        argc: (count) => count === 2,
+        args: ([pred, seqArg]) =>
+        (isExecutable(pred) && isMap(seqArg)) ||
+        (isExecutable(pred) && isVector(seqArg)) ||
+        (isExecutable(pred) && isList(seqArg)) ||
+        (isExecutable(pred) && isOptional(seqArg)),
+    })),
+    'any?': wrap('any?', typecheck({
+        inf: (args) => isMap(args[1])
+        ? seq.Map.anyQ
+        : isVector(args[1])
+        ? seq.Vector.anyQ
+        : isList(args[1])
+        ? seq.List.anyQ
+        : seq.Optional.anyQ,
+        argc: (count) => count === 2,
+        args: ([pred, seqArg]) => (
+            isExecutable(pred) && (
+                isMap(seqArg) ||
+                isVector(seqArg) ||
+                isList(seqArg)  ||
+                isOptional(seqArg)
+            )),
+    })),
+
+    'map': wrap('map', typecheck({
+        inf: (args) => isMap(args[1])
+            ? seq.Map.map
+            : isVector(args[1])
+            ? seq.Vector.map
+            : isList(args[1])
+            ? seq.List.map
+            : seq.Optional.map,
+        argc: (count) => count >= 2,
+        args: ([pred, ...seqArgs]) => (
+            isExecutable(pred) && (
+                seqArgs.every(isMap) ||
+                seqArgs.every(isVector) ||
+                seqArgs.every(isList) ||
+                seqArgs.every(isOptional)
+            ))
+    })),
+
+    'filter': wrap('filter', typecheck({
+        inf: (args) => isMap(args[1])
+            ? seq.Map.filter
+            : isVector(args[1])
+            ? seq.Vector.filter
+            : isList(args[1])
+            ? seq.List.filter
+            : seq.Optional.filter,
+        argc: (count) => count === 2,
+        args: ([pred, seqArg]) => (
+            isExecutable(pred) && (
+                isMap(seqArg) ||
+                isVector(seqArg) ||
+                isList(seqArg) ||
+                isOptional(seqArg)
+            ))
+    })),
+
     'contains?': wrap('contains?', typecheck({
         f: map.containsQ,
         argc: (count) => count === 2,
@@ -165,8 +383,6 @@ export const fixedTable = {
         argc: (count) => count === 2,
         arg0: (val) => isAtom(val),
     })),
-
-    'map': wrap('map', higherorder.map),
 }
 
 export default fixedTable

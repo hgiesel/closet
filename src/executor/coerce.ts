@@ -11,19 +11,19 @@ import {
 
 import * as reflection from '../reflection'
 
-export const toBool = (val: Slang): SlangBool => {
+export const pureToBool = (val: Slang): boolean => {
     if (reflection.isBool(val)) {
-        return val
+        return val.value
     }
 
-    else if (reflection.isOptional(val) && val.boxed === null) {
-        return mkBool(false)
-    }
-
-    return mkBool(true)
+    return true
 }
 
-const pureToString = (val: Slang): string => {
+export const toBool = (val: Slang): SlangBool => {
+    return mkBool(pureToBool(val))
+}
+
+export const pureToString = (val: Slang): string => {
     if (reflection.isUnit(val)) {
         return '()'
     }
@@ -70,6 +70,10 @@ const pureToString = (val: Slang): string => {
         return `[${val.members.map(pureToString).join(' ')}]`
     }
 
+    else if (reflection.isList(val)) {
+        return `(${pureToString(val.head)}${val.tail.map(v => ` ${pureToString(v)}`).join('')})`
+    }
+
     else if (reflection.isMap(val)) {
         const mapStrings = []
         val.table.forEach((v, k) => {
@@ -83,6 +87,16 @@ const pureToString = (val: Slang): string => {
         })
 
         return `{${mapStrings.map(v => v.join(' ')).join(', ')}}`
+    }
+
+    else if (reflection.isFunction(val)) {
+        return `fn<${val.name}>(${val.params.map(pureToString).join(',')}) ${pureToString(val.body)}`
+    }
+    else if (reflection.isShcutFunction(val)) {
+        return `fn<${val.name}>(${val.params}) ${pureToString(val.body)}`
+    }
+    else if (reflection.isArmedFunction(val)) {
+        return `fn<${val.name}> built-in`
     }
 }
 

@@ -35,9 +35,7 @@ import {
 
 import { SlangError } from './executor/exception'
 
-import {
-    isString,
-} from './reflection'
+const getValue = (v: SlangKeyword | SlangString | SlangSymbol): string => v.value
 
 ////////// CONSTRUCTORS FOR BASIC TYPES
 
@@ -72,8 +70,14 @@ export const mkString = (x: string): SlangString => ({
 
 ////////// CONSTRUCTORS FOR RECURSIVE TYPES
 
-const mapKey = (v: SlangSymbol | SlangString): string => v.value
-const mapKwKey = (v: SlangKeyword): symbol => Symbol.for(v.value)
+export const mapKey = (v: SlangKeyword | SlangString): string | symbol => v.kind === SlangTypes.String
+    ? v.value
+    : Symbol.for(v.value)
+
+export const fromMapKey = (v: string | symbol): SlangKeyword | SlangString => typeof v === 'string'
+    ? mkString(v)
+    //@ts-ignore
+    : mkKeyword(v.description)
 
 export const mkQuoted = (x: Slang): SlangQuoted => ({
     kind: SlangTypes.Quoted,
@@ -114,11 +118,11 @@ export const mkVector = (members: Slang[]): SlangVector => ({
 })
 
 export const mkMap = (vs: [SlangString | SlangKeyword, Slang][]): SlangMap => {
-    const theMap: Map<string | Symbol, Slang> = new Map()
+    const theMap: Map<string | symbol, Slang> = new Map()
 
     for (const v of vs) {
         theMap.set(
-            isString(v[0]) ? mapKey(v[0]) : mapKwKey(v[0]),
+            mapKey(v[0]),
             v[1],
         )
     }
@@ -128,6 +132,11 @@ export const mkMap = (vs: [SlangString | SlangKeyword, Slang][]): SlangMap => {
         table: theMap,
     }
 }
+
+export const mkMapDirect = (map: Map<string | symbol, Slang>): SlangMap => ({
+    kind: SlangTypes.Map,
+    table: map,
+})
 
 //////////////////// Functions
 
@@ -168,7 +177,7 @@ export const mkLet = (vs: [SlangSymbol, Slang][], body: Slang): SlangLet => {
     const theBindings: Map<string, Slang> = new Map()
 
     for (const v of vs) {
-        theBindings.set(mapKey(v[0]), v[1])
+        theBindings.set(getValue(v[0]), v[1])
     }
 
     return {
@@ -204,7 +213,7 @@ export const mkFor = (vs: [SlangSymbol, Slang][], body: Slang): SlangFor => {
     const theBindings: Map<string, Slang> = new Map()
 
     for (const v of vs) {
-        theBindings.set(mapKey(v[0]), v[1])
+        theBindings.set(getValue(v[0]), v[1])
     }
 
     return {

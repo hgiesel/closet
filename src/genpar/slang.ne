@@ -13,6 +13,7 @@ import {
     mkList,
     mkVector,
     mkMap,
+    mkFunction,
 
     mkProg,
     mkDef,
@@ -24,6 +25,11 @@ import tokenizer from './tokenizer'
 @preprocessor typescript
 @lexer tokenizer
 
+list[X] -> %lparen _ $X %rparen
+vector[X] -> %lbracket _ $X %rbracket
+map[X] -> %lbrace _ $X  %rbrace
+
+#################################
 
 start -> prog {% id %}
 
@@ -34,16 +40,26 @@ expr -> stmt {% id %}
       | lit {% id %}
 
 stmt -> def {% id %}
+      | fn {% id %}
+      | defn {% id %}
 
 def -> %lparen _ %defSym _ symbol _ expr _ %rparen {%
-    ([,,,, id ,, val]) => mkDef(id, val)
+    ([,,,,id,,val]) => mkDef(id, val)
+%}
+
+fn -> %lparen _ %fnSym _ vector[(_ symbol):*] _ expr _ %rparen {%
+    ([,,,,[,,params],,body]) => mkFunction(params[0].map(v => v[1]), body),
+%}
+
+defn -> %lparen _ %defnSym _ symbol _ vector[(_ symbol):*] _ expr _ %rparen {%
+    ([,,,,id,,[,,params],,body]) => mkDef(id, mkFunction(params[0].map(v => v[1]), body)),
 %}
 
 #################################
 
-lit -> list {% id %}
-     | vector {% id %}
-     | map {% id %}
+lit -> list[(expr _):+] {% ([[,,vals]]) => mkList(vals[0][0][0], vals[0].slice(1).map(v => v[0])) %}
+     | vector[(expr _):*] {% ([[,,vals]]) => mkVector(vals.map(v => v[0][0])) %}
+     | map[(mapIdentifier _ expr _):*] {% id %}
      | quoted {% id %}
      | optional {% id %}
      | number {% id %}
@@ -51,21 +67,12 @@ lit -> list {% id %}
      | symbol {% id %}
      | keyword {% id %}
      | bool {% id %}
+     | unit {% id %}
 
 mapIdentifier -> string {% id %}
                | keyword {% id %}
 
 unit -> %lparen _ %rparen {% () => mkUnit() %}
-
-list -> %lparen _ (expr _):+ %rparen {%
-    ([,, vals ,]) => mkList(vals[0][0], vals.slice(1).map(v => v[0]))
-%}
-
-vector -> %lbracket _ (expr _):* %rbracket {%
-    ([,, vals ,]) => mkVector(vals.map(v => v[0]))
-%}
-
-map -> %lbrace _ (mapIdentifier _ expr _):* %rbrace
 
 optional -> %nilLit {% () => mkOptional() %}
           | %some expr {% ([val]) => mkOptional(val) %}

@@ -116,7 +116,7 @@ export interface SlangIf {
 
 export interface SlangDo {
     kind: SlangTypes.Do,
-    statements: Slang[]
+    expressions: Slang[]
 }
 
 export interface SlangLet {
@@ -178,3 +178,4 @@ export type Slang = SlangString
                   | SlangCase
                   | SlangFor
                   | SlangDotimes
+                  | SlangLet

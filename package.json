@@ -23,7 +23,6 @@
     "dev": "npm-run-all --parallel start watch"
   },
   "dependencies": {
-    "arcsecond": "^2.0.3",
     "eslint": "^6.6.0",
     "moo": "^0.5.1",
     "nearley": "^2.19.1",

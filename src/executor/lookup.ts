@@ -45,12 +45,18 @@ const localLookup = (ctx: Map<string, Slang>, key: SlangSymbol): Slang | null =>
 export const lookup = (key: SlangSymbol, ctx: Map<string, Slang>): Slang => {
     switch (key.value) {
         case '=':
-            return wrap(typecheck('=', equality.equality, {}))
+            return wrap(typecheck('=', equality.equality, {
+                argc: (count) => count > 0,
+            }))
         case 'not=':
-            return wrap(equality.unequality)
+            return wrap(typecheck('not=', equality.unequality, {
+                argc: (count) => count > 0,
+            }))
 
         case 'not':
-            return wrap(bool.not)
+            return wrap(typecheck('not', bool.not, {
+                argc: (count) => count === 1,
+            }))
         case 'and':
             return wrap(bool.and)
         case 'or':

@@ -3,12 +3,21 @@ import type {
     SlangFunction,
     SlangShcutFunction,
     SlangArmedFunction,
+    SlangVector,
+    SlangNumber,
+    SlangMap,
+    SlangMapKey,
     SlangExecutable,
 } from '../types'
 
 import {
     isFunction,
     isShcutFunction,
+    isArmedFunction,
+    isVector,
+    isNumber,
+    isMap,
+    isMapKey,
 } from '../reflection'
 
 import {
@@ -22,9 +31,17 @@ import {
 } from './lookup'
 
 import {
-    SlangArityError,
     typecheck,
+    notExecutable,
 } from './exception'
+
+import {
+    indexing as vectorIndexing,
+} from './vector'
+
+import {
+    indexing as mapIndexing,
+} from './map'
 
 import execute from './executor'
 
@@ -55,10 +72,35 @@ export const armShcut = (name: string, func: SlangShcutFunction): SlangArmedFunc
     }))
 )
 
-export const arm = (name: string, func: SlangExecutable): SlangArmedFunction => (
-    isFunction(func)
-    ? armFunc(name, func)
-    : isShcutFunction(func)
-    ? armShcut(name, func)
-    : func
+
+export const armVector = (vec: SlangVector): SlangArmedFunction => (
+    mkArmedFunction(typecheck(
+        'vectorindexing',
+        (args: [SlangNumber], _ctx) => vectorIndexing([vec, ...args] as any), {
+            argc: (count) => count === 1,
+            arg0: (s) => isNumber(s),
+        }))
+)
+
+export const armMap = (map: SlangMap): SlangArmedFunction => (
+    mkArmedFunction(typecheck(
+        'mapindexing',
+        (args: [SlangMapKey], _ctx) => mapIndexing([map, ...args] as any), {
+            argc: (count) => count === 1,
+            arg0: (s) => isMapKey(s),
+        }))
+)
+
+export const arm = (name: string, exec: Slang): SlangArmedFunction => (
+    isArmedFunction(exec)
+    ? exec
+    : isFunction(exec)
+    ? armFunc(name, exec)
+    : isShcutFunction(exec)
+    ? armShcut(name, exec)
+    : isVector(exec)
+    ? armVector(exec)
+    : isMap(exec)
+    ? armMap(exec)
+    : notExecutable(exec.kind)
 )

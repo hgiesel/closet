@@ -1,6 +1,4 @@
 import type {
-    SlangSymbol,
-    SlangList,
     Slang,
 } from '../types'
 
@@ -12,21 +10,18 @@ import {
     mkUnit,
 } from '../constructors'
 
-import * as higherorder from './higherorder'
-
 import * as lookup from './lookup'
 import * as coerce from './coerce'
 
 import * as functions from './functions'
-import * as map from './map'
-
-import * as vector from './vector'
 import * as equality from './equality'
 
 export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
     switch (expr.kind) {
         case SlangTypes.List:
-            return executeList(expr, ctx)
+            const resolvedHead = execute(expr.head, ctx)
+            console.log('rrr', resolvedHead)
+            return functions.arm('atest', resolvedHead).apply(expr.tail, ctx)
 
         case SlangTypes.Symbol:
             return lookup.lookup(expr, ctx) ?? expr
@@ -97,30 +92,6 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
             // case SlangTypes.ShcutFunction:
             // case SlangTypes.ArmedFunction:
             return expr
-    }
-}
-
-const executeList = function(lst: SlangList, ctx: Map<string, Slang>) {
-    const resolvedHead = execute(lst.head, ctx)
-
-    switch (resolvedHead.kind) {
-        case SlangTypes.Function:
-            return functions.armFunc('test', resolvedHead).apply(lst.tail, ctx)
-
-        case SlangTypes.ShcutFunction:
-            return functions.armShcut('foo', resolvedHead).apply(lst.tail, ctx)
-
-        case SlangTypes.ArmedFunction:
-            return resolvedHead.apply(lst.tail, ctx)
-
-        case SlangTypes.Vector:
-            return vector.indexing(resolvedHead, lst.tail)
-
-        case SlangTypes.Map:
-            return map.indexing(resolvedHead, lst.tail)
-
-        default:
-            return null
     }
 }
 

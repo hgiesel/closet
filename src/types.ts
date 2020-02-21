@@ -162,6 +162,8 @@ export type SlangMapKey = SlangString
 export type SlangExecutable = SlangFunction
                             | SlangShcutFunction
                             | SlangArmedFunction
+                            | SlangVector
+                            | SlangMap
 
 // everything but SlangProg
 export type Slang = SlangString

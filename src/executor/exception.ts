@@ -2,7 +2,7 @@ import type {
     Slang,
 } from '../types'
 
-export class SlangTypeError extends Error {
+class SlangTypeError extends Error {
   constructor(context: string, types: string, position: string | number, ...params: any[]) {
     // Pass remaining arguments (including vendor specific ones) to parent constructor
     super(...params)
@@ -13,11 +13,11 @@ export class SlangTypeError extends Error {
     }
 
     this.name = 'TypeError'
-    this.message = `Wrong argument(s) ${types} passed to \`${context}\` at position ${position}.`
+    this.message = `Wrong argument(s) ${types} passed to \`${context}\` at position ${position + 1}.`
   }
 }
 
-export class SlangArityError extends Error {
+class SlangArityError extends Error {
   constructor(context: string, argc: number, ...params: any[]) {
     super(...params)
 
@@ -47,6 +47,7 @@ export const typecheck = (
     {argc, arg0, arg1, arg2, arg3, arg4, arg5, args}: Typecheckers,
 ) => (as: Slang[], ctx: Map<string, Slang>): Slang => {
     if (argc && !argc(as.length)) {
+        console.log('intypecheck', as)
         throw new SlangArityError(name, as.length)
     }
 
@@ -79,4 +80,21 @@ export const typecheck = (
     }
 
     return f(as, ctx)
+}
+
+class SlangNotExecutableError extends Error {
+  constructor(kind: string, ...params: any[]) {
+    super(...params)
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, SlangArityError)
+    }
+
+    this.name = 'NotExecutableError'
+    this.message = `Value of kind \`${kind}\` is not executable.`
+  }
+}
+
+export const notExecutable = (kind: string) => {
+    throw new SlangNotExecutableError(kind)
 }

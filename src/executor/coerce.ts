@@ -51,7 +51,11 @@ const pureToString = (val: Slang): string => {
     }
 
     else if (reflection.isOptional(val)) {
-        return `&${pureToString(val.boxed)}`
+        if (val.boxed) {
+            return `&${pureToString(val.boxed)}`
+        }
+
+        return `#nil`
     }
 
     else if (reflection.isVector(val)) {

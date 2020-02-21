@@ -8,10 +8,6 @@ import {
     mkBool,
 } from '../constructors'
 
-import {
-    SlangArityError,
-} from './exception'
-
 const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
     if (val1.kind !== val2.kind) {
         return false
@@ -120,10 +116,6 @@ const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
 }
 
 export const equality = (vals: Slang[]): SlangBool => {
-    if (vals.length === 0) {
-        throw SlangArityError
-    }
-
     const headValue = vals.shift()
 
     let result = true
@@ -136,10 +128,6 @@ export const equality = (vals: Slang[]): SlangBool => {
 }
 
 export const unequality = (vals: Slang[]): SlangBool => {
-    if (vals.length === 0) {
-        throw SlangArityError
-    }
-
     const headValue = vals.shift()
 
     let result = false

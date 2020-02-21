@@ -27,7 +27,6 @@ export const indexing = (listArg: SlangVector, args: Slang[]): SlangOptional => 
     }
 
     const maybeResult = listArg.members[args[0].value]
-    console.log('mr', maybeResult)
 
     return mkOptional(maybeResult ?? null)
 }

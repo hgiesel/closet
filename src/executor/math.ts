@@ -18,7 +18,6 @@ import {
 
 export const addition = (args: Slang[]) => {
     let sum = 0
-    console.log(args)
 
     for (const arg of args) {
         if (!isNumber(arg)) {

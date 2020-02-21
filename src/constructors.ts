@@ -142,7 +142,6 @@ export const mkDef = (id: SlangSymbol, val: Slang): SlangDef => ({
 export const mkLet = (vs: [SlangSymbol, Slang][], body: Slang): SlangLet => {
     const theBindings: Map<string, Slang> = new Map()
 
-    console.log(vs)
     for (const v of vs) {
         theBindings.set(mapKey(v[0]), v[1])
     }

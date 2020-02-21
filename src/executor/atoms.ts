@@ -20,11 +20,17 @@ export const deref = ([atom]: [SlangAtom]): Slang => {
     return atom.atom
 }
 
-export const swap = ([atom, headComp, ...otherComps]: [SlangAtom, SlangExecutable, ...Slang[]], ctx: Map<string, Slang>) => {
+export const swapX = ([atom, headComp, ...otherComps]: [SlangAtom, SlangExecutable, ...Slang[]], ctx: Map<string, Slang>): SlangAtom => {
     const args = [deref([atom]), ...otherComps]
 
     const result = fire(headComp, args, ctx)
     atom.atom = result
+
+    return atom
+}
+
+export const resetX = ([atom, val]: [SlangAtom, Slang]): SlangAtom => {
+    atom.atom = val
 
     return atom
 }

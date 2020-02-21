@@ -155,10 +155,15 @@ export const fixedTable = {
         arg0: (val) => isAtom(val),
     })),
     'swap!': wrap('swap!', typecheck({
-        f: atoms.swap,
+        f: atoms.swapX,
         argc: (count) => count >= 2,
         arg0: (val) => isAtom(val),
-        arg1: (val) => (console.log('fojiosf', val, isExecutable(val)),isExecutable(val)),
+        arg1: (val) => isExecutable(val),
+    })),
+    'reset!': wrap('reset!', typecheck({
+        f: atoms.resetX,
+        argc: (count) => count === 2,
+        arg0: (val) => isAtom(val),
     })),
 
     'map': wrap('map', higherorder.map),

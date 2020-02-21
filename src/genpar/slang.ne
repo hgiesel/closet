@@ -14,6 +14,7 @@ import {
     mkVector,
     mkMap,
     mkFunction,
+    mkShcutFunction,
 
     mkDef,
     mkDo,
@@ -25,6 +26,10 @@ import {
 
     mkFor,
 } from '../constructors'
+
+import {
+    shcutFuncArity,
+} from './utils'
 
 import tokenizer from './tokenizer'
 %}
@@ -44,8 +49,12 @@ prog -> exprs {% ([exprs]) => mkDo(exprs) %}
 
 exprs -> _ (expr _):* {% ([,exprs]) => exprs.map(id) %}
 
-expr -> stmt {% id %}
-      | lit {% id %}
+expr -> expr1
+      | shCutFn {% id %}
+
+# no shcut function allowed within another shcut function (!)
+expr1 -> stmt {% id %}
+       | lit {% id %}
 
 stmt -> def {% id %}
       | fn {% id %}
@@ -115,11 +124,12 @@ lit -> list[(expr _):+] {% ([[,,[vals]]]) => mkList(vals[0][0], vals.slice(1).ma
 
 mapIdentifier -> string {% id %}
                | keyword {% id %}
+               | number {% id %}
 
 unit -> %lparen _ %rparen {% () => mkUnit() %}
 
 optional -> %nilLit {% () => mkOptional() %}
-          | %some expr {% ([val]) => mkOptional(val) %}
+          | %amp expr {% ([val]) => mkOptional(val) %}
 quoted -> %quote expr {% ([, l]) => mkQuoted(l) %}
 
 bool -> %trueLit {% () => mkBool(true) %}
@@ -130,5 +140,14 @@ string -> %string {% ([str]) => mkString(str.value) %}
 
 symbol -> %symbol {% ([sym]) => mkSymbol(sym.value) %}
 keyword -> %keyword {% ([kw]) => mkKeyword(kw.value) %}
+
+#################################
+
+shCutFn -> %hashParen _ (expr1 _):+ %rparen {%
+    ([,,vals]) => {
+        const lst = mkList(vals[0][0], vals.slice(1).map(id))
+        return mkShcutFunction(shcutFuncArity(lst), lst)
+    }
+%}
 
 _ -> %ws:* {% function() { return null } %}

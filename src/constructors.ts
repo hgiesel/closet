@@ -15,6 +15,7 @@ import {
     SlangVector,
     SlangMap,
     SlangFunction,
+    SlangShcutFunction,
 
     SlangDef,
     SlangIf,
@@ -119,6 +120,12 @@ export const mkFunction = (params: SlangSymbol[], body: Slang): SlangFunction =>
     body: body,
 })
 
+export const isShcutFunction = (val: Slang): val is SlangFunction => val.kind === SlangTypes.Function
+export const mkShcutFunction = (params: number, body: Slang): SlangShcutFunction => ({
+    kind: SlangTypes.ShcutFunction,
+    params: params,
+    body: body,
+})
 
 ///////////////// Bindings
 

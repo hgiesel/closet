@@ -13,7 +13,8 @@ export enum SlangTypes {
     List = 'list',
     Vector = 'vector',
     Map = 'map',
-    Function = 'function',
+    Function = 'fun',
+    ShcutFunction = 'shcutfun',
 
     // Statement blocks
     Def = 'def',
@@ -87,6 +88,12 @@ export interface SlangOptional {
 export interface SlangFunction {
     kind: SlangTypes.Function,
     params: SlangSymbol[],
+    body: Slang,
+}
+
+export interface SlangShcutFunction {
+    kind: SlangTypes.ShcutFunction,
+    params: number,
     body: Slang,
 }
 

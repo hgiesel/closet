@@ -1,16 +1,30 @@
 interface SetInfo {
     start: number
     end: number
+    elements: any,
     innerSets: SetInfo[]
 }
 
 const mkSetInfo = (start: number) => ({
     start: start,
     end: 0,
+    elements: null,
     innerSets: [],
 })
 
-const mkSetKeeper = () => {
+///// Example Usage
+// const gen = setKeeper()
+// gen.next()
+//
+// console.log(gen.next(5))
+// console.log(gen.next(8))
+// console.log(gen.next(-12))
+// console.log(gen.next(30))
+// console.log(gen.next(-35))
+// console.log(gen.next(-55))
+//
+// gen.next('stop')
+export const setKeeper = function*() {
     const setInfos = []
 
     const getSetInfo = (idxs: number[]) => {
@@ -26,22 +40,29 @@ const mkSetKeeper = () => {
     const setStack: number[] = []
     let nextLevel = 0
 
-    const registerStart = (startIdx: number) => {
-        getSetInfo(setStack).push(mkSetInfo(startIdx))
+    while (true) {
+        let value = yield setStack
 
-        setStack.push(nextLevel)
-        nextLevel = 0
-    }
+        if (value === 'stop') {
+            return setInfos
+        }
 
-    const registerEnd = (endIdx: number) => {
-        const poppedLevel = setStack.pop()
-        getSetInfo(setStack)[poppedLevel].end = endIdx
-        nextLevel = poppedLevel + 1
-    }
+        else if (value[0] >= 0) /* start */ {
+            const startIndex = value[0] - 2 /* two delimiter characters */
+            getSetInfo(setStack).push(mkSetInfo(startIndex))
+            setStack.push(nextLevel)
 
-    return {
-        registerStart: registerStart,
-        registerEnd: registerEnd,
-        returnSetInfos: () => setInfos,
+            nextLevel = 0
+        }
+
+        else /* end */ {
+            const endIndex = Math.abs(value[0]) + 2 /* two delimiter characters */
+            const poppedLevel = setStack.pop()
+            const foundSet = getSetInfo(setStack)[poppedLevel]
+            foundSet.end = endIndex
+            foundSet.elements = value[1]
+
+            nextLevel = poppedLevel + 1
+        }
     }
 }

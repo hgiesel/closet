@@ -1,5 +1,5 @@
 import {
-    parseProg,
+    getProg,
 } from './parsers'
 
 import {
@@ -7,16 +7,14 @@ import {
 } from './executor'
 
 import {
-    // parseTemplate,
-    // valueSetParser,
-    parseTemplate,
+    getTemplate,
 } from './template'
 
 //////////////////////////
 
 const btn = document.querySelector('#btn-parse')
 
-const display = function(htmlElement: HTMLDivElement, obj) {
+const display = function(htmlElement: HTMLDivElement, obj: Object) {
     htmlElement.innerHTML = JSON.stringify(obj, null, 4)
 }
 
@@ -29,14 +27,14 @@ btn.addEventListener('click', (_e) => {
     }
 
     const templateField: HTMLDivElement = document.querySelector('div#setlang-template')
-    const templateOutput = parseTemplate.run(templateElement.value)
+    const templateOutput = getTemplate(templateElement.value)
     display(templateField, templateOutput)
 
     const outputField: HTMLDivElement = document.querySelector('div#setlang-code')
-    const codeOutput = parseProg.run(codeElement.value)
+    const codeOutput = getProg(codeElement.value)
     display(outputField, codeOutput)
 
     const execField: HTMLDivElement = document.querySelector('div#setlang-executed')
-    const executed = execute(codeOutput.result)
+    const executed = execute(codeOutput)
     display(execField, executed)
 })

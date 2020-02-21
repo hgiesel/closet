@@ -9,6 +9,7 @@ export enum SlangTypes {
 
     Quoted = 'quoted',
     Optional = 'optional',
+    Atom = 'atom',
 
     List = 'list',
     Vector = 'vector',
@@ -84,6 +85,11 @@ export interface SlangQuoted {
 export interface SlangOptional {
     kind: SlangTypes.Optional,
     boxed: Slang | null,
+}
+
+export interface SlangAtom {
+    kind: SlangTypes.Atom,
+    atom: Slang,
 }
 
 //////////////////

@@ -1,52 +1,64 @@
 export enum SlangTypes {
-    Prog = 'prog',
-    Expr = 'expr',
-    Symbol = 'symbol',
     String = 'string',
+    Number = 'number',
+    Bool = 'bool',
+    Unit = 'unit',
+
+    Symbol = 'symbol',
+    Keyword = 'keyword',
+
+    Quoted = 'quoted',
+    Optional = 'optional',
+
+    List = 'list',
+    Vector = 'vector',
+    Map = 'map',
+
+    Prog = 'prog',
 }
 
-export interface SlangProg {
-    kind: SlangTypes.Prog
-    nodes: Slang[]
+import {
+    SlangUnit,
+    SlangBool,
+    SlangNumber,
+    SlangSymbol,
+    SlangKeyword,
+    SlangString,
+} from './parsers/basic'
+
+import {
+    SlangQuoted,
+    SlangOptional,
+    SlangList,
+    SlangVector,
+    SlangMap,
+} from './parsers/recursive'
+
+export type Slang = SlangString
+                  | SlangNumber
+                  | SlangBool
+                  | SlangUnit
+
+                  | SlangSymbol
+                  | SlangKeyword
+
+                  | SlangQuoted
+                  | SlangOptional
+
+                  | SlangList
+                  | SlangVector
+                  | SlangMap
+
+export {
+    SlangUnit,
+    SlangBool,
+    SlangNumber,
+    SlangSymbol,
+    SlangKeyword,
+    SlangString,
+    SlangQuoted,
+    SlangOptional,
+    SlangList,
+    SlangVector,
+    SlangMap,
 }
-
-export interface SlangExpr {
-    kind: SlangTypes.Expr
-    head: Slang,
-    tail: Slang[],
-}
-
-export interface SlangSymbol {
-    kind: SlangTypes.Symbol
-    value: string,
-}
-
-export interface SlangString {
-    kind: SlangTypes.String
-    value: string,
-}
-
-export type Slang = SlangExpr
-           | SlangSymbol
-           | SlangString
-
-export const mkProg = (xs: Slang[]): SlangProg => ({
-    kind: SlangTypes.Prog,
-    nodes: xs,
-})
-
-export const mkExpr = (head: Slang, tail: Slang[]): SlangExpr => ({
-    kind: SlangTypes.Expr,
-    head: head,
-    tail: tail,
-})
-
-export const mkSymbol = (x: string): SlangSymbol => ({
-    kind: SlangTypes.Symbol,
-    value: x,
-})
-
-export const mkString = (x: string): SlangString => ({
-    kind: SlangTypes.String,
-    value: x,
-})

@@ -3,9 +3,10 @@ import {
     many,
     many1,
     letter,
+    digit,
+    anyOfString,
     str,
     takeRight,
-    digit,
     choice,
     between,
     sequenceOf,
@@ -20,7 +21,7 @@ import {
 
 import {
     SlangTypes,
-} from './types'
+} from '../types'
 
 //////////// UNIT
 
@@ -108,6 +109,19 @@ export const parseNumber = sequenceOf([
 
 //////////// SYMBOLS
 
+// http://www.lispworks.com/documentation/HyperSpec/Body/02_ac.htm
+const lispChars = anyOfString('_-~./!?+<=>#*%@$\|^')
+const firstChar = choice([
+    letter,
+    lispChars,
+])
+const restChars = many(choice([
+    firstChar,
+    digit,
+])).map((v: string[]) => v.join(''))
+
+const identifier = sequenceOf([firstChar, restChars])
+
 export interface SlangSymbol {
     kind: SlangTypes.Symbol
     value: string,
@@ -118,8 +132,8 @@ export const mkSymbol = (x: string): SlangSymbol => ({
     value: x,
 })
 
-export const parseSymbol = many1(letter)
-    .map((x: string[]) => mkSymbol(x.join('')))
+export const parseSymbol = identifier
+    .map((x: string[]) => (console.log(x),mkSymbol(x.join(''))))
 
 //////////// KEYWORDS
 
@@ -133,7 +147,7 @@ export const mkKeyword = (x: string): SlangKeyword => ({
     value: x,
 })
 
-export const parseKeyword = takeRight(str(':'))(many1(letter))
+export const parseKeyword = takeRight(str(':'))(identifier)
     .map((x: string[]) => mkKeyword(x.join('')))
 
 //////////// STRINGS

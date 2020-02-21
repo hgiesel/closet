@@ -5,7 +5,8 @@ import {
 import {
     parseList,
     // parseBool,
-    // parseString,
+    parseMap,
+    keyValues,
 } from './parsers/recursive'
 
 import {
@@ -26,7 +27,7 @@ btn.addEventListener('click', (_e) => {
 
     console.log(input.value)
 
-    const output = parseList.run(input.value)
+    const output = parseProg.run(input.value)
 
     document
         .querySelector('#setlang-output')

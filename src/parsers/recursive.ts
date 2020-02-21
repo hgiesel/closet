@@ -2,12 +2,16 @@ import {
     recursiveParser,
     choice,
     takeRight,
+    takeLeft,
     str,
+    many,
+    sequenceOf,
 } from 'arcsecond'
 
 import {
     parenthesized,
     bracketed,
+    braced,
     sandwiched1,
     sandwiched,
     ws,
@@ -16,8 +20,7 @@ import {
 import {
     Slang,
     SlangTypes,
-} from './types'
-
+} from '../types'
 
 ///////////////// RECURSIVE TOKEN
 
@@ -101,7 +104,6 @@ const mapMapKey = (v: SlangString | SlangKeyword) => {
 }
 
 export const mkMap = (vs: [SlangString | SlangKeyword, Slang][]): SlangMap => {
-
     const theMap: Map<string | Symbol, Slang> = new Map()
 
     for (const v of vs) {
@@ -114,7 +116,13 @@ export const mkMap = (vs: [SlangString | SlangKeyword, Slang][]): SlangMap => {
     }
 }
 
-export const parseMap = null
+export const keyValues = takeRight(ws)(many(sequenceOf([
+    takeLeft(choice([parseKeyword, parseString]))(ws),
+    takeLeft(parseToken)(ws),
+])))
+
+export const parseMap = braced(keyValues)
+    .map(mkMap)
 
 ///////////////// QUOTED
 

@@ -21,8 +21,8 @@ const wsChars = choice([
 export const ws = many(wsChars)
 export const betweenWs = between(ws)(ws)
 
-export const sandwiched = (sep) => (parser) => takeRight(sep)(many1(takeLeft(parser)(sep)))
-export const sandwiched1 = (sep) => (parser) => takeRight(sep)(many(takeLeft(parser)(sep)))
+export const sandwiched = (sep) => (parser) => takeRight(sep)(many(takeLeft(parser)(sep)))
+export const sandwiched1 = (sep) => (parser) => takeRight(sep)(many1(takeLeft(parser)(sep)))
 
 export const parenthesized = between (str('(')) (str(')'))
 export const bracketed = between (str('[')) (str(']'))

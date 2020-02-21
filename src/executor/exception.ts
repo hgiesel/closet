@@ -1,33 +1,73 @@
 import type {
     Slang,
+    SlangEither,
 } from '../types'
 
-class SlangTypeError extends Error {
-  constructor(context: string, types: string, position: string | number, ...params: any[]) {
-    // Pass remaining arguments (including vendor specific ones) to parent constructor
-    super(...params)
+import {
+    mkLeft,
+    mkRight,
+} from '../constructors'
 
-    // Maintains proper stack trace for where our error was thrown (only available on V8)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, SlangTypeError)
-    }
+export type SlangError = SlangTypeError
+                       | SlangArityError
+                       | SlangNotExecutableError
 
-    this.name = 'TypeError'
-    this.message = `Wrong argument(s) ${types} passed to \`${context}\` at position ${position + 1}.`
-  }
+// `Wrong argument(s) ${types} passed at position ${position}.`
+interface SlangTypeError {
+    kind: 'TypeError',
+    types: string,
+    position: string | number,
 }
 
-class SlangArityError extends Error {
-  constructor(context: string, argc: number, ...params: any[]) {
-    super(...params)
+interface SlangArityError {
+    kind: 'ArityError',
+    argc: number,
+}
 
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, SlangArityError)
+interface SlangNotExecutableError {
+    kind: 'NotExecutableError',
+    valueType: string,
+}
+
+const mkTypeError = (types: string, position: string | number): SlangTypeError => ({
+    kind: 'TypeError',
+    types: types,
+    position: position,
+})
+
+const mkArityError = (argc: number): SlangArityError => ({
+    kind: 'ArityError',
+    argc: argc,
+})
+
+const mkNotExecutableError = (valueType: string): SlangNotExecutableError => ({
+    kind: 'NotExecutableError',
+    valueType: valueType,
+})
+
+export const throwException = (name: string, e: SlangError) => {
+    switch (e.kind) {
+        case 'ArityError':
+            throw new TypeError( [
+                e.kind,
+                name,
+                `Wrong amount of arguments ${e.argc} passed.`,
+            ].join(': '))
+
+        case 'TypeError':
+            throw new TypeError( [
+                e.kind,
+                name,
+                `Wrong type(s) of arguments (${e.types}) passed for ${e.position}.`,
+            ].join(': '))
+
+        case 'NotExecutableError':
+            throw new TypeError( [
+                e.kind,
+                name,
+                `Value of type (${e.valueType}) cannot be executed.`,
+            ].join(': '))
     }
-
-    this.name = 'ArityError'
-    this.message = `Wrong number of arguments (${argc}) passed to \`${context}\`.`
-  }
 }
 
 interface Typecheckers {
@@ -42,59 +82,44 @@ interface Typecheckers {
 }
 
 export const typecheck = (
-    name: string,
     f: (args: Slang[], ctx: Map<string, Slang>) => Slang,
     {argc, arg0, arg1, arg2, arg3, arg4, arg5, args}: Typecheckers,
-) => (as: Slang[], ctx: Map<string, Slang>): Slang => {
-    if (argc && !argc(as.length)) {
-        console.log('intypecheck', as)
-        throw new SlangArityError(name, as.length)
+) => (argums: Slang[], ctx: Map<string, Slang>): SlangEither => {
+    if (argc && !argc(argums.length)) {
+        return mkLeft(mkArityError(argums.length))
     }
 
-    if (arg0 && !arg0(as[0])) {
-        throw new SlangTypeError(name, as[0].kind, 0)
+    if (arg0 && !arg0(argums[0])) {
+        return mkLeft(mkTypeError(argums[0].kind, 1))
     }
 
-    if (arg1 && !arg1(as[1])) {
-        throw new SlangTypeError(name, as[1].kind, 1)
+    if (arg1 && !arg1(argums[1])) {
+        return mkLeft(mkTypeError(argums[1].kind, 2))
     }
 
-    if (arg2 && !arg2(as[2])) {
-        throw new SlangTypeError(name, as[2].kind, 2)
+    if (arg2 && !arg2(argums[2])) {
+        return mkLeft(mkTypeError(argums[2].kind, 3))
     }
 
-    if (arg3 && !arg3(as[3])) {
-        throw new SlangTypeError(name, as[3].kind, 3)
+    if (arg3 && !arg3(argums[3])) {
+        return mkLeft(mkTypeError(argums[3].kind, 4))
     }
 
-    if (arg4 && !arg4(as[4])) {
-        throw new SlangTypeError(name, as[4].kind, 4)
+    if (arg4 && !arg4(argums[4])) {
+        return mkLeft(mkTypeError(argums[4].kind, 5))
     }
 
-    if (arg5 && !arg5(as[5])) {
-        throw new SlangTypeError(name, as[5].kind, 5)
+    if (arg5 && !arg5(argums[5])) {
+        return mkLeft(mkTypeError(argums[5].kind, 6))
     }
 
-    if (args && !args(as)) {
-        throw new SlangTypeError(name, `(${as.map(v => v.kind).join(', ')})`, '*')
+    if (args && !args(argums)) {
+        return mkLeft(mkTypeError(`(${argums.map(v => v.kind).join(', ')})`, '*'))
     }
 
-    return f(as, ctx)
+    return mkRight(f(argums, ctx))
 }
 
-class SlangNotExecutableError extends Error {
-  constructor(kind: string, ...params: any[]) {
-    super(...params)
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, SlangArityError)
-    }
-
-    this.name = 'NotExecutableError'
-    this.message = `Value of kind \`${kind}\` is not executable.`
-  }
-}
-
-export const notExecutable = (kind: string) => {
-    throw new SlangNotExecutableError(kind)
+export const notExecutable = (kind: string): SlangError => {
+    return mkNotExecutableError(kind)
 }

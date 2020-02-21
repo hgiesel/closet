@@ -13,15 +13,14 @@ import {
 import * as lookup from './lookup'
 import * as coerce from './coerce'
 
-import * as functions from './functions'
+import { fire } from './functions'
 import * as equality from './equality'
 
 export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
     switch (expr.kind) {
         case SlangTypes.List:
             const resolvedHead = execute(expr.head, ctx)
-            console.log('rrr', resolvedHead)
-            return functions.arm('atest', resolvedHead).apply(expr.tail, ctx)
+            return fire(resolvedHead, expr.tail, ctx)
 
         case SlangTypes.Symbol:
             return lookup.lookup(expr, ctx) ?? expr

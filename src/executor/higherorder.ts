@@ -27,6 +27,6 @@ export const map = (args: Slang[], ctx: Map<string, Slang>) => {
     //@ts-ignore
     const newParams = transpose(params.map(p => p.members))
 
-    const armed = functions.arm('fo', theFunction)
+    const armed = functions.arm(theFunction)
     return mkVector(newParams.map(np => armed.apply(np, ctx)))
 }

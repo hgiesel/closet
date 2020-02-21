@@ -11,6 +11,10 @@ import {
 
     SlangQuoted,
     SlangOptional,
+    SlangAtom,
+    SlangEither,
+    SlangEitherRight,
+
     SlangList,
     SlangVector,
     SlangMap,
@@ -40,12 +44,18 @@ export const isString = (val: Slang): val is SlangString => val.kind === SlangTy
 
 export const isQuoted = (val: Slang): val is SlangQuoted => val.kind === SlangTypes.Quoted
 export const isOptional = (val: Slang): val is SlangOptional => val.kind === SlangTypes.Optional
+export const isAtom = (val: Slang): val is SlangAtom => val.kind === SlangTypes.Atom
+export const isEither = (val: Slang): val is SlangEither => val.kind === SlangTypes.Either
+
+export const isOk = (val: SlangEither): val is SlangEitherRight => val.ok
+
 export const isList = (val: Slang): val is SlangList => val.kind === SlangTypes.List
 export const isVector = (val: Slang): val is SlangVector => val.kind === SlangTypes.Vector
 export const isMap = (val: Slang): val is SlangMap => val.kind === SlangTypes.Map
 export const isFunction = (val: Slang): val is SlangFunction => val.kind === SlangTypes.Function
 export const isShcutFunction = (val: Slang): val is SlangShcutFunction => val.kind === SlangTypes.Function
 export const isArmedFunction = (val: Slang): val is SlangArmedFunction => val.kind === SlangTypes.ArmedFunction
+
 export const isDo = (val: Slang): val is SlangDo => val.kind === SlangTypes.Do
 export const isDef = (val: Slang): val is SlangDef => val.kind === SlangTypes.Def
 export const isLet = (val: Slang): val is SlangLet => val.kind === SlangTypes.Let

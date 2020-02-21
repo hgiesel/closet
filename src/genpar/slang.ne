@@ -77,7 +77,7 @@ mapIdentifier -> string  {% id %}
                | keyword {% id %}
                | number  {% id %}
 
-optional -> %nilLit   {% () => mkOptional() %}
+optional -> %nilLit   {% () => mkOptional(null) %}
           | %amp expr {% ([val]) => mkOptional(val) %}
 
 quoted -> %quote expr {% ([, quot]) => mkQuoted(quot) %}
@@ -110,11 +110,11 @@ def -> %defSym _ symbol _ expr _ {%
 %}
 
 fn -> %fnSym _ inBrackets[(symbol _):*] _ expr _ {%
-    ([,,[,,params],,body]) => mkFunction(params[0].map(id), body)
+    ([,,[,,params],,body]) => mkFunction(`fn_${Math.floor(Math.random() * 2e6)}`, params[0].map(id), body)
 %}
 
 defn -> %defnSym _ symbol _ inBrackets[(symbol _):*] _ expr _ {%
-    ([,,ident,,[,,params],,body]) => mkDef(ident, mkFunction(params[0].map(id), body))
+    ([,,ident,,[,,params],,body]) => mkDef(ident, mkFunction(ident, params[0].map(id), body))
 %}
 
 do -> %doSym _ (expr _):* {%
@@ -160,7 +160,7 @@ unit -> _ {%
 shCutFn -> %hashParen _ (lit _):+ %rparen {%
     ([,,vals]) => {
         const lst = mkList(vals[0][0], vals.slice(1).map(id))
-        return mkShcutFunction(shcutFuncArity(lst), lst)
+        return mkShcutFunction(`fn_${Math.floor(Math.random() * 2e6)}`, shcutFuncArity(lst), lst)
     }
 %}
 

@@ -1,3 +1,5 @@
+import { SlangError } from './executor/exception'
+
 export enum SlangTypes {
     String = 'string',
     Number = 'number',
@@ -10,6 +12,7 @@ export enum SlangTypes {
     Quoted = 'quoted',
     Optional = 'optional',
     Atom = 'atom',
+    Either = 'either',
 
     List = 'list',
     Vector = 'vector',
@@ -92,23 +95,41 @@ export interface SlangAtom {
     atom: Slang,
 }
 
+export interface SlangEitherRight {
+    kind: SlangTypes.Either,
+    ok: true,
+    value: Slang,
+}
+
+export interface SlangEitherLeft {
+    kind: SlangTypes.Either,
+    ok: false,
+    error: SlangError,
+}
+
+export type SlangEither = SlangEitherRight
+                        | SlangEitherLeft
+
 //////////////////
 
 export interface SlangFunction {
     kind: SlangTypes.Function,
+    name: string,
     params: SlangSymbol[],
     body: Slang,
 }
 
 export interface SlangShcutFunction {
     kind: SlangTypes.ShcutFunction,
+    name: string,
     params: number,
     body: Slang,
 }
 
 export interface SlangArmedFunction {
     kind: SlangTypes.ArmedFunction,
-    apply: (args: Slang[], ctx: Map<string, Slang>) => Slang,
+    name: string,
+    apply: (args: Slang[], ctx: Map<string, Slang>) => SlangEither,
 }
 
 //////////////////
@@ -171,12 +192,13 @@ export type Slang = SlangString
                   | SlangBool
                   | SlangUnit
 
-
                   | SlangSymbol
                   | SlangKeyword
 
                   | SlangQuoted
                   | SlangOptional
+                  | SlangAtom
+                  | SlangEither
 
                   | SlangList
                   | SlangVector

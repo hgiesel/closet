@@ -16,7 +16,7 @@ import {
 } from '../constructors'
 
 import {
-    arm,
+    arm, apply,
 } from './functions'
 
 export const indexing = ([mapArg, idx]: [SlangMap, SlangMapKey]): SlangOptional => {
@@ -38,12 +38,12 @@ export const merge = ([headMap, ...args]: [SlangMap, ...SlangMap[]]): SlangMap =
 }
 
 export const mergeWith = ([func, headMap, ...args]: [SlangExecutable, SlangMap, ...SlangMap[]], ctx: Map<string, Slang>) => {
-    const armed = arm('merge-withfunc', func)
+    const armed = arm(func)
 
     for (const map of args) {
         map.table.forEach((v, k) => {
             if (headMap.table.has(k)) {
-                headMap.table.set(k, armed.apply([headMap.table.get(k), v], ctx))
+                headMap.table.set(k, apply(armed, [headMap.table.get(k), v], ctx))
             }
 
             else {

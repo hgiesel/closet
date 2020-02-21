@@ -11,6 +11,11 @@ import {
 
     SlangQuoted,
     SlangOptional,
+    SlangAtom,
+    SlangEither,
+    SlangEitherLeft,
+    SlangEitherRight,
+
     SlangList,
     SlangVector,
     SlangMap,
@@ -28,9 +33,10 @@ import {
     SlangFor,
 } from './types'
 
+import { SlangError } from './executor/exception'
+
 import {
     isString,
-    isKeyword,
 } from './reflection'
 
 ////////// CONSTRUCTORS FOR BASIC TYPES
@@ -74,9 +80,26 @@ export const mkQuoted = (x: Slang): SlangQuoted => ({
     quoted: x,
 })
 
-export const mkOptional = (x?: Slang): SlangOptional => ({
+export const mkOptional = (x: Slang): SlangOptional => ({
     kind: SlangTypes.Optional,
     boxed: x ?? null,
+})
+
+export const mkAtom = (x: Slang): SlangAtom => ({
+    kind: SlangTypes.Atom,
+    atom: x,
+})
+
+export const mkLeft = (e: SlangError): SlangEitherLeft => ({
+    kind: SlangTypes.Either,
+    ok: false,
+    error: e,
+})
+
+export const mkRight = (val: Slang): SlangEitherRight => ({
+    kind: SlangTypes.Either,
+    ok: true,
+    value: val,
 })
 
 export const mkList = (head: Slang, tail: Slang[]): SlangList => ({
@@ -84,7 +107,6 @@ export const mkList = (head: Slang, tail: Slang[]): SlangList => ({
     head: head,
     tail: tail,
 })
-
 
 export const mkVector = (members: Slang[]): SlangVector => ({
     kind: SlangTypes.Vector,
@@ -109,20 +131,23 @@ export const mkMap = (vs: [SlangString | SlangKeyword, Slang][]): SlangMap => {
 
 //////////////////// Functions
 
-export const mkFunction = (params: SlangSymbol[], body: Slang): SlangFunction => ({
+export const mkFunction = (name: string, params: SlangSymbol[], body: Slang): SlangFunction => ({
     kind: SlangTypes.Function,
+    name: name,
     params: params,
     body: body,
 })
 
-export const mkShcutFunction = (params: number, body: Slang): SlangShcutFunction => ({
+export const mkShcutFunction = (name: string, params: number, body: Slang): SlangShcutFunction => ({
     kind: SlangTypes.ShcutFunction,
+    name: name,
     params: params,
     body: body,
 })
 
-export const mkArmedFunction = (app: (args: Slang[], ctx: Map<string, Slang>) => Slang): SlangArmedFunction => ({
+export const mkArmedFunction = (name: string, app: (args: Slang[], ctx: Map<string, Slang>) => SlangEither): SlangArmedFunction => ({
     kind: SlangTypes.ArmedFunction,
+    name: name,
     apply: app,
 })
 

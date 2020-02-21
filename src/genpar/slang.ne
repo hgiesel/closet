@@ -49,7 +49,7 @@ prog -> exprs {% ([exprs]) => mkDo(exprs) %}
 
 exprs -> _ (expr _):* {% ([,exprs]) => exprs.map(id) %}
 
-expr -> expr1
+expr -> expr1 {% id %}
       | shCutFn {% id %}
 
 # no shcut function allowed within another shcut function (!)

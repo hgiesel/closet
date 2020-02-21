@@ -2,8 +2,6 @@ import {
     SlangTypes,
     SlangSymbol,
     SlangList,
-    SlangFunction,
-    SlangDo,
     Slang,
 } from '../types'
 
@@ -23,6 +21,7 @@ import * as lookup from './lookup'
 import * as functions from './functions'
 
 export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
+    console.log(expr)
     switch (expr.kind) {
         case SlangTypes.List:
             return executeList(expr, ctx)
@@ -93,6 +92,7 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
             // case SlangTypes.Vector:
             // case SlangTypes.Map:
             // case SlangTypes.Function:
+            // case SlangTypes.ShcutFunction:
             return expr
     }
 }
@@ -111,6 +111,9 @@ const executeList = function(lst: SlangList, ctx: Map<string, Slang>) {
 
         case SlangTypes.Function:
             return functions.executeFunction(lst.head, execute)(lst.tail, ctx)
+
+        case SlangTypes.ShcutFunction:
+            return functions.executeShcutFunction(lst.head, execute)(lst.tail, ctx)
 
         case SlangTypes.List:
             const evaluatedHead = execute(lst.head, ctx)

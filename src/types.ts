@@ -159,6 +159,7 @@ export type Slang = SlangString
                   | SlangVector
                   | SlangMap
                   | SlangFunction
+                  | SlangShcutFunction
 
                   | SlangDef
                   | SlangLet

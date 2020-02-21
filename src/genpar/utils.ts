@@ -11,7 +11,6 @@ export const shcutFuncArity = (v: Slang, currentMax: number = 0): number => {
         case SlangTypes.Symbol:
             const m = v.value.match(shcutParam)
 
-            console.log(m, v.value)
             if (m) {
                 if (!m[1]) {
                     return Math.max(currentMax, 1)

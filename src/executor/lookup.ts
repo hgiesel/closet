@@ -25,12 +25,23 @@ export const lookup = (key: SlangSymbol, ctx: Map<string, Slang>): Slang | null 
     return localLookup(ctx, key) ?? globalLookup(key)
 }
 
-export const createLocalEnv = (params: SlangSymbol[], args: Slang[]): Map<string, Slang> => {
-    const localEnv = new Map()
+export const createEnv = (params: SlangSymbol[], args: Slang[]): Map<string, Slang> => {
+    const env = new Map()
+    params.forEach((v, i) => env.set(v.value, args[i]))
 
-    params.forEach((v, i) => localEnv.set(v.value, args[i]))
+    return env
+}
 
-    return localEnv
+export const createNumberedEnv = (args: Slang[]): Map<string, Slang> => {
+    const env = new Map()
+
+    if (args.length > 0) {
+        env.set(`%`, args[0])
+    }
+
+    args.forEach((v, i) => env.set(`%${i+1}`, v))
+
+    return env
 }
 
 export const joinEnvs = (oldEnv: Map<string, Slang>, newEnv: Map<string, Slang>): Map<string, Slang> => {

@@ -3,6 +3,10 @@ import {
     SlangSymbol,
 } from '../types'
 
+import {
+    wrap
+} from './functions'
+
 const globalTable = new Map()
 
 export const globalDefine = (key: SlangSymbol, value: Slang): void => {
@@ -21,8 +25,50 @@ const localLookup = (ctx: Map<string, Slang>, key: SlangSymbol): Slang | null =>
         : null
 }
 
-export const lookup = (key: SlangSymbol, ctx: Map<string, Slang>): Slang | null => {
-    return localLookup(ctx, key) ?? globalLookup(key)
+import * as equality from './equality'
+import * as bool from './bool'
+import * as math from './math'
+import * as map from './map'
+import * as higherorder from './higherorder'
+
+export const lookup = (key: SlangSymbol, ctx: Map<string, Slang>): Slang => {
+    switch (key.value) {
+        case '=':
+            return wrap(equality.equality)
+        case 'not=':
+            return wrap(equality.unequality)
+
+        case 'not':
+            return wrap(bool.not)
+        case 'and':
+            return wrap(bool.and)
+        case 'or':
+            return wrap(bool.or)
+
+        case '+':
+            return wrap(math.addition)
+        case '-':
+            return wrap(math.subtraction)
+        case '*':
+            return wrap(math.multiplication)
+        case '/':
+            return wrap(math.division)
+
+        case 'merge':
+            return wrap(map.merge)
+        case 'assoc':
+            return wrap(map.assoc)
+        case 'dissoc':
+            return wrap(map.dissoc)
+
+        case 'map':
+            return wrap(higherorder.map)
+
+        default:
+            return localLookup(ctx, key)
+                ?? globalLookup(key)
+                ?? key
+    }
 }
 
 export const createEnv = (params: SlangSymbol[], args: Slang[]): Map<string, Slang> => {

@@ -1,8 +1,13 @@
-import {
+import type {
     Slang,
     SlangFunction,
     SlangShcutFunction,
+    SlangArmedFunction,
 } from '../types'
+
+import {
+    mkArmedFunction,
+} from '../constructors'
 
 import {
     createEnv,
@@ -14,36 +19,39 @@ import {
     SlangArityError,
 } from './exception'
 
-export const executeFunction = (
-    func: SlangFunction,
-    exec: (s: Slang, ctx: Map<string, Slang>) => Slang,
-) => (
-    args: Slang[],
-    outerCtx: Map<string, Slang>,
-): Slang => {
-    if (func.params.length !== args.length) {
-        throw new SlangArityError('f')
-    }
+import execute from './executor'
 
-    return exec(
-        func.body,
-        joinEnvs(outerCtx, createEnv(func.params, args)),
-    )
-}
+export const wrap = (func: (a: Slang[], ctx: Map<string, Slang>) => Slang): SlangArmedFunction => (
+    mkArmedFunction((args, ctx) => func(args.map(t => execute(t, ctx)), ctx))
+)
 
-export const executeShcutFunction = (
-    func: SlangShcutFunction,
-    exec: (s: Slang, ctx: Map<string, Slang>) => Slang,
-) => (
-    args: Slang[],
-    outerCtx: Map<string, Slang>,
-): Slang => {
-    if (func.params !== args.length) {
-        throw new SlangArityError('f')
-    }
+export const armFunc = (func: SlangFunction): SlangArmedFunction => (
+    mkArmedFunction((args, ctx) => {
+        if (func.params.length !== args.length) {
+            throw new SlangArityError('f')
+        }
 
-    return exec(
-        func.body,
-        joinEnvs(outerCtx, createNumberedEnv(args)),
-    )
-}
+        return execute(
+            func.body,
+            joinEnvs(ctx, createEnv(
+                func.params,
+                args.map(t => execute(t, ctx))
+            )),
+        )
+    })
+)
+
+export const armShcut = (func: SlangShcutFunction): SlangArmedFunction => (
+    mkArmedFunction((args, ctx) => {
+        if (func.params !== args.length) {
+            throw new SlangArityError('f')
+        }
+
+        return execute(
+            func.body,
+            joinEnvs(ctx, createNumberedEnv(
+                args.map(t => execute(t, ctx)),
+            )),
+        )
+    })
+)

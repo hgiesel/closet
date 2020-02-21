@@ -1,11 +1,12 @@
 import nearley from 'nearley'
 import grammar from './genpar/slang'
 
-import {
-    execute,
-} from './executor'
-
+import execute from './executor'
 import lexer from './genpar/tokenizer'
+
+import {
+    toString,
+} from './executor/coerce'
 
 const parseCode = (code: string) => {
     const p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
@@ -23,8 +24,8 @@ globalThis.lexer = lexer
 
 const btn = document.querySelector('#btn-parse')
 
-const display = function(htmlElement: HTMLDivElement, obj: Object) {
-    htmlElement.innerHTML = JSON.stringify(obj, null, 4)
+const display = function(htmlElement: HTMLDivElement, obj: string) {
+    htmlElement.innerHTML = obj
 }
 
 btn.addEventListener('click', (_e) => {
@@ -40,10 +41,16 @@ btn.addEventListener('click', (_e) => {
     // display(templateField, templateOutput)
 
     const outputField: HTMLDivElement = document.querySelector('div#setlang-code')
+    console.time('code parse')
     const codeOutput = parseCode(codeElement.value)
-    display(outputField, codeOutput)
 
+    console.timeEnd('code parse')
+
+    display(outputField, JSON.stringify(codeOutput, null, 4))
     const execField: HTMLDivElement = document.querySelector('div#setlang-executed')
+    console.time('code execute')
     const executed = execute(codeOutput, new Map())
-    display(execField, executed)
+    console.timeEnd('code execute')
+
+    display(execField, toString(executed).value)
 })

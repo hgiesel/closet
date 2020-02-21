@@ -15,6 +15,7 @@ export enum SlangTypes {
     Map = 'map',
     Function = 'fun',
     ShcutFunction = 'shcutfun',
+    ArmedFunction = 'armedfun',
 
     // Statement blocks
     Def = 'def',
@@ -85,6 +86,8 @@ export interface SlangOptional {
     boxed: Slang | null,
 }
 
+//////////////////
+
 export interface SlangFunction {
     kind: SlangTypes.Function,
     params: SlangSymbol[],
@@ -95,6 +98,11 @@ export interface SlangShcutFunction {
     kind: SlangTypes.ShcutFunction,
     params: number,
     body: Slang,
+}
+
+export interface SlangArmedFunction {
+    kind: SlangTypes.ArmedFunction,
+    apply: (args: Slang[], ctx: Map<string, Slang>) => Slang,
 }
 
 //////////////////
@@ -160,6 +168,7 @@ export type Slang = SlangString
                   | SlangMap
                   | SlangFunction
                   | SlangShcutFunction
+                  | SlangArmedFunction
 
                   | SlangDef
                   | SlangLet

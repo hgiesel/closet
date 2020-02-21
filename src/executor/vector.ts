@@ -1,26 +1,33 @@
-import {
+import type {
     Slang,
     SlangVector,
+    SlangOptional,
 } from '../types'
 
 import {
-    isNumber,
     mkOptional,
 } from '../constructors'
+
+import {
+    isNumber,
+} from '../reflection'
 
 import {
     SlangArityError,
     SlangTypeError,
 } from './exception'
 
-export const indexing = (listArg: SlangVector, args: Slang[]) => {
+export const indexing = (listArg: SlangVector, args: Slang[]): SlangOptional => {
     if (args.length !== 1) {
         throw new SlangArityError(args.length)
-    } else if (!isNumber(args[0])) {
+    }
+
+    else if (!isNumber(args[0])) {
         throw new SlangTypeError('Value needs to be a number')
     }
 
     const maybeResult = listArg.members[args[0].value]
+    console.log('mr', maybeResult)
 
-    return mkOptional(maybeResult ? maybeResult : null)
+    return mkOptional(maybeResult ?? null)
 }

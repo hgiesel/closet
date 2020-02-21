@@ -2,7 +2,7 @@ import moo from 'moo'
 
 export const lexer = moo.compile({
     ws: {
-        match: /(?:&nbsp;|,|<[^>]*?>|[ \t\n])+/u,
+        match: /(?:&nbsp;|,|<[^>]*?>|[ \t\n]|\/\*.*\*\/)+/u,
         lineBreaks: true,
     },
 
@@ -61,12 +61,12 @@ export const lexer = moo.compile({
     dispatch: {
         match: /#(?:[-_.!?+*/<=>%|~^a-zA-Z]|&lt;|&gt;)(?:[-_.!?+*/<=>%|~^a-zA-Z0-9]|&lt;|&gt;)*/u,
         type: moo.keywords({
-            'trueLit': ['#true', '#t'],
-            'falseLit': ['#false', '#f'],
-            'nilLit': ['#nil', '#n'],
-            'infLit': ['#inf'],
-            'negInfLit': ['#-inf'],
-            'nanLit': ['#nan', '#NaN'],
+            'trueLit': '#true',
+            'falseLit': '#false',
+            'nilLit': '#none',
+            'infLit': '#inf',
+            'negInfLit': '#-inf',
+            'nanLit': '#nan',
         }),
         value: (x: string) => x.slice(1),
     },

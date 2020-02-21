@@ -73,7 +73,7 @@ export const pureToString = (val: Slang): string => {
             return `&${pureToString(val.boxed)}`
         }
 
-        return `#nil`
+        return `#none`
     }
 
     else if (reflection.isVector(val)) {

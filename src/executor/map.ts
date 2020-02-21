@@ -10,8 +10,11 @@ import {
 
 import {
     isString,
-    isKeyword,
 } from '../reflection'
+
+import {
+    reshape
+} from './utils'
 
 import {
     mkOptional,
@@ -120,14 +123,6 @@ export const mergeWith = ([func, headMap, ...args]: [SlangExecutable, SlangMap, 
     return mkMapDirect(newMap)
 }
 
-const reshape = function*(arr: any[], columnSize: number) {
-    let currIndex = 0
-    while (arr.length >= currIndex + columnSize) {
-        yield arr.slice(currIndex, currIndex + columnSize)
-        currIndex += columnSize
-    }
-}
-
 export const assoc = ([headMap, ...args]: [SlangMap, ...Slang[]]): SlangMap => {
     const newMap = new Map()
 
@@ -138,7 +133,6 @@ export const assoc = ([headMap, ...args]: [SlangMap, ...Slang[]]): SlangMap => {
     for (const [key, value] of reshape(args, 2)) {
         newMap.set(toMapKey(key), value)
     }
-    console.log(newMap, args)
 
     return mkMapDirect(newMap)
 }
@@ -151,6 +145,16 @@ export const dissoc = ([headMap, ...args]: [SlangMap, ...SlangMapKey[]]): SlangM
         if (!badKeys.some(bk => bk === key)) {
             newMap.set(key, value)
         }
+    }
+
+    return mkMapDirect(newMap)
+}
+
+export const hashMap = ([...args]: [...Slang[]]): SlangMap => {
+    const newMap = new Map()
+
+    for (const [key, value] of reshape(args, 2)) {
+        newMap.set(toMapKey(key), value)
     }
 
     return mkMapDirect(newMap)

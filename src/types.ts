@@ -18,6 +18,8 @@ export enum SlangTypes {
     List = 'list',
     Vector = 'vector',
     Map = 'map',
+    MapEntry = 'mapentry',
+
     Function = 'fun',
     ShcutFunction = 'shcutfun',
     ArmedFunction = 'armedfun',
@@ -87,8 +89,14 @@ export interface SlangVector {
 }
 
 export interface SlangMap {
-    kind: SlangTypes.Map
+    kind: SlangTypes.Map,
     table: Map<string | symbol, Slang>,
+}
+
+export interface SlangMapEntry {
+    kind: SlangTypes.MapEntry,
+    first: SlangMapKey,
+    second: Slang,
 }
 
 export interface SlangQuoted {
@@ -232,13 +240,15 @@ export type Slang = SlangUnit
                   | SlangKeyword
 
                   | SlangQuoted
-                  | SlangOptional
                   | SlangAtom
                   | SlangEither
 
                   | SlangList
                   | SlangVector
                   | SlangMap
+                  | SlangMapEntry
+                  | SlangOptional
+
                   | SlangFunction
                   | SlangShcutFunction
                   | SlangArmedFunction

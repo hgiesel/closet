@@ -77,8 +77,8 @@ export const isExecutable = (val: Slang): val is SlangExecutable => (
     isFunction(val)      ||
     isShcutFunction(val) ||
     isArmedFunction(val) ||
-    isVector(val)        ||
-    isMap(val)
+    isNumber(val)        ||
+    isMapKey(val)
 )
 
 export const isMapKey = (val: Slang): val is SlangMapKey => (

@@ -113,13 +113,9 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
             let tfresult = execute(expr.value, ctx)
 
             for (const pipe of expr.pipes) {
-                if (isList(pipe)) {
-                    pipe.tail.unshift(tfresult)
-                    tfresult = execute(pipe, ctx)
-                }
-                else {
-                    execute(mkList(pipe, [tfresult]), ctx)
-                }
+                tfresult = isList(pipe)
+                    ? (pipe.tail.unshift(tfresult), execute(pipe, ctx))
+                    : execute(mkList(pipe, [tfresult]), ctx)
             }
 
             return tfresult
@@ -128,13 +124,9 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
             let tlresult = execute(expr.value, ctx)
 
             for (const pipe of expr.pipes) {
-                if (isList(pipe)) {
-                    pipe.tail.push(tlresult)
-                    tlresult = execute(pipe, ctx)
-                }
-                else {
-                    execute(mkList(pipe, [tlresult]), ctx)
-                }
+                tlresult = isList(pipe)
+                    ? (pipe.tail.push(tlresult), execute(pipe, ctx))
+                    : execute(mkList(pipe, [tlresult]), ctx)
             }
 
             return tlresult

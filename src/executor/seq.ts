@@ -24,6 +24,9 @@ import {
 
 import {
     isString,
+    isVector,
+    isList,
+    isOptional,
 } from '../reflection'
 
 import { arm, apply } from './functions'
@@ -174,12 +177,54 @@ export namespace Map {
 
         return mkMap(result)
     }
+
+    export const foldl = ([func, accu, map]: [SlangExecutable, Slang, SlangMap], ctx: Map<string, Slang>): Slang => {
+        const armed = arm(func)
+        let result = accu
+
+        for (const [key, value] of map.table) {
+            const theKey = fromMapKey(key)
+
+            console.log('hi', result)
+            result = apply(armed, [result, mkVector([theKey, value])], ctx)
+        }
+
+        console.log(result)
+        return result
+    }
+
+    export const foldr = ([func, accu, map]: [SlangExecutable, Slang, SlangMap], ctx: Map<string, Slang>) => {
+        console.log('hi')
+        const armed = arm(func)
+        const iterator = map.table[Symbol.iterator]()
+
+        const pureFoldr = (it: Iterator<Slang>) => {
+            const nextValue = it.next()
+
+            if (nextValue.done) {
+                return accu
+            }
+            else {
+                const [key, value] = nextValue.value
+                return apply(armed, [mkVector([fromMapKey(key), value]), pureFoldr(it)], ctx)
+            }
+        }
+
+        //@ts-ignore
+        const result = pureFoldr(iterator)
+        return result
+    }
+
 }
 
 export namespace Vector {
     export const getFunc = ([seqArg, idx, defaultValue]: [SlangVector, SlangNumber, Slang]): Slang => {
         const result = seqArg.members[idx.value] ?? defaultValue
         return result
+    }
+
+    export const vector = ([...values]: [...Slang[]]): SlangVector => {
+        return mkVector(values)
     }
 
     export const take = ([count, vectorArg]: [SlangNumber, SlangVector]): SlangVector => {
@@ -304,6 +349,59 @@ export namespace Vector {
 
         return mkVector(result)
     }
+
+    export const foldl = ([func, accu, vector]: [SlangExecutable, Slang, SlangVector], ctx: Map<string, Slang>): Slang => {
+        const armed = arm(func)
+        let result = accu
+
+        for (const value of vector.members) {
+            result = apply(armed, [result, value], ctx)
+        }
+
+        return result
+    }
+
+    export const foldr = ([func, accu, vector]: [SlangExecutable, Slang, SlangVector], ctx: Map<string, Slang>) => {
+        const armed = arm(func)
+        const iterator = vector.members[Symbol.iterator]()
+
+        const pureFoldr = (it: Iterator<Slang>) => {
+            const nextValue = it.next()
+
+            return nextValue.done
+                ? accu
+                : apply(armed, [nextValue.value, pureFoldr(it)], ctx)
+        }
+
+        const result = pureFoldr(iterator)
+        return result
+    }
+
+    export const fzip = ([...vectors]: SlangVector[]) => {
+        return flat([mkVector(vectors)])
+    }
+
+    export const flat = ([vector]: [SlangVector]) => {
+        const results = []
+
+        for (const value of vector.members) {
+            if (isVector(value)) {
+                results.push(...value.members)
+            }
+            else {
+                results.push(value)
+            }
+        }
+        return mkVector(results)
+    }
+
+    export const bind = ([func, headVector, ...otherVectors]: [SlangExecutable, SlangVector, ...SlangVector[]], ctx: Map<string, Slang>) => {
+        const arg = otherVectors.length === 0
+            ? headVector
+            : fzip([headVector, ...otherVectors])
+
+        return flat([map([func, arg], ctx)])
+    }
 }
 
 export namespace List {
@@ -312,6 +410,10 @@ export namespace List {
             ? seqArg.head
         //@ts-ignore
             : (seqArg.tail[idx.value - 1] ?? defaultValue)
+    }
+
+    export const list = ([head, ...values]: [Slang]): SlangList => {
+        return mkList(head, values)
     }
 
     export const take = ([count, listArg]: [SlangNumber, SlangList]): SlangList | SlangUnit => {
@@ -463,6 +565,47 @@ export namespace List {
 
         return mkList(list.head, result)
     }
+
+    export const foldl = ([func, accu, list]: [SlangExecutable, Slang, SlangList], ctx: Map<string, Slang>): Slang => {
+        const armed = arm(func)
+        let result = accu
+
+        for (const value of list.tail) {
+            result = apply(armed, [result, value], ctx)
+        }
+
+        return result
+    }
+
+    export const foldr = ([func, accu, list]: [SlangExecutable, Slang, SlangList], ctx: Map<string, Slang>) => {
+        const armed = arm(func)
+        const iterator = list.tail[Symbol.iterator]()
+
+        const pureFoldr = (it: Iterator<Slang>) => {
+            const nextValue = it.next()
+
+            return nextValue.done
+                ? accu
+                : apply(armed, [nextValue.value, pureFoldr(it)], ctx)
+        }
+
+        const result = pureFoldr(iterator)
+        return result
+    }
+
+    export const flat = ([list]: [SlangList]) => {
+        const results = []
+
+        for (const value of list.tail) {
+            if (isList(value)) {
+                results.push(...value.tail)
+            }
+            else {
+                results.push(value)
+            }
+        }
+        return mkList(list.head, results)
+    }
 }
 
 export namespace Optional {
@@ -470,6 +613,10 @@ export namespace Optional {
         return idx.value
             ? seqArg.boxed ?? defaultValue
             : defaultValue
+    }
+
+    export const optional = ([...values]: [Slang]): SlangOptional => {
+        return mkOptional(values[0] ?? null)
     }
 
     export const count = ([optionalArg]: [SlangOptional]): SlangNumber => {
@@ -532,6 +679,57 @@ export namespace Optional {
         }
 
         return mkOptional(result)
+    }
+
+    export const foldl = ([func, accu, optional]: [SlangExecutable, Slang, SlangOptional], ctx: Map<string, Slang>): Slang => {
+        const armed = arm(func)
+        let result = accu
+
+        if (optional.boxed) {
+            result = apply(armed, [result, optional.boxed], ctx)
+        }
+
+        return result
+    }
+
+    export const foldr = ([func, accu, optional]: [SlangExecutable, Slang, SlangOptional], ctx: Map<string, Slang>) => {
+        const armed = arm(func)
+        let result = accu
+
+        if (optional.boxed) {
+            result = apply(armed, [optional.boxed, result], ctx)
+        }
+
+        return result
+    }
+
+    export const fzip = ([...optionals]: SlangOptional[]) => {
+        let result = mkVector([])
+
+        for (const opt of optionals) {
+            if (!opt.boxed) {
+                result = null
+                break
+            }
+
+            result.members.push(opt.boxed)
+        }
+
+        return mkOptional(result)
+    }
+
+    export const flat = ([optional]: [SlangOptional]) => {
+        return optional.boxed && isOptional(optional.boxed)
+            ? optional.boxed
+            : optional
+    }
+
+    export const bind = ([func, headOptional, ...otherOptionals]: [SlangExecutable, SlangOptional, ...SlangOptional[]], ctx: Map<string, Slang>) => {
+        const arg = otherOptionals.length === 0
+            ? headOptional
+            : fzip([headOptional, ...otherOptionals])
+
+        return flat([map([func, arg], ctx)])
     }
 }
 

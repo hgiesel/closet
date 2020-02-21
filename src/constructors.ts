@@ -11,6 +11,7 @@ import {
     SlangRegex,
 
     SlangMapKey,
+    SlangMapEntry,
 
     SlangQuoted,
     SlangOptional,
@@ -126,6 +127,12 @@ export const mkList = (head: Slang, tail: Slang[]): SlangList => ({
 export const mkVector = (members: Slang[]): SlangVector => ({
     kind: SlangTypes.Vector,
     members: members,
+})
+
+export const mkMapEntry = (first: SlangMapKey, second: Slang): SlangMapEntry => ({
+    kind: SlangTypes.MapEntry,
+    first: first,
+    second: second,
 })
 
 export const mkMap = (vs: [SlangString | SlangKeyword, Slang][]): SlangMap => {

@@ -113,6 +113,20 @@ const armMap = (map: SlangMap): SlangArmedFunction => (
     }))
 )
 
+const armNumber = (num: SlangNumber): SlangArmedFunction =>
+    mkArmedFunction('number-index', typecheck({
+        f: ([val]: [SlangVector]) => vectorIndexing([val, num] as any),
+        argc: (count) => count === 1,
+        arg0: (s) => isVector(s),
+    }))
+
+const armMapKey = (mk: SlangMapKey): SlangArmedFunction =>
+    mkArmedFunction('keyword-index', typecheck({
+        f: ([val]: [SlangMap]) => mapIndexing([val, mk] as any),
+        argc: (count) => count === 1,
+        arg0: (s) => isMap(s),
+    }))
+
 export const arm = (exec: Slang): SlangArmedFunction => (
     isArmedFunction(exec)
     ? exec
@@ -120,10 +134,14 @@ export const arm = (exec: Slang): SlangArmedFunction => (
     ? armFunc(exec)
     : isShcutFunction(exec)
     ? armShcut(exec)
-    : isVector(exec)
-    ? armVector(exec)
-    : isMap(exec)
-    ? armMap(exec)
+    : isNumber(exec)
+    ? armNumber(exec)
+    : isMapKey(exec)
+    ? armMapKey(exec)
+    // : isVector(exec)
+    // ? armVector(exec)
+    // : isMap(exec)
+    // ? armMap(exec)
     : throwException('list', notExecutable(exec.kind))
 )
 

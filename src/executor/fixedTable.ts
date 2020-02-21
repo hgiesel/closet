@@ -148,6 +148,7 @@ export const fixedTable = {
         args: (args) => isNumber(args[0]),
     })),
 
+    ////////////////// RANDOM
     'rand': wrap('rand', typecheck({
         f: random.rand,
         argc: (count) => count <= 2,
@@ -170,6 +171,15 @@ export const fixedTable = {
         args: (args) => isVector(args[0]),
     })),
 
+
+    ////////////////// HASH MAPS
+    'hash-map': wrap('hash-map', typecheck({
+        f: map.hashMap,
+        args: (args) => args
+        .filter((_v, i) => i % 2 === 0)
+        .every(v => isMapKey(v)),
+    })),
+
     'merge': wrap('merge', typecheck({
         f: map.merge,
         argc: (count) => count >= 1,
@@ -180,6 +190,13 @@ export const fixedTable = {
         argc: (count) => count >= 2,
         arg0: (arg) => isExecutable(arg),
         args: (args) => args.slice(1).every(isMap),
+    })),
+
+    'vector': wrap('vector', seq.Vector.vector),
+    'list': wrap('list', seq.List.list),
+    'optional': wrap('optional', typecheck({
+        f: seq.Optional.optional,
+        argc: (count) => count <= 1,
     })),
 
     'get': wrap('get', typecheck({
@@ -348,6 +365,99 @@ export const fixedTable = {
             ))
     })),
 
+    'reduce': wrap('reduce', typecheck({
+        inf: (args) => isMap(args[2])
+            ? seq.Map.foldl
+            : isVector(args[2])
+            ? seq.Vector.foldl
+            : isList(args[2])
+            ? seq.List.foldl
+            : seq.Optional.foldl,
+        argc: (count) => count === 3,
+        args: ([pred,,seqArg]) => (
+            isExecutable(pred) && (
+                isMap(seqArg) ||
+                isVector(seqArg) ||
+                isList(seqArg) ||
+                isOptional(seqArg)
+            ))
+    })),
+    'foldl': wrap('foldl', typecheck({
+        inf: (args) => isMap(args[2])
+            ? seq.Map.foldl
+            : isVector(args[2])
+            ? seq.Vector.foldl
+            : isList(args[2])
+            ? seq.List.foldl
+            : seq.Optional.foldl,
+        argc: (count) => count === 3,
+        args: ([pred,, seqArg]) => (
+            isExecutable(pred) && (
+                isMap(seqArg) ||
+                isVector(seqArg) ||
+                isList(seqArg) ||
+                isOptional(seqArg)
+            ))
+    })),
+
+    'foldr': wrap('foldr', typecheck({
+        inf: (args) => isMap(args[2])
+            ? seq.Map.foldr
+            : isVector(args[2])
+            ? seq.Vector.foldr
+            : isList(args[2])
+            ? seq.List.foldr
+            : seq.Optional.foldr,
+        argc: (count) => count === 3,
+        args: ([pred,,seqArg]) => (
+            isExecutable(pred) && (
+                isMap(seqArg) ||
+                isVector(seqArg) ||
+                isList(seqArg) ||
+                isOptional(seqArg)
+            ))
+    })),
+
+    'fzip': wrap('fzip', typecheck({
+        inf: (args) => isVector(args[0])
+            ? seq.Vector.fzip
+            : seq.Optional.fzip,
+        argc: (count) => count >= 1,
+        args: ([...seqArg]) => (
+            seqArg.every(isVector) ||
+            seqArg.every(isOptional)
+        )
+    })),
+
+    'flat': wrap('flat', typecheck({
+        inf: (args) => isVector(args[0])
+            ? seq.Vector.flat
+            : isList(args[0])
+            ? seq.List.flat
+            : seq.Optional.flat,
+        argc: (count) => count === 1,
+        args: ([seqArg]) => (
+            isVector(seqArg) ||
+            isList(seqArg) ||
+            isOptional(seqArg)
+        )
+    })),
+
+    'bind': wrap('bind', typecheck({
+        inf: (args) => isVector(args[1])
+            ? seq.Vector.bind
+            // : isList(args[0])
+            // ? seq.List.flat
+            : seq.Optional.bind,
+        argc: (count) => count >= 2,
+        args: ([func, ...seqArgs]) => (
+            isExecutable(func) &&
+            seqArgs.every(isVector) ||
+            // isList(seqArg) ||
+            seqArgs.every(isOptional)
+        )
+    })),
+
     'contains?': wrap('contains?', typecheck({
         f: map.containsQ,
         argc: (count) => count === 2,
@@ -482,6 +592,5 @@ export const fixedTable = {
         args: (args) => isString(args[0]),
     })),
 }
-
 
 export default fixedTable

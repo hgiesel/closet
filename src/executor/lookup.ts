@@ -3,10 +3,26 @@ import {
     SlangSymbol,
 } from '../types'
 
-export const localLookup = (key: SlangSymbol, ctx: Map<string, Slang>): Slang | null => {
+const globalTable = new Map()
+
+export const globalDefine = (key: SlangSymbol, value: Slang): void => {
+    globalTable.set(key.value, value)
+}
+
+const globalLookup = (key: SlangSymbol): Slang | null => {
+    return globalTable.has(key.value)
+        ? globalTable.get(key.value)
+        : null
+}
+
+const localLookup = (ctx: Map<string, Slang>, key: SlangSymbol): Slang | null => {
     return ctx.has(key.value)
         ? ctx.get(key.value)
         : null
+}
+
+export const lookup = (key: SlangSymbol, ctx: Map<string, Slang>): Slang | null => {
+    return localLookup(ctx, key) ?? globalLookup(key)
 }
 
 export const createLocalEnv = (params: SlangSymbol[], args: Slang[]): Map<string, Slang> => {

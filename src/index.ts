@@ -16,7 +16,6 @@ const parseCode = (code: string) => {
     return result
 }
 
-
 globalThis.parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
 globalThis.lexer = lexer
 

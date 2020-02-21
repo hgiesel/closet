@@ -27,10 +27,15 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
             return executeList(expr, ctx)
 
         case SlangTypes.Symbol:
-            const lookedup = lookup.localLookup(expr, ctx)
-            console.log('lookup', expr, lookedup)
+            return lookup.lookup(expr, ctx) ?? expr
 
-            return lookedup ? lookedup : expr
+        case SlangTypes.Def:
+            lookup.globalDefine(expr.identifier, execute(expr.value, ctx))
+            return mkUnit()
+
+        case SlangTypes.Let:
+            expr.bindings
+            return null
 
         case SlangTypes.Do:
             let result: Slang = mkUnit()
@@ -59,10 +64,6 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
             return mkUnit()
 
-        case SlangTypes.Def:
-            ctx.set(expr.identifier.value, execute(expr.value, ctx))
-            return mkUnit()
-
         default:
             // case SlangTypes.String:
             // case SlangTypes.Number:
@@ -84,22 +85,20 @@ const executeList = function(lst: SlangList, ctx: Map<string, Slang>) {
     switch (lst.head.kind) {
         case SlangTypes.Symbol:
             const resolve = resolveSymbol(lst.head, ctx) as (args: Slang[], ctx: Map<string, Slang>) => Slang
-
             return resolve(lst.tail, ctx)
 
         case SlangTypes.Vector:
             return vector.indexing(lst.head, lst.tail)
+
         case SlangTypes.Map:
             return map.indexing(lst.head, lst.tail)
 
         case SlangTypes.Function:
-            console.log('foo2')
             return functions.executeFunction(lst.head, execute)(lst.tail, ctx)
 
         case SlangTypes.List:
             const evaluatedHead = execute(lst.head, ctx)
             const newList = mkList(evaluatedHead, lst.tail)
-            console.log('foo', evaluatedHead)
 
             return executeList(newList, ctx)
 
@@ -116,8 +115,7 @@ const builtin = (
 ) => b(args.map(t => execute(t, ctx)))
 
 const resolveSymbol = (head: SlangSymbol, ctx: Map<string, Slang>): (args: Slang[], ctx: Map<string, Slang>) => Slang => {
-
-    const lookedup = lookup.localLookup(head, ctx)
+    const lookedup = lookup.lookup(head, ctx)
 
     if (lookedup) {
         return (args, ctx) => execute(mkList(lookedup, args.map(t => execute(t, ctx))), ctx)

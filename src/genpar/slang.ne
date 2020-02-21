@@ -62,11 +62,11 @@ def -> %lparen _ %defSym _ symbol _ expr _ %rparen {%
 %}
 
 fn -> %lparen _ %fnSym _ vector[(symbol _):*] _ expr _ %rparen {%
-    ([,,,,[,,params],,body]) => mkFunction(params[0].map(id), body),
+    ([,,,,[,,params],,body]) => mkFunction(params[0].map(id), body)
 %}
 
 defn -> %lparen _ %defnSym _ symbol _ vector[(symbol _):*] _ expr _ %rparen {%
-    ([,,,,id,,[,,params],,body]) => mkDef(id, mkFunction(params[0].map(id), body)),
+    ([,,,,id,,[,,params],,body]) => mkDef(id, mkFunction(params[0].map(id), body))
 %}
 
 do -> %lparen _ %doSym _ (expr _):* %rparen {%

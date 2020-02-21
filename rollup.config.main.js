@@ -4,6 +4,7 @@ import {
 
 import {
   terserOptions,
+  typescriptOptions,
 } from './rollup.config.js'
 
 import resolve from 'rollup-plugin-node-resolve'
@@ -23,7 +24,7 @@ export default {
     // sourcemap: true
   },
   plugins: [
-    typescript(),
+    typescript(typescriptOptions),
     resolve(), // tells Rollup how to find date-fns in node_modules
     commonjs(), // converts date-fns to ES modules
     production && terser(terserOptions),

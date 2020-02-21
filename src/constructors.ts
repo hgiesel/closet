@@ -6,6 +6,7 @@ import {
     SlangBool,
     SlangNumber,
     SlangSymbol,
+    SlangUnsymbol,
     SlangKeyword,
     SlangString,
 
@@ -86,6 +87,11 @@ export const isNumber = (val: Slang): val is SlangNumber => {
 
 export const mkSymbol = (x: string): SlangSymbol => ({
     kind: SlangTypes.Symbol,
+    value: x,
+})
+
+export const mkUnsymbol = (x: string): SlangUnsymbol => ({
+    kind: SlangTypes.Unsymbol,
     value: x,
 })
 

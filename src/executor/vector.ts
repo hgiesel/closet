@@ -13,7 +13,7 @@ import {
     SlangTypeError,
 } from './exception'
 
-export const indexing = (listArg: SlangVector) => (args: Slang[]) => {
+export const indexing = (listArg: SlangVector, args: Slang[]) => {
     if (args.length !== 1) {
         throw new SlangArityError(args.length)
     } else if (!isNumber(args[0])) {

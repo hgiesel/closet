@@ -89,7 +89,7 @@ const restChars = many(choice([
 const identifier = sequenceOf([firstChar, restChars])
 
 export const parseSymbol = identifier
-    .map((x: string[]) => (console.log(x),mkSymbol(x.join(''))))
+    .map((x: string[]) => mkSymbol(x.join('')))
 
 //////////// KEYWORDS
 

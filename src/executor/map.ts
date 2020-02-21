@@ -14,11 +14,10 @@ import {
     SlangTypeError,
 } from './exception'
 
-export const indexing = (mapArg: SlangMap) => (args: Slang[]) => {
+export const indexing = (mapArg: SlangMap, args: Slang[]) => {
     if (args.length !== 1) {
         throw new SlangArityError(args.length)
     }
-
 
     if (isString(args[0])) {
         const maybeResult = mapArg.table.get(args[0].value)

@@ -22,3 +22,12 @@ export const terserOptions = {
   toplevel: false,
   warnings: false,
 }
+
+export const typescriptOptions = {
+  'target': 'es5',
+  'lib': [
+    'dom',
+    'es2019',
+  ]
+}
+

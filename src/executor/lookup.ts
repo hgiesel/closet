@@ -1,25 +1,38 @@
 import {
     Slang,
     SlangSymbol,
+    SlangUnit,
 } from '../types'
 
-const globalTable = {}
+import {
+    mkUnit,
+    isSymbol,
+} from '../constructors'
 
-export const globalDefine = ([key, val]: [SlangSymbol, Slang]): void => {
-    globalTable[key.value] = val
+import {
+    SlangArityError,
+    SlangTypeError,
+} from './exception'
+
+const globalTable = new Map()
+
+export const globalDefine = (key: string, value: Slang): SlangUnit => {
+    globalTable.set(key, value)
+
+    return mkUnit()
 }
 
 
 export const globalLookup = (key: SlangSymbol): Slang => {
-    return globalTable[key.value]
+    return globalTable.has(key.value)
+        ? globalTable.get(key.value)
+        : key
 }
 
 const localTable = {}
 
 export const localDefine = (value) => {
-
 }
-
 
 export const localLookup = () => {
 }

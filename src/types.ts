@@ -95,28 +95,9 @@ export interface SlangFunction {
 
 //////////////////
 
-export type Slang = SlangString
-                  | SlangNumber
-                  | SlangBool
-                  | SlangUnit
-
-
-                  | SlangSymbol
-                  | SlangKeyword
-
-                  | SlangQuoted
-                  | SlangOptional
-
-                  | SlangList
-                  | SlangVector
-                  | SlangMap
-                  | SlangFunction
-
-//////////////////
-
 export interface SlangProg {
     kind: SlangTypes.Prog
-    statements: Slang[]
+    expressions: Slang[]
 }
 
 export interface SlangDef {
@@ -172,11 +153,28 @@ export interface SlangDotimes {
 
 //////////////////
 
-export type SlangConstructors = SlangProg
-                              | SlangDef
-                              | SlangIf
-                              | SlangDo
-                              | SlangCond
-                              | SlangCase
-                              | SlangFor
-                              | SlangDotimes
+// everything but SlangProg
+export type Slang = SlangString
+                  | SlangNumber
+                  | SlangBool
+                  | SlangUnit
+
+
+                  | SlangSymbol
+                  | SlangKeyword
+
+                  | SlangQuoted
+                  | SlangOptional
+
+                  | SlangList
+                  | SlangVector
+                  | SlangMap
+                  | SlangFunction
+
+                  | SlangDef
+                  | SlangIf
+                  | SlangDo
+                  | SlangCond
+                  | SlangCase
+                  | SlangFor
+                  | SlangDotimes

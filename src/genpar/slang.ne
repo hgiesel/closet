@@ -15,6 +15,7 @@ import {
     mkMap,
 
     mkProg,
+    mkDef,
 } from '../constructors'
 
 import tokenizer from './tokenizer'
@@ -23,43 +24,68 @@ import tokenizer from './tokenizer'
 @preprocessor typescript
 @lexer tokenizer
 
-prog -> stmts {% ([stmts]) => mkProg(stmts) %}
 
-trailingWs[X] -> $X _ {% id %}
+start -> prog {% id %}
 
-stmts -> _ (trailingWs[lit]):* {% ([_, stmts]) => stmts %}
+prog -> exprs {% ([exprs]) => mkProg(exprs) %}
 
-lit -> list
-     | vector
-     | map
-     | quoted
-     | optional
-     | number
-     | string
-     | symbol
-     | keyword
-     | bool
+exprs -> _ (expr _):* {% ([, exprs]) => exprs.map(([lit]) => lit) %}
+expr -> stmt {% id %}
+      | lit {% id %}
 
-mapIdentifier -> string
-               | keyword
+stmt -> def {% id %}
 
-list -> %lparen _ trailingWs[lit]:+ %rparen
+def -> %lparen _ %defSym _ symbol _ expr _ %rparen {%
+    ([,,,, id ,, val]) => mkDef(id, val)
+%}
+
+#################################
+
+lit -> list {% id %}
+     | vector {% id %}
+     | map {% id %}
+     | quoted {% id %}
+     | optional {% id %}
+     | number {% id %}
+     | string {% id %}
+     | symbol {% id %}
+     | keyword {% id %}
+     | bool {% id %}
+
+mapIdentifier -> string {% id %}
+               | keyword {% id %}
+
 unit -> %lparen _ %rparen {% () => mkUnit() %}
 
-vector -> %lbracket _ trailingWs[lit]:* %rbracket
-map -> %lbrace _ (trailingWs[mapIdentifier] trailingWs[lit]):* %rbrace
+list -> %lparen _ (expr _):+ %rparen {%
+    ([,, vals ,]) => mkList(vals[0][0], vals.slice(1).map(v => v[0]))
+%}
 
-optional -> %nil {% () => mkOptional() %}
-          | %some lit
+vector -> %lbracket _ (expr _):* %rbracket {%
+    ([,, vals ,]) => mkVector(vals.map(v => v[0]))
+%}
 
-quoted -> %quote lit {% ([_, l]) => mkQuoted(l) %}
+map -> %lbrace _ (mapIdentifier _ expr _):* %rbrace
+
+optional -> %nilLit {% () => mkOptional() %}
+          | %some expr {% ([val]) => mkOptional(val) %}
+quoted -> %quote expr {% ([, l]) => mkQuoted(l) %}
 
 bool -> %trueLit {% () => mkBool(true) %}
       | %falseLit {% () => mkBool(false) %}
 
-number -> %number {% ([num]) => mkNumber(num) %}
-string -> %string {% ([str]) => mkString(str) %}
-symbol -> %symbol {% id %}
-keyword -> %keyword {% id %}
+number -> %number {% ([num]) => mkNumber(num.value) %}
+string -> %string {% ([str]) => mkString(str.value) %}
 
-_ -> %ws:? {% function() { return null } %}
+symbol -> %symbol {% ([sym]) => mkSymbol(sym.value) %}
+        | %defSym {% ([sym]) => mkSymbol(sym.value) %}
+        | %fnSym {% ([sym]) => mkSymbol(sym.value) %}
+        | %defnSym {% ([sym]) => mkSymbol(sym.value) %}
+        | %caseSym {% ([sym]) => mkSymbol(sym.value) %}
+        | %condSym {% ([sym]) => mkSymbol(sym.value) %}
+        | %doSym {% ([sym]) => mkSymbol(sym.value) %}
+        | %dotimesSym {% ([sym]) => mkSymbol(sym.value) %}
+
+keyword -> %keyword {% ([kw]) => mkKeyword(kw.value) %}
+
+_ -> %ws:* {% function() { return null } %}

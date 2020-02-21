@@ -28,25 +28,25 @@ import * as functions from './functions'
 export const execute = function(prog: SlangProg) {
     const results = []
 
-    for (const statement of prog.statements) {
-        results.push(executeStatement(statement, lookup.getGlobalContext()))
+    for (const expr of prog.expressions) {
+        results.push(executeStatement(expr, lookup.getGlobalContext()))
     }
 
     return results
 }
 
-const executeStatement = function(stmt: Slang, ctx: Map<string, Slang>): Slang {
+const executeStatement = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
-    switch (stmt.kind) {
+    switch (expr.kind) {
 
         case SlangTypes.List:
-            return executeList(stmt, ctx)
+            return executeList(expr, ctx)
 
         case SlangTypes.Symbol:
-            const lookedup = lookup.localLookup(stmt, ctx)
-            console.log('ll', stmt, lookedup)
+            const lookedup = lookup.localLookup(expr, ctx)
+            console.log('ll', expr, lookedup)
 
-            return lookedup ? lookedup : stmt
+            return lookedup ? lookedup : expr
 
         default:
             // case SlangTypes.String:
@@ -61,7 +61,7 @@ const executeStatement = function(stmt: Slang, ctx: Map<string, Slang>): Slang {
             // case SlangTypes.Vector:
             // case SlangTypes.Map:
             // case SlangTypes.Function:
-            return stmt
+            return expr
     }
 }
 

@@ -15,7 +15,9 @@ import {
     SlangVector,
     SlangMap,
     SlangFunction,
+
     SlangProg,
+    SlangDef,
 } from './types'
 
 ////////// CONSTRUCTORS FOR BASIC TYPES
@@ -151,5 +153,60 @@ export const isFunction = (val: Slang): val is SlangFunction => {
 
 export const mkProg = (xs: Slang[]): SlangProg => ({
     kind: SlangTypes.Prog,
-    statements: xs,
+    expressions: xs,
 })
+
+export const mkDef = (id: SlangSymbol, val: Slang): SlangDef => ({
+    kind: SlangTypes.Def,
+    identifier: id,
+    value: val,
+})
+
+export const isDef = (val: Slang): val is SlangDef => {
+    return val.kind === SlangTypes.Def
+}
+
+// // defaults to Unit
+// export interface SlangIf {
+//     kind: SlangTypes.If,
+//     condition: Slang,
+//     thenClause: Slang,
+//     elseClause: Slang,
+// }
+
+// export interface SlangDo {
+//     kind: SlangTypes.Do,
+//     statements: Slang[]
+// }
+
+// export interface SlangLet {
+//     kind: SlangTypes.Let,
+//     bindings: Map<string, Slang>,
+//     body: Slang,
+// }
+
+// // defaults to Unit
+// export interface SlangCond {
+//     kind: SlangTypes.Cond,
+//     tests: [Slang, Slang][],
+// }
+
+// export interface SlangCase {
+//     kind: SlangTypes.Case,
+//     variable: SlangSymbol,
+//     tests: [Slang, Slang][],
+//     // defaults to Unit
+//     elseClause: Slang | null,
+// }
+
+// export interface SlangFor {
+//     kind: SlangTypes.For,
+//     bindings: Map<string, Slang>,
+//     body: Slang,
+// }
+
+// export interface SlangDotimes {
+//     kind: SlangTypes.Dotimes,
+//     binding: [string, Slang],
+//     body: Slang,
+// }

@@ -44,6 +44,6 @@ btn.addEventListener('click', (_e) => {
     display(outputField, codeOutput)
 
     const execField: HTMLDivElement = document.querySelector('div#setlang-executed')
-    const executed = execute(codeOutput)
+    const executed = execute(codeOutput, new Map())
     display(execField, executed)
 })

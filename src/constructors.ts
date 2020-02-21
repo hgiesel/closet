@@ -16,7 +16,6 @@ import {
     SlangMap,
     SlangFunction,
 
-    SlangProg,
     SlangDef,
     SlangIf,
     SlangCond,
@@ -121,20 +120,13 @@ export const mkFunction = (params: SlangSymbol[], body: Slang): SlangFunction =>
 })
 
 
-/////////////////
-
-export const mkProg = (xs: Slang[]): SlangProg => ({
-    kind: SlangTypes.Prog,
-    expressions: xs,
-})
+///////////////// Bindings
 
 export const isDo = (val: Slang): val is SlangDo => val.kind === SlangTypes.Do
 export const mkDo = (exprs: Slang[]): SlangDo => ({
     kind: SlangTypes.Do,
     expressions: exprs,
 })
-
-//////////////////// Bindings
 
 export const isDef = (val: Slang): val is SlangDef => val.kind === SlangTypes.Def
 export const mkDef = (id: SlangSymbol, val: Slang): SlangDef => ({
@@ -176,11 +168,10 @@ export const mkCond = (tests: [Slang, Slang][]): SlangCond => ({
 })
 
 export const isCase = (val: Slang): val is SlangCase => val.kind === SlangTypes.Case
-export const mkCase = (variable: SlangSymbol, tests: [Slang, Slang][], elseClause: Slang): SlangCase => ({
+export const mkCase = (variable: SlangSymbol, tests: [Slang, Slang][]): SlangCase => ({
     kind: SlangTypes.Case,
     variable: variable,
     tests: tests,
-    elseClause: elseClause /* defaults to Unit */,
 })
 
 //////////////////// Iteration

@@ -15,10 +15,15 @@ import {
     mkMap,
     mkFunction,
 
-    mkProg,
     mkDef,
     mkDo,
     mkLet,
+
+    mkIf,
+    mkCond,
+    mkCase,
+
+    mkFor,
 } from '../constructors'
 
 import tokenizer from './tokenizer'
@@ -35,7 +40,7 @@ map[X] -> %lbrace _ $X  %rbrace
 
 start -> prog {% id %}
 
-prog -> exprs {% ([exprs]) => mkProg(exprs) %}
+prog -> exprs {% ([exprs]) => mkDo(exprs) %}
 
 exprs -> _ (expr _):* {% ([, exprs]) => exprs.map(([lit]) => lit) %}
 expr -> stmt {% id %}
@@ -46,6 +51,10 @@ stmt -> def {% id %}
       | defn {% id %}
       | do {% id %}
       | let {% id %}
+      | if {% id %}
+      | case {% id %}
+      | cond {% id %}
+      | for {% id %}
 
 def -> %lparen _ %defSym _ symbol _ expr _ %rparen {%
     ([,,,,id,,val]) => mkDef(id, val)
@@ -65,6 +74,28 @@ do -> %lparen _ %doSym _ (expr _):* %rparen {%
 
 let -> %lparen _ %letSym _ vector[(symbol _ expr _):*] _ (expr _):* %rparen {%
     ([,,,,[,,[params]],,body]) => mkLet(params.map(v => [v[0], v[2]]), mkDo(body.map(v => v[0])))
+%}
+
+if -> %lparen _ %ifSym _ expr _ expr _ (expr _):? %rparen {%
+    ([,,,,pred,,thenClause,,maybeElseClause]) => mkIf(
+        pred,
+        thenClause,
+        maybeElseClause
+            ? maybeElseClause[0]
+            : mkUnit(),
+    )
+%}
+
+case -> %lparen _ %caseSym _ symbol _ (expr _ expr _):* %rparen {%
+    ([,,,,sym,,vals]) => mkCase(sym, vals.map(v => [v[0], v[2]]))
+%}
+
+cond -> %lparen _ %condSym _ (expr _ expr _):* %rparen {%
+    ([,,,,vals]) => mkCond(vals.map(v => [v[0], v[2]]))
+%}
+
+for -> %lparen _ %forSym _ vector[(symbol _ expr _):*] _ expr _ %rparen {%
+    ([,,,,[,,[params]],,body]) => mkFor(params.map(v => [v[0], v[2]]), body)
 %}
 
 #################################

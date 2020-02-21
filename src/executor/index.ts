@@ -1,6 +1,5 @@
 import {
     SlangTypes,
-    SlangProg,
     SlangSymbol,
     SlangList,
     SlangFunction,
@@ -25,20 +24,8 @@ import * as vector from './vector'
 import * as lookup from './lookup'
 import * as functions from './functions'
 
-export const execute = function(prog: SlangProg) {
-    const results = []
-
-    for (const expr of prog.expressions) {
-        results.push(executeStatement(expr, lookup.getGlobalContext()))
-    }
-
-    return results
-}
-
-const executeStatement = function(expr: Slang, ctx: Map<string, Slang>): Slang {
-
+export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
     switch (expr.kind) {
-
         case SlangTypes.List:
             return executeList(expr, ctx)
 
@@ -79,10 +66,10 @@ const executeList = function(lst: SlangList, ctx: Map<string, Slang>) {
 
         case SlangTypes.Function:
             console.log('foo2')
-            return functions.executeFunction(lst.head, executeStatement)(lst.tail, ctx)
+            return functions.executeFunction(lst.head, execute)(lst.tail, ctx)
 
         case SlangTypes.List:
-            const evaluatedHead = executeStatement(lst.head, ctx)
+            const evaluatedHead = execute(lst.head, ctx)
             const newList = mkList(evaluatedHead, lst.tail)
             console.log('foo', evaluatedHead)
 
@@ -98,14 +85,14 @@ const builtin = (
 ) => (
     args: Slang[],
     ctx: Map<string, Slang>,
-) => b(args.map(t => executeStatement(t, ctx)))
+) => b(args.map(t => execute(t, ctx)))
 
 const resolveSymbol = (head: SlangSymbol, ctx: Map<string, Slang>): (args: Slang[], ctx: Map<string, Slang>) => Slang => {
 
     const lookedup = lookup.localLookup(head, ctx)
 
     if (lookedup) {
-        return (args, ctx) => executeStatement(mkList(lookedup, args.map(t => executeStatement(t, ctx))), ctx)
+        return (args, ctx) => execute(mkList(lookedup, args.map(t => execute(t, ctx))), ctx)
     }
 
     switch (head.value) {
@@ -118,7 +105,7 @@ const resolveSymbol = (head: SlangSymbol, ctx: Map<string, Slang>): (args: Slang
                     throw new SlangTypeError('Value needs to be a symbol')
                 }
 
-                return lookup.globalDefine(args[0].value, executeStatement(args[1], ctx))
+                return lookup.globalDefine(args[0].value, execute(args[1], ctx))
             }
 
         case 'fn':

@@ -16,8 +16,6 @@ export enum SlangTypes {
     Function = 'function',
 
     // Statement blocks
-    Prog = 'prog',
-
     Def = 'def',
     If = 'if',
     Do = 'do',
@@ -25,7 +23,6 @@ export enum SlangTypes {
     Cond = 'cond',
     Case = 'case',
     For = 'for',
-    Dotimes = 'dotimes',
 }
 
 ////////////////// BASIC TYPES
@@ -95,11 +92,6 @@ export interface SlangFunction {
 
 //////////////////
 
-export interface SlangProg {
-    kind: SlangTypes.Prog
-    expressions: Slang[]
-}
-
 export interface SlangDo {
     kind: SlangTypes.Do,
     expressions: Slang[]
@@ -117,15 +109,13 @@ export interface SlangLet {
     body: Slang,
 }
 
-// defaults to Unit
 export interface SlangIf {
     kind: SlangTypes.If,
     condition: Slang,
     thenClause: Slang,
-    elseClause: Slang,
+    elseClause: Slang /* default to Unit */,
 }
 
-// defaults to Unit
 export interface SlangCond {
     kind: SlangTypes.Cond,
     tests: [Slang, Slang][],
@@ -135,8 +125,6 @@ export interface SlangCase {
     kind: SlangTypes.Case,
     variable: SlangSymbol,
     tests: [Slang, Slang][],
-    // defaults to Unit
-    elseClause: Slang | null,
 }
 
 export interface SlangFor {

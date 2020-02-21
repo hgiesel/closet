@@ -1,14 +1,10 @@
 import {
     parseProg,
-} from './types/prog'
-
-import {
-    parseBool,
-} from './types/bool'
-
-import {
-    parseString,
-} from './types/string'
+//     parseToken,
+//     parseList,
+//     parseBool,
+//     parseString,
+} from './parsers'
 
 
 //////////////////////////

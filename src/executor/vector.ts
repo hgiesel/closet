@@ -20,7 +20,7 @@ export const indexing = (listArg: SlangVector, args: Slang[]) => {
         throw new SlangTypeError('Value needs to be a number')
     }
 
-    const maybeResult = listArg.members[args[0].real]
+    const maybeResult = listArg.members[args[0].value]
 
     return mkOptional(maybeResult ? maybeResult : null)
 }

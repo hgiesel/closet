@@ -1,19 +1,12 @@
 import {
     Slang,
     SlangSymbol,
-    SlangUnit,
 } from '../types'
-
-import {
-    mkUnit,
-} from '../constructors'
 
 const globalTable = new Map()
 
-export const globalDefine = (key: string, value: Slang): SlangUnit => {
+export const globalDefine = (key: string, value: Slang): void => {
     globalTable.set(key, value)
-
-    return mkUnit()
 }
 
 export const localLookup = (key: SlangSymbol, ctx: Map<string, Slang>): Slang | null => {

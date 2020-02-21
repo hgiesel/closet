@@ -3,24 +3,21 @@ import {
     SlangSymbol,
     SlangList,
     SlangFunction,
+    SlangDo,
     Slang,
 } from '../types'
 
 import {
-    isSymbol,
-    isVector,
     mkList,
+    mkUnit,
 } from '../constructors'
 
-import {
-    SlangArityError,
-    SlangTypeError,
-} from './exception'
-
 import * as math from './math'
+import * as equality from './equality'
 import * as map from './map'
 import * as vector from './vector'
 
+import * as coerce from './coerce'
 import * as lookup from './lookup'
 import * as functions from './functions'
 
@@ -34,6 +31,37 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
             console.log('ll', expr, lookedup)
 
             return lookedup ? lookedup : expr
+
+        case SlangTypes.Do:
+            let result: Slang = mkUnit()
+
+            for (const e of expr.expressions) {
+                result = execute(e, ctx)
+            }
+
+            return result
+
+        case SlangTypes.If:
+            const ifCond = coerce.toBool(execute(expr.condition, ctx))
+
+            if (ifCond.value) {
+                return execute(expr.thenClause, ctx)
+            }
+
+            return execute(expr.elseClause, ctx)
+
+        case SlangTypes.Cond:
+            for (const test of expr.tests) {
+                if (coerce.toBool(execute(test[0], ctx)).value) {
+                    return execute(test[1], ctx)
+                }
+            }
+
+            return mkUnit()
+
+        case SlangTypes.Def:
+            lookup.globalDefine(expr.identifier.value, execute(expr.value, ctx))
+            return mkUnit()
 
         default:
             // case SlangTypes.String:
@@ -96,20 +124,11 @@ const resolveSymbol = (head: SlangSymbol, ctx: Map<string, Slang>): (args: Slang
     }
 
     switch (head.value) {
-        case 'def':
-            return (args, ctx) => {
-                if (args.length !== 2) {
-                    throw new SlangArityError(args.length)
-                }
-                else if (!isSymbol(args[0])) {
-                    throw new SlangTypeError('Value needs to be a symbol')
-                }
+        case '=':
+            return builtin(equality.equality)
+        case 'not=':
+            return builtin(equality.unequality)
 
-                return lookup.globalDefine(args[0].value, execute(args[1], ctx))
-            }
-
-        case 'fn':
-            return (args, _ctx) => functions.createFunction(args)
 
         case '+':
             return builtin(math.addition)

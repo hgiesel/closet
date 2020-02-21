@@ -38,7 +38,7 @@ export interface SlangBool {
 
 export interface SlangNumber {
     kind: SlangTypes.Number
-    real: number,
+    value: number,
 }
 
 export interface SlangSymbol {

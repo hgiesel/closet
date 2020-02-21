@@ -86,12 +86,12 @@ if -> %lparen _ %ifSym _ expr _ expr _ (expr _):? %rparen {%
     )
 %}
 
-case -> %lparen _ %caseSym _ symbol _ (expr _ expr _):* %rparen {%
-    ([,,,,sym,,vals]) => mkCase(sym, vals.map(v => [v[0], v[2]]))
-%}
-
 cond -> %lparen _ %condSym _ (expr _ expr _):* %rparen {%
     ([,,,,vals]) => mkCond(vals.map(v => [v[0], v[2]]))
+%}
+
+case -> %lparen _ %caseSym _ symbol _ (expr _ expr _):* %rparen {%
+    ([,,,,sym,,vals]) => mkCase(sym, vals.map(v => [v[0], v[2]]))
 %}
 
 for -> %lparen _ %forSym _ vector[(symbol _ expr _):*] _ expr _ %rparen {%

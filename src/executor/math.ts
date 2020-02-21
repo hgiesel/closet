@@ -23,7 +23,7 @@ export const addition = (args: Slang[]) => {
             throw new SlangTypeError('Value needs to be a number')
         }
 
-        sum += arg.real
+        sum += arg.value
     }
 
     return mkNumber(sum)
@@ -38,14 +38,14 @@ export const subtraction = (args: Slang[]) => {
         throw new SlangTypeError('Value needs to be a number')
     }
 
-    let diff = headArg.real
+    let diff = headArg.value
 
     for (const arg of args.slice(1)) {
         if (!isNumber(arg)) {
             throw new SlangTypeError('Value needs to be a number')
         }
 
-        diff -= arg.real
+        diff -= arg.value
     }
 
     return mkNumber(diff)
@@ -59,7 +59,7 @@ export const multiplication = (args: Slang[]) => {
             throw new SlangTypeError('Expected number')
         }
 
-        prod *= arg.real
+        prod *= arg.value
     }
 
     return mkNumber(prod)

@@ -42,7 +42,7 @@ export const mkBool = (v: boolean): SlangBool => ({
 export const isNumber = (val: Slang): val is SlangNumber => val.kind === SlangTypes.Number
 export const mkNumber = (re: number): SlangNumber => ({
     kind: SlangTypes.Number,
-    real: Number(re),
+    value: Number(re),
 })
 
 export const isSymbol = (val: Slang): val is SlangSymbol => val.kind === SlangTypes.Symbol

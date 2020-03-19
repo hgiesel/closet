@@ -19,8 +19,8 @@ export default {
   input: 'src/index.ts',
   output: {
     file: production
-      ? './Main.js'
-      : 'docs/Main.js',
+      ? 'Main.js'
+      : 'docs/javascript/Main.js',
     format: 'iife', // immediately-invoked function expression — suitable for <script> tags
     name: 'SetRandomizer',
     // sourcemap: true

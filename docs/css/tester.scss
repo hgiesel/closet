@@ -1,0 +1,16 @@
+*{
+  box-sizing:border-box;
+}
+
+body {
+  height: 100%;
+  margin:0;
+}
+
+textarea {
+  position: fixed;
+  left:10px; top:10px;
+  width:  calc(100vw - 20px);
+  height: calc(100vh - 20px);
+  resize: none;
+}

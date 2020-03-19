@@ -22,6 +22,8 @@ const display = (htmlElement, obj) => {
     catch (e) {
         htmlElement.innerHTML = obj
     }
+
+    htmlElement.style.display = 'block'
 }
 
 

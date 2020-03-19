@@ -6,7 +6,7 @@
 {% include tester.html %}
 
 <script>
-const escapeHtml = (unsafe: string) => {
+const escapeHtml = (unsafe) => {
     return unsafe
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -15,7 +15,7 @@ const escapeHtml = (unsafe: string) => {
         .replace(/'/g, '&#039;');
 }
 
-const display = (htmlElement: HTMLDivElement, obj: string) => {
+const display = (htmlElement, obj) => {
     try {
         htmlElement.innerHTML = escapeHtml(obj)
     }

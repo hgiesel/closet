@@ -6,12 +6,12 @@
     "url": "https://github.com/hgiesel"
   },
   "devDependencies": {
-    "rollup": "^1.27.3",
+    "@rollup/plugin-typescript": "^3.1.1",
+    "npm-run-all": "^4.1.5",
+    "rollup": "^1.32.1",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.1.0",
-    "rollup-plugin-terser": "^5.1.2",
-    "@rollup/plugin-typescript": "^3.0.0",
-    "npm-run-all": "^4.1.5",
+    "rollup-plugin-terser": "^5.3.0",
     "serve": "^11.2.0"
   },
   "scripts": {

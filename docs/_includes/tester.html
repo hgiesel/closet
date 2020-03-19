@@ -1,4 +1,4 @@
-<script href="../Main.js"></script>
+<script src="../Main.js"></script>
 
 <textarea id="template" cols="30" rows="10" style="resize: none;">This is your [[first]] example.</textarea>
 <textarea id="code" cols="30" rows="10" style="resize: none;"></textarea>
@@ -19,18 +19,26 @@ document.getElementById('code').value = sparams.has('code')
   <button id="btn-parse" type="button">Execute!</button>
 </div>
 
-<hr/>
-<div class="output" id="template-parsed">
+<div class="output" id="template-parsed" style="display: none;">
+  <hr/>
+  <div class="output">
+  </div>
 </div>
 
-<hr/>
-<div class="output" id="code-parsed">
+<div class="output" id="code-parsed" style="display: none;">
+  <hr/>
+  <div class="output">
+  </div>
 </div>
 
-<hr/>
-<div class="output" id="code-executed">
+<div id="code-executed" style="display: none;">
+  <hr/>
+  <div class="output">
+  </div>
 </div>
 
-<hr/>
-<div class="output" id="template-applied">
+<div class="output" id="template-applied" style="display: none;">
+  <hr/>
+  <div class="output">
+  </div>
 </div>

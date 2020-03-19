@@ -1,0 +1,34 @@
+<textarea id="template" cols="30" rows="10" style="resize: none;">This is your [[first]] example.</textarea>
+<textarea id="code" cols="30" rows="10" style="resize: none;"></textarea>
+
+<script>
+const sparams = new URLSearchParams(location.search)
+
+document.getElementById('template').value = sparams.has('template')
+    ? sparams.get('template')
+    : 'Your template text...'
+
+document.getElementById('code').value = sparams.has('code')
+    ? sparams.get('code')
+    : 'Your code...'
+</script>
+
+<div id="btn-group">
+  <button id="btn-parse" type="button">Execute!</button>
+</div>
+
+<hr/>
+<div class="output" id="template-parsed">
+</div>
+
+<hr/>
+<div class="output" id="code-parsed">
+</div>
+
+<hr/>
+<div class="output" id="code-executed">
+</div>
+
+<hr/>
+<div class="output" id="template-applied">
+</div>

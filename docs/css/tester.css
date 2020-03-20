@@ -7,14 +7,15 @@ body {
   margin:0;
 }
 
-.codearea {
-  font-family: monospace;
-}
-
 textarea {
-  left:10px;
-  right:10px;
+  top: 5px;
   width: 45%;
   height: calc(100vh - 20px);
   resize: none;
+}
+
+.CodeMirror {
+  top: 5px;
+  display: inline-block;
+  width: 45%;
 }

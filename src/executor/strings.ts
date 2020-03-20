@@ -14,15 +14,15 @@ import * as equality from './equality'
 import { pureToString } from './coerce'
 
 export namespace String {
-    export const startsWithQ = ([str, prefix]: [SlangString, SlangString]): SlangBool => { 
+    export const startsWithQ = ([prefix, str]: [SlangString, SlangString]): SlangBool => { 
         return mkBool(str.value.startsWith(prefix.value))
     }
 
-    export const endsWithQ = ([str, suffix]: [SlangString, SlangString]): SlangBool => { 
+    export const endsWithQ = ([suffix, str]: [SlangString, SlangString]): SlangBool => { 
         return mkBool(str.value.endsWith(suffix.value))
     }
 
-    export const includesQ = ([str, infix]: [SlangString, SlangString]): SlangBool => { 
+    export const includesQ = ([infix, str]: [SlangString, SlangString]): SlangBool => { 
         return mkBool(str.value.includes(infix.value))
     }
 
@@ -66,7 +66,7 @@ export namespace String {
 }
 
 export namespace Vector {
-    export const startsWithQ = ([vec, prefix]: [SlangVector, SlangVector]): SlangBool => {
+    export const startsWithQ = ([prefix, vec]: [SlangVector, SlangVector]): SlangBool => {
         let result = true
 
         if (prefix.members.length > vec.members.length) {
@@ -80,7 +80,7 @@ export namespace Vector {
         return mkBool(result)
     }
 
-    export const endsWithQ = ([vec, suffix]: [SlangVector, SlangVector]): SlangBool => { 
+    export const endsWithQ = ([suffix, vec]: [SlangVector, SlangVector]): SlangBool => { 
         let result = true
 
         if (suffix.members.length > vec.members.length) {
@@ -97,7 +97,7 @@ export namespace Vector {
         return mkBool(result)
     }
 
-    export const includesQ = ([vec, infix]: [SlangVector, SlangVector]): SlangBool => { 
+    export const includesQ = ([infix, vec]: [SlangVector, SlangVector]): SlangBool => { 
         let result = false
 
         if (infix.members.length <= vec.members.length) {

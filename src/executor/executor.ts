@@ -21,7 +21,12 @@ import {
 import * as lookup from './lookup'
 import * as coerce from './coerce'
 
-import { fire } from './functions'
+import {
+    fire,
+    armFunc,
+    armShcut,
+} from './functions'
+
 import * as equality from './equality'
 
 export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
@@ -52,6 +57,12 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
         case SlangTypes.Quoted:
             return expr.quoted
+
+        case SlangTypes.Function:
+            return armFunc(expr, ctx)
+
+        case SlangTypes.ShcutFunction:
+            return armShcut(expr, ctx)
 
         case SlangTypes.Def:
             lookup.globalDefine(expr.identifier, execute(expr.value, ctx))
@@ -139,8 +150,6 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
             // case SlangTypes.Keyword:
             // case SlangTypes.Function:
-            // case SlangTypes.ShcutFunction:
-            // case SlangTypes.ArmedFunction:
             return expr
     }
 }

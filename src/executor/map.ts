@@ -107,7 +107,7 @@ export const mergeWith = ([func, headMap, ...args]: [SlangExecutable, SlangMap, 
         newMap.set(key, value)
     }
 
-    const armed = arm(func)
+    const armed = arm(func, ctx)
 
     for (const map of args) {
         for (const [key, value] of map.table) {

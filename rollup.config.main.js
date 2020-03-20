@@ -20,7 +20,7 @@ export default {
   output: {
     file: production
       ? 'Main.js'
-      : 'docs/javascript/Main.js',
+      : 'docs/js/Main.js',
     format: 'iife', // immediately-invoked function expression — suitable for <script> tags
     name: 'SetRandomizer',
     // sourcemap: true

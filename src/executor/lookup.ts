@@ -49,11 +49,14 @@ export const createNumberedEnv = (args: Slang[]): Map<string, Slang> => {
     return env
 }
 
-export const joinEnvs = (oldEnv: Map<string, Slang>, newEnv: Map<string, Slang>): Map<string, Slang> => {
+export const joinEnvs = (...envs: Map<string, Slang>[]): Map<string, Slang> => {
     const resultEnv = new Map()
 
-    oldEnv.forEach((v,k) => newEnv.has(k) ? null : resultEnv.set(k, v))
-    newEnv.forEach((v,k) => resultEnv.set(k, v))
+    for (const env of envs) {
+        for (const [key, value] of env) {
+            resultEnv.set(key, value)
+        }
+    }
 
     return resultEnv
 }

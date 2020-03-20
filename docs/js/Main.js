@@ -1122,6 +1122,7 @@
 	        },
 	    },
 	});
+	//# sourceMappingURL=tokenizer.js.map
 
 	// Generated automatically by nearley, version 2.19.1
 	// http://github.com/Hardmath123/nearley
@@ -1153,6 +1154,7 @@
 	    ],
 	    ParserStart: "start",
 	};
+	//# sourceMappingURL=template.js.map
 
 	// import {
 	var parseTemplate = function (text) {
@@ -1168,6 +1170,7 @@
 	//         ? result
 	//         : sk.next('stop').value
 	// }
+	//# sourceMappingURL=index.js.map
 
 	/*! *****************************************************************************
 	Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1279,6 +1282,7 @@
 	    SlangTypes["ThreadFirst"] = "threadfirst";
 	    SlangTypes["ThreadLast"] = "threadlast";
 	})(SlangTypes || (SlangTypes = {}));
+	//# sourceMappingURL=types.js.map
 
 	var getValue = function (v) { return v.value; };
 	////////// CONSTRUCTORS FOR BASIC TYPES
@@ -1494,6 +1498,7 @@
 	    value: value,
 	    pipes: pipes,
 	}); };
+	//# sourceMappingURL=constructors.js.map
 
 	var shcutParam = /^%([1-9][0-9]*)?$/u;
 	var shcutFuncArity = function (v, currentMax) {
@@ -1544,6 +1549,7 @@
 	            return currentMax;
 	    }
 	};
+	//# sourceMappingURL=utils.js.map
 
 	var lexer$1 = moo.compile({
 	    ws: {
@@ -1608,6 +1614,7 @@
 	        value: function (x) { return x.slice(2, -1); },
 	    },
 	});
+	//# sourceMappingURL=tokenizer.js.map
 
 	// Generated automatically by nearley, version 2.19.1
 	// http://github.com/Hardmath123/nearley
@@ -1867,12 +1874,14 @@
 	    ],
 	    ParserStart: "start",
 	};
+	//# sourceMappingURL=slang.js.map
 
 	var parseCode = function (code) {
 	    var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar$1));
 	    var result = p.feed(code).results[0];
 	    return result;
 	};
+	//# sourceMappingURL=index.js.map
 
 	var isUnit = function (val) { return val.kind === SlangTypes.Unit; };
 	var isBool = function (val) { return val.kind === SlangTypes.Bool; };
@@ -1899,6 +1908,7 @@
 	    isMapKey(val)); };
 	var isMapKey = function (val) { return (isString(val) ||
 	    isKeyword(val)); };
+	//# sourceMappingURL=reflection.js.map
 
 	var mkTypeError = function (types, position) { return ({
 	    kind: 'TypeError',
@@ -1971,6 +1981,7 @@
 	var notExecutable = function (kind) {
 	    return mkNotExecutableError(kind);
 	};
+	//# sourceMappingURL=exception.js.map
 
 	var pureToBool = function (val) {
 	    if (isBool(val)) {
@@ -2055,6 +2066,7 @@
 	var toString = function (val) {
 	    return mkString(pureToString(val));
 	};
+	//# sourceMappingURL=coerce.js.map
 
 	var Map$1;
 	(function (Map) {
@@ -2082,7 +2094,7 @@
 	    Map.takeWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], mapArg = _b[1];
 	        var taken = [];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var cont = true;
 	        mapArg.table.forEach(function (v, k) {
 	            if (cont) {
@@ -2114,7 +2126,7 @@
 	    Map.dropWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], mapArg = _b[1];
 	        var dropped = [];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var start = false;
 	        mapArg.table.forEach(function (v, k) {
 	            if (start) {
@@ -2136,7 +2148,7 @@
 	    };
 	    Map.anyQ = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], mapArg = _b[1];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var result = false;
 	        mapArg.table.forEach(function (v, k) {
 	            result = result || pureToBool(apply(armed, [mkVector([fromMapKey(k), v])], ctx));
@@ -2145,7 +2157,7 @@
 	    };
 	    Map.everyQ = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], mapArg = _b[1];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var result = true;
 	        mapArg.table.forEach(function (v, k) {
 	            result = result && pureToBool(apply(armed, [mkVector([fromMapKey(k), v])], ctx));
@@ -2154,7 +2166,7 @@
 	    };
 	    Map.map = function (_a, ctx) {
 	        var _b = __read(_a), func = _b[0], headMap = _b[1], otherMaps = _b.slice(2);
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = [];
 	        headMap.table.forEach(function (v, k) {
 	            var e_1, _a;
@@ -2183,7 +2195,7 @@
 	    };
 	    Map.filter = function (_a, ctx) {
 	        var _b = __read(_a, 2), func = _b[0], map = _b[1];
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = [];
 	        map.table.forEach(function (v, k) {
 	            var theKey = fromMapKey(k);
@@ -2196,7 +2208,7 @@
 	    Map.foldl = function (_a, ctx) {
 	        var e_2, _b;
 	        var _c = __read(_a, 3), func = _c[0], accu = _c[1], map = _c[2];
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = accu;
 	        try {
 	            for (var _d = __values(map.table), _e = _d.next(); !_e.done; _e = _d.next()) {
@@ -2219,7 +2231,7 @@
 	    Map.foldr = function (_a, ctx) {
 	        var _b = __read(_a, 3), func = _b[0], accu = _b[1], map = _b[2];
 	        console.log('hi');
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var iterator = map.table[Symbol.iterator]();
 	        var pureFoldr = function (it) {
 	            var nextValue = it.next();
@@ -2261,7 +2273,7 @@
 	    Vector.takeWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], vectorArg = _b[1];
 	        var taken = [];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var cont = true;
 	        for (var i = 0; i < vectorArg.members.length && cont; i++) {
 	            if (pureToBool(apply(armed, [vectorArg.members[i]], ctx))) {
@@ -2286,7 +2298,7 @@
 	    Vector.dropWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], vectorArg = _b[1];
 	        var dropped = [];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var start = false;
 	        for (var i = 0; i < vectorArg.members.length; i++) {
 	            if (start) {
@@ -2312,7 +2324,7 @@
 	    Vector.anyQ = function (_a, ctx) {
 	        var e_3, _b;
 	        var _c = __read(_a, 2), pred = _c[0], vectorArg = _c[1];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var result = false;
 	        try {
 	            for (var _d = __values(vectorArg.members), _e = _d.next(); !_e.done; _e = _d.next()) {
@@ -2332,7 +2344,7 @@
 	    Vector.everyQ = function (_a, ctx) {
 	        var e_4, _b;
 	        var _c = __read(_a, 2), pred = _c[0], vectorArg = _c[1];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var result = true;
 	        try {
 	            for (var _d = __values(vectorArg.members), _e = _d.next(); !_e.done; _e = _d.next()) {
@@ -2352,7 +2364,7 @@
 	    Vector.map = function (_a, ctx) {
 	        var e_5, _b;
 	        var _c = __read(_a), func = _c[0], headVector = _c[1], otherVectors = _c.slice(2);
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = [];
 	        var _loop_1 = function (i, entry) {
 	            var e_6, _a;
@@ -2392,7 +2404,7 @@
 	    Vector.filter = function (_a, ctx) {
 	        var e_7, _b;
 	        var _c = __read(_a, 2), func = _c[0], vector = _c[1];
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = [];
 	        try {
 	            for (var _d = __values(vector.members), _e = _d.next(); !_e.done; _e = _d.next()) {
@@ -2414,7 +2426,7 @@
 	    Vector.foldl = function (_a, ctx) {
 	        var e_8, _b;
 	        var _c = __read(_a, 3), func = _c[0], accu = _c[1], vector = _c[2];
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = accu;
 	        try {
 	            for (var _d = __values(vector.members), _e = _d.next(); !_e.done; _e = _d.next()) {
@@ -2433,7 +2445,7 @@
 	    };
 	    Vector.foldr = function (_a, ctx) {
 	        var _b = __read(_a, 3), func = _b[0], accu = _b[1], vector = _b[2];
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var iterator = vector.members[Symbol.iterator]();
 	        var pureFoldr = function (it) {
 	            var nextValue = it.next();
@@ -2513,7 +2525,7 @@
 	    List.takeWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], listArg = _b[1];
 	        var taken = [];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var cont = true;
 	        if (!pureToBool(apply(armed, [listArg.head], ctx))) {
 	            return mkUnit();
@@ -2549,7 +2561,7 @@
 	    List.dropWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], listArg = _b[1];
 	        var dropped = [];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var start = false;
 	        if (!pureToBool(apply(armed, [listArg.head], ctx))) {
 	            dropped.push(listArg.head);
@@ -2581,7 +2593,7 @@
 	    List.anyQ = function (_a, ctx) {
 	        var e_10, _b;
 	        var _c = __read(_a, 2), pred = _c[0], listArg = _c[1];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var result = false;
 	        try {
 	            for (var _d = __values(listArg.tail), _e = _d.next(); !_e.done; _e = _d.next()) {
@@ -2601,7 +2613,7 @@
 	    List.everyQ = function (_a, ctx) {
 	        var e_11, _b;
 	        var _c = __read(_a, 2), pred = _c[0], listArg = _c[1];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var result = true;
 	        try {
 	            for (var _d = __values(listArg.tail), _e = _d.next(); !_e.done; _e = _d.next()) {
@@ -2621,7 +2633,7 @@
 	    List.map = function (_a, ctx) {
 	        var e_12, _b;
 	        var _c = __read(_a), func = _c[0], headList = _c[1], otherLists = _c.slice(2);
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = [];
 	        var _loop_2 = function (i, entry) {
 	            var e_13, _a;
@@ -2661,7 +2673,7 @@
 	    List.filter = function (_a, ctx) {
 	        var e_14, _b;
 	        var _c = __read(_a, 2), func = _c[0], list = _c[1];
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = [];
 	        try {
 	            for (var _d = __values(list.tail), _e = _d.next(); !_e.done; _e = _d.next()) {
@@ -2683,7 +2695,7 @@
 	    List.foldl = function (_a, ctx) {
 	        var e_15, _b;
 	        var _c = __read(_a, 3), func = _c[0], accu = _c[1], list = _c[2];
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = accu;
 	        try {
 	            for (var _d = __values(list.tail), _e = _d.next(); !_e.done; _e = _d.next()) {
@@ -2702,7 +2714,7 @@
 	    };
 	    List.foldr = function (_a, ctx) {
 	        var _b = __read(_a, 3), func = _b[0], accu = _b[1], list = _b[2];
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var iterator = list.tail[Symbol.iterator]();
 	        var pureFoldr = function (it) {
 	            var nextValue = it.next();
@@ -2761,7 +2773,7 @@
 	    };
 	    Optional.anyQ = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], optionalArg = _b[1];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var result = false;
 	        if (optionalArg.boxed) {
 	            result = result || pureToBool(apply(armed, [optionalArg.boxed], ctx));
@@ -2770,7 +2782,7 @@
 	    };
 	    Optional.everyQ = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], optionalArg = _b[1];
-	        var armed = arm(pred);
+	        var armed = arm(pred, ctx);
 	        var result = true;
 	        if (optionalArg.boxed) {
 	            result = result && pureToBool(apply(armed, [optionalArg.boxed], ctx));
@@ -2780,7 +2792,7 @@
 	    Optional.map = function (_a, ctx) {
 	        var e_17, _b;
 	        var _c = __read(_a), func = _c[0], headOptional = _c[1], otherOptionals = _c.slice(2);
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = null;
 	        if (headOptional.boxed) {
 	            var allHaveKey = true;
@@ -2805,7 +2817,7 @@
 	    };
 	    Optional.filter = function (_a, ctx) {
 	        var _b = __read(_a, 2), func = _b[0], optional = _b[1];
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = null;
 	        if (optional.boxed) {
 	            if (pureToBool(apply(armed, [optional.boxed], ctx))) {
@@ -2816,7 +2828,7 @@
 	    };
 	    Optional.foldl = function (_a, ctx) {
 	        var _b = __read(_a, 3), func = _b[0], accu = _b[1], optional = _b[2];
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = accu;
 	        if (optional.boxed) {
 	            result = apply(armed, [result, optional.boxed], ctx);
@@ -2825,7 +2837,7 @@
 	    };
 	    Optional.foldr = function (_a, ctx) {
 	        var _b = __read(_a, 3), func = _b[0], accu = _b[1], optional = _b[2];
-	        var armed = arm(func);
+	        var armed = arm(func, ctx);
 	        var result = accu;
 	        if (optional.boxed) {
 	            result = apply(armed, [optional.boxed, result], ctx);
@@ -2874,6 +2886,7 @@
 	    var _c;
 	    return mkOptional((_c = listArg.members[idx.value]) !== null && _c !== void 0 ? _c : null);
 	};
+	//# sourceMappingURL=seq.js.map
 
 	var reshape = function (arr, columnSize) {
 	    var currIndex;
@@ -2893,6 +2906,7 @@
 	        }
 	    });
 	};
+	//# sourceMappingURL=utils.js.map
 
 	var indexing$1 = function (_a) {
 	    var _b = __read(_a, 2), mapArg = _b[0], idx = _b[1];
@@ -2989,7 +3003,7 @@
 	        }
 	        finally { if (e_3) throw e_3.error; }
 	    }
-	    var armed = arm(func);
+	    var armed = arm(func, ctx);
 	    try {
 	        for (var args_1 = __values(args), args_1_1 = args_1.next(); !args_1_1.done; args_1_1 = args_1.next()) {
 	            var map = args_1_1.value;
@@ -3098,6 +3112,7 @@
 	    }
 	    return mkMapDirect(newMap);
 	};
+	//# sourceMappingURL=map.js.map
 
 	var apply = function (func, args, ctx) {
 	    var result = func.apply(args, ctx);
@@ -3112,12 +3127,12 @@
 	        : mkRight(sl);
 	};
 	var wrap = function (name, func) { return (mkArmedFunction(name, function (args, ctx) { return adapt(func(args.map(function (t) { return execute(t, ctx); }), ctx)); })); };
-	var armFunc = function (func) { return (mkArmedFunction(func.name, typecheck({
-	    f: function (args, ctx) { return execute(func.body, joinEnvs(ctx, createEnv(func.params, args.map(function (t) { return execute(t, ctx); })))); },
+	var armFunc = function (func, creationCtx) { return (mkArmedFunction(func.name, typecheck({
+	    f: function (args, ctx) { return execute(func.body, joinEnvs(creationCtx, ctx, createEnv(func.params, args.map(function (t) { return execute(t, ctx); })))); },
 	    argc: function (count) { return count === func.params.length; },
 	}))); };
-	var armShcut = function (func) { return (mkArmedFunction(func.name, typecheck({
-	    f: function (args, ctx) { return execute(func.body, joinEnvs(ctx, createNumberedEnv(args.map(function (t) { return execute(t, ctx); })))); },
+	var armShcut = function (func, creationCtx) { return (mkArmedFunction(func.name, typecheck({
+	    f: function (args, ctx) { return execute(func.body, joinEnvs(creationCtx, ctx, createNumberedEnv(args.map(function (t) { return execute(t, ctx); })))); },
 	    argc: function (count) { return count === func.params; },
 	}))); };
 	var armNumber = function (num) {
@@ -3140,12 +3155,12 @@
 	        arg0: function (s) { return isMap(s); },
 	    }));
 	};
-	var arm = function (exec) { return (isArmedFunction(exec)
+	var arm = function (exec, ctx) { return (isArmedFunction(exec)
 	    ? exec
 	    : isFunction(exec)
-	        ? armFunc(exec)
+	        ? armFunc(exec, ctx)
 	        : isShcutFunction(exec)
-	            ? armShcut(exec)
+	            ? armShcut(exec, ctx)
 	            : isNumber(exec)
 	                ? armNumber(exec)
 	                : isMapKey(exec)
@@ -3156,8 +3171,9 @@
 	                    // ? armMap(exec)
 	                    : throwException('list', notExecutable(exec.kind))); };
 	var fire = function (exec, args, ctx) {
-	    return apply(arm(exec), args, ctx);
+	    return apply(arm(exec, ctx), args, ctx);
 	};
+	//# sourceMappingURL=functions.js.map
 
 	var identity = function (_a) {
 	    var _b = __read(_a, 1), val = _b[0];
@@ -3167,6 +3183,7 @@
 	    var _b = __read(_a, 2), val = _b[0], _throwaway = _b[1];
 	    return val;
 	};
+	//# sourceMappingURL=combinators.js.map
 
 	var twoValueCompare = function (val1, val2) {
 	    if (val1.kind !== val2.kind) {
@@ -3288,6 +3305,7 @@
 	    }
 	    return mkBool(result);
 	};
+	//# sourceMappingURL=equality.js.map
 
 	var and = function (args) {
 	    var e_1, _a;
@@ -3329,6 +3347,7 @@
 	    var headArg = args[0];
 	    return mkBool(!toBool(headArg).value);
 	};
+	//# sourceMappingURL=bool.js.map
 
 	var addition = function (args) {
 	    var e_1, _a;
@@ -3524,6 +3543,7 @@
 	        ? Number.MIN_SAFE_INTEGER
 	        : Math.max.apply(Math, __spread(args.map(function (a) { return a.value; }))));
 	};
+	//# sourceMappingURL=math.js.map
 
 	var atom = function (_a) {
 	    var _b = __read(_a, 1), value = _b[0];
@@ -3545,6 +3565,7 @@
 	    atom.atom = val;
 	    return atom;
 	};
+	//# sourceMappingURL=atoms.js.map
 
 	var rand = function (_a) {
 	    var _b = __read(_a), props = _b.slice(0);
@@ -3606,19 +3627,20 @@
 	    var _b = __read(_a, 1), vec = _b[0];
 	    return mkVector(safeShuffle(vec.members));
 	};
+	//# sourceMappingURL=random.js.map
 
 	var String$1;
 	(function (String) {
 	    String.startsWithQ = function (_a) {
-	        var _b = __read(_a, 2), str = _b[0], prefix = _b[1];
+	        var _b = __read(_a, 2), prefix = _b[0], str = _b[1];
 	        return mkBool(str.value.startsWith(prefix.value));
 	    };
 	    String.endsWithQ = function (_a) {
-	        var _b = __read(_a, 2), str = _b[0], suffix = _b[1];
+	        var _b = __read(_a, 2), suffix = _b[0], str = _b[1];
 	        return mkBool(str.value.endsWith(suffix.value));
 	    };
 	    String.includesQ = function (_a) {
-	        var _b = __read(_a, 2), str = _b[0], infix = _b[1];
+	        var _b = __read(_a, 2), infix = _b[0], str = _b[1];
 	        return mkBool(str.value.includes(infix.value));
 	    };
 	    String.reverse = function (_a) {
@@ -3664,7 +3686,7 @@
 	(function (Vector) {
 	    Vector.startsWithQ = function (_a) {
 	        var e_1, _b;
-	        var _c = __read(_a, 2), vec = _c[0], prefix = _c[1];
+	        var _c = __read(_a, 2), prefix = _c[0], vec = _c[1];
 	        var result = true;
 	        if (prefix.members.length > vec.members.length) {
 	            result = false;
@@ -3685,7 +3707,7 @@
 	        return mkBool(result);
 	    };
 	    Vector.endsWithQ = function (_a) {
-	        var _b = __read(_a, 2), vec = _b[0], suffix = _b[1];
+	        var _b = __read(_a, 2), suffix = _b[0], vec = _b[1];
 	        var result = true;
 	        if (suffix.members.length > vec.members.length) {
 	            result = false;
@@ -3696,7 +3718,7 @@
 	        return mkBool(result);
 	    };
 	    Vector.includesQ = function (_a) {
-	        var _b = __read(_a, 2), vec = _b[0], infix = _b[1];
+	        var _b = __read(_a, 2), infix = _b[0], vec = _b[1];
 	        var result = false;
 	        if (infix.members.length <= vec.members.length) {
 	            for (var idx = 0; !result && idx < vec.members.length; idx++) {
@@ -3719,6 +3741,7 @@
 	        return mkVector(vec.members.slice().reverse());
 	    };
 	})(Vector$1 || (Vector$1 = {}));
+	//# sourceMappingURL=strings.js.map
 
 	var fixedTable = {
 	    /////////////////// COMBINATORS
@@ -4268,6 +4291,7 @@
 	        args: function (args) { return isString(args[0]); },
 	    })),
 	};
+	//# sourceMappingURL=fixedTable.js.map
 
 	var globalTable = new Map();
 	var globalDefine = function (key, value) {
@@ -4300,12 +4324,41 @@
 	    args.forEach(function (v, i) { return env.set("%" + (i + 1), v); });
 	    return env;
 	};
-	var joinEnvs = function (oldEnv, newEnv) {
+	var joinEnvs = function () {
+	    var e_1, _a, e_2, _b;
+	    var envs = [];
+	    for (var _i = 0; _i < arguments.length; _i++) {
+	        envs[_i] = arguments[_i];
+	    }
 	    var resultEnv = new Map();
-	    oldEnv.forEach(function (v, k) { return newEnv.has(k) ? null : resultEnv.set(k, v); });
-	    newEnv.forEach(function (v, k) { return resultEnv.set(k, v); });
+	    try {
+	        for (var envs_1 = __values(envs), envs_1_1 = envs_1.next(); !envs_1_1.done; envs_1_1 = envs_1.next()) {
+	            var env = envs_1_1.value;
+	            try {
+	                for (var env_1 = (e_2 = void 0, __values(env)), env_1_1 = env_1.next(); !env_1_1.done; env_1_1 = env_1.next()) {
+	                    var _c = __read(env_1_1.value, 2), key = _c[0], value = _c[1];
+	                    resultEnv.set(key, value);
+	                }
+	            }
+	            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+	            finally {
+	                try {
+	                    if (env_1_1 && !env_1_1.done && (_b = env_1.return)) _b.call(env_1);
+	                }
+	                finally { if (e_2) throw e_2.error; }
+	            }
+	        }
+	    }
+	    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+	    finally {
+	        try {
+	            if (envs_1_1 && !envs_1_1.done && (_a = envs_1.return)) _a.call(envs_1);
+	        }
+	        finally { if (e_1) throw e_1.error; }
+	    }
 	    return resultEnv;
 	};
+	//# sourceMappingURL=lookup.js.map
 
 	var execute = function (expr, ctx) {
 	    var e_1, _a, e_2, _b, e_3, _c, e_4, _d, e_5, _e, e_6, _f;
@@ -4340,6 +4393,10 @@
 	            return mkMapDirect(newMap);
 	        case SlangTypes.Quoted:
 	            return expr.quoted;
+	        case SlangTypes.Function:
+	            return armFunc(expr, ctx);
+	        case SlangTypes.ShcutFunction:
+	            return armShcut(expr, ctx);
 	        case SlangTypes.Def:
 	            globalDefine(expr.identifier, execute(expr.value, ctx));
 	            return mkUnit();
@@ -4452,15 +4509,17 @@
 	            // case SlangTypes.Bool:
 	            // case SlangTypes.Keyword:
 	            // case SlangTypes.Function:
-	            // case SlangTypes.ShcutFunction:
-	            // case SlangTypes.ArmedFunction:
 	            return expr;
 	    }
 	};
+	//# sourceMappingURL=executor.js.map
+
+	//# sourceMappingURL=index.js.map
 
 	globalThis.parseTemplate = parseTemplate;
 	globalThis.parseCode = parseCode;
 	globalThis.execute = execute;
 	globalThis.codeToString = toString;
+	//# sourceMappingURL=index.js.map
 
 }());

@@ -72,11 +72,11 @@ export const wrap = (name: string, func: (a: Slang[], ctx: Map<string, Slang>) =
     )
 )
 
-export const armFunc = (func: SlangFunction): SlangArmedFunction => (
+export const armFunc = (func: SlangFunction, creationCtx: Map<string, Slang>): SlangArmedFunction => (
     mkArmedFunction(func.name, typecheck({
         f: (args, ctx) => execute(
             func.body,
-            joinEnvs(ctx, createEnv(
+            joinEnvs(creationCtx, ctx, createEnv(
                 func.params,
                 args.map(t => execute(t, ctx)),
             )),
@@ -85,31 +85,15 @@ export const armFunc = (func: SlangFunction): SlangArmedFunction => (
     }))
 )
 
-export const armShcut = (func: SlangShcutFunction): SlangArmedFunction => (
+export const armShcut = (func: SlangShcutFunction, creationCtx: Map<string, Slang>): SlangArmedFunction => (
     mkArmedFunction(func.name, typecheck({
         f: (args, ctx) => execute(
             func.body,
-            joinEnvs(ctx, createNumberedEnv(
+            joinEnvs(creationCtx, ctx, createNumberedEnv(
                 args.map(t => execute(t, ctx)),
             )),
         ),
         argc: (count) => count === func.params,
-    }))
-)
-
-const armVector = (vec: SlangVector): SlangArmedFunction => (
-    mkArmedFunction('vector-index', typecheck({
-        f: (args: [SlangNumber], _ctx) => vectorIndexing([vec, ...args] as any),
-        argc: (count) => count === 1,
-        arg0: (s) => isNumber(s),
-    }))
-)
-
-const armMap = (map: SlangMap): SlangArmedFunction => (
-    mkArmedFunction('map-index', typecheck({
-        f: (args: [SlangMapKey], _ctx) => mapIndexing([map, ...args] as any),
-        argc: (count) => count === 1,
-        arg0: (s) => isMapKey(s),
     }))
 )
 
@@ -127,13 +111,13 @@ const armMapKey = (mk: SlangMapKey): SlangArmedFunction =>
         arg0: (s) => isMap(s),
     }))
 
-export const arm = (exec: Slang): SlangArmedFunction => (
+export const arm = (exec: Slang, ctx: Map<string, Slang>): SlangArmedFunction => (
     isArmedFunction(exec)
     ? exec
     : isFunction(exec)
-    ? armFunc(exec)
+    ? armFunc(exec, ctx)
     : isShcutFunction(exec)
-    ? armShcut(exec)
+    ? armShcut(exec, ctx)
     : isNumber(exec)
     ? armNumber(exec)
     : isMapKey(exec)
@@ -146,5 +130,5 @@ export const arm = (exec: Slang): SlangArmedFunction => (
 )
 
 export const fire = (exec: Slang, args: Slang[], ctx: Map<string, Slang>): Slang => {
-    return apply(arm(exec), args, ctx)
+    return apply(arm(exec, ctx), args, ctx)
 }

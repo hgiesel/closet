@@ -1,7 +1,7 @@
 import {
     Slang,
     SlangBool,
-    SlangTypes,
+    SlangType,
 } from '../types'
 
 import {
@@ -13,22 +13,22 @@ export const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
         return false
     }
 
-    else if (val1.kind == SlangTypes.Unit) {
+    else if (val1.kind == SlangType.Unit) {
         return true
     }
 
     else if (
-        val1.kind === SlangTypes.Bool    ||
-        val1.kind === SlangTypes.Number  ||
-        val1.kind === SlangTypes.Symbol  ||
-        val1.kind === SlangTypes.Keyword ||
-        val1.kind === SlangTypes.String
+        val1.kind === SlangType.Bool    ||
+        val1.kind === SlangType.Number  ||
+        val1.kind === SlangType.Symbol  ||
+        val1.kind === SlangType.Keyword ||
+        val1.kind === SlangType.String
     ) {
         //@ts-ignore
         return val1.value === val2.value
     }
 
-    else if (val1.kind === SlangTypes.List) {
+    else if (val1.kind === SlangType.List) {
         //@ts-ignore
         if (val1.tail.length !== val2.tail.length) {
             return false
@@ -49,7 +49,7 @@ export const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
         return check
     }
 
-    else if (val1.kind === SlangTypes.Vector) {
+    else if (val1.kind === SlangType.Vector) {
         //@ts-ignore
         if (val1.members.length !== val2.members.length) {
             return false
@@ -70,7 +70,7 @@ export const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
         return check
     }
 
-    else if (val1.kind === SlangTypes.Map) {
+    else if (val1.kind === SlangType.Map) {
         //@ts-ignore
         if (val1.table.size !== val2.table.size) {
             return false
@@ -91,12 +91,12 @@ export const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
         return result
     }
 
-    else if (val1.kind === SlangTypes.Quoted) {
+    else if (val1.kind === SlangType.Quoted) {
         //@ts-ignore
         return twoValueCompare(val1.quoted, val2.quoted)
     }
 
-    else if (val1.kind === SlangTypes.Optional) {
+    else if (val1.kind === SlangType.Optional) {
         if (val1.boxed === null) {
             //@ts-ignore
             if (val2.boxed === null) {
@@ -110,7 +110,7 @@ export const twoValueCompare = (val1: Slang, val2: Slang): boolean => {
         return twoValueCompare(val1.boxed, val2.boxed)
     }
 
-    else /* val1.kind === SlangTypes.Function */ {
+    else /* val1.kind === SlangType.Function */ {
         return false
     }
 }

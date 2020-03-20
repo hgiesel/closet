@@ -1,5 +1,5 @@
 import {
-    SlangTypes,
+    SlangType,
     Slang,
 
     SlangUnit,
@@ -47,42 +47,42 @@ const getValue = (v: SlangKeyword | SlangString | SlangSymbol): string => v.valu
 ////////// CONSTRUCTORS FOR BASIC TYPES
 
 export const mkUnit = (): SlangUnit => ({
-    kind: SlangTypes.Unit,
+    kind: SlangType.Unit,
 })
 
 export const mkBool = (v: boolean): SlangBool => ({
-    kind: SlangTypes.Bool,
+    kind: SlangType.Bool,
     value: v,
 })
 
 export const mkNumber = (re: number): SlangNumber => ({
-    kind: SlangTypes.Number,
+    kind: SlangType.Number,
     value: Number(re),
 })
 
 export const mkSymbol = (x: string): SlangSymbol => ({
-    kind: SlangTypes.Symbol,
+    kind: SlangType.Symbol,
     value: x,
 })
 
 export const mkKeyword = (x: string): SlangKeyword => ({
-    kind: SlangTypes.Keyword,
+    kind: SlangType.Keyword,
     value: x,
 })
 
 export const mkString = (x: string): SlangString => ({
-    kind: SlangTypes.String,
+    kind: SlangType.String,
     value: x,
 })
 
 export const mkRegex = (x: string): SlangRegex => ({
-    kind: SlangTypes.Regex,
+    kind: SlangType.Regex,
     value: new RegExp(x),
 })
 
 ////////// CONSTRUCTORS FOR RECURSIVE TYPES
 
-export const toMapKey = (v: SlangMapKey): string | symbol => v.kind === SlangTypes.String
+export const toMapKey = (v: SlangMapKey): string | symbol => v.kind === SlangType.String
     ? v.value
     : Symbol.for(v.value)
 
@@ -92,45 +92,45 @@ export const fromMapKey = (v: string | symbol): SlangMapKey => typeof v === 'str
     : mkKeyword(v.description)
 
 export const mkQuoted = (x: Slang): SlangQuoted => ({
-    kind: SlangTypes.Quoted,
+    kind: SlangType.Quoted,
     quoted: x,
 })
 
 export const mkOptional = (x: Slang): SlangOptional => ({
-    kind: SlangTypes.Optional,
+    kind: SlangType.Optional,
     boxed: x ?? null,
 })
 
 export const mkAtom = (x: Slang): SlangAtom => ({
-    kind: SlangTypes.Atom,
+    kind: SlangType.Atom,
     atom: x,
 })
 
 export const mkLeft = (e: SlangError): SlangEitherLeft => ({
-    kind: SlangTypes.Either,
+    kind: SlangType.Either,
     ok: false,
     error: e,
 })
 
 export const mkRight = (val: Slang): SlangEitherRight => ({
-    kind: SlangTypes.Either,
+    kind: SlangType.Either,
     ok: true,
     value: val,
 })
 
 export const mkList = (head: Slang, tail: Slang[]): SlangList => ({
-    kind: SlangTypes.List,
+    kind: SlangType.List,
     head: head,
     tail: tail,
 })
 
 export const mkVector = (members: Slang[]): SlangVector => ({
-    kind: SlangTypes.Vector,
+    kind: SlangType.Vector,
     members: members,
 })
 
 export const mkMapEntry = (first: SlangMapKey, second: Slang): SlangMapEntry => ({
-    kind: SlangTypes.MapEntry,
+    kind: SlangType.MapEntry,
     first: first,
     second: second,
 })
@@ -143,34 +143,34 @@ export const mkMap = (vs: [SlangString | SlangKeyword, Slang][]): SlangMap => {
     }
 
     return {
-        kind: SlangTypes.Map,
+        kind: SlangType.Map,
         table: theMap,
     }
 }
 
 export const mkMapDirect = (table: Map<string | symbol, Slang>): SlangMap => ({
-    kind: SlangTypes.Map,
+    kind: SlangType.Map,
     table: table,
 })
 
 //////////////////// Functions
 
 export const mkFunction = (name: string, params: SlangSymbol[], body: Slang): SlangFunction => ({
-    kind: SlangTypes.Function,
+    kind: SlangType.Function,
     name: name,
     params: params,
     body: body,
 })
 
 export const mkShcutFunction = (name: string, params: number, body: Slang): SlangShcutFunction => ({
-    kind: SlangTypes.ShcutFunction,
+    kind: SlangType.ShcutFunction,
     name: name,
     params: params,
     body: body,
 })
 
 export const mkArmedFunction = (name: string, app: (args: Slang[], ctx: Map<string, Slang>) => SlangEither): SlangArmedFunction => ({
-    kind: SlangTypes.ArmedFunction,
+    kind: SlangType.ArmedFunction,
     name: name,
     apply: app,
 })
@@ -178,12 +178,12 @@ export const mkArmedFunction = (name: string, app: (args: Slang[], ctx: Map<stri
 ///////////////// Bindings
 
 export const mkDo = (exprs: Slang[]): SlangDo => ({
-    kind: SlangTypes.Do,
+    kind: SlangType.Do,
     expressions: exprs,
 })
 
 export const mkDef = (id: SlangSymbol, val: Slang): SlangDef => ({
-    kind: SlangTypes.Def,
+    kind: SlangType.Def,
     identifier: id,
     value: val,
 })
@@ -196,7 +196,7 @@ export const mkLet = (vs: [SlangSymbol, Slang][], body: Slang): SlangLet => {
     }
 
     return {
-        kind: SlangTypes.Let,
+        kind: SlangType.Let,
         bindings: theBindings,
         body: body,
     }
@@ -205,19 +205,19 @@ export const mkLet = (vs: [SlangSymbol, Slang][], body: Slang): SlangLet => {
 //////////////////// Conditionals
 
 export const mkIf = (condition: Slang, thenClause: Slang, elseClause: Slang): SlangIf => ({
-    kind: SlangTypes.If,
+    kind: SlangType.If,
     condition: condition,
     thenClause: thenClause,
     elseClause: elseClause,
 })
 
 export const mkCond = (tests: [Slang, Slang][]): SlangCond => ({ 
-    kind: SlangTypes.Cond,
+    kind: SlangType.Cond,
     tests: tests,
 })
 
 export const mkCase = (variable: SlangSymbol, tests: [Slang, Slang][]): SlangCase => ({
-    kind: SlangTypes.Case,
+    kind: SlangType.Case,
     variable: variable,
     tests: tests,
 })
@@ -232,7 +232,7 @@ export const mkFor = (vs: [SlangSymbol, Slang][], body: Slang): SlangFor => {
     }
 
     return {
-        kind: SlangTypes.For,
+        kind: SlangType.For,
         bindings: theBindings,
         body: body,
     }
@@ -246,20 +246,20 @@ export const mkDoseq = (vs: [SlangSymbol, Slang][], body: Slang): SlangDoseq => 
     }
 
     return {
-        kind: SlangTypes.Doseq,
+        kind: SlangType.Doseq,
         bindings: theBindings,
         body: body,
     }
 }
 
 export const mkThreadFirst = (value: Slang, pipes: Slang[]): SlangThreadFirst => ({
-    kind: SlangTypes.ThreadFirst,
+    kind: SlangType.ThreadFirst,
     value: value,
     pipes: pipes,
 })
 
 export const mkThreadLast = (value: Slang, pipes: Slang[]): SlangThreadLast => ({
-    kind: SlangTypes.ThreadLast,
+    kind: SlangType.ThreadLast,
     value: value,
     pipes: pipes,
 })

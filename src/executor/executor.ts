@@ -3,7 +3,7 @@ import type {
 } from '../types'
 
 import {
-    SlangTypes,
+    SlangType,
 } from '../types'
 
 import {
@@ -31,22 +31,22 @@ import * as equality from './equality'
 
 export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
     switch (expr.kind) {
-        case SlangTypes.List:
+        case SlangType.List:
             const resolvedHead = execute(expr.head, ctx)
             return fire(resolvedHead, expr.tail, ctx)
 
-        case SlangTypes.Symbol:
+        case SlangType.Symbol:
             return lookup.lookup(expr, ctx) ?? expr
 
-        case SlangTypes.Optional:
+        case SlangType.Optional:
             return mkOptional(expr.boxed
                 ? execute(expr.boxed, ctx)
                 : null)
 
-        case SlangTypes.Vector:
+        case SlangType.Vector:
             return mkVector(expr.members.map(v => execute(v, ctx)))
 
-        case SlangTypes.Map:
+        case SlangType.Map:
             const newMap = new Map()
 
             for (const [key, value] of expr.table) {
@@ -55,26 +55,26 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
             return mkMapDirect(newMap)
 
-        case SlangTypes.Quoted:
+        case SlangType.Quoted:
             return expr.quoted
 
-        case SlangTypes.Function:
+        case SlangType.Function:
             return armFunc(expr, ctx)
 
-        case SlangTypes.ShcutFunction:
+        case SlangType.ShcutFunction:
             return armShcut(expr, ctx)
 
-        case SlangTypes.Def:
+        case SlangType.Def:
             lookup.globalDefine(expr.identifier, execute(expr.value, ctx))
             return mkUnit()
 
-        case SlangTypes.Let:
+        case SlangType.Let:
             return execute(
                 expr.body,
                 lookup.joinEnvs(ctx, expr.bindings),
             )
 
-        case SlangTypes.Do:
+        case SlangType.Do:
             let result: Slang = mkUnit()
 
             for (const e of expr.expressions) {
@@ -83,7 +83,7 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
             return result
 
-        case SlangTypes.If:
+        case SlangType.If:
             const ifCond = coerce.toBool(execute(expr.condition, ctx))
 
             if (ifCond.value) {
@@ -92,7 +92,7 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
             return execute(expr.elseClause, ctx)
 
-        case SlangTypes.Cond:
+        case SlangType.Cond:
             for (const test of expr.tests) {
                 if (coerce.toBool(execute(test[0], ctx)).value) {
                     return execute(test[1], ctx)
@@ -101,7 +101,7 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
             return mkUnit()
 
-        case SlangTypes.Case:
+        case SlangType.Case:
             expr.variable
             for (const [test, then] of expr.tests) {
                 if (equality.equality([
@@ -114,13 +114,13 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
             return mkUnit()
 
-        case SlangTypes.For:
+        case SlangType.For:
             return mkUnit()
 
-        case SlangTypes.Doseq:
+        case SlangType.Doseq:
             return mkUnit()
 
-        case SlangTypes.ThreadFirst:
+        case SlangType.ThreadFirst:
             let tfresult = execute(expr.value, ctx)
 
             for (const pipe of expr.pipes) {
@@ -131,7 +131,7 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
 
             return tfresult
 
-        case SlangTypes.ThreadLast:
+        case SlangType.ThreadLast:
             let tlresult = execute(expr.value, ctx)
 
             for (const pipe of expr.pipes) {
@@ -143,13 +143,13 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
             return tlresult
 
         default:
-            // case SlangTypes.String:
-            // case SlangTypes.Number:
-            // case SlangTypes.Unit:
-            // case SlangTypes.Bool:
+            // case SlangType.String:
+            // case SlangType.Number:
+            // case SlangType.Unit:
+            // case SlangType.Bool:
 
-            // case SlangTypes.Keyword:
-            // case SlangTypes.Function:
+            // case SlangType.Keyword:
+            // case SlangType.Function:
             return expr
     }
 }

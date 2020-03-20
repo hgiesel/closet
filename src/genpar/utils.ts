@@ -1,6 +1,6 @@
 import {
     Slang,
-    SlangTypes,
+    SlangType,
 } from '../types'
 
 
@@ -8,7 +8,7 @@ const shcutParam = /^%([1-9][0-9]*)?$/u
 
 export const shcutFuncArity = (v: Slang, currentMax: number = 0): number => {
     switch (v.kind) {
-        case SlangTypes.Symbol:
+        case SlangType.Symbol:
             const m = v.value.match(shcutParam)
 
             if (m) {
@@ -21,18 +21,18 @@ export const shcutFuncArity = (v: Slang, currentMax: number = 0): number => {
 
             return currentMax
 
-        case SlangTypes.List:
+        case SlangType.List:
             const headMax = shcutFuncArity(v.head, currentMax)
             const tailMaxes = v.tail.map(t => shcutFuncArity(t, headMax))
 
             return Math.max(...tailMaxes)
 
-        case SlangTypes.Vector:
+        case SlangType.Vector:
             const vmaxes = v.members.map(m => shcutFuncArity(m, currentMax))
 
             return Math.max(...vmaxes)
 
-        case SlangTypes.Map:
+        case SlangType.Map:
             const mmaxes = []
 
             v.table.forEach((v) => {
@@ -41,18 +41,18 @@ export const shcutFuncArity = (v: Slang, currentMax: number = 0): number => {
 
             return Math.max(...mmaxes)
 
-        case SlangTypes.Do:
+        case SlangType.Do:
             const dmaxes = v.expressions.map(e => shcutFuncArity(e, currentMax))
             return Math.max(...dmaxes)
 
-        case SlangTypes.If:
+        case SlangType.If:
             return Math.max(
                 shcutFuncArity(v.condition, currentMax),
                 shcutFuncArity(v.thenClause, currentMax),
                 shcutFuncArity(v.elseClause, currentMax),
             )
 
-        case SlangTypes.Let:
+        case SlangType.Let:
             const lmax = shcutFuncArity(v.body, currentMax)
             const lmaxes = []
 
@@ -63,10 +63,10 @@ export const shcutFuncArity = (v: Slang, currentMax: number = 0): number => {
             return Math.max(...lmaxes)
 
 
-        case SlangTypes.Def:
+        case SlangType.Def:
             return shcutFuncArity(v.value, currentMax)
 
-        case SlangTypes.Case:
+        case SlangType.Case:
             const cmax = shcutFuncArity(v.variable)
 
             return Math.max(...v.tests.map(pair => Math.max(
@@ -74,7 +74,7 @@ export const shcutFuncArity = (v: Slang, currentMax: number = 0): number => {
                 shcutFuncArity(pair[1], cmax),
             )))
 
-        case SlangTypes.Cond:
+        case SlangType.Cond:
             return Math.max(...v.tests.map(pair => Math.max(
                 shcutFuncArity(pair[0], currentMax),
                 shcutFuncArity(pair[1], currentMax),

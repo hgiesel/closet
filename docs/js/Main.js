@@ -1122,7 +1122,6 @@
 	        },
 	    },
 	});
-	//# sourceMappingURL=tokenizer.js.map
 
 	// Generated automatically by nearley, version 2.19.1
 	// http://github.com/Hardmath123/nearley
@@ -1154,7 +1153,6 @@
 	    ],
 	    ParserStart: "start",
 	};
-	//# sourceMappingURL=template.js.map
 
 	// import {
 	var parseTemplate = function (text) {
@@ -1170,7 +1168,6 @@
 	//         ? result
 	//         : sk.next('stop').value
 	// }
-	//# sourceMappingURL=index.js.map
 
 	/*! *****************************************************************************
 	Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1250,71 +1247,70 @@
 	    return ar;
 	}
 
-	var SlangTypes;
-	(function (SlangTypes) {
-	    SlangTypes["Unit"] = "unit";
-	    SlangTypes["Bool"] = "bool";
-	    SlangTypes["Number"] = "number";
-	    SlangTypes["String"] = "string";
-	    SlangTypes["Regex"] = "regex";
-	    SlangTypes["Symbol"] = "symbol";
-	    SlangTypes["Keyword"] = "keyword";
-	    SlangTypes["Quoted"] = "quoted";
-	    SlangTypes["Optional"] = "optional";
-	    SlangTypes["Atom"] = "atom";
-	    SlangTypes["Either"] = "either";
-	    SlangTypes["List"] = "list";
-	    SlangTypes["Vector"] = "vector";
-	    SlangTypes["Map"] = "map";
-	    SlangTypes["MapEntry"] = "mapentry";
-	    SlangTypes["Function"] = "fun";
-	    SlangTypes["ShcutFunction"] = "shcutfun";
-	    SlangTypes["ArmedFunction"] = "armedfun";
+	var SlangType;
+	(function (SlangType) {
+	    SlangType["Unit"] = "unit";
+	    SlangType["Bool"] = "bool";
+	    SlangType["Number"] = "number";
+	    SlangType["String"] = "string";
+	    SlangType["Regex"] = "regex";
+	    SlangType["Symbol"] = "symbol";
+	    SlangType["Keyword"] = "keyword";
+	    SlangType["Quoted"] = "quoted";
+	    SlangType["Optional"] = "optional";
+	    SlangType["Atom"] = "atom";
+	    SlangType["Either"] = "either";
+	    SlangType["List"] = "list";
+	    SlangType["Vector"] = "vector";
+	    SlangType["Map"] = "map";
+	    SlangType["MapEntry"] = "mapentry";
+	    SlangType["Function"] = "fun";
+	    SlangType["ShcutFunction"] = "shcutfun";
+	    SlangType["ArmedFunction"] = "armedfun";
 	    // Statement blocks
-	    SlangTypes["Def"] = "def";
-	    SlangTypes["If"] = "if";
-	    SlangTypes["Do"] = "do";
-	    SlangTypes["Let"] = "let";
-	    SlangTypes["Cond"] = "cond";
-	    SlangTypes["Case"] = "case";
-	    SlangTypes["For"] = "for";
-	    SlangTypes["Doseq"] = "doseq";
-	    SlangTypes["ThreadFirst"] = "threadfirst";
-	    SlangTypes["ThreadLast"] = "threadlast";
-	})(SlangTypes || (SlangTypes = {}));
-	//# sourceMappingURL=types.js.map
+	    SlangType["Def"] = "def";
+	    SlangType["If"] = "if";
+	    SlangType["Do"] = "do";
+	    SlangType["Let"] = "let";
+	    SlangType["Cond"] = "cond";
+	    SlangType["Case"] = "case";
+	    SlangType["For"] = "for";
+	    SlangType["Doseq"] = "doseq";
+	    SlangType["ThreadFirst"] = "threadfirst";
+	    SlangType["ThreadLast"] = "threadlast";
+	})(SlangType || (SlangType = {}));
 
 	var getValue = function (v) { return v.value; };
 	////////// CONSTRUCTORS FOR BASIC TYPES
 	var mkUnit = function () { return ({
-	    kind: SlangTypes.Unit,
+	    kind: SlangType.Unit,
 	}); };
 	var mkBool = function (v) { return ({
-	    kind: SlangTypes.Bool,
+	    kind: SlangType.Bool,
 	    value: v,
 	}); };
 	var mkNumber = function (re) { return ({
-	    kind: SlangTypes.Number,
+	    kind: SlangType.Number,
 	    value: Number(re),
 	}); };
 	var mkSymbol = function (x) { return ({
-	    kind: SlangTypes.Symbol,
+	    kind: SlangType.Symbol,
 	    value: x,
 	}); };
 	var mkKeyword = function (x) { return ({
-	    kind: SlangTypes.Keyword,
+	    kind: SlangType.Keyword,
 	    value: x,
 	}); };
 	var mkString = function (x) { return ({
-	    kind: SlangTypes.String,
+	    kind: SlangType.String,
 	    value: x,
 	}); };
 	var mkRegex = function (x) { return ({
-	    kind: SlangTypes.Regex,
+	    kind: SlangType.Regex,
 	    value: new RegExp(x),
 	}); };
 	////////// CONSTRUCTORS FOR RECURSIVE TYPES
-	var toMapKey = function (v) { return v.kind === SlangTypes.String
+	var toMapKey = function (v) { return v.kind === SlangType.String
 	    ? v.value
 	    : Symbol.for(v.value); };
 	var fromMapKey = function (v) { return typeof v === 'string'
@@ -1322,34 +1318,34 @@
 	    //@ts-ignore
 	    : mkKeyword(v.description); };
 	var mkQuoted = function (x) { return ({
-	    kind: SlangTypes.Quoted,
+	    kind: SlangType.Quoted,
 	    quoted: x,
 	}); };
 	var mkOptional = function (x) { return ({
-	    kind: SlangTypes.Optional,
+	    kind: SlangType.Optional,
 	    boxed: x !== null && x !== void 0 ? x : null,
 	}); };
 	var mkAtom = function (x) { return ({
-	    kind: SlangTypes.Atom,
+	    kind: SlangType.Atom,
 	    atom: x,
 	}); };
 	var mkLeft = function (e) { return ({
-	    kind: SlangTypes.Either,
+	    kind: SlangType.Either,
 	    ok: false,
 	    error: e,
 	}); };
 	var mkRight = function (val) { return ({
-	    kind: SlangTypes.Either,
+	    kind: SlangType.Either,
 	    ok: true,
 	    value: val,
 	}); };
 	var mkList = function (head, tail) { return ({
-	    kind: SlangTypes.List,
+	    kind: SlangType.List,
 	    head: head,
 	    tail: tail,
 	}); };
 	var mkVector = function (members) { return ({
-	    kind: SlangTypes.Vector,
+	    kind: SlangType.Vector,
 	    members: members,
 	}); };
 	var mkMap = function (vs) {
@@ -1369,39 +1365,39 @@
 	        finally { if (e_1) throw e_1.error; }
 	    }
 	    return {
-	        kind: SlangTypes.Map,
+	        kind: SlangType.Map,
 	        table: theMap,
 	    };
 	};
 	var mkMapDirect = function (table) { return ({
-	    kind: SlangTypes.Map,
+	    kind: SlangType.Map,
 	    table: table,
 	}); };
 	//////////////////// Functions
 	var mkFunction = function (name, params, body) { return ({
-	    kind: SlangTypes.Function,
+	    kind: SlangType.Function,
 	    name: name,
 	    params: params,
 	    body: body,
 	}); };
 	var mkShcutFunction = function (name, params, body) { return ({
-	    kind: SlangTypes.ShcutFunction,
+	    kind: SlangType.ShcutFunction,
 	    name: name,
 	    params: params,
 	    body: body,
 	}); };
 	var mkArmedFunction = function (name, app) { return ({
-	    kind: SlangTypes.ArmedFunction,
+	    kind: SlangType.ArmedFunction,
 	    name: name,
 	    apply: app,
 	}); };
 	///////////////// Bindings
 	var mkDo = function (exprs) { return ({
-	    kind: SlangTypes.Do,
+	    kind: SlangType.Do,
 	    expressions: exprs,
 	}); };
 	var mkDef = function (id, val) { return ({
-	    kind: SlangTypes.Def,
+	    kind: SlangType.Def,
 	    identifier: id,
 	    value: val,
 	}); };
@@ -1422,24 +1418,24 @@
 	        finally { if (e_2) throw e_2.error; }
 	    }
 	    return {
-	        kind: SlangTypes.Let,
+	        kind: SlangType.Let,
 	        bindings: theBindings,
 	        body: body,
 	    };
 	};
 	//////////////////// Conditionals
 	var mkIf = function (condition, thenClause, elseClause) { return ({
-	    kind: SlangTypes.If,
+	    kind: SlangType.If,
 	    condition: condition,
 	    thenClause: thenClause,
 	    elseClause: elseClause,
 	}); };
 	var mkCond = function (tests) { return ({
-	    kind: SlangTypes.Cond,
+	    kind: SlangType.Cond,
 	    tests: tests,
 	}); };
 	var mkCase = function (variable, tests) { return ({
-	    kind: SlangTypes.Case,
+	    kind: SlangType.Case,
 	    variable: variable,
 	    tests: tests,
 	}); };
@@ -1461,7 +1457,7 @@
 	        finally { if (e_3) throw e_3.error; }
 	    }
 	    return {
-	        kind: SlangTypes.For,
+	        kind: SlangType.For,
 	        bindings: theBindings,
 	        body: body,
 	    };
@@ -1483,28 +1479,27 @@
 	        finally { if (e_4) throw e_4.error; }
 	    }
 	    return {
-	        kind: SlangTypes.Doseq,
+	        kind: SlangType.Doseq,
 	        bindings: theBindings,
 	        body: body,
 	    };
 	};
 	var mkThreadFirst = function (value, pipes) { return ({
-	    kind: SlangTypes.ThreadFirst,
+	    kind: SlangType.ThreadFirst,
 	    value: value,
 	    pipes: pipes,
 	}); };
 	var mkThreadLast = function (value, pipes) { return ({
-	    kind: SlangTypes.ThreadLast,
+	    kind: SlangType.ThreadLast,
 	    value: value,
 	    pipes: pipes,
 	}); };
-	//# sourceMappingURL=constructors.js.map
 
 	var shcutParam = /^%([1-9][0-9]*)?$/u;
 	var shcutFuncArity = function (v, currentMax) {
 	    if (currentMax === void 0) { currentMax = 0; }
 	    switch (v.kind) {
-	        case SlangTypes.Symbol:
+	        case SlangType.Symbol:
 	            var m = v.value.match(shcutParam);
 	            if (m) {
 	                if (!m[1]) {
@@ -1513,43 +1508,42 @@
 	                return Math.max(currentMax, Number(m[1]));
 	            }
 	            return currentMax;
-	        case SlangTypes.List:
+	        case SlangType.List:
 	            var headMax_1 = shcutFuncArity(v.head, currentMax);
 	            var tailMaxes = v.tail.map(function (t) { return shcutFuncArity(t, headMax_1); });
 	            return Math.max.apply(Math, __spread(tailMaxes));
-	        case SlangTypes.Vector:
+	        case SlangType.Vector:
 	            var vmaxes = v.members.map(function (m) { return shcutFuncArity(m, currentMax); });
 	            return Math.max.apply(Math, __spread(vmaxes));
-	        case SlangTypes.Map:
+	        case SlangType.Map:
 	            var mmaxes_1 = [];
 	            v.table.forEach(function (v) {
 	                mmaxes_1.push(shcutFuncArity(v, currentMax));
 	            });
 	            return Math.max.apply(Math, __spread(mmaxes_1));
-	        case SlangTypes.Do:
+	        case SlangType.Do:
 	            var dmaxes = v.expressions.map(function (e) { return shcutFuncArity(e, currentMax); });
 	            return Math.max.apply(Math, __spread(dmaxes));
-	        case SlangTypes.If:
+	        case SlangType.If:
 	            return Math.max(shcutFuncArity(v.condition, currentMax), shcutFuncArity(v.thenClause, currentMax), shcutFuncArity(v.elseClause, currentMax));
-	        case SlangTypes.Let:
+	        case SlangType.Let:
 	            var lmax_1 = shcutFuncArity(v.body, currentMax);
 	            var lmaxes = [];
 	            v.bindings.forEach(function (v) {
 	                mmaxes_1.push(shcutFuncArity(v, lmax_1));
 	            });
 	            return Math.max.apply(Math, __spread(lmaxes));
-	        case SlangTypes.Def:
+	        case SlangType.Def:
 	            return shcutFuncArity(v.value, currentMax);
-	        case SlangTypes.Case:
+	        case SlangType.Case:
 	            var cmax_1 = shcutFuncArity(v.variable);
 	            return Math.max.apply(Math, __spread(v.tests.map(function (pair) { return Math.max(shcutFuncArity(pair[0], cmax_1), shcutFuncArity(pair[1], cmax_1)); })));
-	        case SlangTypes.Cond:
+	        case SlangType.Cond:
 	            return Math.max.apply(Math, __spread(v.tests.map(function (pair) { return Math.max(shcutFuncArity(pair[0], currentMax), shcutFuncArity(pair[1], currentMax)); })));
 	        default:
 	            return currentMax;
 	    }
 	};
-	//# sourceMappingURL=utils.js.map
 
 	var lexer$1 = moo.compile({
 	    ws: {
@@ -1614,7 +1608,6 @@
 	        value: function (x) { return x.slice(2, -1); },
 	    },
 	});
-	//# sourceMappingURL=tokenizer.js.map
 
 	// Generated automatically by nearley, version 2.19.1
 	// http://github.com/Hardmath123/nearley
@@ -1874,33 +1867,31 @@
 	    ],
 	    ParserStart: "start",
 	};
-	//# sourceMappingURL=slang.js.map
 
 	var parseCode = function (code) {
 	    var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar$1));
 	    var result = p.feed(code).results[0];
 	    return result;
 	};
-	//# sourceMappingURL=index.js.map
 
-	var isUnit = function (val) { return val.kind === SlangTypes.Unit; };
-	var isBool = function (val) { return val.kind === SlangTypes.Bool; };
-	var isNumber = function (val) { return val.kind === SlangTypes.Number; };
-	var isSymbol = function (val) { return val.kind === SlangTypes.Symbol; };
-	var isKeyword = function (val) { return val.kind === SlangTypes.Keyword; };
-	var isString = function (val) { return val.kind === SlangTypes.String; };
-	var isRegex = function (val) { return val.kind === SlangTypes.Regex; };
-	var isQuoted = function (val) { return val.kind === SlangTypes.Quoted; };
-	var isOptional = function (val) { return val.kind === SlangTypes.Optional; };
-	var isAtom = function (val) { return val.kind === SlangTypes.Atom; };
-	var isEither = function (val) { return val.kind === SlangTypes.Either; };
+	var isUnit = function (val) { return val.kind === SlangType.Unit; };
+	var isBool = function (val) { return val.kind === SlangType.Bool; };
+	var isNumber = function (val) { return val.kind === SlangType.Number; };
+	var isSymbol = function (val) { return val.kind === SlangType.Symbol; };
+	var isKeyword = function (val) { return val.kind === SlangType.Keyword; };
+	var isString = function (val) { return val.kind === SlangType.String; };
+	var isRegex = function (val) { return val.kind === SlangType.Regex; };
+	var isQuoted = function (val) { return val.kind === SlangType.Quoted; };
+	var isOptional = function (val) { return val.kind === SlangType.Optional; };
+	var isAtom = function (val) { return val.kind === SlangType.Atom; };
+	var isEither = function (val) { return val.kind === SlangType.Either; };
 	var isOk = function (val) { return val.ok; };
-	var isList = function (val) { return val.kind === SlangTypes.List; };
-	var isVector = function (val) { return val.kind === SlangTypes.Vector; };
-	var isMap = function (val) { return val.kind === SlangTypes.Map; };
-	var isFunction = function (val) { return val.kind === SlangTypes.Function; };
-	var isShcutFunction = function (val) { return val.kind === SlangTypes.ShcutFunction; };
-	var isArmedFunction = function (val) { return val.kind === SlangTypes.ArmedFunction; };
+	var isList = function (val) { return val.kind === SlangType.List; };
+	var isVector = function (val) { return val.kind === SlangType.Vector; };
+	var isMap = function (val) { return val.kind === SlangType.Map; };
+	var isFunction = function (val) { return val.kind === SlangType.Function; };
+	var isShcutFunction = function (val) { return val.kind === SlangType.ShcutFunction; };
+	var isArmedFunction = function (val) { return val.kind === SlangType.ArmedFunction; };
 	var isExecutable = function (val) { return (isFunction(val) ||
 	    isShcutFunction(val) ||
 	    isArmedFunction(val) ||
@@ -1908,7 +1899,6 @@
 	    isMapKey(val)); };
 	var isMapKey = function (val) { return (isString(val) ||
 	    isKeyword(val)); };
-	//# sourceMappingURL=reflection.js.map
 
 	var mkTypeError = function (types, position) { return ({
 	    kind: 'TypeError',
@@ -1981,7 +1971,6 @@
 	var notExecutable = function (kind) {
 	    return mkNotExecutableError(kind);
 	};
-	//# sourceMappingURL=exception.js.map
 
 	var pureToBool = function (val) {
 	    if (isBool(val)) {
@@ -2066,7 +2055,6 @@
 	var toString = function (val) {
 	    return mkString(pureToString(val));
 	};
-	//# sourceMappingURL=coerce.js.map
 
 	var Map$1;
 	(function (Map) {
@@ -2886,7 +2874,6 @@
 	    var _c;
 	    return mkOptional((_c = listArg.members[idx.value]) !== null && _c !== void 0 ? _c : null);
 	};
-	//# sourceMappingURL=seq.js.map
 
 	var reshape = function (arr, columnSize) {
 	    var currIndex;
@@ -2906,7 +2893,6 @@
 	        }
 	    });
 	};
-	//# sourceMappingURL=utils.js.map
 
 	var indexing$1 = function (_a) {
 	    var _b = __read(_a, 2), mapArg = _b[0], idx = _b[1];
@@ -3112,7 +3098,6 @@
 	    }
 	    return mkMapDirect(newMap);
 	};
-	//# sourceMappingURL=map.js.map
 
 	var apply = function (func, args, ctx) {
 	    var result = func.apply(args, ctx);
@@ -3173,7 +3158,6 @@
 	var fire = function (exec, args, ctx) {
 	    return apply(arm(exec, ctx), args, ctx);
 	};
-	//# sourceMappingURL=functions.js.map
 
 	var identity = function (_a) {
 	    var _b = __read(_a, 1), val = _b[0];
@@ -3183,24 +3167,23 @@
 	    var _b = __read(_a, 2), val = _b[0], _throwaway = _b[1];
 	    return val;
 	};
-	//# sourceMappingURL=combinators.js.map
 
 	var twoValueCompare = function (val1, val2) {
 	    if (val1.kind !== val2.kind) {
 	        return false;
 	    }
-	    else if (val1.kind == SlangTypes.Unit) {
+	    else if (val1.kind == SlangType.Unit) {
 	        return true;
 	    }
-	    else if (val1.kind === SlangTypes.Bool ||
-	        val1.kind === SlangTypes.Number ||
-	        val1.kind === SlangTypes.Symbol ||
-	        val1.kind === SlangTypes.Keyword ||
-	        val1.kind === SlangTypes.String) {
+	    else if (val1.kind === SlangType.Bool ||
+	        val1.kind === SlangType.Number ||
+	        val1.kind === SlangType.Symbol ||
+	        val1.kind === SlangType.Keyword ||
+	        val1.kind === SlangType.String) {
 	        //@ts-ignore
 	        return val1.value === val2.value;
 	    }
-	    else if (val1.kind === SlangTypes.List) {
+	    else if (val1.kind === SlangType.List) {
 	        //@ts-ignore
 	        if (val1.tail.length !== val2.tail.length) {
 	            return false;
@@ -3216,7 +3199,7 @@
 	        }
 	        return check;
 	    }
-	    else if (val1.kind === SlangTypes.Vector) {
+	    else if (val1.kind === SlangType.Vector) {
 	        //@ts-ignore
 	        if (val1.members.length !== val2.members.length) {
 	            return false;
@@ -3232,7 +3215,7 @@
 	        }
 	        return check;
 	    }
-	    else if (val1.kind === SlangTypes.Map) {
+	    else if (val1.kind === SlangType.Map) {
 	        //@ts-ignore
 	        if (val1.table.size !== val2.table.size) {
 	            return false;
@@ -3248,11 +3231,11 @@
 	        });
 	        return result_1;
 	    }
-	    else if (val1.kind === SlangTypes.Quoted) {
+	    else if (val1.kind === SlangType.Quoted) {
 	        //@ts-ignore
 	        return twoValueCompare(val1.quoted, val2.quoted);
 	    }
-	    else if (val1.kind === SlangTypes.Optional) {
+	    else if (val1.kind === SlangType.Optional) {
 	        if (val1.boxed === null) {
 	            //@ts-ignore
 	            if (val2.boxed === null) {
@@ -3263,7 +3246,7 @@
 	        //@ts-ignore
 	        return twoValueCompare(val1.boxed, val2.boxed);
 	    }
-	    else /* val1.kind === SlangTypes.Function */ {
+	    else /* val1.kind === SlangType.Function */ {
 	        return false;
 	    }
 	};
@@ -3305,7 +3288,6 @@
 	    }
 	    return mkBool(result);
 	};
-	//# sourceMappingURL=equality.js.map
 
 	var and = function (args) {
 	    var e_1, _a;
@@ -3347,7 +3329,6 @@
 	    var headArg = args[0];
 	    return mkBool(!toBool(headArg).value);
 	};
-	//# sourceMappingURL=bool.js.map
 
 	var addition = function (args) {
 	    var e_1, _a;
@@ -3543,7 +3524,6 @@
 	        ? Number.MIN_SAFE_INTEGER
 	        : Math.max.apply(Math, __spread(args.map(function (a) { return a.value; }))));
 	};
-	//# sourceMappingURL=math.js.map
 
 	var atom = function (_a) {
 	    var _b = __read(_a, 1), value = _b[0];
@@ -3565,7 +3545,6 @@
 	    atom.atom = val;
 	    return atom;
 	};
-	//# sourceMappingURL=atoms.js.map
 
 	var rand = function (_a) {
 	    var _b = __read(_a), props = _b.slice(0);
@@ -3627,7 +3606,6 @@
 	    var _b = __read(_a, 1), vec = _b[0];
 	    return mkVector(safeShuffle(vec.members));
 	};
-	//# sourceMappingURL=random.js.map
 
 	var String$1;
 	(function (String) {
@@ -3741,7 +3719,6 @@
 	        return mkVector(vec.members.slice().reverse());
 	    };
 	})(Vector$1 || (Vector$1 = {}));
-	//# sourceMappingURL=strings.js.map
 
 	var fixedTable = {
 	    /////////////////// COMBINATORS
@@ -4291,7 +4268,6 @@
 	        args: function (args) { return isString(args[0]); },
 	    })),
 	};
-	//# sourceMappingURL=fixedTable.js.map
 
 	var globalTable = new Map();
 	var globalDefine = function (key, value) {
@@ -4358,24 +4334,23 @@
 	    }
 	    return resultEnv;
 	};
-	//# sourceMappingURL=lookup.js.map
 
 	var execute = function (expr, ctx) {
 	    var e_1, _a, e_2, _b, e_3, _c, e_4, _d, e_5, _e, e_6, _f;
 	    var _g;
 	    switch (expr.kind) {
-	        case SlangTypes.List:
+	        case SlangType.List:
 	            var resolvedHead = execute(expr.head, ctx);
 	            return fire(resolvedHead, expr.tail, ctx);
-	        case SlangTypes.Symbol:
+	        case SlangType.Symbol:
 	            return (_g = lookup(expr, ctx)) !== null && _g !== void 0 ? _g : expr;
-	        case SlangTypes.Optional:
+	        case SlangType.Optional:
 	            return mkOptional(expr.boxed
 	                ? execute(expr.boxed, ctx)
 	                : null);
-	        case SlangTypes.Vector:
+	        case SlangType.Vector:
 	            return mkVector(expr.members.map(function (v) { return execute(v, ctx); }));
-	        case SlangTypes.Map:
+	        case SlangType.Map:
 	            var newMap = new Map();
 	            try {
 	                for (var _h = __values(expr.table), _j = _h.next(); !_j.done; _j = _h.next()) {
@@ -4391,18 +4366,18 @@
 	                finally { if (e_1) throw e_1.error; }
 	            }
 	            return mkMapDirect(newMap);
-	        case SlangTypes.Quoted:
+	        case SlangType.Quoted:
 	            return expr.quoted;
-	        case SlangTypes.Function:
+	        case SlangType.Function:
 	            return armFunc(expr, ctx);
-	        case SlangTypes.ShcutFunction:
+	        case SlangType.ShcutFunction:
 	            return armShcut(expr, ctx);
-	        case SlangTypes.Def:
+	        case SlangType.Def:
 	            globalDefine(expr.identifier, execute(expr.value, ctx));
 	            return mkUnit();
-	        case SlangTypes.Let:
+	        case SlangType.Let:
 	            return execute(expr.body, joinEnvs(ctx, expr.bindings));
-	        case SlangTypes.Do:
+	        case SlangType.Do:
 	            var result = mkUnit();
 	            try {
 	                for (var _l = __values(expr.expressions), _m = _l.next(); !_m.done; _m = _l.next()) {
@@ -4418,13 +4393,13 @@
 	                finally { if (e_2) throw e_2.error; }
 	            }
 	            return result;
-	        case SlangTypes.If:
+	        case SlangType.If:
 	            var ifCond = toBool(execute(expr.condition, ctx));
 	            if (ifCond.value) {
 	                return execute(expr.thenClause, ctx);
 	            }
 	            return execute(expr.elseClause, ctx);
-	        case SlangTypes.Cond:
+	        case SlangType.Cond:
 	            try {
 	                for (var _o = __values(expr.tests), _p = _o.next(); !_p.done; _p = _o.next()) {
 	                    var test = _p.value;
@@ -4441,7 +4416,7 @@
 	                finally { if (e_3) throw e_3.error; }
 	            }
 	            return mkUnit();
-	        case SlangTypes.Case:
+	        case SlangType.Case:
 	            expr.variable;
 	            try {
 	                for (var _q = __values(expr.tests), _r = _q.next(); !_r.done; _r = _q.next()) {
@@ -4462,11 +4437,11 @@
 	                finally { if (e_4) throw e_4.error; }
 	            }
 	            return mkUnit();
-	        case SlangTypes.For:
+	        case SlangType.For:
 	            return mkUnit();
-	        case SlangTypes.Doseq:
+	        case SlangType.Doseq:
 	            return mkUnit();
-	        case SlangTypes.ThreadFirst:
+	        case SlangType.ThreadFirst:
 	            var tfresult = execute(expr.value, ctx);
 	            try {
 	                for (var _t = __values(expr.pipes), _u = _t.next(); !_u.done; _u = _t.next()) {
@@ -4484,7 +4459,7 @@
 	                finally { if (e_5) throw e_5.error; }
 	            }
 	            return tfresult;
-	        case SlangTypes.ThreadLast:
+	        case SlangType.ThreadLast:
 	            var tlresult = execute(expr.value, ctx);
 	            try {
 	                for (var _v = __values(expr.pipes), _w = _v.next(); !_w.done; _w = _v.next()) {
@@ -4503,23 +4478,19 @@
 	            }
 	            return tlresult;
 	        default:
-	            // case SlangTypes.String:
-	            // case SlangTypes.Number:
-	            // case SlangTypes.Unit:
-	            // case SlangTypes.Bool:
-	            // case SlangTypes.Keyword:
-	            // case SlangTypes.Function:
+	            // case SlangType.String:
+	            // case SlangType.Number:
+	            // case SlangType.Unit:
+	            // case SlangType.Bool:
+	            // case SlangType.Keyword:
+	            // case SlangType.Function:
 	            return expr;
 	    }
 	};
-	//# sourceMappingURL=executor.js.map
-
-	//# sourceMappingURL=index.js.map
 
 	globalThis.parseTemplate = parseTemplate;
 	globalThis.parseCode = parseCode;
 	globalThis.execute = execute;
 	globalThis.codeToString = toString;
-	//# sourceMappingURL=index.js.map
 
 }());

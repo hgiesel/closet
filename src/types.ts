@@ -1,6 +1,6 @@
 import { SlangError } from './executor/exception'
 
-export enum SlangTypes {
+export enum SlangType {
     Unit = 'unit',
     Bool = 'bool',
     Number = 'number',
@@ -42,86 +42,86 @@ export enum SlangTypes {
 ////////////////// BASIC TYPES
 
 export interface SlangUnit {
-    kind: SlangTypes.Unit
+    kind: SlangType.Unit
 }
 
 export interface SlangBool {
-    kind: SlangTypes.Bool
+    kind: SlangType.Bool
     value: boolean,
 }
 
 export interface SlangNumber {
-    kind: SlangTypes.Number
+    kind: SlangType.Number
     value: number,
 }
 
 export interface SlangSymbol {
-    kind: SlangTypes.Symbol
+    kind: SlangType.Symbol
     value: string,
 }
 
 export interface SlangKeyword {
-    kind: SlangTypes.Keyword
+    kind: SlangType.Keyword
     value: string,
 }
 
 export interface SlangString {
-    kind: SlangTypes.String
+    kind: SlangType.String
     value: string,
 }
 
 export interface SlangRegex {
-    kind: SlangTypes.Regex
+    kind: SlangType.Regex
     value: RegExp,
 }
 
 ////////////////// RECURSIVE TYPES
 
 export interface SlangList {
-    kind: SlangTypes.List
+    kind: SlangType.List
     head: Slang,
     tail: Slang[],
 }
 
 export interface SlangVector {
-    kind: SlangTypes.Vector
+    kind: SlangType.Vector
     members: Slang[],
 }
 
 export interface SlangMap {
-    kind: SlangTypes.Map,
+    kind: SlangType.Map,
     table: Map<string | symbol, Slang>,
 }
 
 export interface SlangMapEntry {
-    kind: SlangTypes.MapEntry,
+    kind: SlangType.MapEntry,
     first: SlangMapKey,
     second: Slang,
 }
 
 export interface SlangQuoted {
-    kind: SlangTypes.Quoted,
+    kind: SlangType.Quoted,
     quoted: Slang,
 }
 
 export interface SlangOptional {
-    kind: SlangTypes.Optional,
+    kind: SlangType.Optional,
     boxed: Slang | null,
 }
 
 export interface SlangAtom {
-    kind: SlangTypes.Atom,
+    kind: SlangType.Atom,
     atom: Slang,
 }
 
 export interface SlangEitherRight {
-    kind: SlangTypes.Either,
+    kind: SlangType.Either,
     ok: true,
     value: Slang,
 }
 
 export interface SlangEitherLeft {
-    kind: SlangTypes.Either,
+    kind: SlangType.Either,
     ok: false,
     error: SlangError,
 }
@@ -132,21 +132,21 @@ export type SlangEither = SlangEitherRight
 //////////////////
 
 export interface SlangFunction {
-    kind: SlangTypes.Function,
+    kind: SlangType.Function,
     name: string,
     params: SlangSymbol[],
     body: Slang,
 }
 
 export interface SlangShcutFunction {
-    kind: SlangTypes.ShcutFunction,
+    kind: SlangType.ShcutFunction,
     name: string,
     params: number,
     body: Slang,
 }
 
 export interface SlangArmedFunction {
-    kind: SlangTypes.ArmedFunction,
+    kind: SlangType.ArmedFunction,
     name: string,
     apply: (args: Slang[], ctx: Map<string, Slang>) => SlangEither,
 }
@@ -154,60 +154,60 @@ export interface SlangArmedFunction {
 //////////////////
 
 export interface SlangDo {
-    kind: SlangTypes.Do,
+    kind: SlangType.Do,
     expressions: Slang[]
 }
 
 export interface SlangDef {
-    kind: SlangTypes.Def,
+    kind: SlangType.Def,
     identifier: SlangSymbol,
     value: Slang,
 }
 
 export interface SlangLet {
-    kind: SlangTypes.Let,
+    kind: SlangType.Let,
     bindings: Map<string, Slang>,
     body: Slang,
 }
 
 export interface SlangIf {
-    kind: SlangTypes.If,
+    kind: SlangType.If,
     condition: Slang,
     thenClause: Slang,
     elseClause: Slang /* default to Unit */,
 }
 
 export interface SlangCond {
-    kind: SlangTypes.Cond,
+    kind: SlangType.Cond,
     tests: [Slang, Slang][],
 }
 
 export interface SlangCase {
-    kind: SlangTypes.Case,
+    kind: SlangType.Case,
     variable: SlangSymbol,
     tests: [Slang, Slang][],
 }
 
 export interface SlangFor {
-    kind: SlangTypes.For,
+    kind: SlangType.For,
     bindings: Map<string, Slang>,
     body: Slang,
 }
 
 export interface SlangDoseq {
-    kind: SlangTypes.Doseq,
+    kind: SlangType.Doseq,
     bindings: Map<string, Slang>,
     body: Slang,
 }
 
 export interface SlangThreadFirst {
-    kind: SlangTypes.ThreadFirst,
+    kind: SlangType.ThreadFirst,
     value: Slang,
     pipes: Slang[],
 }
 
 export interface SlangThreadLast {
-    kind: SlangTypes.ThreadLast,
+    kind: SlangType.ThreadLast,
     value: Slang,
     pipes: Slang[],
 }

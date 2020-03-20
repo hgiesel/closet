@@ -3,6 +3,10 @@
 <script src="js/Main.js"></script>
 <link rel="stylesheet" type="text/css" href="css/tester.css">
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/prism.min.js" integrity="sha256-YZQM6/hLBZYkb01VYf17isoQM4qpaOP+aX96hhYrWhg=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/components/prism-clojure.min.js" integrity="sha256-dqJuEK5/MPu3IaeQRlBYg0ZPuodNyPUDziwjDBlcEbI=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/themes/prism-tomorrow.min.css" integrity="sha256-xevuwyBEb2ZYh4nDhj0g3Z/rDBnM569hg9Vq6gEw/Sg=" crossorigin="anonymous" />
+
 {% include tester.html %}
 
 <script>
@@ -25,7 +29,6 @@ const display = (htmlElement, obj) => {
 
     htmlElement.style.display = 'block'
 }
-
 
 const templateParsed = document.getElementById('template-parsed')
 const codeParsed = document.getElementById('code-parsed')

@@ -7,6 +7,10 @@ body {
   margin:0;
 }
 
+.codearea {
+  font-family: monospace;
+}
+
 textarea {
   left:10px;
   right:10px;

@@ -1,14 +1,23 @@
+<!-- Code Mirror CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.css" integrity="sha256-vZ3SaLOjnKO/gGvcUWegySoDU6ff33CS5i9ot8J9Czk=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.js" integrity="sha256-C1kVf8tUtnM4eBSZM0mE7kcDrTYuVGxACdyYvhMEeRo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/mode/clojure/clojure.min.js" integrity="sha256-rdlGcdCWKSU7f61JkJGn29gSD+38dLJ/KeIiDjN/1v8=" crossorigin="anonymous"></script>
+
 <textarea id="template" cols="30" rows="10">This is your [[first]] example.</textarea>
-<textarea id="code" cols="30" rows="10"></textarea>
+<textarea id="code" class="codearea" cols="30" rows="10"></textarea>
 
 <script>
+const templateTA = document.getElementById('template')
+const codeTA = document.getElementById('code')
+
+const myCodeMirror = CodeMirror.fromTextArea(templateTA)
 const sparams = new URLSearchParams(location.search)
 
-document.getElementById('template').value = sparams.has('template')
+templateTA.value = sparams.has('template')
     ? sparams.get('template')
     : 'Your template text...'
 
-document.getElementById('code').value = sparams.has('code')
+codeTA.value = sparams.has('code')
     ? sparams.get('code')
     : 'Your code...'
 </script>

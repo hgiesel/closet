@@ -8,14 +8,14 @@ body {
 }
 
 textarea {
-  top: 5px;
+  position: relative;
+  top: -60px;
   width: 45%;
   height: calc(100vh - 20px);
   resize: none;
 }
 
 .CodeMirror {
-  top: 5px;
   display: inline-block;
   width: 45%;
 }

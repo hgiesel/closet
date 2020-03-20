@@ -49,8 +49,8 @@ import {
 
 import execute from './executor'
 
-export const apply = (func: SlangArmedFunction, args: Slang[], ctx: Map<string, Slang>): Slang => {
-    const result = func.apply(args, ctx)
+export const apply = (func: SlangArmedFunction, args: Slang[]): Slang => {
+    const result = func.apply(args)
 
     if (isOk(result)) {
         return result.value
@@ -65,20 +65,20 @@ const adapt = (sl: Slang): SlangEither => {
         : mkRight(sl)
 }
 
-export const wrap = (name: string, func: (a: Slang[], ctx: Map<string, Slang>) => Slang): SlangArmedFunction => (
+export const wrap = (name: string, func: (a: Slang[]) => Slang) => (ctx: Map<string, Slang>): SlangArmedFunction => (
     mkArmedFunction(
         name,
-        (args, ctx) => adapt(func(args.map(t => execute(t, ctx)), ctx)),
+        (args) => adapt(func(args.map(t => execute(t, ctx)))),
     )
 )
 
 export const armFunc = (func: SlangFunction, creationCtx: Map<string, Slang>): SlangArmedFunction => (
     mkArmedFunction(func.name, typecheck({
-        f: (args, ctx) => execute(
+        f: (args) => execute(
             func.body,
-            joinEnvs(creationCtx, ctx, createEnv(
+            joinEnvs(creationCtx, createEnv(
                 func.params,
-                args.map(t => execute(t, ctx)),
+                args.map(t => execute(t, creationCtx)),
             )),
         ),
         argc: (count) => count === func.params.length,
@@ -87,10 +87,10 @@ export const armFunc = (func: SlangFunction, creationCtx: Map<string, Slang>): S
 
 export const armShcut = (func: SlangShcutFunction, creationCtx: Map<string, Slang>): SlangArmedFunction => (
     mkArmedFunction(func.name, typecheck({
-        f: (args, ctx) => execute(
+        f: (args) => execute(
             func.body,
-            joinEnvs(creationCtx, ctx, createNumberedEnv(
-                args.map(t => execute(t, ctx)),
+            joinEnvs(creationCtx, createNumberedEnv(
+                args.map(t => execute(t, creationCtx)),
             )),
         ),
         argc: (count) => count === func.params,
@@ -129,6 +129,6 @@ export const arm = (exec: Slang, ctx: Map<string, Slang>): SlangArmedFunction =>
     : throwException('list', notExecutable(exec.kind))
 )
 
-export const fire = (exec: Slang, args: Slang[], ctx: Map<string, Slang>): Slang => {
-    return apply(arm(exec, ctx), args, ctx)
+export const fire = (exec: Slang, ctx: Map<string, Slang>, args: Slang[]): Slang => {
+    return apply(arm(exec, ctx), args)
 }

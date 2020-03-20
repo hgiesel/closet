@@ -169,7 +169,7 @@ export const mkShcutFunction = (name: string, params: number, body: Slang): Slan
     body: body,
 })
 
-export const mkArmedFunction = (name: string, app: (args: Slang[], ctx: Map<string, Slang>) => SlangEither): SlangArmedFunction => ({
+export const mkArmedFunction = (name: string, app: (args: Slang[]) => SlangEither): SlangArmedFunction => ({
     kind: SlangType.ArmedFunction,
     name: name,
     apply: app,

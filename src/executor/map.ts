@@ -3,7 +3,7 @@ import {
     SlangMap,
     SlangVector,
     SlangOptional,
-    SlangExecutable,
+    SlangArmedFunction,
     SlangMapKey,
     SlangBool,
 } from '../types'
@@ -100,19 +100,17 @@ export const merge = ([...maps]: [SlangMap, ...SlangMap[]]): SlangMap => {
     return mkMapDirect(newMap)
 }
 
-export const mergeWith = ([func, headMap, ...args]: [SlangExecutable, SlangMap, ...SlangMap[]], ctx: Map<string, Slang>) => {
+export const mergeWith = ([func, headMap, ...args]: [SlangArmedFunction, SlangMap, ...SlangMap[]]) => {
     const newMap = new Map()
 
     for (const [key, value] of headMap.table) {
         newMap.set(key, value)
     }
 
-    const armed = arm(func, ctx)
-
     for (const map of args) {
         for (const [key, value] of map.table) {
             if (newMap.has(key)) {
-                newMap.set(key, apply(armed, [newMap.get(key), value], ctx))
+                newMap.set(key, apply(func, [newMap.get(key), value]))
             }
             else {
                 newMap.set(key, value)

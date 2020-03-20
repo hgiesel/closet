@@ -33,7 +33,7 @@ export const execute = function(expr: Slang, ctx: Map<string, Slang>): Slang {
     switch (expr.kind) {
         case SlangType.List:
             const resolvedHead = execute(expr.head, ctx)
-            return fire(resolvedHead, expr.tail, ctx)
+            return fire(resolvedHead, ctx, expr.tail)
 
         case SlangType.Symbol:
             return lookup.lookup(expr, ctx) ?? expr

@@ -17,6 +17,7 @@ import {
     isBool,
     isMapKey,
     isExecutable,
+    isArmedFunction,
 } from '../reflection'
 
 import * as combinators from './combinators'
@@ -235,7 +236,7 @@ export const fixedTable = {
             : seq.List.takeWhile,
         argc: (count) => count === 2,
         args: ([func, seqArg]) =>
-            (isMap(seqArg) && isExecutable(func)) ||
+            (isMap(seqArg) && isArmedFunction(func)) ||
             (isVector(seqArg) && isExecutable(func)) ||
             (isList(seqArg) && isExecutable(func))
     })),

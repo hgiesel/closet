@@ -25,9 +25,8 @@ const localLookup = (ctx: Map<string, Slang>, key: SlangSymbol): Slang | null =>
 
 export const lookup = (key: SlangSymbol, ctx: Map<string, Slang>): Slang => {
     return fixedTable[key.value]
-        ?? localLookup(ctx, key)
-        ?? globalLookup(key)
-        ?? key
+        ? fixedTable[key.value](ctx)
+        : localLookup(ctx, key) ?? globalLookup(key) ?? key
 }
 
 export const createEnv = (params: SlangSymbol[], args: Slang[]): Map<string, Slang> => {

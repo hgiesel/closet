@@ -1,7 +1,7 @@
 import type {
     Slang,
     SlangAtom,
-    SlangExecutable,
+    SlangArmedFunction,
 } from '../types'
 
 import {
@@ -9,7 +9,7 @@ import {
 } from '../constructors'
 
 import {
-    fire,
+    apply,
 } from './functions'
 
 export const atom = ([value]: [Slang]): SlangAtom => {
@@ -20,10 +20,10 @@ export const deref = ([atom]: [SlangAtom]): Slang => {
     return atom.atom
 }
 
-export const swapX = ([atom, headComp, ...otherComps]: [SlangAtom, SlangExecutable, ...Slang[]], ctx: Map<string, Slang>): SlangAtom => {
+export const swapX = ([atom, headComp, ...otherComps]: [SlangAtom, SlangArmedFunction, ...Slang[]]): SlangAtom => {
     const args = [deref([atom]), ...otherComps]
 
-    const result = fire(headComp, args, ctx)
+    const result = apply(headComp, args)
     atom.atom = result
 
     return atom

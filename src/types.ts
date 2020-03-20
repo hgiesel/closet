@@ -148,7 +148,7 @@ export interface SlangShcutFunction {
 export interface SlangArmedFunction {
     kind: SlangType.ArmedFunction,
     name: string,
-    apply: (args: Slang[], ctx: Map<string, Slang>) => SlangEither,
+    apply: (args: Slang[]) => SlangEither,
 }
 
 //////////////////

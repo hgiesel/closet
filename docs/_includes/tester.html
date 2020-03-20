@@ -9,8 +9,8 @@
 <script>
 const templateTA = document.getElementById('template')
 const codeTA = document.getElementById('code')
+const codeCM = CodeMirror.fromTextArea(codeTA)
 
-const myCodeMirror = CodeMirror.fromTextArea(codeTA)
 const sparams = new URLSearchParams(location.search)
 
 templateTA.value = sparams.has('template')

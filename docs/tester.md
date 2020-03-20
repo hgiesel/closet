@@ -38,8 +38,8 @@ const templateApplied = document.getElementById('template-applied')
 const btn = document.getElementById('btn-execute')
 
 btn.addEventListener('click', (_e) => {
-    const templateTxt = document.getElementById('template').value
-    const code = document.getElementById('code').value
+    const templateTxt = templateTA.value
+    const code = codeCM.getValue()
 
     console.time('code parse')
     const codeOutput = parseCode(code)

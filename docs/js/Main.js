@@ -3826,82 +3826,26 @@
 	            return type2;
 	    }
 	};
-	//# sourceMappingURL=optic-helper.js.map
-
 	var dimap = function (l, r, f) { return function (x) { return r(f(l(x))); }; };
 	var lmap = function (l, f) { return function (x) { return f(l(x)); }; };
 	// const rmap = (r: (x: unknown) => unknown, f: (y: unknown) => unknown) => (x: unknown) => r(f(x))
 	var forgetDimap = function (l, _r, f) { return lmap(l, f); };
-	var dictFunc = {
+	var dictSetter = {
 	    dimap: dimap,
-	    // u.assert(arguments.length === 3, "dimap: there should be 3 arguments");
-	    // u.assert(u.isFunction(f), "dimap: f should be a function");
-	    // u.assert(u.isFunction(g), "dimap: g should be a function");
 	    first: function (self) { return function (p) { return [self(p[0]), p[1]]; }; },
-	    // u.assert(arguments.length === 1, "first: there should be 1 argument");
-	    right: function (self) { return function (x) { return [x[0], x[0] ? self(x[1]) : x[1]]; }; },
-	    // u.assert(arguments.length === 1, "right: there should be 1 argument");
+	    right: function (self) { return function (x) { return (console.log('eju', self, x), [x[0].boxed ? self(x[0].boxed) : x[0], x[1]]); }; },
 	    wander: function (self) { return function (xs) { return xs.map(self); }; },
 	};
-	var dictForgetNone = {
+	var dictGetter = {
 	    dimap: forgetDimap,
-	    first: function (self) { return function (x) { return (console.log('fofo', x, self), self(x[0])); }; },
-	    // u.assert(arguments.length === 1, "first: there should be 1 argument");
+	    first: function (self) { return function (x) { return self(x[0]); }; },
 	    wander: function (self) { return function (xs) { return xs.map(self); }; },
 	};
-	var indexGetter = function (i) { return function (s) { return [s[i], s]; }; };
-	var ix = function (_a) {
-	    var _b = __read(_a, 1), i = _b[0];
-	    var getter = function (s) { var _a; return (console.log(s, i, 'meh'), [mkOptional((_a = s.members[i.value]) !== null && _a !== void 0 ? _a : null), s]); };
-	    var setter = function (_a) {
-	        var _b = __read(_a, 2), val = _b[0], orig = _b[1];
-	        var copy = mkVector(__spread(orig.members));
-	        copy.members[i.value] = val;
-	        return copy;
-	    };
-	    return mkOptic(OpticType.Affine, 'ix', function (dict, f0) {
-	        var f1 = dict.first(f0);
-	        var f2 = dict.dimap(getter, setter, f1);
-	        return f2;
-	    });
-	};
-	var key = function (_a) {
-	    var _b = __read(_a, 1), k = _b[0];
-	    var getter = indexGetter(k);
-	    var setter = function (_a) {
-	        var _b = __read(_a, 2), val = _b[0], orig = _b[1];
-	        var copy = Object.assign({}, orig);
-	        copy.set(toMapKey(k), val);
-	        return copy;
-	    };
-	    return mkOptic(OpticType.Lens, 'key', function (dict, f0) {
-	        var f1 = dict.first(f0);
-	        var f2 = dict.dimap(getter, setter, f1);
-	        return f2;
-	    });
-	};
-	var get = function (_a) {
-	    var _b = __read(_a, 2), lens = _b[0], value = _b[1];
-	    var f = run(lens.members, dictForgetNone, function (x) { return identity([x]); });
-	    var result = f(value);
-	    console.log('hey there', lens, value, f, result);
-	    return result;
-	};
-	var tryGet = function (_a) {
-	    var _b = __read(_a, 2), affine = _b[0], value = _b[1];
-	    var f = run(affine.members, dictForgetNone, function (x) { return identity([x]); });
-	    var result = f(value);
-	    return result;
-	};
-	var set = function (_a) {
-	    var _b = __read(_a, 3), setter = _b[0], d = _b[1], value = _b[2];
-	    var f = run(setter.members, dictFunc, function (x) { return constant2([d, x]); });
-	    return f(value);
-	};
-	var over = function (_a, ctx) {
-	    var _b = __read(_a, 3), setter = _b[0], g = _b[1], value = _b[2];
-	    var f = run(setter.members, dictFunc, function (x) { return apply(g, [x], ctx); });
-	    return f(value);
+	var dictAffine = {
+	    dimap: forgetDimap,
+	    first: function (self) { return function (x) { return self(x[0]); }; },
+	    //  basically fmap @Maybe
+	    right: function (self) { return function (x) { return x[0].boxed ? self(x[0].boxed) : x[0]; }; },
 	};
 	var run = function (optics, dict, f) {
 	    var e_1, _a;
@@ -3924,10 +3868,73 @@
 	    }
 	    return f;
 	};
-	// const path = [traversed(), key('c')]
-	// const old = [{a: 1, b: 2}, {b: 3, c: 4}]
-	// const newv = over(path, old, (x) => (x + 1))
-	//# sourceMappingURL=optic.js.map
+	//# sourceMappingURL=optic-helper.js.map
+
+	var ix = function (_a) {
+	    var _b = __read(_a, 1), i = _b[0];
+	    var getter = function (s) {
+	        var _a;
+	        if (!isVector(s)) {
+	            throw 'needs to be vector';
+	        }
+	        var result = (_a = s.members[i.value]) !== null && _a !== void 0 ? _a : null;
+	        return [mkOptional(result), s];
+	    };
+	    var setter = function (_a) {
+	        var _b = __read(_a, 2), val = _b[0], orig = _b[1];
+	        var result = orig;
+	        if (orig.members[i.value]) {
+	            var copy = mkVector(__spread(orig.members));
+	            copy.members[i.value] = val;
+	            result = copy;
+	        }
+	        return result;
+	    };
+	    return mkOptic(OpticType.Affine, 'ix', function (dict, f0) {
+	        var f1 = dict.right(f0);
+	        var f2 = dict.dimap(getter, setter, f1);
+	        return f2;
+	    });
+	};
+	var key = function (_a) {
+	    var _b = __read(_a, 1), k = _b[0];
+	    var getter = function (s) { return [s.get(k), s]; };
+	    var setter = function (_a) {
+	        var _b = __read(_a, 2), val = _b[0], orig = _b[1];
+	        var copy = Object.assign({}, orig);
+	        copy.set(toMapKey(k), val);
+	        return copy;
+	    };
+	    return mkOptic(OpticType.Lens, 'key', function (dict, f0) {
+	        var f1 = dict.first(f0);
+	        var f2 = dict.dimap(getter, setter, f1);
+	        return f2;
+	    });
+	};
+	//////////// CONSUMING OPTICS
+	var get = function (_a) {
+	    var _b = __read(_a, 2), lens = _b[0], value = _b[1];
+	    var f = run(lens.members, dictGetter, function (x) { return identity([x]); });
+	    var result = f(value);
+	    return result;
+	};
+	var tryGet = function (_a) {
+	    var _b = __read(_a, 2), affine = _b[0], value = _b[1];
+	    var f = run(affine.members, dictAffine, function (x) { return mkOptional(x); });
+	    var result = f(value);
+	    return result;
+	};
+	var set = function (_a) {
+	    var _b = __read(_a, 3), setter = _b[0], d = _b[1], value = _b[2];
+	    var f = run(setter.members, dictSetter, function (x) { return constant2([d, x]); });
+	    return f(value);
+	};
+	var over = function (_a, ctx) {
+	    var _b = __read(_a, 3), setter = _b[0], g = _b[1], value = _b[2];
+	    var f = run(setter.members, dictSetter, function (x) { return apply(g, [x], ctx); });
+	    debugger;
+	    return f(value);
+	};
 
 	var fixedTable = {
 	    /////////////////// COMBINATORS
@@ -4500,6 +4507,7 @@
 	        args: function (args) { return isVector(args[0]); },
 	    })),
 	};
+	//# sourceMappingURL=fixedTable.js.map
 
 	var globalTable = new Map();
 	var globalDefine = function (key, value) {

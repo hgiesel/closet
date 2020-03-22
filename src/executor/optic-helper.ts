@@ -1,4 +1,5 @@
 import {
+    SlangOptic,
     OpticType,
 } from '../types'
 
@@ -90,3 +91,57 @@ export const opticSupremum = (type1: OpticType, type2: OpticType): OpticType | n
 
 export const opticLE = (type1: OpticType, type2: OpticType): boolean =>
     opticSupremum(type1, type2) === type1
+
+const dimap = (
+    l: (x: unknown) => unknown,
+    r: (x: unknown) => unknown,
+    f: (x: unknown) => unknown,
+) => (x: unknown) => r(f(l(x)))
+
+const lmap = (l: (x: unknown) => unknown, f: (x: unknown) => unknown) => (x: unknown) => f(l(x))
+// const rmap = (r: (x: unknown) => unknown, f: (y: unknown) => unknown) => (x: unknown) => r(f(x))
+
+const forgetDimap = (l: (x: unknown) => unknown, _r: (x: unknown) => unknown, f: (x: unknown) => unknown) => lmap(l, f)
+
+export const dictSetter = {
+    dimap: dimap,
+    first: (self) => (p) => [self(p[0]), p[1]],
+    right: (self) => (x) => (console.log('eju', self, x), [x[0].boxed ? self(x[0].boxed) : x[0], x[1]]),
+    wander: (self) => (xs) => xs.map(self),
+}
+
+export const dictGetter = {
+    dimap: forgetDimap,
+    first: (self) => (x) => self(x[0]),
+    wander: (self) => (xs) => xs.map(self),
+}
+
+const nothing = () => {}
+
+export const dictAffine = {
+  dimap: forgetDimap,
+  first: (self) => (x) => self(x[0]),
+    //  basically fmap @Maybe
+  right: (self) => (x) => x[0].boxed ? self(x[0].boxed) : x[0],
+}
+
+export const dictPrism = {
+  dimap: (f, g, x) => g(x),
+  right: (x) => [true, x],
+}
+
+export const run = (optics: SlangOptic[], dict: object, f: Function) => {
+    const [
+        zooms,
+        opticKind,
+    ] = optics.reduce(([rev, k], optic) =>
+        (rev.unshift(optic.zoom), [rev, opticSupremum(k, optic.subkind)]),
+        [[], OpticType.Iso]
+    )
+
+    for (const z of zooms) {
+        f = z(dict, f);
+    }
+
+    return f
+}

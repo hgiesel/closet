@@ -1,13 +1,6 @@
-export enum OpticType {
-    Setter = 'setter',
-    Fold = 'fold',
-    Traversal = 'traversal',
-    Affine = 'affine',
-    Getter = 'getter',
-    Lens = 'lens',
-    Prism = 'prism',
-    Iso = 'iso',
-}
+import {
+    OpticType,
+} from '../types'
 
 export const opticSupremum = (type1: OpticType, type2: OpticType): OpticType | null => {
     switch (type1) {
@@ -95,6 +88,5 @@ export const opticSupremum = (type1: OpticType, type2: OpticType): OpticType | n
     }
 }
 
-export const opticLE = (type1: OpticType, type2: OpticType): boolean => {
-    return opticSupremum(type1, type2) === type1
-}
+export const opticLE = (type1: OpticType, type2: OpticType): boolean =>
+    opticSupremum(type1, type2) === type1

@@ -23,6 +23,7 @@ export enum SlangType {
     Function = 'fun',
     ShcutFunction = 'shcutfun',
     ArmedFunction = 'armedfun',
+    Optic = 'optic',
 
     // Statement blocks
     Def = 'def',
@@ -138,6 +139,24 @@ export interface SlangFunction {
     body: Slang,
 }
 
+export enum OpticType {
+    Setter = 'setter',
+    Fold = 'fold',
+    Traversal = 'traversal',
+    Affine = 'affine',
+    Getter = 'getter',
+    Lens = 'lens',
+    Prism = 'prism',
+    Iso = 'iso',
+}
+
+export interface SlangOptic {
+    kind: SlangType.Optic,
+    subkind: OpticType,
+    name: string,
+    zoom: Function,
+}
+
 export interface SlangShcutFunction {
     kind: SlangType.ShcutFunction,
     name: string,
@@ -148,7 +167,7 @@ export interface SlangShcutFunction {
 export interface SlangArmedFunction {
     kind: SlangType.ArmedFunction,
     name: string,
-    apply: (args: Slang[]) => SlangEither,
+    apply: (args: Slang[], ctx: Map<string, Slang>) => SlangEither,
 }
 
 //////////////////
@@ -250,6 +269,7 @@ export type Slang = SlangUnit
                   | SlangOptional
 
                   | SlangFunction
+                  | SlangOptic
                   | SlangShcutFunction
                   | SlangArmedFunction
 

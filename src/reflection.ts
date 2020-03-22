@@ -19,7 +19,9 @@ import {
     SlangList,
     SlangVector,
     SlangMap,
+
     SlangFunction,
+    SlangOptic,
     SlangShcutFunction,
     SlangArmedFunction,
 
@@ -57,7 +59,9 @@ export const isOk = (val: SlangEither): val is SlangEitherRight => val.ok
 export const isList = (val: Slang): val is SlangList => val.kind === SlangType.List
 export const isVector = (val: Slang): val is SlangVector => val.kind === SlangType.Vector
 export const isMap = (val: Slang): val is SlangMap => val.kind === SlangType.Map
+
 export const isFunction = (val: Slang): val is SlangFunction => val.kind === SlangType.Function
+export const isOptic = (val: Slang): val is SlangOptic => val.kind === SlangType.Optic
 export const isShcutFunction = (val: Slang): val is SlangShcutFunction => val.kind === SlangType.ShcutFunction
 export const isArmedFunction = (val: Slang): val is SlangArmedFunction => val.kind === SlangType.ArmedFunction
 

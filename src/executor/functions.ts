@@ -49,8 +49,8 @@ import {
 
 import execute from './executor'
 
-export const apply = (func: SlangArmedFunction, args: Slang[]): Slang => {
-    const result = func.apply(args)
+export const apply = (func: SlangArmedFunction, args: Slang[], ctx: Map<string, Slang>): Slang => {
+    const result = func.apply(args, ctx)
 
     if (isOk(result)) {
         return result.value
@@ -65,10 +65,10 @@ const adapt = (sl: Slang): SlangEither => {
         : mkRight(sl)
 }
 
-export const wrap = (name: string, func: (a: Slang[]) => Slang) => (ctx: Map<string, Slang>): SlangArmedFunction => (
+export const wrap = (name: string, func: (a: Slang[], ctx: Map<string, Slang>) => Slang) => (ctx: Map<string, Slang>): SlangArmedFunction => (
     mkArmedFunction(
         name,
-        (args) => adapt(func(args.map(t => execute(t, ctx)))),
+        (args) => adapt(func(args.map(t => execute(t, ctx)), ctx)),
     )
 )
 
@@ -130,5 +130,5 @@ export const arm = (exec: Slang, ctx: Map<string, Slang>): SlangArmedFunction =>
 )
 
 export const fire = (exec: Slang, ctx: Map<string, Slang>, args: Slang[]): Slang => {
-    return apply(arm(exec, ctx), args)
+    return apply(arm(exec, ctx), args, ctx)
 }

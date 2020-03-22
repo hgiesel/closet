@@ -1,3 +1,8 @@
+import type {
+    Slang,
+    SlangArmedFunction,
+} from '../types'
+
 import {
     wrap,
 } from './functions'
@@ -14,10 +19,10 @@ import {
     isVector,
     isList,
     isOptional,
-    isBool,
     isMapKey,
     isExecutable,
     isArmedFunction,
+    isOptic,
 } from '../reflection'
 
 import * as combinators from './combinators'
@@ -29,17 +34,12 @@ import * as atoms from './atoms'
 import * as seq from './seq'
 import * as random from './random'
 import * as strings from './strings'
+import * as optic from './optic'
 
-export const fixedTable = {
+export const fixedTable: {[key: string]: (ctx: Map<string, Slang>) => SlangArmedFunction} = {
     /////////////////// COMBINATORS
-    'identity': wrap('identity', typecheck({
-        f: combinators.identity,
-        argc: (count) => count === 1,
-    })),
-    'constant': wrap('constant', typecheck({
-        f: combinators.constant,
-        argc: (count) => count === 2,
-    })),
+    'identity': combinators.wrappedIdentity,
+    'constant': combinators.wrappedConstant,
 
     /////////////////// EQUALITY
     '=': wrap('=', typecheck({
@@ -200,21 +200,21 @@ export const fixedTable = {
         argc: (count) => count <= 1,
     })),
 
-    'get': wrap('get', typecheck({
-        inf: (args) => isMap(args[0])
-            ? seq.Map.getFunc
-            : isVector(args[0])
-            ? seq.Vector.getFunc
-            : isList(args[0])
-            ? seq.List.getFunc
-            : seq.Optional.getFunc,
-        argc: (count) => count === 3,
-        args: ([seqArg, idxArg]) =>
-            (isMap(seqArg) && isMapKey(idxArg)) ||
-            (isVector(seqArg) && isNumber(idxArg)) ||
-            (isList(seqArg) && isNumber(idxArg)) ||
-            (isOptional(seqArg) && isBool(idxArg))
-    })),
+    // 'get': wrap('get', typecheck({
+    //     inf: (args) => isMap(args[0])
+    //         ? seq.Map.getFunc
+    //         : isVector(args[0])
+    //         ? seq.Vector.getFunc
+    //         : isList(args[0])
+    //         ? seq.List.getFunc
+    //         : seq.Optional.getFunc,
+    //     argc: (count) => count === 3,
+    //     args: ([seqArg, idxArg]) =>
+    //         (isMap(seqArg) && isMapKey(idxArg)) ||
+    //         (isVector(seqArg) && isNumber(idxArg)) ||
+    //         (isList(seqArg) && isNumber(idxArg)) ||
+    //         (isOptional(seqArg) && isBool(idxArg))
+    // })),
 
     'take': wrap('take', typecheck({
         inf: (args) => isMap(args[1])
@@ -591,6 +591,44 @@ export const fixedTable = {
         f: strings.String.trimr,
         argc: (count) => count === 1,
         args: (args) => isString(args[0]),
+    })),
+
+
+    /////////////// OPTIC
+    'get': wrap('get', typecheck({
+        f: optic.get,
+        argc: (count) => count === 2,
+        args: (args) => isVector(args[0]) && args[0].members.every(isOptic),
+    })),
+
+    'try-get': wrap('try-get', typecheck({
+        f: optic.tryGet,
+        argc: (count) => count === 2,
+        args: (args) => isVector(args[0]) && args[0].members.every(isOptic),
+    })),
+
+    'ix': wrap('ix', typecheck({
+        f: optic.ix,
+        argc: (count) => count === 1,
+        args: (args) => isNumber(args[0]),
+    })),
+
+    'key': wrap('key', typecheck({
+        f: optic.key,
+        argc: (count) => count === 1,
+        args: (args) => isMapKey(args[0]),
+    })),
+
+    'set': wrap('set', typecheck({
+        f: optic.set,
+        argc: (count) => count === 3,
+        args: (args) => isVector(args[0]),
+    })),
+
+    'over': wrap('over', typecheck({
+        f: optic.over,
+        argc: (count) => count === 3,
+        args: (args) => isVector(args[0]),
     })),
 }
 

@@ -100,7 +100,7 @@ export const merge = ([...maps]: [SlangMap, ...SlangMap[]]): SlangMap => {
     return mkMapDirect(newMap)
 }
 
-export const mergeWith = ([func, headMap, ...args]: [SlangArmedFunction, SlangMap, ...SlangMap[]]) => {
+export const mergeWith = ([func, headMap, ...args]: [SlangArmedFunction, SlangMap, ...SlangMap[]], ctx: Map<string, Slang>) => {
     const newMap = new Map()
 
     for (const [key, value] of headMap.table) {
@@ -110,7 +110,7 @@ export const mergeWith = ([func, headMap, ...args]: [SlangArmedFunction, SlangMa
     for (const map of args) {
         for (const [key, value] of map.table) {
             if (newMap.has(key)) {
-                newMap.set(key, apply(func, [newMap.get(key), value]))
+                newMap.set(key, apply(func, [newMap.get(key), value], ctx))
             }
             else {
                 newMap.set(key, value)

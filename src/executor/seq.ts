@@ -58,13 +58,13 @@ export namespace Map {
         return mkMap(taken)
     }
 
-    export const takeWhile = ([pred, mapArg]: [SlangArmedFunction, SlangMap]): SlangMap => {
+    export const takeWhile = ([pred, mapArg]: [SlangArmedFunction, SlangMap], ctx: Map<string, Slang>): SlangMap => {
         const taken = []
 
         let cont = true
         mapArg.table.forEach((v, k) => {
             if (cont) {
-                const result = pureToBool(apply(pred, [mkVector([fromMapKey(k), v])]))
+                const result = pureToBool(apply(pred, [mkVector([fromMapKey(k), v])], ctx))
                 if (result) {
                     taken.push([k, v])
                 }
@@ -94,7 +94,7 @@ export namespace Map {
         return mkMap(dropped)
     }
 
-    export const dropWhile = ([pred, mapArg]: [SlangArmedFunction, SlangMap]): SlangMap => {
+    export const dropWhile = ([pred, mapArg]: [SlangArmedFunction, SlangMap], ctx: Map<string, Slang>): SlangMap => {
         const dropped = []
 
         let start = false
@@ -103,7 +103,7 @@ export namespace Map {
                 dropped.push([k, v])
             }
             else {
-                start = pureToBool(apply(pred, [mkVector([fromMapKey(k), v])]))
+                start = pureToBool(apply(pred, [mkVector([fromMapKey(k), v])], ctx))
             }
         })
 
@@ -118,25 +118,25 @@ export namespace Map {
         return mkBool(mapArg.table.size === 0)
     }
 
-    export const anyQ = ([pred, mapArg]: [SlangArmedFunction, SlangMap]): SlangBool => {
+    export const anyQ = ([pred, mapArg]: [SlangArmedFunction, SlangMap], ctx: Map<string, Slang>): SlangBool => {
         let result = false
         mapArg.table.forEach((v, k) => {
-            result = result || pureToBool(apply(pred, [mkVector([fromMapKey(k), v])]))
+            result = result || pureToBool(apply(pred, [mkVector([fromMapKey(k), v])], ctx))
         })
 
         return mkBool(result)
     }
 
-    export const everyQ = ([pred, mapArg]: [SlangArmedFunction, SlangMap]): SlangBool => {
+    export const everyQ = ([pred, mapArg]: [SlangArmedFunction, SlangMap], ctx: Map<string, Slang>): SlangBool => {
         let result = true
         mapArg.table.forEach((v, k) => {
-            result = result && pureToBool(apply(pred, [mkVector([fromMapKey(k), v])]))
+            result = result && pureToBool(apply(pred, [mkVector([fromMapKey(k), v])], ctx))
         })
 
         return mkBool(result)
     }
 
-    export const map = ([func, headMap, ...otherMaps]: [SlangArmedFunction, SlangMap, ...SlangMap[]]) => {
+    export const map = ([func, headMap, ...otherMaps]: [SlangArmedFunction, SlangMap, ...SlangMap[]], ctx: Map<string, Slang>) => {
         const result: [SlangMapKey, Slang][] = []
 
         headMap.table.forEach((v, k) => {
@@ -150,19 +150,19 @@ export namespace Map {
                 result.push([theKey, apply(func, [
                     mkVector([theKey, v]),
                     ...otherMaps.map(m => mkVector([theKey, m.table.get(k)])),
-                ])])
+                ], ctx)])
             }
         })
 
         return mkMap(result)
     }
 
-    export const filter = ([func, map]: [SlangArmedFunction, SlangMap]) => {
+    export const filter = ([func, map]: [SlangArmedFunction, SlangMap], ctx: Map<string, Slang>) => {
         const result: [SlangMapKey, Slang][] = []
 
         map.table.forEach((v, k) => {
             const theKey = fromMapKey(k)
-            if (pureToBool(apply(func, [mkVector([theKey, v])]))) {
+            if (pureToBool(apply(func, [mkVector([theKey, v])], ctx))) {
                 result.push([theKey, v])
             }
         })
@@ -170,21 +170,20 @@ export namespace Map {
         return mkMap(result)
     }
 
-    export const foldl = ([func, accu, map]: [SlangArmedFunction, Slang, SlangMap]): Slang => {
+    export const foldl = ([func, accu, map]: [SlangArmedFunction, Slang, SlangMap], ctx: Map<string, Slang>): Slang => {
         let result = accu
 
         for (const [key, value] of map.table) {
             const theKey = fromMapKey(key)
 
-            console.log('hi', result)
-            result = apply(func, [result, mkVector([theKey, value])])
+            result = apply(func, [result, mkVector([theKey, value])], ctx)
         }
 
         console.log(result)
         return result
     }
 
-    export const foldr = ([func, accu, map]: [SlangArmedFunction, Slang, SlangMap]) => {
+    export const foldr = ([func, accu, map]: [SlangArmedFunction, Slang, SlangMap], ctx: Map<string, Slang>) => {
         console.log('hi')
         const iterator = map.table[Symbol.iterator]()
 
@@ -196,7 +195,7 @@ export namespace Map {
             }
             else {
                 const [key, value] = nextValue.value
-                return apply(func, [mkVector([fromMapKey(key), value]), pureFoldr(it)])
+                return apply(func, [mkVector([fromMapKey(key), value]), pureFoldr(it)], ctx)
             }
         }
 
@@ -229,12 +228,12 @@ export namespace Vector {
         return mkVector(taken)
     }
 
-    export const takeWhile = ([pred, vectorArg]: [SlangArmedFunction, SlangVector]): SlangVector => {
+    export const takeWhile = ([pred, vectorArg]: [SlangArmedFunction, SlangVector], ctx: Map<string, Slang>): SlangVector => {
         const taken = []
 
         let cont = true
         for (let i = 0; i < vectorArg.members.length && cont; i++) {
-            if (pureToBool(apply(pred, [vectorArg.members[i]]))) {
+            if (pureToBool(apply(pred, [vectorArg.members[i]], ctx))) {
                 taken.push(vectorArg.members[i])
             }
             else {
@@ -257,7 +256,7 @@ export namespace Vector {
         return mkVector(dropped)
     }
 
-    export const dropWhile = ([pred, vectorArg]: [SlangArmedFunction, SlangVector]): SlangVector => {
+    export const dropWhile = ([pred, vectorArg]: [SlangArmedFunction, SlangVector], ctx: Map<string, Slang>): SlangVector => {
         const dropped = []
 
         let start = false
@@ -266,7 +265,7 @@ export namespace Vector {
                 dropped.push(vectorArg.members[i])
             }
             else {
-                if (!pureToBool(apply(pred, [vectorArg.members[i]]))) {
+                if (!pureToBool(apply(pred, [vectorArg.members[i]], ctx))) {
                     dropped.push(vectorArg.members[i])
                     start = true
                 }
@@ -284,25 +283,25 @@ export namespace Vector {
         return mkBool(vectorArg.members.length === 0)
     }
 
-    export const anyQ = ([pred, vectorArg]: [SlangArmedFunction, SlangVector]): SlangBool => {
+    export const anyQ = ([pred, vectorArg]: [SlangArmedFunction, SlangVector], ctx: Map<string, Slang>): SlangBool => {
         let result = false
         for (const m of vectorArg.members) {
-            result = result || pureToBool(apply(pred, [m]))
+            result = result || pureToBool(apply(pred, [m], ctx))
         }
 
         return mkBool(result)
     }
 
-    export const everyQ = ([pred, vectorArg]: [SlangArmedFunction, SlangVector]): SlangBool => {
+    export const everyQ = ([pred, vectorArg]: [SlangArmedFunction, SlangVector], ctx: Map<string, Slang>): SlangBool => {
         let result = true
         for (const m of vectorArg.members) {
-            result = result && pureToBool(apply(pred, [m]))
+            result = result && pureToBool(apply(pred, [m], ctx))
         }
 
         return mkBool(result)
     }
 
-    export const map = ([func, headVector, ...otherVectors]: [SlangArmedFunction, SlangVector, ...SlangVector[]]) => {
+    export const map = ([func, headVector, ...otherVectors]: [SlangArmedFunction, SlangVector, ...SlangVector[]], ctx: Map<string, Slang>) => {
         const result = []
 
         for (const [i, entry] of headVector.members.entries()) {
@@ -313,18 +312,18 @@ export namespace Vector {
             }
 
             if (allHaveKey) {
-                result.push(apply(func, [entry, ...otherVectors.map(v => v.members[i])]))
+                result.push(apply(func, [entry, ...otherVectors.map(v => v.members[i])], ctx))
             }
         }
 
         return mkVector(result)
     }
 
-    export const filter = ([func, vector]: [SlangArmedFunction, SlangVector]) => {
+    export const filter = ([func, vector]: [SlangArmedFunction, SlangVector], ctx: Map<string, Slang>) => {
         const result = []
 
         for (const v of vector.members) {
-            if (pureToBool(apply(func, [v]))) {
+            if (pureToBool(apply(func, [v], ctx))) {
                 result.push(v)
             }
         }
@@ -332,17 +331,17 @@ export namespace Vector {
         return mkVector(result)
     }
 
-    export const foldl = ([func, accu, vector]: [SlangArmedFunction, Slang, SlangVector]): Slang => {
+    export const foldl = ([func, accu, vector]: [SlangArmedFunction, Slang, SlangVector], ctx: Map<string, Slang>): Slang => {
         let result = accu
 
         for (const value of vector.members) {
-            result = apply(func, [result, value])
+            result = apply(func, [result, value], ctx)
         }
 
         return result
     }
 
-    export const foldr = ([func, accu, vector]: [SlangArmedFunction, Slang, SlangVector]) => {
+    export const foldr = ([func, accu, vector]: [SlangArmedFunction, Slang, SlangVector], ctx: Map<string, Slang>) => {
         const iterator = vector.members[Symbol.iterator]()
 
         const pureFoldr = (it: Iterator<Slang>) => {
@@ -350,7 +349,7 @@ export namespace Vector {
 
             return nextValue.done
                 ? accu
-                : apply(func, [nextValue.value, pureFoldr(it)])
+                : apply(func, [nextValue.value, pureFoldr(it)], ctx)
         }
 
         const result = pureFoldr(iterator)
@@ -375,12 +374,12 @@ export namespace Vector {
         return mkVector(results)
     }
 
-    export const bind = ([func, headVector, ...otherVectors]: [SlangArmedFunction, SlangVector, ...SlangVector[]]) => {
+    export const bind = ([func, headVector, ...otherVectors]: [SlangArmedFunction, SlangVector, ...SlangVector[]], ctx: Map<string, Slang>) => {
         const arg = otherVectors.length === 0
             ? headVector
             : fzip([headVector, ...otherVectors])
 
-        return flat([map([func, arg])])
+        return flat([map([func, arg], ctx)])
     }
 }
 
@@ -415,18 +414,18 @@ export namespace List {
         return mkList(taken[0], taken.slice(1))
     }
 
-    export const takeWhile = ([pred, listArg]: [SlangArmedFunction, SlangList]): SlangList | SlangUnit => {
+    export const takeWhile = ([pred, listArg]: [SlangArmedFunction, SlangList], ctx: Map<string, Slang>): SlangList | SlangUnit => {
         const taken = []
 
         let cont = true
-        if (!pureToBool(apply(pred, [listArg.head]))) {
+        if (!pureToBool(apply(pred, [listArg.head], ctx))) {
             return mkUnit()
         }
         else {
             taken.push(listArg.head)
 
             for (let i = 0; i < listArg.tail.length && cont; i++) {
-                if (pureToBool(apply(pred, [listArg.tail[i]]))) {
+                if (pureToBool(apply(pred, [listArg.tail[i]], ctx))) {
                     taken.push(listArg.tail[i])
                 }
                 else {
@@ -456,11 +455,11 @@ export namespace List {
             : mkList(dropped[0], dropped.slice(1))
     }
 
-    export const dropWhile = ([pred, listArg]: [SlangArmedFunction, SlangList]): SlangList | SlangUnit => {
+    export const dropWhile = ([pred, listArg]: [SlangArmedFunction, SlangList], ctx: Map<string, Slang>): SlangList | SlangUnit => {
         const dropped = []
 
         let start = false
-        if (!pureToBool(apply(pred, [listArg.head]))) {
+        if (!pureToBool(apply(pred, [listArg.head], ctx))) {
             dropped.push(listArg.head)
             start = true
         }
@@ -470,7 +469,7 @@ export namespace List {
                 dropped.push(listArg.tail[i])
             }
             else {
-                if (!pureToBool(apply(pred, [listArg.tail[i]]))) {
+                if (!pureToBool(apply(pred, [listArg.tail[i]], ctx))) {
                     dropped.push(listArg.tail[i])
                     start = true
                 }
@@ -490,25 +489,25 @@ export namespace List {
         return mkBool(listArg.tail.length === 0)
     }
 
-    export const anyQ = ([pred, listArg]: [SlangArmedFunction, SlangList]): SlangBool => {
+    export const anyQ = ([pred, listArg]: [SlangArmedFunction, SlangList], ctx: Map<string, Slang>): SlangBool => {
         let result = false
         for (const m of listArg.tail) {
-            result = result || pureToBool(apply(pred, [m]))
+            result = result || pureToBool(apply(pred, [m], ctx))
         }
 
         return mkBool(result)
     }
 
-    export const everyQ = ([pred, listArg]: [SlangArmedFunction, SlangList]): SlangBool => {
+    export const everyQ = ([pred, listArg]: [SlangArmedFunction, SlangList], ctx: Map<string, Slang>): SlangBool => {
         let result = true
         for (const m of listArg.tail) {
-            result = result && pureToBool(apply(pred, [m]))
+            result = result && pureToBool(apply(pred, [m], ctx))
         }
 
         return mkBool(result)
     }
 
-    export const map = ([func, headList, ...otherLists]: [SlangArmedFunction, SlangList, ...SlangList[]]) => {
+    export const map = ([func, headList, ...otherLists]: [SlangArmedFunction, SlangList, ...SlangList[]], ctx: Map<string, Slang>) => {
         const result = []
 
         for (const [i, entry] of headList.tail.entries()) {
@@ -519,18 +518,18 @@ export namespace List {
             }
 
             if (allHaveKey) {
-                result.push(apply(func, [entry, ...otherLists.map(v => v.tail[i])]))
+                result.push(apply(func, [entry, ...otherLists.map(v => v.tail[i])], ctx))
             }
         }
 
         return mkList(headList.head, result)
     }
 
-    export const filter = ([func, list]: [SlangArmedFunction, SlangList]) => {
+    export const filter = ([func, list]: [SlangArmedFunction, SlangList], ctx: Map<string, Slang>) => {
         const result = []
 
         for (const v of list.tail) {
-            if (pureToBool(apply(func, [v]))) {
+            if (pureToBool(apply(func, [v], ctx))) {
                 result.push(v)
             }
         }
@@ -538,17 +537,17 @@ export namespace List {
         return mkList(list.head, result)
     }
 
-    export const foldl = ([func, accu, list]: [SlangArmedFunction, Slang, SlangList]): Slang => {
+    export const foldl = ([func, accu, list]: [SlangArmedFunction, Slang, SlangList], ctx: Map<string, Slang>): Slang => {
         let result = accu
 
         for (const value of list.tail) {
-            result = apply(func, [result, value])
+            result = apply(func, [result, value], ctx)
         }
 
         return result
     }
 
-    export const foldr = ([func, accu, list]: [SlangArmedFunction, Slang, SlangList]) => {
+    export const foldr = ([func, accu, list]: [SlangArmedFunction, Slang, SlangList], ctx: Map<string, Slang>) => {
         const iterator = list.tail[Symbol.iterator]()
 
         const pureFoldr = (it: Iterator<Slang>) => {
@@ -556,7 +555,7 @@ export namespace List {
 
             return nextValue.done
                 ? accu
-                : apply(func, [nextValue.value, pureFoldr(it)])
+                : apply(func, [nextValue.value, pureFoldr(it)], ctx)
         }
 
         const result = pureFoldr(iterator)
@@ -597,25 +596,25 @@ export namespace Optional {
         return mkBool(optionalArg.boxed === null)
     }
 
-    export const anyQ = ([pred, optionalArg]: [SlangArmedFunction, SlangOptional]): SlangBool => {
+    export const anyQ = ([pred, optionalArg]: [SlangArmedFunction, SlangOptional], ctx: Map<string, Slang>): SlangBool => {
         let result = false
         if (optionalArg.boxed) {
-            result = result || pureToBool(apply(pred, [optionalArg.boxed]))
+            result = result || pureToBool(apply(pred, [optionalArg.boxed], ctx))
         }
 
         return mkBool(result)
     }
 
-    export const everyQ = ([pred, optionalArg]: [SlangArmedFunction, SlangOptional]): SlangBool => {
+    export const everyQ = ([pred, optionalArg]: [SlangArmedFunction, SlangOptional], ctx: Map<string, Slang>): SlangBool => {
         let result = true
         if (optionalArg.boxed) {
-            result = result && pureToBool(apply(pred, [optionalArg.boxed]))
+            result = result && pureToBool(apply(pred, [optionalArg.boxed], ctx))
         }
 
         return mkBool(result)
     }
 
-    export const map = ([func, headOptional, ...otherOptionals]: [SlangArmedFunction, SlangOptional, ...SlangOptional[]]) => {
+    export const map = ([func, headOptional, ...otherOptionals]: [SlangArmedFunction, SlangOptional, ...SlangOptional[]], ctx: Map<string, Slang>) => {
         let result = null
 
         if (headOptional.boxed) {
@@ -626,18 +625,18 @@ export namespace Optional {
             }
 
             if (allHaveKey) {
-                result = apply(func, [headOptional.boxed, ...otherOptionals.map(v => v.boxed)])
+                result = apply(func, [headOptional.boxed, ...otherOptionals.map(v => v.boxed)], ctx)
             }
         }
 
         return mkOptional(result)
     }
 
-    export const filter = ([func, optional]: [SlangArmedFunction, SlangOptional]) => {
+    export const filter = ([func, optional]: [SlangArmedFunction, SlangOptional], ctx: Map<string, Slang>) => {
         let result = null
 
         if (optional.boxed) {
-            if (pureToBool(apply(func, [optional.boxed]))) {
+            if (pureToBool(apply(func, [optional.boxed], ctx))) {
                 result = optional.boxed
             }
         }
@@ -645,21 +644,21 @@ export namespace Optional {
         return mkOptional(result)
     }
 
-    export const foldl = ([func, accu, optional]: [SlangArmedFunction, Slang, SlangOptional]): Slang => {
+    export const foldl = ([func, accu, optional]: [SlangArmedFunction, Slang, SlangOptional], ctx: Map<string, Slang>): Slang => {
         let result = accu
 
         if (optional.boxed) {
-            result = apply(func, [result, optional.boxed])
+            result = apply(func, [result, optional.boxed], ctx)
         }
 
         return result
     }
 
-    export const foldr = ([func, accu, optional]: [SlangArmedFunction, Slang, SlangOptional]) => {
+    export const foldr = ([func, accu, optional]: [SlangArmedFunction, Slang, SlangOptional], ctx: Map<string, Slang>) => {
         let result = accu
 
         if (optional.boxed) {
-            result = apply(func, [optional.boxed, result])
+            result = apply(func, [optional.boxed, result], ctx)
         }
 
         return result
@@ -686,12 +685,12 @@ export namespace Optional {
             : optional
     }
 
-    export const bind = ([func, headOptional, ...otherOptionals]: [SlangArmedFunction, SlangOptional, ...SlangOptional[]]) => {
+    export const bind = ([func, headOptional, ...otherOptionals]: [SlangArmedFunction, SlangOptional, ...SlangOptional[]], ctx: Map<string, Slang>) => {
         const arg = otherOptionals.length === 0
             ? headOptional
             : fzip([headOptional, ...otherOptionals])
 
-        return flat([map([func, arg])])
+        return flat([map([func, arg], ctx)])
     }
 }
 

@@ -71,7 +71,7 @@ export const throwException = (name: string, e: SlangError) => {
 }
 
 interface Typecheckers {
-    f?: (args: Slang[]) => Slang,
+    f?: (args: Slang[], ctx: Map<string, Slang>) => Slang,
     argc?: (count: number) => boolean,
     arg0?: (arg: Slang) => boolean,
     arg1?: (arg: Slang) => boolean,
@@ -80,7 +80,7 @@ interface Typecheckers {
     arg4?: (arg: Slang) => boolean,
     arg5?: (arg: Slang) => boolean,
     args?: (args: Slang[]) => boolean,
-    inf?: (args: Slang[]) => (args: Slang[]) => Slang,
+    inf?: (args: Slang[]) => (args: Slang[], ctx: Map<string, Slang>) => Slang,
 }
 
 export const typecheck = ({
@@ -94,7 +94,7 @@ export const typecheck = ({
     arg4,
     arg5,
     args
-}: Typecheckers) => (argums: Slang[]): SlangEither => {
+}: Typecheckers) => (argums: Slang[], ctx: Map<string, Slang>): SlangEither => {
     if (argc && !argc(argums.length)) {
         return mkLeft(mkArityError(argums.length))
     }
@@ -131,7 +131,7 @@ export const typecheck = ({
         ? inf(argums)
         : f
 
-    return mkRight(exec(argums))
+    return mkRight(exec(argums, ctx))
 }
 
 export const notExecutable = (kind: string): SlangError => {

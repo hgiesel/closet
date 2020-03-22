@@ -24,6 +24,7 @@ export const toBool = (val: Slang): SlangBool => {
 }
 
 export const pureToString = (val: Slang): string => {
+    console.log(val)
     if (reflection.isUnit(val)) {
         return '()'
     }
@@ -106,7 +107,11 @@ export const pureToString = (val: Slang): string => {
         return `fn<${val.name}>(${val.params}) ${pureToString(val.body)}`
     }
     else if (reflection.isArmedFunction(val)) {
-        return `fn<${val.name}> built-in`
+        return `fn<${val.name}>`
+    }
+
+    else if (reflection.isOptic(val)) {
+        return `optic<${val.subkind}:${val.name}>`
     }
 }
 

@@ -23,7 +23,10 @@ import {
     SlangList,
     SlangVector,
     SlangMap,
+
     SlangFunction,
+    OpticType,
+    SlangOptic,
     SlangShcutFunction,
     SlangArmedFunction,
 
@@ -162,6 +165,13 @@ export const mkFunction = (name: string, params: SlangSymbol[], body: Slang): Sl
     body: body,
 })
 
+export const mkOptic = (opticType: OpticType, name: string, zoom: Function): SlangOptic => ({
+    kind: SlangType.Optic,
+    subkind: opticType,
+    name: name,
+    zoom: zoom,
+})
+
 export const mkShcutFunction = (name: string, params: number, body: Slang): SlangShcutFunction => ({
     kind: SlangType.ShcutFunction,
     name: name,
@@ -169,7 +179,7 @@ export const mkShcutFunction = (name: string, params: number, body: Slang): Slan
     body: body,
 })
 
-export const mkArmedFunction = (name: string, app: (args: Slang[]) => SlangEither): SlangArmedFunction => ({
+export const mkArmedFunction = (name: string, app: (args: Slang[], ctx: Map<string, Slang>) => SlangEither): SlangArmedFunction => ({
     kind: SlangType.ArmedFunction,
     name: name,
     apply: app,

@@ -3,6 +3,15 @@ import {
     OpticType,
 } from '../types'
 
+import {
+    mkVector,
+    mkOptional,
+} from '../constructors'
+
+import {
+    isVector,
+} from '../reflection'
+
 export const opticSupremum = (type1: OpticType, type2: OpticType): OpticType | null => {
     switch (type1) {
         case OpticType.Setter:
@@ -103,43 +112,49 @@ const lmap = (l: (x: unknown) => unknown, f: (x: unknown) => unknown) => (x: unk
 
 const forgetDimap = (l: (x: unknown) => unknown, _r: (x: unknown) => unknown, f: (x: unknown) => unknown) => lmap(l, f)
 
+const wander = (self) => (xs) => {
+    // console.log('foof', self, xs)
+    // console.log('foof2', mkVector(xs.members.map(self)))
+
+    return isVector(xs)
+        ? mkVector(xs.members.map(self))
+        : xs.boxed
+        ? mkOptional(self(xs.boxed))
+        : xs
+}
+
 export const dictSetter = {
     dimap: dimap,
     first: (self) => (p) => [self(p[0]), p[1]],
     right: (self) => (x) => (console.log('eju', self, x), [x[0].boxed ? self(x[0].boxed) : x[0], x[1]]),
-    wander: (self) => (xs) => xs.map(self),
+    wander: wander,
 }
 
 export const dictGetter = {
     dimap: forgetDimap,
     first: (self) => (x) => self(x[0]),
-    wander: (self) => (xs) => xs.map(self),
+    wander: wander,
 }
-
-const nothing = () => {}
 
 export const dictAffine = {
-  dimap: forgetDimap,
-  first: (self) => (x) => self(x[0]),
+    dimap: forgetDimap,
+    first: (self) => (x) => self(x[0]),
     //  basically fmap @Maybe
-  right: (self) => (x) => x[0].boxed ? self(x[0].boxed) : x[0],
+    right: (self) => (x) => x[0].boxed ? self(x[0].boxed) : x[0],
+    wander: wander,
 }
+
+export const dictTraversal = dictAffine
 
 export const dictPrism = {
-  dimap: (f, g, x) => g(x),
-  right: (x) => [true, x],
+    dimap: (f, g, x) => g(x),
+    right: (x) => [true, x],
 }
 
-export const run = (optics: SlangOptic[], dict: object, f: Function) => {
-    const [
-        zooms,
-        opticKind,
-    ] = optics.reduce(([rev, k], optic) =>
-        (rev.unshift(optic.zoom), [rev, opticSupremum(k, optic.subkind)]),
-        [[], OpticType.Iso]
-    )
-
-    for (const z of zooms) {
+export const run = (zooms: Function[], dict: object, f: Function) => {
+    console.log(zooms)
+    debugger
+    for (const z of zooms.reverse()) {
         f = z(dict, f);
     }
 

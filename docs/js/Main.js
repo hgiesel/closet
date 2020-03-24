@@ -1122,7 +1122,6 @@
 	        },
 	    },
 	});
-	//# sourceMappingURL=tokenizer.js.map
 
 	// Generated automatically by nearley, version 2.19.1
 	// http://github.com/Hardmath123/nearley
@@ -1154,7 +1153,6 @@
 	    ],
 	    ParserStart: "start",
 	};
-	//# sourceMappingURL=template.js.map
 
 	// import {
 	var parseTemplate = function (text) {
@@ -1170,7 +1168,6 @@
 	//         ? result
 	//         : sk.next('stop').value
 	// }
-	//# sourceMappingURL=index.js.map
 
 	/*! *****************************************************************************
 	Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1294,7 +1291,6 @@
 	    OpticType["Prism"] = "prism";
 	    OpticType["Iso"] = "iso";
 	})(OpticType || (OpticType = {}));
-	//# sourceMappingURL=types.js.map
 
 	var getValue = function (v) { return v.value; };
 	////////// CONSTRUCTORS FOR BASIC TYPES
@@ -1396,11 +1392,11 @@
 	    params: params,
 	    body: body,
 	}); };
-	var mkOptic = function (opticType, name, zoom) { return ({
+	var mkOptic = function (opticType, name, zooms) { return ({
 	    kind: SlangType.Optic,
 	    subkind: opticType,
 	    name: name,
-	    zoom: zoom,
+	    zooms: zooms,
 	}); };
 	var mkShcutFunction = function (name, params, body) { return ({
 	    kind: SlangType.ShcutFunction,
@@ -1516,7 +1512,6 @@
 	    value: value,
 	    pipes: pipes,
 	}); };
-	//# sourceMappingURL=constructors.js.map
 
 	var shcutParam = /^%([1-9][0-9]*)?$/u;
 	var shcutFuncArity = function (v, currentMax) {
@@ -1567,7 +1562,6 @@
 	            return currentMax;
 	    }
 	};
-	//# sourceMappingURL=utils.js.map
 
 	var lexer$1 = moo.compile({
 	    ws: {
@@ -1632,7 +1626,6 @@
 	        value: function (x) { return x.slice(2, -1); },
 	    },
 	});
-	//# sourceMappingURL=tokenizer.js.map
 
 	// Generated automatically by nearley, version 2.19.1
 	// http://github.com/Hardmath123/nearley
@@ -1892,14 +1885,12 @@
 	    ],
 	    ParserStart: "start",
 	};
-	//# sourceMappingURL=slang.js.map
 
 	var parseCode = function (code) {
 	    var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar$1));
 	    var result = p.feed(code).results[0];
 	    return result;
 	};
-	//# sourceMappingURL=index.js.map
 
 	var isUnit = function (val) { return val.kind === SlangType.Unit; };
 	var isBool = function (val) { return val.kind === SlangType.Bool; };
@@ -1917,9 +1908,13 @@
 	var isVector = function (val) { return val.kind === SlangType.Vector; };
 	var isMap = function (val) { return val.kind === SlangType.Map; };
 	var isFunction = function (val) { return val.kind === SlangType.Function; };
-	var isOptic = function (val) { return val.kind === SlangType.Optic; };
 	var isShcutFunction = function (val) { return val.kind === SlangType.ShcutFunction; };
 	var isArmedFunction = function (val) { return val.kind === SlangType.ArmedFunction; };
+	var isOptic = function (val) { return val.kind === SlangType.Optic; };
+	var isOpticCoercable = function (val) { return (isOptic(val) ||
+	    isNumber(val) ||
+	    isString(val) ||
+	    isKeyword(val)); };
 	var isExecutable = function (val) { return (isFunction(val) ||
 	    isShcutFunction(val) ||
 	    isArmedFunction(val) ||
@@ -1927,7 +1922,6 @@
 	    isMapKey(val)); };
 	var isMapKey = function (val) { return (isString(val) ||
 	    isKeyword(val)); };
-	//# sourceMappingURL=reflection.js.map
 
 	var mkTypeError = function (types, position) { return ({
 	    kind: 'TypeError',
@@ -2000,7 +1994,6 @@
 	var notExecutable = function (kind) {
 	    return mkNotExecutableError(kind);
 	};
-	//# sourceMappingURL=exception.js.map
 
 	var pureToBool = function (val) {
 	    if (isBool(val)) {
@@ -2089,7 +2082,6 @@
 	var toString = function (val) {
 	    return mkString(pureToString(val));
 	};
-	//# sourceMappingURL=coerce.js.map
 
 	var Map$1;
 	(function (Map) {
@@ -2878,7 +2870,6 @@
 	    var _c;
 	    return mkOptional((_c = listArg.members[idx.value]) !== null && _c !== void 0 ? _c : null);
 	};
-	//# sourceMappingURL=seq.js.map
 
 	var reshape = function (arr, columnSize) {
 	    var currIndex;
@@ -2898,7 +2889,6 @@
 	        }
 	    });
 	};
-	//# sourceMappingURL=utils.js.map
 
 	var indexing$1 = function (_a) {
 	    var _b = __read(_a, 2), mapArg = _b[0], idx = _b[1];
@@ -3103,7 +3093,6 @@
 	    }
 	    return mkMapDirect(newMap);
 	};
-	//# sourceMappingURL=map.js.map
 
 	var apply = function (func, args, ctx) {
 	    var result = func.apply(args, ctx);
@@ -3164,7 +3153,6 @@
 	var fire = function (exec, ctx, args) {
 	    return apply(arm(exec, ctx), args, ctx);
 	};
-	//# sourceMappingURL=functions.js.map
 
 	var identity = function (_a) {
 	    var _b = __read(_a, 1), val = _b[0];
@@ -3188,7 +3176,6 @@
 	        : constant1; },
 	    argc: function (count) { return count <= 2; },
 	}));
-	//# sourceMappingURL=combinators.js.map
 
 	var twoValueCompare = function (val1, val2) {
 	    if (val1.kind !== val2.kind) {
@@ -3310,7 +3297,6 @@
 	    }
 	    return mkBool(result);
 	};
-	//# sourceMappingURL=equality.js.map
 
 	var and = function (args) {
 	    var e_1, _a;
@@ -3352,7 +3338,6 @@
 	    var headArg = args[0];
 	    return mkBool(!toBool(headArg).value);
 	};
-	//# sourceMappingURL=bool.js.map
 
 	var addition = function (args) {
 	    var e_1, _a;
@@ -3548,7 +3533,6 @@
 	        ? Number.MIN_SAFE_INTEGER
 	        : Math.max.apply(Math, __spread(args.map(function (a) { return a.value; }))));
 	};
-	//# sourceMappingURL=math.js.map
 
 	var atom = function (_a) {
 	    var _b = __read(_a, 1), value = _b[0];
@@ -3570,7 +3554,6 @@
 	    atom.atom = val;
 	    return atom;
 	};
-	//# sourceMappingURL=atoms.js.map
 
 	var rand = function (_a) {
 	    var _b = __read(_a), props = _b.slice(0);
@@ -3632,7 +3615,6 @@
 	    var _b = __read(_a, 1), vec = _b[0];
 	    return mkVector(safeShuffle(vec.members));
 	};
-	//# sourceMappingURL=random.js.map
 
 	var String$1;
 	(function (String) {
@@ -3746,7 +3728,6 @@
 	        return mkVector(vec.members.slice().reverse());
 	    };
 	})(Vector$1 || (Vector$1 = {}));
-	//# sourceMappingURL=strings.js.map
 
 	var opticSupremum = function (type1, type2) {
 	    switch (type1) {
@@ -3826,50 +3807,85 @@
 	            return type2;
 	    }
 	};
+	var opticLE = function (type1, type2) {
+	    return opticSupremum(type1, type2) === type1;
+	};
 	var dimap = function (l, r, f) { return function (x) { return r(f(l(x))); }; };
 	var lmap = function (l, f) { return function (x) { return f(l(x)); }; };
 	// const rmap = (r: (x: unknown) => unknown, f: (y: unknown) => unknown) => (x: unknown) => r(f(x))
 	var forgetDimap = function (l, _r, f) { return lmap(l, f); };
+	var wander = function (self) { return function (xs) {
+	    // console.log('foof', self, xs)
+	    // console.log('foof2', mkVector(xs.members.map(self)))
+	    return isVector(xs)
+	        ? mkVector(xs.members.map(self))
+	        : xs.boxed
+	            ? mkOptional(self(xs.boxed))
+	            : xs;
+	}; };
 	var dictSetter = {
 	    dimap: dimap,
 	    first: function (self) { return function (p) { return [self(p[0]), p[1]]; }; },
 	    right: function (self) { return function (x) { return (console.log('eju', self, x), [x[0].boxed ? self(x[0].boxed) : x[0], x[1]]); }; },
-	    wander: function (self) { return function (xs) { return xs.map(self); }; },
+	    wander: wander,
 	};
 	var dictGetter = {
 	    dimap: forgetDimap,
 	    first: function (self) { return function (x) { return self(x[0]); }; },
-	    wander: function (self) { return function (xs) { return xs.map(self); }; },
+	    wander: wander,
 	};
 	var dictAffine = {
 	    dimap: forgetDimap,
 	    first: function (self) { return function (x) { return self(x[0]); }; },
 	    //  basically fmap @Maybe
 	    right: function (self) { return function (x) { return x[0].boxed ? self(x[0].boxed) : x[0]; }; },
+	    wander: wander,
 	};
-	var run = function (optics, dict, f) {
+	var dictTraversal = dictAffine;
+	var run = function (zooms, dict, f) {
 	    var e_1, _a;
-	    var _b = __read(optics.reduce(function (_a, optic) {
-	        var _b = __read(_a, 2), rev = _b[0], k = _b[1];
-	        return (rev.unshift(optic.zoom), [rev, opticSupremum(k, optic.subkind)]);
-	    }, [[], OpticType.Iso]), 2), zooms = _b[0], opticKind = _b[1];
+	    console.log(zooms);
+	    debugger;
 	    try {
-	        for (var zooms_1 = __values(zooms), zooms_1_1 = zooms_1.next(); !zooms_1_1.done; zooms_1_1 = zooms_1.next()) {
-	            var z = zooms_1_1.value;
+	        for (var _b = __values(zooms.reverse()), _c = _b.next(); !_c.done; _c = _b.next()) {
+	            var z = _c.value;
 	            f = z(dict, f);
 	        }
 	    }
 	    catch (e_1_1) { e_1 = { error: e_1_1 }; }
 	    finally {
 	        try {
-	            if (zooms_1_1 && !zooms_1_1.done && (_a = zooms_1.return)) _a.call(zooms_1);
+	            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
 	        }
 	        finally { if (e_1) throw e_1.error; }
 	    }
 	    return f;
 	};
-	//# sourceMappingURL=optic-helper.js.map
 
+	var optic = function (_a) {
+	    var _b = __read(_a), headOptic = _b[0], optics = _b.slice(1);
+	    return optics.map(coerceOptic).reduce(mergeOptic, coerceOptic(headOptic));
+	};
+	var mergeOptic = function (op1, op2) {
+	    var newName = op1.name + '.' + op2.name;
+	    var newSubkind = opticSupremum(op1.subkind, op2.subkind);
+	    // @ts-ignore
+	    return mkOptic(newSubkind, newName, [op1.zooms, op2.zooms].flat());
+	};
+	var coerceOptic = function (val) {
+	    if (isOptic(val)) {
+	        return val;
+	    }
+	    else if (isNumber(val)) {
+	        return ix([val]);
+	    }
+	    else if (isMapKey(val)) {
+	        return key([val]);
+	    }
+	    else {
+	        throw 'cannot be coerced';
+	    }
+	};
 	var ix = function (_a) {
 	    var _b = __read(_a, 1), i = _b[0];
 	    var getter = function (s) {
@@ -3890,49 +3906,70 @@
 	        }
 	        return result;
 	    };
-	    return mkOptic(OpticType.Affine, 'ix', function (dict, f0) {
-	        var f1 = dict.right(f0);
-	        var f2 = dict.dimap(getter, setter, f1);
-	        return f2;
-	    });
+	    return mkOptic(OpticType.Affine, 'ix', [function (dict, f0) {
+	            var f1 = dict.right(f0);
+	            var f2 = dict.dimap(getter, setter, f1);
+	            return f2;
+	        }]);
 	};
 	var key = function (_a) {
 	    var _b = __read(_a, 1), k = _b[0];
-	    var getter = function (s) { return [s.get(k), s]; };
+	    var theKey = toMapKey(k);
+	    var getter = function (s) {
+	        var _a;
+	        if (!isMap(s)) {
+	            throw 'needs to be map';
+	        }
+	        var holeTable = new Map(s.table);
+	        holeTable.delete(theKey);
+	        var result = (_a = s.table.get(theKey)) !== null && _a !== void 0 ? _a : null;
+	        return [mkOptional(result), mkMapDirect(holeTable)];
+	    };
 	    var setter = function (_a) {
 	        var _b = __read(_a, 2), val = _b[0], orig = _b[1];
-	        var copy = Object.assign({}, orig);
-	        copy.set(toMapKey(k), val);
-	        return copy;
+	        var copy = new Map(orig.table);
+	        if (val.boxed) {
+	            copy.set(theKey, val.boxed);
+	        }
+	        return mkMapDirect(copy);
 	    };
-	    return mkOptic(OpticType.Lens, 'key', function (dict, f0) {
-	        var f1 = dict.first(f0);
-	        var f2 = dict.dimap(getter, setter, f1);
-	        return f2;
-	    });
+	    return mkOptic(OpticType.Lens, 'key', [function (dict, f0) {
+	            var f1 = dict.first(f0);
+	            var f2 = dict.dimap(getter, setter, f1);
+	            return f2;
+	        }]);
 	};
+	var traversedCached = mkOptic(OpticType.Traversal, 'traversed', [function (dict, f0) {
+	        return dict.wander(f0);
+	    }]);
+	var traversed = function (_a) { return traversedCached; };
 	//////////// CONSUMING OPTICS
 	var get = function (_a) {
 	    var _b = __read(_a, 2), lens = _b[0], value = _b[1];
-	    var f = run(lens.members, dictGetter, function (x) { return identity([x]); });
+	    var f = run(lens.zooms, dictGetter, function (x) { return identity([x]); });
 	    var result = f(value);
 	    return result;
 	};
 	var tryGet = function (_a) {
 	    var _b = __read(_a, 2), affine = _b[0], value = _b[1];
-	    var f = run(affine.members, dictAffine, function (x) { return mkOptional(x); });
+	    var f = run(affine.zooms, dictAffine, function (x) { return mkOptional(x); });
+	    var result = f(value);
+	    return result;
+	};
+	var getAll = function (_a) {
+	    var _b = __read(_a, 2), traversal = _b[0], value = _b[1];
+	    var f = run(traversal.zooms, dictTraversal, function (x) { return identity([x]); });
 	    var result = f(value);
 	    return result;
 	};
 	var set = function (_a) {
 	    var _b = __read(_a, 3), setter = _b[0], d = _b[1], value = _b[2];
-	    var f = run(setter.members, dictSetter, function (x) { return constant2([d, x]); });
+	    var f = run(setter.zooms, dictSetter, function (x) { return constant2([d, x]); });
 	    return f(value);
 	};
 	var over = function (_a, ctx) {
 	    var _b = __read(_a, 3), setter = _b[0], g = _b[1], value = _b[2];
-	    var f = run(setter.members, dictSetter, function (x) { return apply(g, [x], ctx); });
-	    debugger;
+	    var f = run(setter.zooms, dictSetter, function (x) { return apply(g, [x], ctx); });
 	    return f(value);
 	};
 
@@ -4336,8 +4373,6 @@
 	    'bind': wrap('bind', typecheck({
 	        inf: function (args) { return isVector(args[1])
 	            ? Vector.bind
-	            // : isList(args[0])
-	            // ? seq.List.flat
 	            : Optional.bind; },
 	        argc: function (count) { return count >= 2; },
 	        args: function (_a) {
@@ -4476,15 +4511,10 @@
 	        args: function (args) { return isString(args[0]); },
 	    })),
 	    /////////////// OPTIC
-	    'get': wrap('get', typecheck({
-	        f: get,
-	        argc: function (count) { return count === 2; },
-	        args: function (args) { return isVector(args[0]) && args[0].members.every(isOptic); },
-	    })),
-	    'try-get': wrap('try-get', typecheck({
-	        f: tryGet,
-	        argc: function (count) { return count === 2; },
-	        args: function (args) { return isVector(args[0]) && args[0].members.every(isOptic); },
+	    'optic': wrap('optic', typecheck({
+	        f: optic,
+	        argc: function (count) { return count >= 1; },
+	        args: function (args) { return args.every(isOpticCoercable); },
 	    })),
 	    'ix': wrap('ix', typecheck({
 	        f: ix,
@@ -4496,18 +4526,36 @@
 	        argc: function (count) { return count === 1; },
 	        args: function (args) { return isMapKey(args[0]); },
 	    })),
+	    'traversed': wrap('traversed', typecheck({
+	        f: traversed,
+	        argc: function (count) { return count === 0; },
+	    })),
+	    'get': wrap('get', typecheck({
+	        f: get,
+	        argc: function (count) { return count === 2; },
+	        args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Lens, args[0].subkind); },
+	    })),
+	    'try-get': wrap('try-get', typecheck({
+	        f: tryGet,
+	        argc: function (count) { return count === 2; },
+	        args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Affine, args[0].subkind); },
+	    })),
+	    'get-all': wrap('get-all', typecheck({
+	        f: getAll,
+	        argc: function (count) { return count === 2; },
+	        args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Traversal, args[0].subkind); },
+	    })),
 	    'set': wrap('set', typecheck({
 	        f: set,
 	        argc: function (count) { return count === 3; },
-	        args: function (args) { return isVector(args[0]); },
+	        args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Setter, args[0].subkind); },
 	    })),
 	    'over': wrap('over', typecheck({
 	        f: over,
 	        argc: function (count) { return count === 3; },
-	        args: function (args) { return isVector(args[0]); },
+	        args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Setter, args[0].subkind); },
 	    })),
 	};
-	//# sourceMappingURL=fixedTable.js.map
 
 	var globalTable = new Map();
 	var globalDefine = function (key, value) {
@@ -4576,7 +4624,6 @@
 	    }
 	    return resultEnv;
 	};
-	//# sourceMappingURL=lookup.js.map
 
 	var execute = function (expr, ctx) {
 	    var e_1, _a, e_2, _b, e_3, _c, e_4, _d, e_5, _e, e_6, _f;
@@ -4730,14 +4777,10 @@
 	            return expr;
 	    }
 	};
-	//# sourceMappingURL=executor.js.map
-
-	//# sourceMappingURL=index.js.map
 
 	globalThis.parseTemplate = parseTemplate;
 	globalThis.parseCode = parseCode;
 	globalThis.execute = execute;
 	globalThis.codeToString = toString;
-	//# sourceMappingURL=index.js.map
 
 }());

@@ -61,9 +61,16 @@ export const isVector = (val: Slang): val is SlangVector => val.kind === SlangTy
 export const isMap = (val: Slang): val is SlangMap => val.kind === SlangType.Map
 
 export const isFunction = (val: Slang): val is SlangFunction => val.kind === SlangType.Function
-export const isOptic = (val: Slang): val is SlangOptic => val.kind === SlangType.Optic
 export const isShcutFunction = (val: Slang): val is SlangShcutFunction => val.kind === SlangType.ShcutFunction
 export const isArmedFunction = (val: Slang): val is SlangArmedFunction => val.kind === SlangType.ArmedFunction
+
+export const isOptic = (val: Slang): val is SlangOptic => val.kind === SlangType.Optic
+export const isOpticCoercable = (val: Slang): val is SlangOptic => (
+    isOptic(val)   ||
+    isNumber(val)  ||
+    isString(val)  ||
+    isKeyword(val)
+)
 
 export const isDo = (val: Slang): val is SlangDo => val.kind === SlangType.Do
 export const isDef = (val: Slang): val is SlangDef => val.kind === SlangType.Def

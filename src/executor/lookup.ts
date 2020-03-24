@@ -3,7 +3,7 @@ import type {
     SlangSymbol,
 } from '../types'
 
-import fixedTable from './fixedTable'
+import fixedTable from './fixed-table'
 
 const globalTable = new Map()
 

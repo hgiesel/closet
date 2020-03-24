@@ -165,11 +165,11 @@ export const mkFunction = (name: string, params: SlangSymbol[], body: Slang): Sl
     body: body,
 })
 
-export const mkOptic = (opticType: OpticType, name: string, zoom: Function): SlangOptic => ({
+export const mkOptic = (opticType: OpticType, name: string, zooms: Function[]): SlangOptic => ({
     kind: SlangType.Optic,
     subkind: opticType,
     name: name,
-    zoom: zoom,
+    zooms: zooms,
 })
 
 export const mkShcutFunction = (name: string, params: number, body: Slang): SlangShcutFunction => ({

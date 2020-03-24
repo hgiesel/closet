@@ -154,7 +154,7 @@ export interface SlangOptic {
     kind: SlangType.Optic,
     subkind: OpticType,
     name: string,
-    zoom: Function,
+    zooms: Function[],
 }
 
 export interface SlangShcutFunction {

@@ -4,6 +4,10 @@ import type {
 } from '../types'
 
 import {
+    OpticType,
+} from '../types'
+
+import {
     wrap,
 } from './functions'
 
@@ -23,6 +27,7 @@ import {
     isExecutable,
     isArmedFunction,
     isOptic,
+    isOpticCoercable,
 } from '../reflection'
 
 import * as combinators from './combinators'
@@ -35,6 +40,10 @@ import * as seq from './seq'
 import * as random from './random'
 import * as strings from './strings'
 import * as optic from './optic'
+
+import {
+    opticLE,
+} from './optic-helper'
 
 export const fixedTable: {[key: string]: (ctx: Map<string, Slang>) => SlangArmedFunction} = {
     /////////////////// COMBINATORS
@@ -447,8 +456,6 @@ export const fixedTable: {[key: string]: (ctx: Map<string, Slang>) => SlangArmed
     'bind': wrap('bind', typecheck({
         inf: (args) => isVector(args[1])
             ? seq.Vector.bind
-            // : isList(args[0])
-            // ? seq.List.flat
             : seq.Optional.bind,
         argc: (count) => count >= 2,
         args: ([func, ...seqArgs]) => (
@@ -595,16 +602,10 @@ export const fixedTable: {[key: string]: (ctx: Map<string, Slang>) => SlangArmed
 
 
     /////////////// OPTIC
-    'get': wrap('get', typecheck({
-        f: optic.get,
-        argc: (count) => count === 2,
-        args: (args) => isVector(args[0]) && args[0].members.every(isOptic),
-    })),
-
-    'try-get': wrap('try-get', typecheck({
-        f: optic.tryGet,
-        argc: (count) => count === 2,
-        args: (args) => isVector(args[0]) && args[0].members.every(isOptic),
+    'optic': wrap('optic', typecheck({
+        f: optic.optic,
+        argc: (count) => count >= 1,
+        args: (args) => args.every(isOpticCoercable),
     })),
 
     'ix': wrap('ix', typecheck({
@@ -619,16 +620,39 @@ export const fixedTable: {[key: string]: (ctx: Map<string, Slang>) => SlangArmed
         args: (args) => isMapKey(args[0]),
     })),
 
+    'traversed': wrap('traversed', typecheck({
+        f: optic.traversed,
+        argc: (count) => count === 0,
+    })),
+
+    'get': wrap('get', typecheck({
+        f: optic.get,
+        argc: (count) => count === 2,
+        args: (args) => isOptic(args[0]) && opticLE(OpticType.Lens, args[0].subkind),
+    })),
+
+    'try-get': wrap('try-get', typecheck({
+        f: optic.tryGet,
+        argc: (count) => count === 2,
+        args: (args) => isOptic(args[0]) && opticLE(OpticType.Affine, args[0].subkind),
+    })),
+
+    'get-all': wrap('get-all', typecheck({
+        f: optic.getAll,
+        argc: (count) => count === 2,
+        args: (args) => isOptic(args[0]) && opticLE(OpticType.Traversal, args[0].subkind),
+    })),
+
     'set': wrap('set', typecheck({
         f: optic.set,
         argc: (count) => count === 3,
-        args: (args) => isVector(args[0]),
+        args: (args) => isOptic(args[0]) && opticLE(OpticType.Setter, args[0].subkind),
     })),
 
     'over': wrap('over', typecheck({
         f: optic.over,
         argc: (count) => count === 3,
-        args: (args) => isVector(args[0]),
+        args: (args) => isOptic(args[0]) && opticLE(OpticType.Setter, args[0].subkind),
     })),
 }
 

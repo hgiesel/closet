@@ -29,7 +29,7 @@
   btn.addEventListener('click', (_e) => {
     const templateTxt = templateTA.value
     console.time('template parse')
-    const templateOutput = parseTemplate(TemplateTxt)
+    const templateOutput = parseTemplate(templateTxt)
     console.timeEnd('template parse')
 
     display(templateParsed, JSON.stringify(templateOutput, null, 4))

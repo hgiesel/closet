@@ -20,7 +20,7 @@ export const lexer = moo.states({
             match: ']]',
             pop: 1,
         },
-        valuesep: '::',
+        argsep: '::',
         altsep: '||',
         intext: {
             match: /.+?(?=\[\[|\]\]|\|\||::)/u,

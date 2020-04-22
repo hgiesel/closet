@@ -24,8 +24,7 @@
   },
   "dependencies": {
     "eslint": "^6.6.0",
-    "typescript": "^3.8.3",
     "moo": "^0.5.1",
-    "nearley": "^2.19.1"
+    "typescript": "^3.8.3"
   }
 }

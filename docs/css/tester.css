@@ -9,7 +9,15 @@ textarea {
   resize: none;
 }
 
-.CodeMirror {
-  /* display: inline-block; */
-  /* width: 45%; */
+.bordered {
+  padding: 5px;
+  border: 2px solid grey;
+  border-radius: 8px;
+}
+
+.desc {
+  position: relative;
+  right: 3px;
+  bottom: 3px;
+  opacity: 0.5;
 }

@@ -19,10 +19,10 @@
     htmlElement.style.display = 'block'
   }
 
-  const templateParsed = document.getElementById('template-parsed')
-  const codeParsed = document.getElementById('code-parsed')
-  const codeExecuted = document.getElementById('code-executed')
-  const templateApplied = document.getElementById('template-applied')
+  const templateParsed = document.querySelector('#template-parsed > .output')
+  const codeParsed = document.querySelector('#code-parsed > .output')
+  const codeExecuted = document.querySelector('#code-executed > .output')
+  const templateApplied = document.querySelector('#template-applied > .output')
 
   const btn = document.getElementById('btn-execute')
 

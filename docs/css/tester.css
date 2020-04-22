@@ -1,12 +1,9 @@
 body {
   display: flex;
-  grid-row-gap: 5px;
+  grid-row-gap: 10px;
 }
 
 textarea {
-  /* top: -60px; */
-  /* width: 45%; */
-  /* height: calc(100vh - 20px); */
   resize: none;
 }
 
@@ -14,6 +11,8 @@ textarea {
   padding: 5px;
   border: 2px solid grey;
   border-radius: 8px;
+
+  position: relative;
 }
 
 .desc {

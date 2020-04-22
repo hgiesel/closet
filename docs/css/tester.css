@@ -1,21 +1,15 @@
-* {
+body {
   display: flex;
 }
 
-body {
-  height: 100%;
-  margin:0;
-}
-
 textarea {
-  position: relative;
-  top: -60px;
-  width: 45%;
-  height: calc(100vh - 20px);
+  /* top: -60px; */
+  /* width: 45%; */
+  /* height: calc(100vh - 20px); */
   resize: none;
 }
 
 .CodeMirror {
-  display: inline-block;
-  width: 45%;
+  /* display: inline-block; */
+  /* width: 45%; */
 }

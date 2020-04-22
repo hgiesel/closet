@@ -3,6 +3,7 @@
 node_modules/*
 /Main.js
 
+
 # compiled .ne files
 src/genpar/slang.ts
 src/template/template.ts

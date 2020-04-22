@@ -1,5 +1,6 @@
 body {
   display: flex;
+  grid-row-gap: 5px;
 }
 
 textarea {

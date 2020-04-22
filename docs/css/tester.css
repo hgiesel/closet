@@ -1,4 +1,4 @@
-body {
+#mybody {
   display: flex;
   grid-row-gap: 10px;
 }
@@ -8,7 +8,7 @@ textarea {
 }
 
 .bordered {
-  padding: 5px;
+  padding: 20px 5px;
   border: 2px solid grey;
   border-radius: 8px;
 

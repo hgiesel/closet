@@ -1,5 +1,6 @@
 #mybody {
   display: flex;
+  flex-direction: column;
   grid-row-gap: 10px;
 }
 

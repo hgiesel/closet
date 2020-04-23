@@ -15,10 +15,12 @@
     "serve": "^11.2.0"
   },
   "scripts": {
-    "build": "npm-run-all --parallel build-main",
+    "build": "npm-run-all --parallel build-main build-docs",
     "build-main": "rollup -c rollup.config.main.js",
-    "watch": "npm-run-all --parallel watch-main",
+    "build-docs": "rollup -c rollup.config.docs.js",
+    "watch": "npm-run-all --parallel watch-main watch-docs",
     "watch-main": "rollup -c rollup.config.main.js -w",
+    "watch-docs": "rollup -c rollup.config.docs.js -w",
     "start": "serve dist",
     "dev": "npm-run-all --parallel start watch"
   },

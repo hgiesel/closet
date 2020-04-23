@@ -7,3 +7,11 @@ node_modules/*
 # compiled .ne files
 src/genpar/slang.ts
 src/template/template.ts
+
+
+# for Jekyll
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor

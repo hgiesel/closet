@@ -32,7 +32,6 @@
   </div>
 </div>
 
-
 <script>
   const templateTA = document.getElementById('template')
   const codeTA = document.getElementById('code')
@@ -40,13 +39,19 @@
 
   const sparams = new URLSearchParams(location.search)
 
-  templateTA.value = sparams.has('template')
-    ? sparams.get('template')
-    : 'Your template text...'
+  if (sparams.has('template')) {
+    templateTA.value = sparams.get('template')
+  }
+  else if (templateTA.value === '') {
+    templateTA.value = 'This is a [[hl::sample::text]].\nReplace it with whatever you [[em::wish||want||desire]]!'
+  }
 
-  codeTA.value = sparams.has('code')
-    ? sparams.get('code')
-    : 'Your code...'
+  if(sparams.has('code')) {
+    codeTA.value = sparams.get('code')
+  }
+  else if (codeTA.value === '') {
+    codeTA.value = '(def x [1 2 3])\n(->> x\n     (map #(+ % 1))\n)'
+  }
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/prism.min.js" integrity="sha256-YZQM6/hLBZYkb01VYf17isoQM4qpaOP+aX96hhYrWhg=" crossorigin="anonymous"></script>

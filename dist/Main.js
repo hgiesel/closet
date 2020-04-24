@@ -59,6 +59,9 @@
 	        state.right = child;
 	        if (state.isComplete) {
 	            state.data = state.build();
+	            // Having right set here will prevent the right state and its children
+	            // form being garbage collected
+	            state.right = undefined;
 	        }
 	        return state;
 	    };
@@ -571,307 +574,6 @@
 	        ar = ar.concat(__read(arguments[i]));
 	    return ar;
 	}
-
-	var SlangTypes;
-	(function (SlangTypes) {
-	    SlangTypes["Unit"] = "unit";
-	    SlangTypes["Bool"] = "bool";
-	    SlangTypes["Number"] = "number";
-	    SlangTypes["String"] = "string";
-	    SlangTypes["Regex"] = "regex";
-	    SlangTypes["Symbol"] = "symbol";
-	    SlangTypes["Keyword"] = "keyword";
-	    SlangTypes["Quoted"] = "quoted";
-	    SlangTypes["Optional"] = "optional";
-	    SlangTypes["Atom"] = "atom";
-	    SlangTypes["Either"] = "either";
-	    SlangTypes["List"] = "list";
-	    SlangTypes["Vector"] = "vector";
-	    SlangTypes["Map"] = "map";
-	    SlangTypes["MapEntry"] = "mapentry";
-	    SlangTypes["Function"] = "fun";
-	    SlangTypes["ShcutFunction"] = "shcutfun";
-	    SlangTypes["ArmedFunction"] = "armedfun";
-	    // Statement blocks
-	    SlangTypes["Def"] = "def";
-	    SlangTypes["If"] = "if";
-	    SlangTypes["Do"] = "do";
-	    SlangTypes["Let"] = "let";
-	    SlangTypes["Cond"] = "cond";
-	    SlangTypes["Case"] = "case";
-	    SlangTypes["For"] = "for";
-	    SlangTypes["Doseq"] = "doseq";
-	    SlangTypes["ThreadFirst"] = "threadfirst";
-	    SlangTypes["ThreadLast"] = "threadlast";
-	})(SlangTypes || (SlangTypes = {}));
-	//# sourceMappingURL=types.js.map
-
-	var getValue = function (v) { return v.value; };
-	////////// CONSTRUCTORS FOR BASIC TYPES
-	var mkUnit = function () { return ({
-	    kind: SlangTypes.Unit,
-	}); };
-	var mkBool = function (v) { return ({
-	    kind: SlangTypes.Bool,
-	    value: v,
-	}); };
-	var mkNumber = function (re) { return ({
-	    kind: SlangTypes.Number,
-	    value: Number(re),
-	}); };
-	var mkSymbol = function (x) { return ({
-	    kind: SlangTypes.Symbol,
-	    value: x,
-	}); };
-	var mkKeyword = function (x) { return ({
-	    kind: SlangTypes.Keyword,
-	    value: x,
-	}); };
-	var mkString = function (x) { return ({
-	    kind: SlangTypes.String,
-	    value: x,
-	}); };
-	var mkRegex = function (x) { return ({
-	    kind: SlangTypes.Regex,
-	    value: new RegExp(x),
-	}); };
-	////////// CONSTRUCTORS FOR RECURSIVE TYPES
-	var toMapKey = function (v) { return v.kind === SlangTypes.String
-	    ? v.value
-	    : Symbol.for(v.value); };
-	var fromMapKey = function (v) { return typeof v === 'string'
-	    ? mkString(v)
-	    //@ts-ignore
-	    : mkKeyword(v.description); };
-	var mkQuoted = function (x) { return ({
-	    kind: SlangTypes.Quoted,
-	    quoted: x,
-	}); };
-	var mkOptional = function (x) { return ({
-	    kind: SlangTypes.Optional,
-	    boxed: x !== null && x !== void 0 ? x : null,
-	}); };
-	var mkAtom = function (x) { return ({
-	    kind: SlangTypes.Atom,
-	    atom: x,
-	}); };
-	var mkLeft = function (e) { return ({
-	    kind: SlangTypes.Either,
-	    ok: false,
-	    error: e,
-	}); };
-	var mkRight = function (val) { return ({
-	    kind: SlangTypes.Either,
-	    ok: true,
-	    value: val,
-	}); };
-	var mkList = function (head, tail) { return ({
-	    kind: SlangTypes.List,
-	    head: head,
-	    tail: tail,
-	}); };
-	var mkVector = function (members) { return ({
-	    kind: SlangTypes.Vector,
-	    members: members,
-	}); };
-	var mkMap = function (vs) {
-	    var e_1, _a;
-	    var theMap = new Map();
-	    try {
-	        for (var vs_1 = __values(vs), vs_1_1 = vs_1.next(); !vs_1_1.done; vs_1_1 = vs_1.next()) {
-	            var _b = __read(vs_1_1.value, 2), key = _b[0], value = _b[1];
-	            theMap.set(toMapKey(key), value);
-	        }
-	    }
-	    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-	    finally {
-	        try {
-	            if (vs_1_1 && !vs_1_1.done && (_a = vs_1.return)) _a.call(vs_1);
-	        }
-	        finally { if (e_1) throw e_1.error; }
-	    }
-	    return {
-	        kind: SlangTypes.Map,
-	        table: theMap,
-	    };
-	};
-	var mkMapDirect = function (table) { return ({
-	    kind: SlangTypes.Map,
-	    table: table,
-	}); };
-	//////////////////// Functions
-	var mkFunction = function (name, params, body) { return ({
-	    kind: SlangTypes.Function,
-	    name: name,
-	    params: params,
-	    body: body,
-	}); };
-	var mkShcutFunction = function (name, params, body) { return ({
-	    kind: SlangTypes.ShcutFunction,
-	    name: name,
-	    params: params,
-	    body: body,
-	}); };
-	var mkArmedFunction = function (name, app) { return ({
-	    kind: SlangTypes.ArmedFunction,
-	    name: name,
-	    apply: app,
-	}); };
-	///////////////// Bindings
-	var mkDo = function (exprs) { return ({
-	    kind: SlangTypes.Do,
-	    expressions: exprs,
-	}); };
-	var mkDef = function (id, val) { return ({
-	    kind: SlangTypes.Def,
-	    identifier: id,
-	    value: val,
-	}); };
-	var mkLet = function (vs, body) {
-	    var e_2, _a;
-	    var theBindings = new Map();
-	    try {
-	        for (var vs_2 = __values(vs), vs_2_1 = vs_2.next(); !vs_2_1.done; vs_2_1 = vs_2.next()) {
-	            var v = vs_2_1.value;
-	            theBindings.set(getValue(v[0]), v[1]);
-	        }
-	    }
-	    catch (e_2_1) { e_2 = { error: e_2_1 }; }
-	    finally {
-	        try {
-	            if (vs_2_1 && !vs_2_1.done && (_a = vs_2.return)) _a.call(vs_2);
-	        }
-	        finally { if (e_2) throw e_2.error; }
-	    }
-	    return {
-	        kind: SlangTypes.Let,
-	        bindings: theBindings,
-	        body: body,
-	    };
-	};
-	//////////////////// Conditionals
-	var mkIf = function (condition, thenClause, elseClause) { return ({
-	    kind: SlangTypes.If,
-	    condition: condition,
-	    thenClause: thenClause,
-	    elseClause: elseClause,
-	}); };
-	var mkCond = function (tests) { return ({
-	    kind: SlangTypes.Cond,
-	    tests: tests,
-	}); };
-	var mkCase = function (variable, tests) { return ({
-	    kind: SlangTypes.Case,
-	    variable: variable,
-	    tests: tests,
-	}); };
-	//////////////////// Iteration
-	var mkFor = function (vs, body) {
-	    var e_3, _a;
-	    var theBindings = new Map();
-	    try {
-	        for (var vs_3 = __values(vs), vs_3_1 = vs_3.next(); !vs_3_1.done; vs_3_1 = vs_3.next()) {
-	            var v = vs_3_1.value;
-	            theBindings.set(getValue(v[0]), v[1]);
-	        }
-	    }
-	    catch (e_3_1) { e_3 = { error: e_3_1 }; }
-	    finally {
-	        try {
-	            if (vs_3_1 && !vs_3_1.done && (_a = vs_3.return)) _a.call(vs_3);
-	        }
-	        finally { if (e_3) throw e_3.error; }
-	    }
-	    return {
-	        kind: SlangTypes.For,
-	        bindings: theBindings,
-	        body: body,
-	    };
-	};
-	var mkDoseq = function (vs, body) {
-	    var e_4, _a;
-	    var theBindings = new Map();
-	    try {
-	        for (var vs_4 = __values(vs), vs_4_1 = vs_4.next(); !vs_4_1.done; vs_4_1 = vs_4.next()) {
-	            var v = vs_4_1.value;
-	            theBindings.set(getValue(v[0]), v[1]);
-	        }
-	    }
-	    catch (e_4_1) { e_4 = { error: e_4_1 }; }
-	    finally {
-	        try {
-	            if (vs_4_1 && !vs_4_1.done && (_a = vs_4.return)) _a.call(vs_4);
-	        }
-	        finally { if (e_4) throw e_4.error; }
-	    }
-	    return {
-	        kind: SlangTypes.Doseq,
-	        bindings: theBindings,
-	        body: body,
-	    };
-	};
-	var mkThreadFirst = function (value, pipes) { return ({
-	    kind: SlangTypes.ThreadFirst,
-	    value: value,
-	    pipes: pipes,
-	}); };
-	var mkThreadLast = function (value, pipes) { return ({
-	    kind: SlangTypes.ThreadLast,
-	    value: value,
-	    pipes: pipes,
-	}); };
-	//# sourceMappingURL=constructors.js.map
-
-	var shcutParam = /^%([1-9][0-9]*)?$/u;
-	var shcutFuncArity = function (v, currentMax) {
-	    if (currentMax === void 0) { currentMax = 0; }
-	    switch (v.kind) {
-	        case SlangTypes.Symbol:
-	            var m = v.value.match(shcutParam);
-	            if (m) {
-	                if (!m[1]) {
-	                    return Math.max(currentMax, 1);
-	                }
-	                return Math.max(currentMax, Number(m[1]));
-	            }
-	            return currentMax;
-	        case SlangTypes.List:
-	            var headMax_1 = shcutFuncArity(v.head, currentMax);
-	            var tailMaxes = v.tail.map(function (t) { return shcutFuncArity(t, headMax_1); });
-	            return Math.max.apply(Math, __spread(tailMaxes));
-	        case SlangTypes.Vector:
-	            var vmaxes = v.members.map(function (m) { return shcutFuncArity(m, currentMax); });
-	            return Math.max.apply(Math, __spread(vmaxes));
-	        case SlangTypes.Map:
-	            var mmaxes_1 = [];
-	            v.table.forEach(function (v) {
-	                mmaxes_1.push(shcutFuncArity(v, currentMax));
-	            });
-	            return Math.max.apply(Math, __spread(mmaxes_1));
-	        case SlangTypes.Do:
-	            var dmaxes = v.expressions.map(function (e) { return shcutFuncArity(e, currentMax); });
-	            return Math.max.apply(Math, __spread(dmaxes));
-	        case SlangTypes.If:
-	            return Math.max(shcutFuncArity(v.condition, currentMax), shcutFuncArity(v.thenClause, currentMax), shcutFuncArity(v.elseClause, currentMax));
-	        case SlangTypes.Let:
-	            var lmax_1 = shcutFuncArity(v.body, currentMax);
-	            var lmaxes = [];
-	            v.bindings.forEach(function (v) {
-	                mmaxes_1.push(shcutFuncArity(v, lmax_1));
-	            });
-	            return Math.max.apply(Math, __spread(lmaxes));
-	        case SlangTypes.Def:
-	            return shcutFuncArity(v.value, currentMax);
-	        case SlangTypes.Case:
-	            var cmax_1 = shcutFuncArity(v.variable);
-	            return Math.max.apply(Math, __spread(v.tests.map(function (pair) { return Math.max(shcutFuncArity(pair[0], cmax_1), shcutFuncArity(pair[1], cmax_1)); })));
-	        case SlangTypes.Cond:
-	            return Math.max.apply(Math, __spread(v.tests.map(function (pair) { return Math.max(shcutFuncArity(pair[0], currentMax), shcutFuncArity(pair[1], currentMax)); })));
-	        default:
-	            return currentMax;
-	    }
-	};
-	//# sourceMappingURL=utils.js.map
 
 	var moo = createCommonjsModule(function (module) {
 	(function(root, factory) {
@@ -1473,7 +1175,432 @@
 	}));
 	});
 
-	var lexer = moo.compile({
+	var lexer = moo.states({
+	    main: {
+	        setstart: {
+	            match: '[[',
+	            push: 'inSet',
+	        },
+	        text: {
+	            match: /[\s\S]/u,
+	            lineBreaks: true,
+	        },
+	    },
+	    inSet: {
+	        setstart: {
+	            match: '[[',
+	            push: 'inSet',
+	        },
+	        setend: {
+	            match: ']]',
+	            pop: 1,
+	        },
+	        argsep: '::',
+	        altsep: '||',
+	        intext: {
+	            match: /[\s\S]/u,
+	            lineBreaks: true,
+	        },
+	    },
+	});
+
+	// Generated automatically by nearley, version 2.19.2
+	// http://github.com/Hardmath123/nearley
+	// Bypasses TS6133. Allow declared but unused functions.
+	// @ts-ignore
+	function id(d) { return d[0]; }
+	var grammar = {
+	    Lexer: lexer,
+	    ParserRules: [
+	        { "name": "start", "symbols": ["content"], "postprocess": id },
+	        { "name": "content$ebnf$1", "symbols": [] },
+	        { "name": "content$ebnf$1$subexpression$1", "symbols": ["set", "_"] },
+	        { "name": "content$ebnf$1", "symbols": ["content$ebnf$1", "content$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "content", "symbols": ["_", "content$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 2), sets = _b[1];
+	                return sets.map(id);
+	            } },
+	        { "name": "set", "symbols": [(lexer.has("setstart") ? { type: "setstart" } : setstart), "inner", (lexer.has("setend") ? { type: "setend" } : setend)], "postprocess": function (_a) {
+	                var _b = __read(_a, 2), inner = _b[1];
+	                return inner;
+	            } },
+	        { "name": "inner$ebnf$1", "symbols": [] },
+	        { "name": "inner$ebnf$1$subexpression$1", "symbols": [(lexer.has("argsep") ? { type: "argsep" } : argsep), "args"] },
+	        { "name": "inner$ebnf$1", "symbols": ["inner$ebnf$1", "inner$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "inner", "symbols": ["head", "inner$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 2), head = _b[0], args = _b[1];
+	                return __spread([head], args.map(function (v) { return v[1]; }));
+	            } },
+	        { "name": "head$ebnf$1", "symbols": [(lexer.has("intext") ? { type: "intext" } : intext)] },
+	        { "name": "head$ebnf$1", "symbols": ["head$ebnf$1", (lexer.has("intext") ? { type: "intext" } : intext)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "head", "symbols": ["head$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 1), vs = _b[0];
+	                return vs.map(function (v) { return v.value; }).join('');
+	            } },
+	        { "name": "args$ebnf$1", "symbols": [] },
+	        { "name": "args$ebnf$1$subexpression$1", "symbols": [(lexer.has("altsep") ? { type: "altsep" } : altsep), "val"] },
+	        { "name": "args$ebnf$1", "symbols": ["args$ebnf$1", "args$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "args", "symbols": ["val", "args$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 2), first = _b[0], rest = _b[1];
+	                return __spread([first], rest.map(function (v) { return v[1]; }));
+	            } },
+	        { "name": "val$ebnf$1", "symbols": [] },
+	        { "name": "val$ebnf$1$subexpression$1", "symbols": ["set", "_in"] },
+	        { "name": "val$ebnf$1", "symbols": ["val$ebnf$1", "val$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "val", "symbols": ["_in", "val$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 2), first = _b[0], rest = _b[1];
+	                return rest.reduce(function (accu, v) { return [accu, '[[', [v[0][0], v[0].slice(1).flat().join('||')].join('::'), ']]', v[1]].join(''); }, first);
+	            }
+	        },
+	        { "name": "_in$ebnf$1", "symbols": [] },
+	        { "name": "_in$ebnf$1", "symbols": ["_in$ebnf$1", (lexer.has("intext") ? { type: "intext" } : intext)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "_in", "symbols": ["_in$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 1), vs = _b[0];
+	                return vs.map(function (v) { return v.value; }).join('');
+	            } },
+	        { "name": "_$ebnf$1", "symbols": [] },
+	        { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", (lexer.has("text") ? { type: "text" } : text)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "_", "symbols": ["_$ebnf$1"], "postprocess": function () { return null; } }
+	    ],
+	    ParserStart: "start",
+	};
+
+	// import {
+	var parseTemplate = function (text) {
+	    var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+	    var result = p.feed(text).results;
+	    console.log('meh', result);
+	    if (result.length > 1) {
+	        console.error('Ambiguous template grammar', result);
+	    }
+	    return result[0];
+	};
+	// export const getTemplate = (templateText: string) => {
+	//     const sk = setKeeper()
+	//     sk.next(/* init */)
+	//     const result = parseTemplate(sk).run(templateText)
+	//     return result.isError
+	//         ? result
+	//         : sk.next('stop').value
+	// }
+
+	var SlangType;
+	(function (SlangType) {
+	    SlangType["Unit"] = "unit";
+	    SlangType["Bool"] = "bool";
+	    SlangType["Number"] = "number";
+	    SlangType["String"] = "string";
+	    SlangType["Regex"] = "regex";
+	    SlangType["Symbol"] = "symbol";
+	    SlangType["Keyword"] = "keyword";
+	    SlangType["Quoted"] = "quoted";
+	    SlangType["Optional"] = "optional";
+	    SlangType["Atom"] = "atom";
+	    SlangType["Either"] = "either";
+	    SlangType["List"] = "list";
+	    SlangType["Vector"] = "vector";
+	    SlangType["Map"] = "map";
+	    SlangType["MapEntry"] = "mapentry";
+	    SlangType["Function"] = "fun";
+	    SlangType["ShcutFunction"] = "shcutfun";
+	    SlangType["ArmedFunction"] = "armedfun";
+	    SlangType["Optic"] = "optic";
+	    // Statement blocks
+	    SlangType["Def"] = "def";
+	    SlangType["If"] = "if";
+	    SlangType["Do"] = "do";
+	    SlangType["Let"] = "let";
+	    SlangType["Cond"] = "cond";
+	    SlangType["Case"] = "case";
+	    SlangType["For"] = "for";
+	    SlangType["Doseq"] = "doseq";
+	    SlangType["ThreadFirst"] = "threadfirst";
+	    SlangType["ThreadLast"] = "threadlast";
+	})(SlangType || (SlangType = {}));
+	var OpticType;
+	(function (OpticType) {
+	    OpticType["Setter"] = "setter";
+	    OpticType["Fold"] = "fold";
+	    OpticType["Traversal"] = "traversal";
+	    OpticType["Affine"] = "affine";
+	    OpticType["Getter"] = "getter";
+	    OpticType["Lens"] = "lens";
+	    OpticType["Prism"] = "prism";
+	    OpticType["Iso"] = "iso";
+	})(OpticType || (OpticType = {}));
+
+	var getValue = function (v) { return v.value; };
+	////////// CONSTRUCTORS FOR BASIC TYPES
+	var mkUnit = function () { return ({
+	    kind: SlangType.Unit,
+	}); };
+	var mkBool = function (v) { return ({
+	    kind: SlangType.Bool,
+	    value: v,
+	}); };
+	var mkNumber = function (re) { return ({
+	    kind: SlangType.Number,
+	    value: Number(re),
+	}); };
+	var mkSymbol = function (x) { return ({
+	    kind: SlangType.Symbol,
+	    value: x,
+	}); };
+	var mkKeyword = function (x) { return ({
+	    kind: SlangType.Keyword,
+	    value: x,
+	}); };
+	var mkString = function (x) { return ({
+	    kind: SlangType.String,
+	    value: x,
+	}); };
+	var mkRegex = function (x) { return ({
+	    kind: SlangType.Regex,
+	    value: new RegExp(x),
+	}); };
+	////////// CONSTRUCTORS FOR RECURSIVE TYPES
+	var toMapKey = function (v) { return v.kind === SlangType.String
+	    ? v.value
+	    : Symbol.for(v.value); };
+	var fromMapKey = function (v) { return typeof v === 'string'
+	    ? mkString(v)
+	    //@ts-ignore
+	    : mkKeyword(v.description); };
+	var mkQuoted = function (x) { return ({
+	    kind: SlangType.Quoted,
+	    quoted: x,
+	}); };
+	var mkOptional = function (x) { return ({
+	    kind: SlangType.Optional,
+	    boxed: x !== null && x !== void 0 ? x : null,
+	}); };
+	var mkAtom = function (x) { return ({
+	    kind: SlangType.Atom,
+	    atom: x,
+	}); };
+	var mkLeft = function (e) { return ({
+	    kind: SlangType.Either,
+	    ok: false,
+	    error: e,
+	}); };
+	var mkRight = function (val) { return ({
+	    kind: SlangType.Either,
+	    ok: true,
+	    value: val,
+	}); };
+	var mkList = function (head, tail) { return ({
+	    kind: SlangType.List,
+	    head: head,
+	    tail: tail,
+	}); };
+	var mkVector = function (members) { return ({
+	    kind: SlangType.Vector,
+	    members: members,
+	}); };
+	var mkMap = function (vs) {
+	    var e_1, _a;
+	    var theMap = new Map();
+	    try {
+	        for (var vs_1 = __values(vs), vs_1_1 = vs_1.next(); !vs_1_1.done; vs_1_1 = vs_1.next()) {
+	            var _b = __read(vs_1_1.value, 2), key = _b[0], value = _b[1];
+	            theMap.set(toMapKey(key), value);
+	        }
+	    }
+	    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+	    finally {
+	        try {
+	            if (vs_1_1 && !vs_1_1.done && (_a = vs_1.return)) _a.call(vs_1);
+	        }
+	        finally { if (e_1) throw e_1.error; }
+	    }
+	    return {
+	        kind: SlangType.Map,
+	        table: theMap,
+	    };
+	};
+	var mkMapDirect = function (table) { return ({
+	    kind: SlangType.Map,
+	    table: table,
+	}); };
+	//////////////////// Functions
+	var mkFunction = function (name, params, body) { return ({
+	    kind: SlangType.Function,
+	    name: name,
+	    params: params,
+	    body: body,
+	}); };
+	var mkOptic = function (opticType, name, zooms) { return ({
+	    kind: SlangType.Optic,
+	    subkind: opticType,
+	    name: name,
+	    zooms: zooms,
+	}); };
+	var mkShcutFunction = function (name, params, body) { return ({
+	    kind: SlangType.ShcutFunction,
+	    name: name,
+	    params: params,
+	    body: body,
+	}); };
+	var mkArmedFunction = function (name, app) { return ({
+	    kind: SlangType.ArmedFunction,
+	    name: name,
+	    apply: app,
+	}); };
+	///////////////// Bindings
+	var mkDo = function (exprs) { return ({
+	    kind: SlangType.Do,
+	    expressions: exprs,
+	}); };
+	var mkDef = function (id, val) { return ({
+	    kind: SlangType.Def,
+	    identifier: id,
+	    value: val,
+	}); };
+	var mkLet = function (vs, body) {
+	    var e_2, _a;
+	    var theBindings = new Map();
+	    try {
+	        for (var vs_2 = __values(vs), vs_2_1 = vs_2.next(); !vs_2_1.done; vs_2_1 = vs_2.next()) {
+	            var v = vs_2_1.value;
+	            theBindings.set(getValue(v[0]), v[1]);
+	        }
+	    }
+	    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+	    finally {
+	        try {
+	            if (vs_2_1 && !vs_2_1.done && (_a = vs_2.return)) _a.call(vs_2);
+	        }
+	        finally { if (e_2) throw e_2.error; }
+	    }
+	    return {
+	        kind: SlangType.Let,
+	        bindings: theBindings,
+	        body: body,
+	    };
+	};
+	//////////////////// Conditionals
+	var mkIf = function (condition, thenClause, elseClause) { return ({
+	    kind: SlangType.If,
+	    condition: condition,
+	    thenClause: thenClause,
+	    elseClause: elseClause,
+	}); };
+	var mkCond = function (tests) { return ({
+	    kind: SlangType.Cond,
+	    tests: tests,
+	}); };
+	var mkCase = function (variable, tests) { return ({
+	    kind: SlangType.Case,
+	    variable: variable,
+	    tests: tests,
+	}); };
+	//////////////////// Iteration
+	var mkFor = function (vs, body) {
+	    var e_3, _a;
+	    var theBindings = new Map();
+	    try {
+	        for (var vs_3 = __values(vs), vs_3_1 = vs_3.next(); !vs_3_1.done; vs_3_1 = vs_3.next()) {
+	            var v = vs_3_1.value;
+	            theBindings.set(getValue(v[0]), v[1]);
+	        }
+	    }
+	    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+	    finally {
+	        try {
+	            if (vs_3_1 && !vs_3_1.done && (_a = vs_3.return)) _a.call(vs_3);
+	        }
+	        finally { if (e_3) throw e_3.error; }
+	    }
+	    return {
+	        kind: SlangType.For,
+	        bindings: theBindings,
+	        body: body,
+	    };
+	};
+	var mkDoseq = function (vs, body) {
+	    var e_4, _a;
+	    var theBindings = new Map();
+	    try {
+	        for (var vs_4 = __values(vs), vs_4_1 = vs_4.next(); !vs_4_1.done; vs_4_1 = vs_4.next()) {
+	            var v = vs_4_1.value;
+	            theBindings.set(getValue(v[0]), v[1]);
+	        }
+	    }
+	    catch (e_4_1) { e_4 = { error: e_4_1 }; }
+	    finally {
+	        try {
+	            if (vs_4_1 && !vs_4_1.done && (_a = vs_4.return)) _a.call(vs_4);
+	        }
+	        finally { if (e_4) throw e_4.error; }
+	    }
+	    return {
+	        kind: SlangType.Doseq,
+	        bindings: theBindings,
+	        body: body,
+	    };
+	};
+	var mkThreadFirst = function (value, pipes) { return ({
+	    kind: SlangType.ThreadFirst,
+	    value: value,
+	    pipes: pipes,
+	}); };
+	var mkThreadLast = function (value, pipes) { return ({
+	    kind: SlangType.ThreadLast,
+	    value: value,
+	    pipes: pipes,
+	}); };
+
+	var shcutParam = /^%([1-9][0-9]*)?$/u;
+	var shcutFuncArity = function (v, currentMax) {
+	    if (currentMax === void 0) { currentMax = 0; }
+	    switch (v.kind) {
+	        case SlangType.Symbol:
+	            var m = v.value.match(shcutParam);
+	            if (m) {
+	                if (!m[1]) {
+	                    return Math.max(currentMax, 1);
+	                }
+	                return Math.max(currentMax, Number(m[1]));
+	            }
+	            return currentMax;
+	        case SlangType.List:
+	            var headMax_1 = shcutFuncArity(v.head, currentMax);
+	            var tailMaxes = v.tail.map(function (t) { return shcutFuncArity(t, headMax_1); });
+	            return Math.max.apply(Math, __spread(tailMaxes));
+	        case SlangType.Vector:
+	            var vmaxes = v.members.map(function (m) { return shcutFuncArity(m, currentMax); });
+	            return Math.max.apply(Math, __spread(vmaxes));
+	        case SlangType.Map:
+	            var mmaxes_1 = [];
+	            v.table.forEach(function (v) {
+	                mmaxes_1.push(shcutFuncArity(v, currentMax));
+	            });
+	            return Math.max.apply(Math, __spread(mmaxes_1));
+	        case SlangType.Do:
+	            var dmaxes = v.expressions.map(function (e) { return shcutFuncArity(e, currentMax); });
+	            return Math.max.apply(Math, __spread(dmaxes));
+	        case SlangType.If:
+	            return Math.max(shcutFuncArity(v.condition, currentMax), shcutFuncArity(v.thenClause, currentMax), shcutFuncArity(v.elseClause, currentMax));
+	        case SlangType.Let:
+	            var lmax_1 = shcutFuncArity(v.body, currentMax);
+	            var lmaxes = [];
+	            v.bindings.forEach(function (v) {
+	                mmaxes_1.push(shcutFuncArity(v, lmax_1));
+	            });
+	            return Math.max.apply(Math, __spread(lmaxes));
+	        case SlangType.Def:
+	            return shcutFuncArity(v.value, currentMax);
+	        case SlangType.Case:
+	            var cmax_1 = shcutFuncArity(v.variable);
+	            return Math.max.apply(Math, __spread(v.tests.map(function (pair) { return Math.max(shcutFuncArity(pair[0], cmax_1), shcutFuncArity(pair[1], cmax_1)); })));
+	        case SlangType.Cond:
+	            return Math.max.apply(Math, __spread(v.tests.map(function (pair) { return Math.max(shcutFuncArity(pair[0], currentMax), shcutFuncArity(pair[1], currentMax)); })));
+	        default:
+	            return currentMax;
+	    }
+	};
+
+	var lexer$1 = moo.compile({
 	    ws: {
 	        match: /(?:&nbsp;|,|<[^>]*?>|[ \t\n]|\/\*.*\*\/)+/u,
 	        lineBreaks: true,
@@ -1522,12 +1649,12 @@
 	    dispatch: {
 	        match: /#(?:[-_.!?+*/<=>%|~^a-zA-Z]|&lt;|&gt;)(?:[-_.!?+*/<=>%|~^a-zA-Z0-9]|&lt;|&gt;)*/u,
 	        type: moo.keywords({
-	            'trueLit': ['#true', '#t'],
-	            'falseLit': ['#false', '#f'],
-	            'nilLit': ['#nil', '#n'],
-	            'infLit': ['#inf'],
-	            'negInfLit': ['#-inf'],
-	            'nanLit': ['#nan', '#NaN'],
+	            'trueLit': '#true',
+	            'falseLit': '#false',
+	            'nilLit': '#none',
+	            'infLit': '#inf',
+	            'negInfLit': '#-inf',
+	            'nanLit': '#nan',
 	        }),
 	        value: function (x) { return x.slice(1); },
 	    },
@@ -1536,129 +1663,128 @@
 	        value: function (x) { return x.slice(2, -1); },
 	    },
 	});
-	//# sourceMappingURL=tokenizer.js.map
 
-	// Generated automatically by nearley, version 2.19.1
+	// Generated automatically by nearley, version 2.19.2
 	// http://github.com/Hardmath123/nearley
 	// Bypasses TS6133. Allow declared but unused functions.
 	// @ts-ignore
-	function id(d) { return d[0]; }
-	var grammar = {
-	    Lexer: lexer,
+	function id$1(d) { return d[0]; }
+	var grammar$1 = {
+	    Lexer: lexer$1,
 	    ParserRules: [
-	        { "name": "start", "symbols": ["prog"], "postprocess": id },
+	        { "name": "start", "symbols": ["prog"], "postprocess": id$1 },
 	        { "name": "prog$ebnf$1", "symbols": [] },
 	        { "name": "prog$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
 	        { "name": "prog$ebnf$1", "symbols": ["prog$ebnf$1", "prog$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "prog", "symbols": ["_", "prog$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 2), vals = _b[1];
-	                return mkDo(vals.map(id));
+	                return mkDo(vals.map(id$1));
 	            }
 	        },
-	        { "name": "expr", "symbols": ["lit"], "postprocess": id },
-	        { "name": "expr", "symbols": ["shCutFn"], "postprocess": id },
+	        { "name": "expr", "symbols": ["lit"], "postprocess": id$1 },
+	        { "name": "expr", "symbols": ["shCutFn"], "postprocess": id$1 },
 	        { "name": "lit$macrocall$2", "symbols": ["list"] },
-	        { "name": "lit$macrocall$1", "symbols": [(lexer.has("lparen") ? { type: "lparen" } : lparen), "_", "lit$macrocall$2", (lexer.has("rparen") ? { type: "rparen" } : rparen)] },
+	        { "name": "lit$macrocall$1", "symbols": [(lexer$1.has("lparen") ? { type: "lparen" } : lparen), "_", "lit$macrocall$2", (lexer$1.has("rparen") ? { type: "rparen" } : rparen)] },
 	        { "name": "lit", "symbols": ["lit$macrocall$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), _c = __read(_b[0], 3), _d = __read(_c[2], 1), val = _d[0];
 	                return val;
 	            } },
-	        { "name": "lit", "symbols": ["vector"], "postprocess": id },
-	        { "name": "lit", "symbols": ["map"], "postprocess": id },
-	        { "name": "lit", "symbols": ["quoted"], "postprocess": id },
-	        { "name": "lit", "symbols": ["optional"], "postprocess": id },
-	        { "name": "lit", "symbols": ["deref"], "postprocess": id },
-	        { "name": "lit", "symbols": ["number"], "postprocess": id },
-	        { "name": "lit", "symbols": ["string"], "postprocess": id },
-	        { "name": "lit", "symbols": ["regex"], "postprocess": id },
-	        { "name": "lit", "symbols": ["symbol"], "postprocess": id },
-	        { "name": "lit", "symbols": ["keyword"], "postprocess": id },
-	        { "name": "lit", "symbols": ["bool"], "postprocess": id },
+	        { "name": "lit", "symbols": ["vector"], "postprocess": id$1 },
+	        { "name": "lit", "symbols": ["map"], "postprocess": id$1 },
+	        { "name": "lit", "symbols": ["quoted"], "postprocess": id$1 },
+	        { "name": "lit", "symbols": ["optional"], "postprocess": id$1 },
+	        { "name": "lit", "symbols": ["deref"], "postprocess": id$1 },
+	        { "name": "lit", "symbols": ["number"], "postprocess": id$1 },
+	        { "name": "lit", "symbols": ["string"], "postprocess": id$1 },
+	        { "name": "lit", "symbols": ["regex"], "postprocess": id$1 },
+	        { "name": "lit", "symbols": ["symbol"], "postprocess": id$1 },
+	        { "name": "lit", "symbols": ["keyword"], "postprocess": id$1 },
+	        { "name": "lit", "symbols": ["bool"], "postprocess": id$1 },
 	        { "name": "vector$macrocall$2$ebnf$1", "symbols": [] },
 	        { "name": "vector$macrocall$2$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
 	        { "name": "vector$macrocall$2$ebnf$1", "symbols": ["vector$macrocall$2$ebnf$1", "vector$macrocall$2$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "vector$macrocall$2", "symbols": ["vector$macrocall$2$ebnf$1"] },
-	        { "name": "vector$macrocall$1", "symbols": [(lexer.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "vector$macrocall$2", (lexer.has("rbracket") ? { type: "rbracket" } : rbracket)] },
+	        { "name": "vector$macrocall$1", "symbols": [(lexer$1.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "vector$macrocall$2", (lexer$1.has("rbracket") ? { type: "rbracket" } : rbracket)] },
 	        { "name": "vector", "symbols": ["vector$macrocall$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), _c = __read(_b[0], 3), _d = __read(_c[2], 1), vals = _d[0];
-	                return mkVector(vals.map(id));
+	                return mkVector(vals.map(id$1));
 	            }
 	        },
 	        { "name": "map$macrocall$2$ebnf$1", "symbols": [] },
 	        { "name": "map$macrocall$2$ebnf$1$subexpression$1", "symbols": ["mapIdentifier", "_", "expr", "_"] },
 	        { "name": "map$macrocall$2$ebnf$1", "symbols": ["map$macrocall$2$ebnf$1", "map$macrocall$2$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "map$macrocall$2", "symbols": ["map$macrocall$2$ebnf$1"] },
-	        { "name": "map$macrocall$1", "symbols": [(lexer.has("lbrace") ? { type: "lbrace" } : lbrace), "_", "map$macrocall$2", (lexer.has("rbrace") ? { type: "rbrace" } : rbrace)] },
+	        { "name": "map$macrocall$1", "symbols": [(lexer$1.has("lbrace") ? { type: "lbrace" } : lbrace), "_", "map$macrocall$2", (lexer$1.has("rbrace") ? { type: "rbrace" } : rbrace)] },
 	        { "name": "map", "symbols": ["map$macrocall$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), _c = __read(_b[0], 3), _d = __read(_c[2], 1), vals = _d[0];
 	                return mkMap(vals.map(function (v) { return [v[0], v[2]]; }));
 	            }
 	        },
-	        { "name": "mapIdentifier", "symbols": ["string"], "postprocess": id },
-	        { "name": "mapIdentifier", "symbols": ["keyword"], "postprocess": id },
-	        { "name": "mapIdentifier", "symbols": ["number"], "postprocess": id },
-	        { "name": "optional", "symbols": [(lexer.has("nilLit") ? { type: "nilLit" } : nilLit)], "postprocess": function () { return mkOptional(null); } },
-	        { "name": "optional", "symbols": [(lexer.has("amp") ? { type: "amp" } : amp), "expr"], "postprocess": function (_a) {
+	        { "name": "mapIdentifier", "symbols": ["string"], "postprocess": id$1 },
+	        { "name": "mapIdentifier", "symbols": ["keyword"], "postprocess": id$1 },
+	        { "name": "mapIdentifier", "symbols": ["number"], "postprocess": id$1 },
+	        { "name": "optional", "symbols": [(lexer$1.has("nilLit") ? { type: "nilLit" } : nilLit)], "postprocess": function () { return mkOptional(null); } },
+	        { "name": "optional", "symbols": [(lexer$1.has("amp") ? { type: "amp" } : amp), "expr"], "postprocess": function (_a) {
 	                var _b = __read(_a, 2), val = _b[1];
 	                return mkOptional(val);
 	            } },
-	        { "name": "quoted", "symbols": [(lexer.has("quote") ? { type: "quote" } : quote), "expr"], "postprocess": function (_a) {
+	        { "name": "quoted", "symbols": [(lexer$1.has("quote") ? { type: "quote" } : quote), "expr"], "postprocess": function (_a) {
 	                var _b = __read(_a, 2), quot = _b[1];
 	                return mkQuoted(quot);
 	            } },
-	        { "name": "deref", "symbols": [(lexer.has("at") ? { type: "at" } : at), "expr"], "postprocess": function (_a) {
+	        { "name": "deref", "symbols": [(lexer$1.has("at") ? { type: "at" } : at), "expr"], "postprocess": function (_a) {
 	                var _b = __read(_a, 2), expr = _b[1];
 	                return mkList(mkSymbol('deref'), [expr]);
 	            } },
-	        { "name": "bool", "symbols": [(lexer.has("trueLit") ? { type: "trueLit" } : trueLit)], "postprocess": function () { return mkBool(true); } },
-	        { "name": "bool", "symbols": [(lexer.has("falseLit") ? { type: "falseLit" } : falseLit)], "postprocess": function () { return mkBool(false); } },
-	        { "name": "number", "symbols": [(lexer.has("number") ? { type: "number" } : number)], "postprocess": function (_a) {
+	        { "name": "bool", "symbols": [(lexer$1.has("trueLit") ? { type: "trueLit" } : trueLit)], "postprocess": function () { return mkBool(true); } },
+	        { "name": "bool", "symbols": [(lexer$1.has("falseLit") ? { type: "falseLit" } : falseLit)], "postprocess": function () { return mkBool(false); } },
+	        { "name": "number", "symbols": [(lexer$1.has("number") ? { type: "number" } : number)], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), num = _b[0];
 	                return mkNumber(num.value);
 	            } },
-	        { "name": "number", "symbols": [(lexer.has("infLit") ? { type: "infLit" } : infLit)], "postprocess": function (_a) {
+	        { "name": "number", "symbols": [(lexer$1.has("infLit") ? { type: "infLit" } : infLit)], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), num = _b[0];
 	                return mkNumber(Infinity);
 	            } },
-	        { "name": "number", "symbols": [(lexer.has("negInfLit") ? { type: "negInfLit" } : negInfLit)], "postprocess": function (_a) {
+	        { "name": "number", "symbols": [(lexer$1.has("negInfLit") ? { type: "negInfLit" } : negInfLit)], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), num = _b[0];
 	                return mkNumber(-Infinity);
 	            } },
-	        { "name": "number", "symbols": [(lexer.has("nanLit") ? { type: "nanLit" } : nanLit)], "postprocess": function (_a) {
+	        { "name": "number", "symbols": [(lexer$1.has("nanLit") ? { type: "nanLit" } : nanLit)], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), num = _b[0];
 	                return mkNumber(NaN);
 	            } },
-	        { "name": "string", "symbols": [(lexer.has("string") ? { type: "string" } : string)], "postprocess": function (_a) {
+	        { "name": "string", "symbols": [(lexer$1.has("string") ? { type: "string" } : string)], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), str = _b[0];
 	                return mkString(str.value);
 	            } },
-	        { "name": "symbol", "symbols": [(lexer.has("symbol") ? { type: "symbol" } : symbol)], "postprocess": function (_a) {
+	        { "name": "symbol", "symbols": [(lexer$1.has("symbol") ? { type: "symbol" } : symbol)], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), sym = _b[0];
 	                return mkSymbol(sym.value);
 	            } },
-	        { "name": "keyword", "symbols": [(lexer.has("keyword") ? { type: "keyword" } : keyword)], "postprocess": function (_a) {
+	        { "name": "keyword", "symbols": [(lexer$1.has("keyword") ? { type: "keyword" } : keyword)], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), kw = _b[0];
 	                return mkKeyword(kw.value);
 	            } },
-	        { "name": "regex", "symbols": [(lexer.has("regex") ? { type: "regex" } : regex)], "postprocess": function (_a) {
+	        { "name": "regex", "symbols": [(lexer$1.has("regex") ? { type: "regex" } : regex)], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), re = _b[0];
 	                return mkRegex(re.value);
 	            } },
-	        { "name": "list", "symbols": ["def"], "postprocess": id },
-	        { "name": "list", "symbols": ["fn"], "postprocess": id },
-	        { "name": "list", "symbols": ["defn"], "postprocess": id },
-	        { "name": "list", "symbols": ["do"], "postprocess": id },
-	        { "name": "list", "symbols": ["let"], "postprocess": id },
-	        { "name": "list", "symbols": ["if"], "postprocess": id },
-	        { "name": "list", "symbols": ["case"], "postprocess": id },
-	        { "name": "list", "symbols": ["cond"], "postprocess": id },
-	        { "name": "list", "symbols": ["for"], "postprocess": id },
-	        { "name": "list", "symbols": ["doseq"], "postprocess": id },
-	        { "name": "list", "symbols": ["threadfirst"], "postprocess": id },
-	        { "name": "list", "symbols": ["threadlast"], "postprocess": id },
-	        { "name": "list", "symbols": ["op"], "postprocess": id },
-	        { "name": "list", "symbols": ["unit"], "postprocess": id },
-	        { "name": "def", "symbols": [(lexer.has("defSym") ? { type: "defSym" } : defSym), "_", "symbol", "_", "expr", "_"], "postprocess": function (_a) {
+	        { "name": "list", "symbols": ["def"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["fn"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["defn"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["do"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["let"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["if"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["case"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["cond"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["for"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["doseq"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["threadfirst"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["threadlast"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["op"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["unit"], "postprocess": id$1 },
+	        { "name": "def", "symbols": [(lexer$1.has("defSym") ? { type: "defSym" } : defSym), "_", "symbol", "_", "expr", "_"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), ident = _b[2], val = _b[4];
 	                return mkDef(ident, val);
 	            }
@@ -1667,47 +1793,47 @@
 	        { "name": "fn$macrocall$2$ebnf$1$subexpression$1", "symbols": ["symbol", "_"] },
 	        { "name": "fn$macrocall$2$ebnf$1", "symbols": ["fn$macrocall$2$ebnf$1", "fn$macrocall$2$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "fn$macrocall$2", "symbols": ["fn$macrocall$2$ebnf$1"] },
-	        { "name": "fn$macrocall$1", "symbols": [(lexer.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "fn$macrocall$2", (lexer.has("rbracket") ? { type: "rbracket" } : rbracket)] },
-	        { "name": "fn", "symbols": [(lexer.has("fnSym") ? { type: "fnSym" } : fnSym), "_", "fn$macrocall$1", "_", "expr", "_"], "postprocess": function (_a) {
+	        { "name": "fn$macrocall$1", "symbols": [(lexer$1.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "fn$macrocall$2", (lexer$1.has("rbracket") ? { type: "rbracket" } : rbracket)] },
+	        { "name": "fn", "symbols": [(lexer$1.has("fnSym") ? { type: "fnSym" } : fnSym), "_", "fn$macrocall$1", "_", "expr", "_"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), _c = __read(_b[2], 3), params = _c[2], body = _b[4];
-	                return mkFunction("fn_" + Math.floor(Math.random() * 2e6), params[0].map(id), body);
+	                return mkFunction("fn_" + Math.floor(Math.random() * 2e6), params[0].map(id$1), body);
 	            }
 	        },
 	        { "name": "defn$macrocall$2$ebnf$1", "symbols": [] },
 	        { "name": "defn$macrocall$2$ebnf$1$subexpression$1", "symbols": ["symbol", "_"] },
 	        { "name": "defn$macrocall$2$ebnf$1", "symbols": ["defn$macrocall$2$ebnf$1", "defn$macrocall$2$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "defn$macrocall$2", "symbols": ["defn$macrocall$2$ebnf$1"] },
-	        { "name": "defn$macrocall$1", "symbols": [(lexer.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "defn$macrocall$2", (lexer.has("rbracket") ? { type: "rbracket" } : rbracket)] },
-	        { "name": "defn", "symbols": [(lexer.has("defnSym") ? { type: "defnSym" } : defnSym), "_", "symbol", "_", "defn$macrocall$1", "_", "expr", "_"], "postprocess": function (_a) {
+	        { "name": "defn$macrocall$1", "symbols": [(lexer$1.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "defn$macrocall$2", (lexer$1.has("rbracket") ? { type: "rbracket" } : rbracket)] },
+	        { "name": "defn", "symbols": [(lexer$1.has("defnSym") ? { type: "defnSym" } : defnSym), "_", "symbol", "_", "defn$macrocall$1", "_", "expr", "_"], "postprocess": function (_a) {
 	                var _b = __read(_a, 7), ident = _b[2], _c = __read(_b[4], 3), params = _c[2], body = _b[6];
-	                return mkDef(ident, mkFunction(ident, params[0].map(id), body));
+	                return mkDef(ident, mkFunction(ident, params[0].map(id$1), body));
 	            }
 	        },
 	        { "name": "do$ebnf$1", "symbols": [] },
 	        { "name": "do$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
 	        { "name": "do$ebnf$1", "symbols": ["do$ebnf$1", "do$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-	        { "name": "do", "symbols": [(lexer.has("doSym") ? { type: "doSym" } : doSym), "_", "do$ebnf$1"], "postprocess": function (_a) {
+	        { "name": "do", "symbols": [(lexer$1.has("doSym") ? { type: "doSym" } : doSym), "_", "do$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 3), vals = _b[2];
-	                return mkDo(vals.map(id));
+	                return mkDo(vals.map(id$1));
 	            }
 	        },
 	        { "name": "let$macrocall$2$ebnf$1", "symbols": [] },
 	        { "name": "let$macrocall$2$ebnf$1$subexpression$1", "symbols": ["symbol", "_", "expr", "_"] },
 	        { "name": "let$macrocall$2$ebnf$1", "symbols": ["let$macrocall$2$ebnf$1", "let$macrocall$2$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "let$macrocall$2", "symbols": ["let$macrocall$2$ebnf$1"] },
-	        { "name": "let$macrocall$1", "symbols": [(lexer.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "let$macrocall$2", (lexer.has("rbracket") ? { type: "rbracket" } : rbracket)] },
+	        { "name": "let$macrocall$1", "symbols": [(lexer$1.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "let$macrocall$2", (lexer$1.has("rbracket") ? { type: "rbracket" } : rbracket)] },
 	        { "name": "let$ebnf$1", "symbols": [] },
 	        { "name": "let$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
 	        { "name": "let$ebnf$1", "symbols": ["let$ebnf$1", "let$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-	        { "name": "let", "symbols": [(lexer.has("letSym") ? { type: "letSym" } : letSym), "_", "let$macrocall$1", "_", "let$ebnf$1"], "postprocess": function (_a) {
+	        { "name": "let", "symbols": [(lexer$1.has("letSym") ? { type: "letSym" } : letSym), "_", "let$macrocall$1", "_", "let$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), _c = __read(_b[2], 3), _d = __read(_c[2], 1), params = _d[0], body = _b[4];
 	                return mkLet(params.map(function (v) { return [v[0], v[2]]; }), mkDo(body.map(function (v) { return v[0]; })));
 	            }
 	        },
 	        { "name": "if$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
-	        { "name": "if$ebnf$1", "symbols": ["if$ebnf$1$subexpression$1"], "postprocess": id },
+	        { "name": "if$ebnf$1", "symbols": ["if$ebnf$1$subexpression$1"], "postprocess": id$1 },
 	        { "name": "if$ebnf$1", "symbols": [], "postprocess": function () { return null; } },
-	        { "name": "if", "symbols": [(lexer.has("ifSym") ? { type: "ifSym" } : ifSym), "_", "expr", "_", "expr", "_", "if$ebnf$1"], "postprocess": function (_a) {
+	        { "name": "if", "symbols": [(lexer$1.has("ifSym") ? { type: "ifSym" } : ifSym), "_", "expr", "_", "expr", "_", "if$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 7), pred = _b[2], thenClause = _b[4], maybeElseClause = _b[6];
 	                return mkIf(pred, thenClause, maybeElseClause
 	                    ? maybeElseClause[0]
@@ -1717,7 +1843,7 @@
 	        { "name": "cond$ebnf$1", "symbols": [] },
 	        { "name": "cond$ebnf$1$subexpression$1", "symbols": ["expr", "_", "expr", "_"] },
 	        { "name": "cond$ebnf$1", "symbols": ["cond$ebnf$1", "cond$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-	        { "name": "cond", "symbols": [(lexer.has("condSym") ? { type: "condSym" } : condSym), "_", "cond$ebnf$1"], "postprocess": function (_a) {
+	        { "name": "cond", "symbols": [(lexer$1.has("condSym") ? { type: "condSym" } : condSym), "_", "cond$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 3), vals = _b[2];
 	                return mkCond(vals.map(function (v) { return [v[0], v[2]]; }));
 	            }
@@ -1725,7 +1851,7 @@
 	        { "name": "case$ebnf$1", "symbols": [] },
 	        { "name": "case$ebnf$1$subexpression$1", "symbols": ["expr", "_", "expr", "_"] },
 	        { "name": "case$ebnf$1", "symbols": ["case$ebnf$1", "case$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-	        { "name": "case", "symbols": [(lexer.has("caseSym") ? { type: "caseSym" } : caseSym), "_", "symbol", "_", "case$ebnf$1"], "postprocess": function (_a) {
+	        { "name": "case", "symbols": [(lexer$1.has("caseSym") ? { type: "caseSym" } : caseSym), "_", "symbol", "_", "case$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), sym = _b[2], vals = _b[4];
 	                return mkCase(sym, vals.map(function (v) { return [v[0], v[2]]; }));
 	            }
@@ -1734,8 +1860,8 @@
 	        { "name": "for$macrocall$2$ebnf$1$subexpression$1", "symbols": ["symbol", "_", "expr", "_"] },
 	        { "name": "for$macrocall$2$ebnf$1", "symbols": ["for$macrocall$2$ebnf$1", "for$macrocall$2$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "for$macrocall$2", "symbols": ["for$macrocall$2$ebnf$1"] },
-	        { "name": "for$macrocall$1", "symbols": [(lexer.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "for$macrocall$2", (lexer.has("rbracket") ? { type: "rbracket" } : rbracket)] },
-	        { "name": "for", "symbols": [(lexer.has("forSym") ? { type: "forSym" } : forSym), "_", "for$macrocall$1", "_", "expr", "_"], "postprocess": function (_a) {
+	        { "name": "for$macrocall$1", "symbols": [(lexer$1.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "for$macrocall$2", (lexer$1.has("rbracket") ? { type: "rbracket" } : rbracket)] },
+	        { "name": "for", "symbols": [(lexer$1.has("forSym") ? { type: "forSym" } : forSym), "_", "for$macrocall$1", "_", "expr", "_"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), _c = __read(_b[2], 3), _d = __read(_c[2], 1), params = _d[0], body = _b[4];
 	                return mkFor(params.map(function (v) { return [v[0], v[2]]; }), body);
 	            }
@@ -1744,8 +1870,8 @@
 	        { "name": "doseq$macrocall$2$ebnf$1$subexpression$1", "symbols": ["symbol", "_", "expr", "_"] },
 	        { "name": "doseq$macrocall$2$ebnf$1", "symbols": ["doseq$macrocall$2$ebnf$1", "doseq$macrocall$2$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "doseq$macrocall$2", "symbols": ["doseq$macrocall$2$ebnf$1"] },
-	        { "name": "doseq$macrocall$1", "symbols": [(lexer.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "doseq$macrocall$2", (lexer.has("rbracket") ? { type: "rbracket" } : rbracket)] },
-	        { "name": "doseq", "symbols": [(lexer.has("doseqSym") ? { type: "doseqSym" } : doseqSym), "_", "doseq$macrocall$1", "_", "expr", "_"], "postprocess": function (_a) {
+	        { "name": "doseq$macrocall$1", "symbols": [(lexer$1.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "doseq$macrocall$2", (lexer$1.has("rbracket") ? { type: "rbracket" } : rbracket)] },
+	        { "name": "doseq", "symbols": [(lexer$1.has("doseqSym") ? { type: "doseqSym" } : doseqSym), "_", "doseq$macrocall$1", "_", "expr", "_"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), _c = __read(_b[2], 3), _d = __read(_c[2], 1), params = _d[0], body = _b[4];
 	                return mkDoseq(params.map(function (v) { return [v[0], v[2]]; }), body);
 	            }
@@ -1753,17 +1879,17 @@
 	        { "name": "threadfirst$ebnf$1", "symbols": [] },
 	        { "name": "threadfirst$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
 	        { "name": "threadfirst$ebnf$1", "symbols": ["threadfirst$ebnf$1", "threadfirst$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-	        { "name": "threadfirst", "symbols": [(lexer.has("arrowSym") ? { type: "arrowSym" } : arrowSym), "_", "expr", "_", "threadfirst$ebnf$1"], "postprocess": function (_a) {
+	        { "name": "threadfirst", "symbols": [(lexer$1.has("arrowSym") ? { type: "arrowSym" } : arrowSym), "_", "expr", "_", "threadfirst$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), val = _b[2], pipes = _b[4];
-	                return mkThreadFirst(val, pipes.map(id));
+	                return mkThreadFirst(val, pipes.map(id$1));
 	            }
 	        },
 	        { "name": "threadlast$ebnf$1", "symbols": [] },
 	        { "name": "threadlast$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
 	        { "name": "threadlast$ebnf$1", "symbols": ["threadlast$ebnf$1", "threadlast$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-	        { "name": "threadlast", "symbols": [(lexer.has("darrowSym") ? { type: "darrowSym" } : darrowSym), "_", "expr", "_", "threadlast$ebnf$1"], "postprocess": function (_a) {
+	        { "name": "threadlast", "symbols": [(lexer$1.has("darrowSym") ? { type: "darrowSym" } : darrowSym), "_", "expr", "_", "threadlast$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), val = _b[2], pipes = _b[4];
-	                return mkThreadLast(val, pipes.map(id));
+	                return mkThreadLast(val, pipes.map(id$1));
 	            }
 	        },
 	        { "name": "op$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
@@ -1772,7 +1898,7 @@
 	        { "name": "op$ebnf$1", "symbols": ["op$ebnf$1", "op$ebnf$1$subexpression$2"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "op", "symbols": ["op$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), vals = _b[0];
-	                return mkList(id(id(vals)), vals.slice(1).map(id));
+	                return mkList(id$1(id$1(vals)), vals.slice(1).map(id$1));
 	            }
 	        },
 	        { "name": "unit", "symbols": ["_"], "postprocess": function () { return mkUnit(); }
@@ -1781,48 +1907,54 @@
 	        { "name": "shCutFn$ebnf$1", "symbols": ["shCutFn$ebnf$1$subexpression$1"] },
 	        { "name": "shCutFn$ebnf$1$subexpression$2", "symbols": ["lit", "_"] },
 	        { "name": "shCutFn$ebnf$1", "symbols": ["shCutFn$ebnf$1", "shCutFn$ebnf$1$subexpression$2"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-	        { "name": "shCutFn", "symbols": [(lexer.has("hashParen") ? { type: "hashParen" } : hashParen), "_", "shCutFn$ebnf$1", (lexer.has("rparen") ? { type: "rparen" } : rparen)], "postprocess": function (_a) {
+	        { "name": "shCutFn", "symbols": [(lexer$1.has("hashParen") ? { type: "hashParen" } : hashParen), "_", "shCutFn$ebnf$1", (lexer$1.has("rparen") ? { type: "rparen" } : rparen)], "postprocess": function (_a) {
 	                var _b = __read(_a, 3), vals = _b[2];
-	                var lst = mkList(vals[0][0], vals.slice(1).map(id));
+	                var lst = mkList(vals[0][0], vals.slice(1).map(id$1));
 	                return mkShcutFunction("fn_" + Math.floor(Math.random() * 2e6), shcutFuncArity(lst), lst);
 	            }
 	        },
 	        { "name": "_$ebnf$1", "symbols": [] },
-	        { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", (lexer.has("ws") ? { type: "ws" } : ws)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", (lexer$1.has("ws") ? { type: "ws" } : ws)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "_", "symbols": ["_$ebnf$1"], "postprocess": function () { return null; } },
-	        { "name": "__$ebnf$1", "symbols": [(lexer.has("ws") ? { type: "ws" } : ws)] },
-	        { "name": "__$ebnf$1", "symbols": ["__$ebnf$1", (lexer.has("ws") ? { type: "ws" } : ws)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "__$ebnf$1", "symbols": [(lexer$1.has("ws") ? { type: "ws" } : ws)] },
+	        { "name": "__$ebnf$1", "symbols": ["__$ebnf$1", (lexer$1.has("ws") ? { type: "ws" } : ws)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "__", "symbols": ["__$ebnf$1"], "postprocess": function () { return null; } }
 	    ],
 	    ParserStart: "start",
 	};
-	//# sourceMappingURL=slang.js.map
 
 	var parseCode = function (code) {
-	    var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-	    var result = p.feed(code).results[0];
-	    return result;
+	    var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar$1));
+	    var result = p.feed(code).results;
+	    if (result.length > 1) {
+	        console.error('Ambiguous template grammar', result);
+	    }
+	    return result[0];
 	};
-	//# sourceMappingURL=index.js.map
 
-	var isUnit = function (val) { return val.kind === SlangTypes.Unit; };
-	var isBool = function (val) { return val.kind === SlangTypes.Bool; };
-	var isNumber = function (val) { return val.kind === SlangTypes.Number; };
-	var isSymbol = function (val) { return val.kind === SlangTypes.Symbol; };
-	var isKeyword = function (val) { return val.kind === SlangTypes.Keyword; };
-	var isString = function (val) { return val.kind === SlangTypes.String; };
-	var isRegex = function (val) { return val.kind === SlangTypes.Regex; };
-	var isQuoted = function (val) { return val.kind === SlangTypes.Quoted; };
-	var isOptional = function (val) { return val.kind === SlangTypes.Optional; };
-	var isAtom = function (val) { return val.kind === SlangTypes.Atom; };
-	var isEither = function (val) { return val.kind === SlangTypes.Either; };
+	var isUnit = function (val) { return val.kind === SlangType.Unit; };
+	var isBool = function (val) { return val.kind === SlangType.Bool; };
+	var isNumber = function (val) { return val.kind === SlangType.Number; };
+	var isSymbol = function (val) { return val.kind === SlangType.Symbol; };
+	var isKeyword = function (val) { return val.kind === SlangType.Keyword; };
+	var isString = function (val) { return val.kind === SlangType.String; };
+	var isRegex = function (val) { return val.kind === SlangType.Regex; };
+	var isQuoted = function (val) { return val.kind === SlangType.Quoted; };
+	var isOptional = function (val) { return val.kind === SlangType.Optional; };
+	var isAtom = function (val) { return val.kind === SlangType.Atom; };
+	var isEither = function (val) { return val.kind === SlangType.Either; };
 	var isOk = function (val) { return val.ok; };
-	var isList = function (val) { return val.kind === SlangTypes.List; };
-	var isVector = function (val) { return val.kind === SlangTypes.Vector; };
-	var isMap = function (val) { return val.kind === SlangTypes.Map; };
-	var isFunction = function (val) { return val.kind === SlangTypes.Function; };
-	var isShcutFunction = function (val) { return val.kind === SlangTypes.ShcutFunction; };
-	var isArmedFunction = function (val) { return val.kind === SlangTypes.ArmedFunction; };
+	var isList = function (val) { return val.kind === SlangType.List; };
+	var isVector = function (val) { return val.kind === SlangType.Vector; };
+	var isMap = function (val) { return val.kind === SlangType.Map; };
+	var isFunction = function (val) { return val.kind === SlangType.Function; };
+	var isShcutFunction = function (val) { return val.kind === SlangType.ShcutFunction; };
+	var isArmedFunction = function (val) { return val.kind === SlangType.ArmedFunction; };
+	var isOptic = function (val) { return val.kind === SlangType.Optic; };
+	var isOpticCoercable = function (val) { return (isOptic(val) ||
+	    isNumber(val) ||
+	    isString(val) ||
+	    isKeyword(val)); };
 	var isExecutable = function (val) { return (isFunction(val) ||
 	    isShcutFunction(val) ||
 	    isArmedFunction(val) ||
@@ -1902,7 +2034,6 @@
 	var notExecutable = function (kind) {
 	    return mkNotExecutableError(kind);
 	};
-	//# sourceMappingURL=exception.js.map
 
 	var pureToBool = function (val) {
 	    if (isBool(val)) {
@@ -1914,6 +2045,7 @@
 	    return mkBool(pureToBool(val));
 	};
 	var pureToString = function (val) {
+	    console.log(val);
 	    if (isUnit(val)) {
 	        return '()';
 	    }
@@ -1953,7 +2085,7 @@
 	        if (val.boxed) {
 	            return "&" + pureToString(val.boxed);
 	        }
-	        return "#nil";
+	        return "#none";
 	    }
 	    else if (isVector(val)) {
 	        return "[" + val.members.map(pureToString).join(' ') + "]";
@@ -1981,13 +2113,15 @@
 	        return "fn<" + val.name + ">(" + val.params + ") " + pureToString(val.body);
 	    }
 	    else if (isArmedFunction(val)) {
-	        return "fn<" + val.name + "> built-in";
+	        return "fn<" + val.name + ">";
+	    }
+	    else if (isOptic(val)) {
+	        return "optic<" + val.subkind + ":" + val.name + ">";
 	    }
 	};
 	var toString = function (val) {
 	    return mkString(pureToString(val));
 	};
-	//# sourceMappingURL=coerce.js.map
 
 	var Map$1;
 	(function (Map) {
@@ -2015,11 +2149,10 @@
 	    Map.takeWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], mapArg = _b[1];
 	        var taken = [];
-	        var armed = arm(pred);
 	        var cont = true;
 	        mapArg.table.forEach(function (v, k) {
 	            if (cont) {
-	                var result = pureToBool(apply(armed, [mkVector([fromMapKey(k), v])], ctx));
+	                var result = pureToBool(apply(pred, [mkVector([fromMapKey(k), v])], ctx));
 	                if (result) {
 	                    taken.push([k, v]);
 	                }
@@ -2047,14 +2180,13 @@
 	    Map.dropWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], mapArg = _b[1];
 	        var dropped = [];
-	        var armed = arm(pred);
 	        var start = false;
 	        mapArg.table.forEach(function (v, k) {
 	            if (start) {
 	                dropped.push([k, v]);
 	            }
 	            else {
-	                start = pureToBool(apply(armed, [mkVector([fromMapKey(k), v])], ctx));
+	                start = pureToBool(apply(pred, [mkVector([fromMapKey(k), v])], ctx));
 	            }
 	        });
 	        return mkMap(dropped);
@@ -2069,25 +2201,22 @@
 	    };
 	    Map.anyQ = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], mapArg = _b[1];
-	        var armed = arm(pred);
 	        var result = false;
 	        mapArg.table.forEach(function (v, k) {
-	            result = result || pureToBool(apply(armed, [mkVector([fromMapKey(k), v])], ctx));
+	            result = result || pureToBool(apply(pred, [mkVector([fromMapKey(k), v])], ctx));
 	        });
 	        return mkBool(result);
 	    };
 	    Map.everyQ = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], mapArg = _b[1];
-	        var armed = arm(pred);
 	        var result = true;
 	        mapArg.table.forEach(function (v, k) {
-	            result = result && pureToBool(apply(armed, [mkVector([fromMapKey(k), v])], ctx));
+	            result = result && pureToBool(apply(pred, [mkVector([fromMapKey(k), v])], ctx));
 	        });
 	        return mkBool(result);
 	    };
 	    Map.map = function (_a, ctx) {
 	        var _b = __read(_a), func = _b[0], headMap = _b[1], otherMaps = _b.slice(2);
-	        var armed = arm(func);
 	        var result = [];
 	        headMap.table.forEach(function (v, k) {
 	            var e_1, _a;
@@ -2107,7 +2236,7 @@
 	            }
 	            if (allHaveKey) {
 	                var theKey_1 = fromMapKey(k);
-	                result.push([theKey_1, apply(armed, __spread([
+	                result.push([theKey_1, apply(func, __spread([
 	                        mkVector([theKey_1, v])
 	                    ], otherMaps.map(function (m) { return mkVector([theKey_1, m.table.get(k)]); })), ctx)]);
 	            }
@@ -2116,11 +2245,10 @@
 	    };
 	    Map.filter = function (_a, ctx) {
 	        var _b = __read(_a, 2), func = _b[0], map = _b[1];
-	        var armed = arm(func);
 	        var result = [];
 	        map.table.forEach(function (v, k) {
 	            var theKey = fromMapKey(k);
-	            if (pureToBool(apply(armed, [mkVector([theKey, v])], ctx))) {
+	            if (pureToBool(apply(func, [mkVector([theKey, v])], ctx))) {
 	                result.push([theKey, v]);
 	            }
 	        });
@@ -2129,14 +2257,12 @@
 	    Map.foldl = function (_a, ctx) {
 	        var e_2, _b;
 	        var _c = __read(_a, 3), func = _c[0], accu = _c[1], map = _c[2];
-	        var armed = arm(func);
 	        var result = accu;
 	        try {
 	            for (var _d = __values(map.table), _e = _d.next(); !_e.done; _e = _d.next()) {
 	                var _f = __read(_e.value, 2), key = _f[0], value = _f[1];
 	                var theKey = fromMapKey(key);
-	                console.log('hi', result);
-	                result = apply(armed, [result, mkVector([theKey, value])], ctx);
+	                result = apply(func, [result, mkVector([theKey, value])], ctx);
 	            }
 	        }
 	        catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -2152,7 +2278,6 @@
 	    Map.foldr = function (_a, ctx) {
 	        var _b = __read(_a, 3), func = _b[0], accu = _b[1], map = _b[2];
 	        console.log('hi');
-	        var armed = arm(func);
 	        var iterator = map.table[Symbol.iterator]();
 	        var pureFoldr = function (it) {
 	            var nextValue = it.next();
@@ -2161,7 +2286,7 @@
 	            }
 	            else {
 	                var _a = __read(nextValue.value, 2), key = _a[0], value = _a[1];
-	                return apply(armed, [mkVector([fromMapKey(key), value]), pureFoldr(it)], ctx);
+	                return apply(func, [mkVector([fromMapKey(key), value]), pureFoldr(it)], ctx);
 	            }
 	        };
 	        //@ts-ignore
@@ -2194,10 +2319,9 @@
 	    Vector.takeWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], vectorArg = _b[1];
 	        var taken = [];
-	        var armed = arm(pred);
 	        var cont = true;
 	        for (var i = 0; i < vectorArg.members.length && cont; i++) {
-	            if (pureToBool(apply(armed, [vectorArg.members[i]], ctx))) {
+	            if (pureToBool(apply(pred, [vectorArg.members[i]], ctx))) {
 	                taken.push(vectorArg.members[i]);
 	            }
 	            else {
@@ -2219,14 +2343,13 @@
 	    Vector.dropWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], vectorArg = _b[1];
 	        var dropped = [];
-	        var armed = arm(pred);
 	        var start = false;
 	        for (var i = 0; i < vectorArg.members.length; i++) {
 	            if (start) {
 	                dropped.push(vectorArg.members[i]);
 	            }
 	            else {
-	                if (!pureToBool(apply(armed, [vectorArg.members[i]], ctx))) {
+	                if (!pureToBool(apply(pred, [vectorArg.members[i]], ctx))) {
 	                    dropped.push(vectorArg.members[i]);
 	                    start = true;
 	                }
@@ -2245,12 +2368,11 @@
 	    Vector.anyQ = function (_a, ctx) {
 	        var e_3, _b;
 	        var _c = __read(_a, 2), pred = _c[0], vectorArg = _c[1];
-	        var armed = arm(pred);
 	        var result = false;
 	        try {
 	            for (var _d = __values(vectorArg.members), _e = _d.next(); !_e.done; _e = _d.next()) {
 	                var m = _e.value;
-	                result = result || pureToBool(apply(armed, [m], ctx));
+	                result = result || pureToBool(apply(pred, [m], ctx));
 	            }
 	        }
 	        catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -2265,12 +2387,11 @@
 	    Vector.everyQ = function (_a, ctx) {
 	        var e_4, _b;
 	        var _c = __read(_a, 2), pred = _c[0], vectorArg = _c[1];
-	        var armed = arm(pred);
 	        var result = true;
 	        try {
 	            for (var _d = __values(vectorArg.members), _e = _d.next(); !_e.done; _e = _d.next()) {
 	                var m = _e.value;
-	                result = result && pureToBool(apply(armed, [m], ctx));
+	                result = result && pureToBool(apply(pred, [m], ctx));
 	            }
 	        }
 	        catch (e_4_1) { e_4 = { error: e_4_1 }; }
@@ -2285,7 +2406,6 @@
 	    Vector.map = function (_a, ctx) {
 	        var e_5, _b;
 	        var _c = __read(_a), func = _c[0], headVector = _c[1], otherVectors = _c.slice(2);
-	        var armed = arm(func);
 	        var result = [];
 	        var _loop_1 = function (i, entry) {
 	            var e_6, _a;
@@ -2304,7 +2424,7 @@
 	                finally { if (e_6) throw e_6.error; }
 	            }
 	            if (allHaveKey) {
-	                result.push(apply(armed, __spread([entry], otherVectors.map(function (v) { return v.members[i]; })), ctx));
+	                result.push(apply(func, __spread([entry], otherVectors.map(function (v) { return v.members[i]; })), ctx));
 	            }
 	        };
 	        try {
@@ -2325,12 +2445,11 @@
 	    Vector.filter = function (_a, ctx) {
 	        var e_7, _b;
 	        var _c = __read(_a, 2), func = _c[0], vector = _c[1];
-	        var armed = arm(func);
 	        var result = [];
 	        try {
 	            for (var _d = __values(vector.members), _e = _d.next(); !_e.done; _e = _d.next()) {
 	                var v = _e.value;
-	                if (pureToBool(apply(armed, [v], ctx))) {
+	                if (pureToBool(apply(func, [v], ctx))) {
 	                    result.push(v);
 	                }
 	            }
@@ -2347,12 +2466,11 @@
 	    Vector.foldl = function (_a, ctx) {
 	        var e_8, _b;
 	        var _c = __read(_a, 3), func = _c[0], accu = _c[1], vector = _c[2];
-	        var armed = arm(func);
 	        var result = accu;
 	        try {
 	            for (var _d = __values(vector.members), _e = _d.next(); !_e.done; _e = _d.next()) {
 	                var value = _e.value;
-	                result = apply(armed, [result, value], ctx);
+	                result = apply(func, [result, value], ctx);
 	            }
 	        }
 	        catch (e_8_1) { e_8 = { error: e_8_1 }; }
@@ -2366,13 +2484,12 @@
 	    };
 	    Vector.foldr = function (_a, ctx) {
 	        var _b = __read(_a, 3), func = _b[0], accu = _b[1], vector = _b[2];
-	        var armed = arm(func);
 	        var iterator = vector.members[Symbol.iterator]();
 	        var pureFoldr = function (it) {
 	            var nextValue = it.next();
 	            return nextValue.done
 	                ? accu
-	                : apply(armed, [nextValue.value, pureFoldr(it)], ctx);
+	                : apply(func, [nextValue.value, pureFoldr(it)], ctx);
 	        };
 	        var result = pureFoldr(iterator);
 	        return result;
@@ -2446,15 +2563,14 @@
 	    List.takeWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], listArg = _b[1];
 	        var taken = [];
-	        var armed = arm(pred);
 	        var cont = true;
-	        if (!pureToBool(apply(armed, [listArg.head], ctx))) {
+	        if (!pureToBool(apply(pred, [listArg.head], ctx))) {
 	            return mkUnit();
 	        }
 	        else {
 	            taken.push(listArg.head);
 	            for (var i = 0; i < listArg.tail.length && cont; i++) {
-	                if (pureToBool(apply(armed, [listArg.tail[i]], ctx))) {
+	                if (pureToBool(apply(pred, [listArg.tail[i]], ctx))) {
 	                    taken.push(listArg.tail[i]);
 	                }
 	                else {
@@ -2482,9 +2598,8 @@
 	    List.dropWhile = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], listArg = _b[1];
 	        var dropped = [];
-	        var armed = arm(pred);
 	        var start = false;
-	        if (!pureToBool(apply(armed, [listArg.head], ctx))) {
+	        if (!pureToBool(apply(pred, [listArg.head], ctx))) {
 	            dropped.push(listArg.head);
 	            start = true;
 	        }
@@ -2493,7 +2608,7 @@
 	                dropped.push(listArg.tail[i]);
 	            }
 	            else {
-	                if (!pureToBool(apply(armed, [listArg.tail[i]], ctx))) {
+	                if (!pureToBool(apply(pred, [listArg.tail[i]], ctx))) {
 	                    dropped.push(listArg.tail[i]);
 	                    start = true;
 	                }
@@ -2514,12 +2629,11 @@
 	    List.anyQ = function (_a, ctx) {
 	        var e_10, _b;
 	        var _c = __read(_a, 2), pred = _c[0], listArg = _c[1];
-	        var armed = arm(pred);
 	        var result = false;
 	        try {
 	            for (var _d = __values(listArg.tail), _e = _d.next(); !_e.done; _e = _d.next()) {
 	                var m = _e.value;
-	                result = result || pureToBool(apply(armed, [m], ctx));
+	                result = result || pureToBool(apply(pred, [m], ctx));
 	            }
 	        }
 	        catch (e_10_1) { e_10 = { error: e_10_1 }; }
@@ -2534,12 +2648,11 @@
 	    List.everyQ = function (_a, ctx) {
 	        var e_11, _b;
 	        var _c = __read(_a, 2), pred = _c[0], listArg = _c[1];
-	        var armed = arm(pred);
 	        var result = true;
 	        try {
 	            for (var _d = __values(listArg.tail), _e = _d.next(); !_e.done; _e = _d.next()) {
 	                var m = _e.value;
-	                result = result && pureToBool(apply(armed, [m], ctx));
+	                result = result && pureToBool(apply(pred, [m], ctx));
 	            }
 	        }
 	        catch (e_11_1) { e_11 = { error: e_11_1 }; }
@@ -2554,7 +2667,6 @@
 	    List.map = function (_a, ctx) {
 	        var e_12, _b;
 	        var _c = __read(_a), func = _c[0], headList = _c[1], otherLists = _c.slice(2);
-	        var armed = arm(func);
 	        var result = [];
 	        var _loop_2 = function (i, entry) {
 	            var e_13, _a;
@@ -2573,7 +2685,7 @@
 	                finally { if (e_13) throw e_13.error; }
 	            }
 	            if (allHaveKey) {
-	                result.push(apply(armed, __spread([entry], otherLists.map(function (v) { return v.tail[i]; })), ctx));
+	                result.push(apply(func, __spread([entry], otherLists.map(function (v) { return v.tail[i]; })), ctx));
 	            }
 	        };
 	        try {
@@ -2594,12 +2706,11 @@
 	    List.filter = function (_a, ctx) {
 	        var e_14, _b;
 	        var _c = __read(_a, 2), func = _c[0], list = _c[1];
-	        var armed = arm(func);
 	        var result = [];
 	        try {
 	            for (var _d = __values(list.tail), _e = _d.next(); !_e.done; _e = _d.next()) {
 	                var v = _e.value;
-	                if (pureToBool(apply(armed, [v], ctx))) {
+	                if (pureToBool(apply(func, [v], ctx))) {
 	                    result.push(v);
 	                }
 	            }
@@ -2616,12 +2727,11 @@
 	    List.foldl = function (_a, ctx) {
 	        var e_15, _b;
 	        var _c = __read(_a, 3), func = _c[0], accu = _c[1], list = _c[2];
-	        var armed = arm(func);
 	        var result = accu;
 	        try {
 	            for (var _d = __values(list.tail), _e = _d.next(); !_e.done; _e = _d.next()) {
 	                var value = _e.value;
-	                result = apply(armed, [result, value], ctx);
+	                result = apply(func, [result, value], ctx);
 	            }
 	        }
 	        catch (e_15_1) { e_15 = { error: e_15_1 }; }
@@ -2635,13 +2745,12 @@
 	    };
 	    List.foldr = function (_a, ctx) {
 	        var _b = __read(_a, 3), func = _b[0], accu = _b[1], list = _b[2];
-	        var armed = arm(func);
 	        var iterator = list.tail[Symbol.iterator]();
 	        var pureFoldr = function (it) {
 	            var nextValue = it.next();
 	            return nextValue.done
 	                ? accu
-	                : apply(armed, [nextValue.value, pureFoldr(it)], ctx);
+	                : apply(func, [nextValue.value, pureFoldr(it)], ctx);
 	        };
 	        var result = pureFoldr(iterator);
 	        return result;
@@ -2694,26 +2803,23 @@
 	    };
 	    Optional.anyQ = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], optionalArg = _b[1];
-	        var armed = arm(pred);
 	        var result = false;
 	        if (optionalArg.boxed) {
-	            result = result || pureToBool(apply(armed, [optionalArg.boxed], ctx));
+	            result = result || pureToBool(apply(pred, [optionalArg.boxed], ctx));
 	        }
 	        return mkBool(result);
 	    };
 	    Optional.everyQ = function (_a, ctx) {
 	        var _b = __read(_a, 2), pred = _b[0], optionalArg = _b[1];
-	        var armed = arm(pred);
 	        var result = true;
 	        if (optionalArg.boxed) {
-	            result = result && pureToBool(apply(armed, [optionalArg.boxed], ctx));
+	            result = result && pureToBool(apply(pred, [optionalArg.boxed], ctx));
 	        }
 	        return mkBool(result);
 	    };
 	    Optional.map = function (_a, ctx) {
 	        var e_17, _b;
 	        var _c = __read(_a), func = _c[0], headOptional = _c[1], otherOptionals = _c.slice(2);
-	        var armed = arm(func);
 	        var result = null;
 	        if (headOptional.boxed) {
 	            var allHaveKey = true;
@@ -2731,17 +2837,16 @@
 	                finally { if (e_17) throw e_17.error; }
 	            }
 	            if (allHaveKey) {
-	                result = apply(armed, __spread([headOptional.boxed], otherOptionals.map(function (v) { return v.boxed; })), ctx);
+	                result = apply(func, __spread([headOptional.boxed], otherOptionals.map(function (v) { return v.boxed; })), ctx);
 	            }
 	        }
 	        return mkOptional(result);
 	    };
 	    Optional.filter = function (_a, ctx) {
 	        var _b = __read(_a, 2), func = _b[0], optional = _b[1];
-	        var armed = arm(func);
 	        var result = null;
 	        if (optional.boxed) {
-	            if (pureToBool(apply(armed, [optional.boxed], ctx))) {
+	            if (pureToBool(apply(func, [optional.boxed], ctx))) {
 	                result = optional.boxed;
 	            }
 	        }
@@ -2749,19 +2854,17 @@
 	    };
 	    Optional.foldl = function (_a, ctx) {
 	        var _b = __read(_a, 3), func = _b[0], accu = _b[1], optional = _b[2];
-	        var armed = arm(func);
 	        var result = accu;
 	        if (optional.boxed) {
-	            result = apply(armed, [result, optional.boxed], ctx);
+	            result = apply(func, [result, optional.boxed], ctx);
 	        }
 	        return result;
 	    };
 	    Optional.foldr = function (_a, ctx) {
 	        var _b = __read(_a, 3), func = _b[0], accu = _b[1], optional = _b[2];
-	        var armed = arm(func);
 	        var result = accu;
 	        if (optional.boxed) {
-	            result = apply(armed, [optional.boxed, result], ctx);
+	            result = apply(func, [optional.boxed, result], ctx);
 	        }
 	        return result;
 	    };
@@ -2807,7 +2910,6 @@
 	    var _c;
 	    return mkOptional((_c = listArg.members[idx.value]) !== null && _c !== void 0 ? _c : null);
 	};
-	//# sourceMappingURL=seq.js.map
 
 	var reshape = function (arr, columnSize) {
 	    var currIndex;
@@ -2827,7 +2929,6 @@
 	        }
 	    });
 	};
-	//# sourceMappingURL=utils.js.map
 
 	var indexing$1 = function (_a) {
 	    var _b = __read(_a, 2), mapArg = _b[0], idx = _b[1];
@@ -2924,7 +3025,6 @@
 	        }
 	        finally { if (e_3) throw e_3.error; }
 	    }
-	    var armed = arm(func);
 	    try {
 	        for (var args_1 = __values(args), args_1_1 = args_1.next(); !args_1_1.done; args_1_1 = args_1.next()) {
 	            var map = args_1_1.value;
@@ -2932,7 +3032,7 @@
 	                for (var _j = (e_5 = void 0, __values(map.table)), _l = _j.next(); !_l.done; _l = _j.next()) {
 	                    var _m = __read(_l.value, 2), key = _m[0], value = _m[1];
 	                    if (newMap.has(key)) {
-	                        newMap.set(key, apply(armed, [newMap.get(key), value], ctx));
+	                        newMap.set(key, apply(func, [newMap.get(key), value], ctx));
 	                    }
 	                    else {
 	                        newMap.set(key, value);
@@ -3033,7 +3133,6 @@
 	    }
 	    return mkMapDirect(newMap);
 	};
-	//# sourceMappingURL=map.js.map
 
 	var apply = function (func, args, ctx) {
 	    var result = func.apply(args, ctx);
@@ -3047,13 +3146,13 @@
 	        ? sl
 	        : mkRight(sl);
 	};
-	var wrap = function (name, func) { return (mkArmedFunction(name, function (args, ctx) { return adapt(func(args.map(function (t) { return execute(t, ctx); }), ctx)); })); };
-	var armFunc = function (func) { return (mkArmedFunction(func.name, typecheck({
-	    f: function (args, ctx) { return execute(func.body, joinEnvs(ctx, createEnv(func.params, args.map(function (t) { return execute(t, ctx); })))); },
+	var wrap = function (name, func) { return function (ctx) { return (mkArmedFunction(name, function (args) { return adapt(func(args.map(function (t) { return execute(t, ctx); }), ctx)); })); }; };
+	var armFunc = function (func, creationCtx) { return (mkArmedFunction(func.name, typecheck({
+	    f: function (args) { return execute(func.body, joinEnvs(creationCtx, createEnv(func.params, args.map(function (t) { return execute(t, creationCtx); })))); },
 	    argc: function (count) { return count === func.params.length; },
 	}))); };
-	var armShcut = function (func) { return (mkArmedFunction(func.name, typecheck({
-	    f: function (args, ctx) { return execute(func.body, joinEnvs(ctx, createNumberedEnv(args.map(function (t) { return execute(t, ctx); })))); },
+	var armShcut = function (func, creationCtx) { return (mkArmedFunction(func.name, typecheck({
+	    f: function (args) { return execute(func.body, joinEnvs(creationCtx, createNumberedEnv(args.map(function (t) { return execute(t, creationCtx); })))); },
 	    argc: function (count) { return count === func.params; },
 	}))); };
 	var armNumber = function (num) {
@@ -3076,12 +3175,12 @@
 	        arg0: function (s) { return isMap(s); },
 	    }));
 	};
-	var arm = function (exec) { return (isArmedFunction(exec)
+	var arm = function (exec, ctx) { return (isArmedFunction(exec)
 	    ? exec
 	    : isFunction(exec)
-	        ? armFunc(exec)
+	        ? armFunc(exec, ctx)
 	        : isShcutFunction(exec)
-	            ? armShcut(exec)
+	            ? armShcut(exec, ctx)
 	            : isNumber(exec)
 	                ? armNumber(exec)
 	                : isMapKey(exec)
@@ -3091,37 +3190,49 @@
 	                    // : isMap(exec)
 	                    // ? armMap(exec)
 	                    : throwException('list', notExecutable(exec.kind))); };
-	var fire = function (exec, args, ctx) {
-	    return apply(arm(exec), args, ctx);
+	var fire = function (exec, ctx, args) {
+	    return apply(arm(exec, ctx), args, ctx);
 	};
-	//# sourceMappingURL=functions.js.map
 
 	var identity = function (_a) {
 	    var _b = __read(_a, 1), val = _b[0];
 	    return val;
 	};
-	var constant = function (_a) {
+	var constant2 = function (_a) {
 	    var _b = __read(_a, 2), val = _b[0], _throwaway = _b[1];
 	    return val;
 	};
-	//# sourceMappingURL=combinators.js.map
+	var constant1 = function (_a, ctx) {
+	    var _b = __read(_a, 1), val = _b[0];
+	    return arm(wrap('constant1', function () { return val; })(ctx), ctx);
+	};
+	var wrappedIdentity = wrap('identity', typecheck({
+	    f: identity,
+	    argc: function (count) { return count === 1; },
+	}));
+	var wrappedConstant = wrap('constant', typecheck({
+	    inf: function (args) { return args.length == 2
+	        ? constant2
+	        : constant1; },
+	    argc: function (count) { return count <= 2; },
+	}));
 
 	var twoValueCompare = function (val1, val2) {
 	    if (val1.kind !== val2.kind) {
 	        return false;
 	    }
-	    else if (val1.kind == SlangTypes.Unit) {
+	    else if (val1.kind == SlangType.Unit) {
 	        return true;
 	    }
-	    else if (val1.kind === SlangTypes.Bool ||
-	        val1.kind === SlangTypes.Number ||
-	        val1.kind === SlangTypes.Symbol ||
-	        val1.kind === SlangTypes.Keyword ||
-	        val1.kind === SlangTypes.String) {
+	    else if (val1.kind === SlangType.Bool ||
+	        val1.kind === SlangType.Number ||
+	        val1.kind === SlangType.Symbol ||
+	        val1.kind === SlangType.Keyword ||
+	        val1.kind === SlangType.String) {
 	        //@ts-ignore
 	        return val1.value === val2.value;
 	    }
-	    else if (val1.kind === SlangTypes.List) {
+	    else if (val1.kind === SlangType.List) {
 	        //@ts-ignore
 	        if (val1.tail.length !== val2.tail.length) {
 	            return false;
@@ -3137,7 +3248,7 @@
 	        }
 	        return check;
 	    }
-	    else if (val1.kind === SlangTypes.Vector) {
+	    else if (val1.kind === SlangType.Vector) {
 	        //@ts-ignore
 	        if (val1.members.length !== val2.members.length) {
 	            return false;
@@ -3153,7 +3264,7 @@
 	        }
 	        return check;
 	    }
-	    else if (val1.kind === SlangTypes.Map) {
+	    else if (val1.kind === SlangType.Map) {
 	        //@ts-ignore
 	        if (val1.table.size !== val2.table.size) {
 	            return false;
@@ -3169,11 +3280,11 @@
 	        });
 	        return result_1;
 	    }
-	    else if (val1.kind === SlangTypes.Quoted) {
+	    else if (val1.kind === SlangType.Quoted) {
 	        //@ts-ignore
 	        return twoValueCompare(val1.quoted, val2.quoted);
 	    }
-	    else if (val1.kind === SlangTypes.Optional) {
+	    else if (val1.kind === SlangType.Optional) {
 	        if (val1.boxed === null) {
 	            //@ts-ignore
 	            if (val2.boxed === null) {
@@ -3184,7 +3295,7 @@
 	        //@ts-ignore
 	        return twoValueCompare(val1.boxed, val2.boxed);
 	    }
-	    else /* val1.kind === SlangTypes.Function */ {
+	    else /* val1.kind === SlangType.Function */ {
 	        return false;
 	    }
 	};
@@ -3226,7 +3337,6 @@
 	    }
 	    return mkBool(result);
 	};
-	//# sourceMappingURL=equality.js.map
 
 	var and = function (args) {
 	    var e_1, _a;
@@ -3268,7 +3378,6 @@
 	    var headArg = args[0];
 	    return mkBool(!toBool(headArg).value);
 	};
-	//# sourceMappingURL=bool.js.map
 
 	var addition = function (args) {
 	    var e_1, _a;
@@ -3464,7 +3573,6 @@
 	        ? Number.MIN_SAFE_INTEGER
 	        : Math.max.apply(Math, __spread(args.map(function (a) { return a.value; }))));
 	};
-	//# sourceMappingURL=math.js.map
 
 	var atom = function (_a) {
 	    var _b = __read(_a, 1), value = _b[0];
@@ -3477,7 +3585,7 @@
 	var swapX = function (_a, ctx) {
 	    var _b = __read(_a), atom = _b[0], headComp = _b[1], otherComps = _b.slice(2);
 	    var args = __spread([deref([atom])], otherComps);
-	    var result = fire(headComp, args, ctx);
+	    var result = apply(headComp, args, ctx);
 	    atom.atom = result;
 	    return atom;
 	};
@@ -3486,7 +3594,6 @@
 	    atom.atom = val;
 	    return atom;
 	};
-	//# sourceMappingURL=atoms.js.map
 
 	var rand = function (_a) {
 	    var _b = __read(_a), props = _b.slice(0);
@@ -3548,20 +3655,19 @@
 	    var _b = __read(_a, 1), vec = _b[0];
 	    return mkVector(safeShuffle(vec.members));
 	};
-	//# sourceMappingURL=random.js.map
 
 	var String$1;
 	(function (String) {
 	    String.startsWithQ = function (_a) {
-	        var _b = __read(_a, 2), str = _b[0], prefix = _b[1];
+	        var _b = __read(_a, 2), prefix = _b[0], str = _b[1];
 	        return mkBool(str.value.startsWith(prefix.value));
 	    };
 	    String.endsWithQ = function (_a) {
-	        var _b = __read(_a, 2), str = _b[0], suffix = _b[1];
+	        var _b = __read(_a, 2), suffix = _b[0], str = _b[1];
 	        return mkBool(str.value.endsWith(suffix.value));
 	    };
 	    String.includesQ = function (_a) {
-	        var _b = __read(_a, 2), str = _b[0], infix = _b[1];
+	        var _b = __read(_a, 2), infix = _b[0], str = _b[1];
 	        return mkBool(str.value.includes(infix.value));
 	    };
 	    String.reverse = function (_a) {
@@ -3607,7 +3713,7 @@
 	(function (Vector) {
 	    Vector.startsWithQ = function (_a) {
 	        var e_1, _b;
-	        var _c = __read(_a, 2), vec = _c[0], prefix = _c[1];
+	        var _c = __read(_a, 2), prefix = _c[0], vec = _c[1];
 	        var result = true;
 	        if (prefix.members.length > vec.members.length) {
 	            result = false;
@@ -3628,7 +3734,7 @@
 	        return mkBool(result);
 	    };
 	    Vector.endsWithQ = function (_a) {
-	        var _b = __read(_a, 2), vec = _b[0], suffix = _b[1];
+	        var _b = __read(_a, 2), suffix = _b[0], vec = _b[1];
 	        var result = true;
 	        if (suffix.members.length > vec.members.length) {
 	            result = false;
@@ -3639,7 +3745,7 @@
 	        return mkBool(result);
 	    };
 	    Vector.includesQ = function (_a) {
-	        var _b = __read(_a, 2), vec = _b[0], infix = _b[1];
+	        var _b = __read(_a, 2), infix = _b[0], vec = _b[1];
 	        var result = false;
 	        if (infix.members.length <= vec.members.length) {
 	            for (var idx = 0; !result && idx < vec.members.length; idx++) {
@@ -3662,18 +3768,255 @@
 	        return mkVector(vec.members.slice().reverse());
 	    };
 	})(Vector$1 || (Vector$1 = {}));
-	//# sourceMappingURL=strings.js.map
+
+	var opticSupremum = function (type1, type2) {
+	    switch (type1) {
+	        case OpticType.Setter:
+	            switch (type2) {
+	                case OpticType.Fold:
+	                case OpticType.Getter:
+	                    return null;
+	                default:
+	                    return type1;
+	            }
+	        case OpticType.Fold:
+	            switch (type2) {
+	                case OpticType.Setter:
+	                    return null;
+	                default:
+	                    return type1;
+	            }
+	        case OpticType.Traversal:
+	            switch (type2) {
+	                case OpticType.Setter:
+	                case OpticType.Fold:
+	                    return type2;
+	                case OpticType.Getter:
+	                    return OpticType.Setter;
+	                default:
+	                    return type1;
+	            }
+	        case OpticType.Affine:
+	            switch (type2) {
+	                case OpticType.Setter:
+	                case OpticType.Fold:
+	                case OpticType.Traversal:
+	                    return type2;
+	                case OpticType.Getter:
+	                    return OpticType.Setter;
+	                default:
+	                    return type1;
+	            }
+	        case OpticType.Getter:
+	            switch (type2) {
+	                case OpticType.Setter:
+	                    return null;
+	                case OpticType.Fold:
+	                case OpticType.Traversal:
+	                case OpticType.Affine:
+	                case OpticType.Prism:
+	                    return OpticType.Fold;
+	                default:
+	                    return type1;
+	            }
+	        case OpticType.Lens:
+	            switch (type2) {
+	                case OpticType.Fold:
+	                case OpticType.Traversal:
+	                case OpticType.Affine:
+	                case OpticType.Setter:
+	                    return type2;
+	                case OpticType.Prism:
+	                    return OpticType.Affine;
+	                default:
+	                    return type1;
+	            }
+	        case OpticType.Prism:
+	            switch (type2) {
+	                case OpticType.Fold:
+	                case OpticType.Traversal:
+	                case OpticType.Affine:
+	                case OpticType.Setter:
+	                    return type2;
+	                case OpticType.Lens:
+	                    return OpticType.Affine;
+	                default:
+	                    return type1;
+	            }
+	        case OpticType.Iso:
+	            return type2;
+	    }
+	};
+	var opticLE = function (type1, type2) {
+	    return opticSupremum(type1, type2) === type1;
+	};
+	var dimap = function (l, r, f) { return function (x) { return r(f(l(x))); }; };
+	var lmap = function (l, f) { return function (x) { return f(l(x)); }; };
+	// const rmap = (r: (x: unknown) => unknown, f: (y: unknown) => unknown) => (x: unknown) => r(f(x))
+	var forgetDimap = function (l, _r, f) { return lmap(l, f); };
+	var wander = function (self) { return function (xs) {
+	    // console.log('foof', self, xs)
+	    // console.log('foof2', mkVector(xs.members.map(self)))
+	    return isVector(xs)
+	        ? mkVector(xs.members.map(self))
+	        : xs.boxed
+	            ? mkOptional(self(xs.boxed))
+	            : xs;
+	}; };
+	var dictSetter = {
+	    dimap: dimap,
+	    first: function (self) { return function (p) { return [self(p[0]), p[1]]; }; },
+	    right: function (self) { return function (x) { return (console.log('eju', self, x), [x[0].boxed ? self(x[0].boxed) : x[0], x[1]]); }; },
+	    wander: wander,
+	};
+	var dictGetter = {
+	    dimap: forgetDimap,
+	    first: function (self) { return function (x) { return self(x[0]); }; },
+	    wander: wander,
+	};
+	var dictAffine = {
+	    dimap: forgetDimap,
+	    first: function (self) { return function (x) { return self(x[0]); }; },
+	    //  basically fmap @Maybe
+	    right: function (self) { return function (x) { return x[0].boxed ? self(x[0].boxed) : x[0]; }; },
+	    wander: wander,
+	};
+	var dictTraversal = dictAffine;
+	var run = function (zooms, dict, f) {
+	    var e_1, _a;
+	    console.log(zooms);
+	    debugger;
+	    try {
+	        for (var _b = __values(zooms.reverse()), _c = _b.next(); !_c.done; _c = _b.next()) {
+	            var z = _c.value;
+	            f = z(dict, f);
+	        }
+	    }
+	    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+	    finally {
+	        try {
+	            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+	        }
+	        finally { if (e_1) throw e_1.error; }
+	    }
+	    return f;
+	};
+
+	var optic = function (_a) {
+	    var _b = __read(_a), headOptic = _b[0], optics = _b.slice(1);
+	    return optics.map(coerceOptic).reduce(mergeOptic, coerceOptic(headOptic));
+	};
+	var mergeOptic = function (op1, op2) {
+	    var newName = op1.name + '.' + op2.name;
+	    var newSubkind = opticSupremum(op1.subkind, op2.subkind);
+	    // @ts-ignore
+	    return mkOptic(newSubkind, newName, [op1.zooms, op2.zooms].flat());
+	};
+	var coerceOptic = function (val) {
+	    if (isOptic(val)) {
+	        return val;
+	    }
+	    else if (isNumber(val)) {
+	        return ix([val]);
+	    }
+	    else if (isMapKey(val)) {
+	        return key([val]);
+	    }
+	    else {
+	        throw 'cannot be coerced';
+	    }
+	};
+	var ix = function (_a) {
+	    var _b = __read(_a, 1), i = _b[0];
+	    var getter = function (s) {
+	        var _a;
+	        if (!isVector(s)) {
+	            throw 'needs to be vector';
+	        }
+	        var result = (_a = s.members[i.value]) !== null && _a !== void 0 ? _a : null;
+	        return [mkOptional(result), s];
+	    };
+	    var setter = function (_a) {
+	        var _b = __read(_a, 2), val = _b[0], orig = _b[1];
+	        var result = orig;
+	        if (orig.members[i.value]) {
+	            var copy = mkVector(__spread(orig.members));
+	            copy.members[i.value] = val;
+	            result = copy;
+	        }
+	        return result;
+	    };
+	    return mkOptic(OpticType.Affine, 'ix', [function (dict, f0) {
+	            var f1 = dict.right(f0);
+	            var f2 = dict.dimap(getter, setter, f1);
+	            return f2;
+	        }]);
+	};
+	var key = function (_a) {
+	    var _b = __read(_a, 1), k = _b[0];
+	    var theKey = toMapKey(k);
+	    var getter = function (s) {
+	        var _a;
+	        if (!isMap(s)) {
+	            throw 'needs to be map';
+	        }
+	        var holeTable = new Map(s.table);
+	        holeTable.delete(theKey);
+	        var result = (_a = s.table.get(theKey)) !== null && _a !== void 0 ? _a : null;
+	        return [mkOptional(result), mkMapDirect(holeTable)];
+	    };
+	    var setter = function (_a) {
+	        var _b = __read(_a, 2), val = _b[0], orig = _b[1];
+	        var copy = new Map(orig.table);
+	        if (val.boxed) {
+	            copy.set(theKey, val.boxed);
+	        }
+	        return mkMapDirect(copy);
+	    };
+	    return mkOptic(OpticType.Lens, 'key', [function (dict, f0) {
+	            var f1 = dict.first(f0);
+	            var f2 = dict.dimap(getter, setter, f1);
+	            return f2;
+	        }]);
+	};
+	var traversedCached = mkOptic(OpticType.Traversal, 'traversed', [function (dict, f0) {
+	        return dict.wander(f0);
+	    }]);
+	var traversed = function (_a) { return traversedCached; };
+	//////////// CONSUMING OPTICS
+	var get = function (_a) {
+	    var _b = __read(_a, 2), lens = _b[0], value = _b[1];
+	    var f = run(lens.zooms, dictGetter, function (x) { return identity([x]); });
+	    var result = f(value);
+	    return result;
+	};
+	var tryGet = function (_a) {
+	    var _b = __read(_a, 2), affine = _b[0], value = _b[1];
+	    var f = run(affine.zooms, dictAffine, function (x) { return mkOptional(x); });
+	    var result = f(value);
+	    return result;
+	};
+	var getAll = function (_a) {
+	    var _b = __read(_a, 2), traversal = _b[0], value = _b[1];
+	    var f = run(traversal.zooms, dictTraversal, function (x) { return identity([x]); });
+	    var result = f(value);
+	    return result;
+	};
+	var set = function (_a) {
+	    var _b = __read(_a, 3), setter = _b[0], d = _b[1], value = _b[2];
+	    var f = run(setter.zooms, dictSetter, function (x) { return constant2([d, x]); });
+	    return f(value);
+	};
+	var over = function (_a, ctx) {
+	    var _b = __read(_a, 3), setter = _b[0], g = _b[1], value = _b[2];
+	    var f = run(setter.zooms, dictSetter, function (x) { return apply(g, [x], ctx); });
+	    return f(value);
+	};
 
 	var fixedTable = {
 	    /////////////////// COMBINATORS
-	    'identity': wrap('identity', typecheck({
-	        f: identity,
-	        argc: function (count) { return count === 1; },
-	    })),
-	    'constant': wrap('constant', typecheck({
-	        f: constant,
-	        argc: function (count) { return count === 2; },
-	    })),
+	    'identity': wrappedIdentity,
+	    'constant': wrappedConstant,
 	    /////////////////// EQUALITY
 	    '=': wrap('=', typecheck({
 	        f: equality,
@@ -3818,23 +4161,21 @@
 	        f: Optional.optional,
 	        argc: function (count) { return count <= 1; },
 	    })),
-	    'get': wrap('get', typecheck({
-	        inf: function (args) { return isMap(args[0])
-	            ? Map$1.getFunc
-	            : isVector(args[0])
-	                ? Vector.getFunc
-	                : isList(args[0])
-	                    ? List.getFunc
-	                    : Optional.getFunc; },
-	        argc: function (count) { return count === 3; },
-	        args: function (_a) {
-	            var _b = __read(_a, 2), seqArg = _b[0], idxArg = _b[1];
-	            return (isMap(seqArg) && isMapKey(idxArg)) ||
-	                (isVector(seqArg) && isNumber(idxArg)) ||
-	                (isList(seqArg) && isNumber(idxArg)) ||
-	                (isOptional(seqArg) && isBool(idxArg));
-	        }
-	    })),
+	    // 'get': wrap('get', typecheck({
+	    //     inf: (args) => isMap(args[0])
+	    //         ? seq.Map.getFunc
+	    //         : isVector(args[0])
+	    //         ? seq.Vector.getFunc
+	    //         : isList(args[0])
+	    //         ? seq.List.getFunc
+	    //         : seq.Optional.getFunc,
+	    //     argc: (count) => count === 3,
+	    //     args: ([seqArg, idxArg]) =>
+	    //         (isMap(seqArg) && isMapKey(idxArg)) ||
+	    //         (isVector(seqArg) && isNumber(idxArg)) ||
+	    //         (isList(seqArg) && isNumber(idxArg)) ||
+	    //         (isOptional(seqArg) && isBool(idxArg))
+	    // })),
 	    'take': wrap('take', typecheck({
 	        inf: function (args) { return isMap(args[1])
 	            ? Map$1.take
@@ -3858,7 +4199,7 @@
 	        argc: function (count) { return count === 2; },
 	        args: function (_a) {
 	            var _b = __read(_a, 2), func = _b[0], seqArg = _b[1];
-	            return (isMap(seqArg) && isExecutable(func)) ||
+	            return (isMap(seqArg) && isArmedFunction(func)) ||
 	                (isVector(seqArg) && isExecutable(func)) ||
 	                (isList(seqArg) && isExecutable(func));
 	        }
@@ -4072,8 +4413,6 @@
 	    'bind': wrap('bind', typecheck({
 	        inf: function (args) { return isVector(args[1])
 	            ? Vector.bind
-	            // : isList(args[0])
-	            // ? seq.List.flat
 	            : Optional.bind; },
 	        argc: function (count) { return count >= 2; },
 	        args: function (_a) {
@@ -4211,8 +4550,52 @@
 	        argc: function (count) { return count === 1; },
 	        args: function (args) { return isString(args[0]); },
 	    })),
+	    /////////////// OPTIC
+	    'optic': wrap('optic', typecheck({
+	        f: optic,
+	        argc: function (count) { return count >= 1; },
+	        args: function (args) { return args.every(isOpticCoercable); },
+	    })),
+	    'ix': wrap('ix', typecheck({
+	        f: ix,
+	        argc: function (count) { return count === 1; },
+	        args: function (args) { return isNumber(args[0]); },
+	    })),
+	    'key': wrap('key', typecheck({
+	        f: key,
+	        argc: function (count) { return count === 1; },
+	        args: function (args) { return isMapKey(args[0]); },
+	    })),
+	    'traversed': wrap('traversed', typecheck({
+	        f: traversed,
+	        argc: function (count) { return count === 0; },
+	    })),
+	    'get': wrap('get', typecheck({
+	        f: get,
+	        argc: function (count) { return count === 2; },
+	        args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Lens, args[0].subkind); },
+	    })),
+	    'try-get': wrap('try-get', typecheck({
+	        f: tryGet,
+	        argc: function (count) { return count === 2; },
+	        args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Affine, args[0].subkind); },
+	    })),
+	    'get-all': wrap('get-all', typecheck({
+	        f: getAll,
+	        argc: function (count) { return count === 2; },
+	        args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Traversal, args[0].subkind); },
+	    })),
+	    'set': wrap('set', typecheck({
+	        f: set,
+	        argc: function (count) { return count === 3; },
+	        args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Setter, args[0].subkind); },
+	    })),
+	    'over': wrap('over', typecheck({
+	        f: over,
+	        argc: function (count) { return count === 3; },
+	        args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Setter, args[0].subkind); },
+	    })),
 	};
-	//# sourceMappingURL=fixedTable.js.map
 
 	var globalTable = new Map();
 	var globalDefine = function (key, value) {
@@ -4229,8 +4612,10 @@
 	        : null;
 	};
 	var lookup = function (key, ctx) {
-	    var _a, _b, _c;
-	    return (_c = (_b = (_a = fixedTable[key.value]) !== null && _a !== void 0 ? _a : localLookup(ctx, key)) !== null && _b !== void 0 ? _b : globalLookup(key)) !== null && _c !== void 0 ? _c : key;
+	    var _a, _b;
+	    return fixedTable[key.value]
+	        ? fixedTable[key.value](ctx)
+	        : (_b = (_a = localLookup(ctx, key)) !== null && _a !== void 0 ? _a : globalLookup(key)) !== null && _b !== void 0 ? _b : key;
 	};
 	var createEnv = function (params, args) {
 	    var env = new Map();
@@ -4245,30 +4630,57 @@
 	    args.forEach(function (v, i) { return env.set("%" + (i + 1), v); });
 	    return env;
 	};
-	var joinEnvs = function (oldEnv, newEnv) {
+	var joinEnvs = function () {
+	    var e_1, _a, e_2, _b;
+	    var envs = [];
+	    for (var _i = 0; _i < arguments.length; _i++) {
+	        envs[_i] = arguments[_i];
+	    }
 	    var resultEnv = new Map();
-	    oldEnv.forEach(function (v, k) { return newEnv.has(k) ? null : resultEnv.set(k, v); });
-	    newEnv.forEach(function (v, k) { return resultEnv.set(k, v); });
+	    try {
+	        for (var envs_1 = __values(envs), envs_1_1 = envs_1.next(); !envs_1_1.done; envs_1_1 = envs_1.next()) {
+	            var env = envs_1_1.value;
+	            try {
+	                for (var env_1 = (e_2 = void 0, __values(env)), env_1_1 = env_1.next(); !env_1_1.done; env_1_1 = env_1.next()) {
+	                    var _c = __read(env_1_1.value, 2), key = _c[0], value = _c[1];
+	                    resultEnv.set(key, value);
+	                }
+	            }
+	            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+	            finally {
+	                try {
+	                    if (env_1_1 && !env_1_1.done && (_b = env_1.return)) _b.call(env_1);
+	                }
+	                finally { if (e_2) throw e_2.error; }
+	            }
+	        }
+	    }
+	    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+	    finally {
+	        try {
+	            if (envs_1_1 && !envs_1_1.done && (_a = envs_1.return)) _a.call(envs_1);
+	        }
+	        finally { if (e_1) throw e_1.error; }
+	    }
 	    return resultEnv;
 	};
-	//# sourceMappingURL=lookup.js.map
 
 	var execute = function (expr, ctx) {
 	    var e_1, _a, e_2, _b, e_3, _c, e_4, _d, e_5, _e, e_6, _f;
 	    var _g;
 	    switch (expr.kind) {
-	        case SlangTypes.List:
+	        case SlangType.List:
 	            var resolvedHead = execute(expr.head, ctx);
-	            return fire(resolvedHead, expr.tail, ctx);
-	        case SlangTypes.Symbol:
+	            return fire(resolvedHead, ctx, expr.tail);
+	        case SlangType.Symbol:
 	            return (_g = lookup(expr, ctx)) !== null && _g !== void 0 ? _g : expr;
-	        case SlangTypes.Optional:
+	        case SlangType.Optional:
 	            return mkOptional(expr.boxed
 	                ? execute(expr.boxed, ctx)
 	                : null);
-	        case SlangTypes.Vector:
+	        case SlangType.Vector:
 	            return mkVector(expr.members.map(function (v) { return execute(v, ctx); }));
-	        case SlangTypes.Map:
+	        case SlangType.Map:
 	            var newMap = new Map();
 	            try {
 	                for (var _h = __values(expr.table), _j = _h.next(); !_j.done; _j = _h.next()) {
@@ -4284,14 +4696,18 @@
 	                finally { if (e_1) throw e_1.error; }
 	            }
 	            return mkMapDirect(newMap);
-	        case SlangTypes.Quoted:
+	        case SlangType.Quoted:
 	            return expr.quoted;
-	        case SlangTypes.Def:
+	        case SlangType.Function:
+	            return armFunc(expr, ctx);
+	        case SlangType.ShcutFunction:
+	            return armShcut(expr, ctx);
+	        case SlangType.Def:
 	            globalDefine(expr.identifier, execute(expr.value, ctx));
 	            return mkUnit();
-	        case SlangTypes.Let:
+	        case SlangType.Let:
 	            return execute(expr.body, joinEnvs(ctx, expr.bindings));
-	        case SlangTypes.Do:
+	        case SlangType.Do:
 	            var result = mkUnit();
 	            try {
 	                for (var _l = __values(expr.expressions), _m = _l.next(); !_m.done; _m = _l.next()) {
@@ -4307,13 +4723,13 @@
 	                finally { if (e_2) throw e_2.error; }
 	            }
 	            return result;
-	        case SlangTypes.If:
+	        case SlangType.If:
 	            var ifCond = toBool(execute(expr.condition, ctx));
 	            if (ifCond.value) {
 	                return execute(expr.thenClause, ctx);
 	            }
 	            return execute(expr.elseClause, ctx);
-	        case SlangTypes.Cond:
+	        case SlangType.Cond:
 	            try {
 	                for (var _o = __values(expr.tests), _p = _o.next(); !_p.done; _p = _o.next()) {
 	                    var test = _p.value;
@@ -4330,7 +4746,7 @@
 	                finally { if (e_3) throw e_3.error; }
 	            }
 	            return mkUnit();
-	        case SlangTypes.Case:
+	        case SlangType.Case:
 	            expr.variable;
 	            try {
 	                for (var _q = __values(expr.tests), _r = _q.next(); !_r.done; _r = _q.next()) {
@@ -4351,11 +4767,11 @@
 	                finally { if (e_4) throw e_4.error; }
 	            }
 	            return mkUnit();
-	        case SlangTypes.For:
+	        case SlangType.For:
 	            return mkUnit();
-	        case SlangTypes.Doseq:
+	        case SlangType.Doseq:
 	            return mkUnit();
-	        case SlangTypes.ThreadFirst:
+	        case SlangType.ThreadFirst:
 	            var tfresult = execute(expr.value, ctx);
 	            try {
 	                for (var _t = __values(expr.pipes), _u = _t.next(); !_u.done; _u = _t.next()) {
@@ -4373,7 +4789,7 @@
 	                finally { if (e_5) throw e_5.error; }
 	            }
 	            return tfresult;
-	        case SlangTypes.ThreadLast:
+	        case SlangType.ThreadLast:
 	            var tlresult = execute(expr.value, ctx);
 	            try {
 	                for (var _v = __values(expr.pipes), _w = _v.next(); !_w.done; _w = _v.next()) {
@@ -4392,63 +4808,19 @@
 	            }
 	            return tlresult;
 	        default:
-	            // case SlangTypes.String:
-	            // case SlangTypes.Number:
-	            // case SlangTypes.Unit:
-	            // case SlangTypes.Bool:
-	            // case SlangTypes.Keyword:
-	            // case SlangTypes.Function:
-	            // case SlangTypes.ShcutFunction:
-	            // case SlangTypes.ArmedFunction:
+	            // case SlangType.String:
+	            // case SlangType.Number:
+	            // case SlangType.Unit:
+	            // case SlangType.Bool:
+	            // case SlangType.Keyword:
+	            // case SlangType.Function:
 	            return expr;
 	    }
 	};
-	//# sourceMappingURL=executor.js.map
 
-	//# sourceMappingURL=index.js.map
-
-	var btn = document.querySelector('#btn-parse');
-	var templateElement = document.querySelector('#setlang-template');
-	var templateField = document.querySelector('div#setlang-template');
-	var codeElement = document.querySelector('#setlang-code');
-	var codeField = document.querySelector('div#setlang-executed');
-	var outputField = document.querySelector('div#setlang-code');
-	var escapeHtml = function (unsafe) {
-	    return unsafe
-	        .replace(/&/g, '&amp;')
-	        .replace(/</g, '&lt;')
-	        .replace(/>/g, '&gt;')
-	        .replace(/"/g, '&quot;')
-	        .replace(/'/g, '&#039;');
-	};
-	var display = function (htmlElement, obj) {
-	    try {
-	        htmlElement.innerHTML = escapeHtml(obj);
-	    }
-	    catch (e) {
-	        htmlElement.innerHTML = obj;
-	    }
-	};
-	btn.addEventListener('click', function (_e) {
-	    // const templateOutput = parseTemplate(templateElement.value)
-	    // display(templateField, templateOutput)
-	    console.time('code parse');
-	    var codeOutput = parseCode(codeElement.value);
-	    console.timeEnd('code parse');
-	    display(outputField, JSON.stringify(codeOutput, null, 4));
-	    try {
-	        console.time('code execute');
-	        var executed = execute(codeOutput, new Map());
-	        display(codeField, toString(executed).value);
-	    }
-	    catch (e) {
-	        display(codeField, e.toString());
-	        throw e;
-	    }
-	    finally {
-	        console.timeEnd('code execute');
-	    }
-	});
-	//# sourceMappingURL=index.js.map
+	globalThis.parseTemplate = parseTemplate;
+	globalThis.parseCode = parseCode;
+	globalThis.execute = execute;
+	globalThis.codeToString = toString;
 
 }());

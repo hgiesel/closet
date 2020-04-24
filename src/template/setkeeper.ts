@@ -1,30 +1,23 @@
-interface SetInfo {
-    start: number
-    end: number
-    elements: any,
-    innerSets: SetInfo[]
-}
-
-const mkSetInfo = (start: number) => ({
-    start: start,
-    end: 0,
-    elements: null,
-    innerSets: [],
-})
+import {
+    Set,
+    mkSet,
+    SetInfo,
+    mkSetInfo,
+} from '../templateTypes'
 
 ///// Example Usage
 // const gen = setKeeper()
 // gen.next()
 //
-// console.log(gen.next(5))
-// console.log(gen.next(8))
-// console.log(gen.next(-12))
-// console.log(gen.next(30))
-// console.log(gen.next(-35))
-// console.log(gen.next(-55))
+// console.log(gen.next([5]))
+// console.log(gen.next([8]))
+// console.log(gen.next([-12, elems]))
+// console.log(gen.next([30]))
+// console.log(gen.next([-35, elems]))
+// console.log(gen.next([-55, elems]))
 //
 // gen.next('stop')
-export const setKeeper = function*() {
+export default const setKeeper = function*() {
     const setInfos = []
 
     const getSetInfo = (idxs: number[]) => {
@@ -60,7 +53,7 @@ export const setKeeper = function*() {
             const poppedLevel = setStack.pop()
             const foundSet = getSetInfo(setStack)[poppedLevel]
             foundSet.end = endIndex
-            foundSet.elements = value[1]
+            foundSet.theSet = value[1]
 
             nextLevel = poppedLevel + 1
         }

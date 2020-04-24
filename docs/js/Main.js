@@ -59,6 +59,9 @@
 	        state.right = child;
 	        if (state.isComplete) {
 	            state.data = state.build();
+	            // Having right set here will prevent the right state and its children
+	            // form being garbage collected
+	            state.right = undefined;
 	        }
 	        return state;
 	    };
@@ -493,6 +496,84 @@
 
 	}));
 	});
+
+	/*! *****************************************************************************
+	Copyright (c) Microsoft Corporation. All rights reserved.
+	Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+	this file except in compliance with the License. You may obtain a copy of the
+	License at http://www.apache.org/licenses/LICENSE-2.0
+
+	THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+	KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+	WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+	MERCHANTABLITY OR NON-INFRINGEMENT.
+
+	See the Apache Version 2.0 License for specific language governing permissions
+	and limitations under the License.
+	***************************************************************************** */
+
+	function __generator(thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	}
+
+	function __values(o) {
+	    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+	    if (m) return m.call(o);
+	    if (o && typeof o.length === "number") return {
+	        next: function () {
+	            if (o && i >= o.length) o = void 0;
+	            return { value: o && o[i++], done: !o };
+	        }
+	    };
+	    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+	}
+
+	function __read(o, n) {
+	    var m = typeof Symbol === "function" && o[Symbol.iterator];
+	    if (!m) return o;
+	    var i = m.call(o), r, ar = [], e;
+	    try {
+	        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+	    }
+	    catch (error) { e = { error: error }; }
+	    finally {
+	        try {
+	            if (r && !r.done && (m = i["return"])) m.call(i);
+	        }
+	        finally { if (e) throw e.error; }
+	    }
+	    return ar;
+	}
+
+	function __spread() {
+	    for (var ar = [], i = 0; i < arguments.length; i++)
+	        ar = ar.concat(__read(arguments[i]));
+	    return ar;
+	}
 
 	var moo = createCommonjsModule(function (module) {
 	(function(root, factory) {
@@ -1098,32 +1179,32 @@
 	    main: {
 	        setstart: {
 	            match: '[[',
-	            push: 'inSet'
+	            push: 'inSet',
 	        },
 	        text: {
-	            match: /.+?(?=\[\[|$)/u,
+	            match: /[\s\S]/u,
 	            lineBreaks: true,
 	        },
 	    },
 	    inSet: {
 	        setstart: {
 	            match: '[[',
-	            push: 'inSet'
+	            push: 'inSet',
 	        },
 	        setend: {
 	            match: ']]',
 	            pop: 1,
 	        },
-	        valuesep: '::',
+	        argsep: '::',
 	        altsep: '||',
 	        intext: {
-	            match: /.+?(?=\[\[|\]\]|\|\||::)/u,
+	            match: /[\s\S]/u,
 	            lineBreaks: true,
 	        },
 	    },
 	});
 
-	// Generated automatically by nearley, version 2.19.1
+	// Generated automatically by nearley, version 2.19.2
 	// http://github.com/Hardmath123/nearley
 	// Bypasses TS6133. Allow declared but unused functions.
 	// @ts-ignore
@@ -1131,25 +1212,55 @@
 	var grammar = {
 	    Lexer: lexer,
 	    ParserRules: [
-	        { "name": "start", "symbols": ["content"] },
+	        { "name": "start", "symbols": ["content"], "postprocess": id },
 	        { "name": "content$ebnf$1", "symbols": [] },
-	        { "name": "content$ebnf$1$subexpression$1", "symbols": [(lexer.has("setstart") ? { type: "setstart" } : setstart), "alts", (lexer.has("setend") ? { type: "setend" } : setend), "__"] },
+	        { "name": "content$ebnf$1$subexpression$1", "symbols": ["set", "_"] },
 	        { "name": "content$ebnf$1", "symbols": ["content$ebnf$1", "content$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-	        { "name": "content", "symbols": ["__", "content$ebnf$1"] },
-	        { "name": "alts$ebnf$1", "symbols": [] },
-	        { "name": "alts$ebnf$1$subexpression$1", "symbols": [(lexer.has("altsep") ? { type: "altsep" } : altsep), "values"] },
-	        { "name": "alts$ebnf$1", "symbols": ["alts$ebnf$1", "alts$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-	        { "name": "alts", "symbols": ["values", "alts$ebnf$1"] },
-	        { "name": "values$ebnf$1", "symbols": [] },
-	        { "name": "values$ebnf$1$subexpression$1", "symbols": [(lexer.has("valuesep") ? { type: "valuesep" } : valuesep), "val"] },
-	        { "name": "values$ebnf$1", "symbols": ["values$ebnf$1", "values$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-	        { "name": "values", "symbols": ["val", "values$ebnf$1"], "postprocess": function (val) { return console.log('fo', val); } },
-	        { "name": "val$ebnf$1", "symbols": [(lexer.has("intext") ? { type: "intext" } : intext)], "postprocess": id },
-	        { "name": "val$ebnf$1", "symbols": [], "postprocess": function () { return null; } },
-	        { "name": "val", "symbols": ["val$ebnf$1"], "postprocess": id },
-	        { "name": "__$ebnf$1", "symbols": [(lexer.has("text") ? { type: "text" } : text)], "postprocess": id },
-	        { "name": "__$ebnf$1", "symbols": [], "postprocess": function () { return null; } },
-	        { "name": "__", "symbols": ["__$ebnf$1"], "postprocess": function () { return null; } }
+	        { "name": "content", "symbols": ["_", "content$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 2), sets = _b[1];
+	                return sets.map(id);
+	            } },
+	        { "name": "set", "symbols": [(lexer.has("setstart") ? { type: "setstart" } : setstart), "inner", (lexer.has("setend") ? { type: "setend" } : setend)], "postprocess": function (_a) {
+	                var _b = __read(_a, 2), inner = _b[1];
+	                return inner;
+	            } },
+	        { "name": "inner$ebnf$1", "symbols": [] },
+	        { "name": "inner$ebnf$1$subexpression$1", "symbols": [(lexer.has("argsep") ? { type: "argsep" } : argsep), "args"] },
+	        { "name": "inner$ebnf$1", "symbols": ["inner$ebnf$1", "inner$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "inner", "symbols": ["head", "inner$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 2), head = _b[0], args = _b[1];
+	                return __spread([head], args.map(function (v) { return v[1]; }));
+	            } },
+	        { "name": "head$ebnf$1", "symbols": [(lexer.has("intext") ? { type: "intext" } : intext)] },
+	        { "name": "head$ebnf$1", "symbols": ["head$ebnf$1", (lexer.has("intext") ? { type: "intext" } : intext)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "head", "symbols": ["head$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 1), vs = _b[0];
+	                return vs.map(function (v) { return v.value; }).join('');
+	            } },
+	        { "name": "args$ebnf$1", "symbols": [] },
+	        { "name": "args$ebnf$1$subexpression$1", "symbols": [(lexer.has("altsep") ? { type: "altsep" } : altsep), "val"] },
+	        { "name": "args$ebnf$1", "symbols": ["args$ebnf$1", "args$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "args", "symbols": ["val", "args$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 2), first = _b[0], rest = _b[1];
+	                return __spread([first], rest.map(function (v) { return v[1]; }));
+	            } },
+	        { "name": "val$ebnf$1", "symbols": [] },
+	        { "name": "val$ebnf$1$subexpression$1", "symbols": ["set", "_in"] },
+	        { "name": "val$ebnf$1", "symbols": ["val$ebnf$1", "val$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "val", "symbols": ["_in", "val$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 2), first = _b[0], rest = _b[1];
+	                return rest.reduce(function (accu, v) { return [accu, '[[', [v[0][0], v[0].slice(1).flat().join('||')].join('::'), ']]', v[1]].join(''); }, first);
+	            }
+	        },
+	        { "name": "_in$ebnf$1", "symbols": [] },
+	        { "name": "_in$ebnf$1", "symbols": ["_in$ebnf$1", (lexer.has("intext") ? { type: "intext" } : intext)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "_in", "symbols": ["_in$ebnf$1"], "postprocess": function (_a) {
+	                var _b = __read(_a, 1), vs = _b[0];
+	                return vs.map(function (v) { return v.value; }).join('');
+	            } },
+	        { "name": "_$ebnf$1", "symbols": [] },
+	        { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", (lexer.has("text") ? { type: "text" } : text)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+	        { "name": "_", "symbols": ["_$ebnf$1"], "postprocess": function () { return null; } }
 	    ],
 	    ParserStart: "start",
 	};
@@ -1157,8 +1268,12 @@
 	// import {
 	var parseTemplate = function (text) {
 	    var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-	    var result = p.feed(text).results[0];
-	    return result;
+	    var result = p.feed(text).results;
+	    console.log('meh', result);
+	    if (result.length > 1) {
+	        console.error('Ambiguous template grammar', result);
+	    }
+	    return result[0];
 	};
 	// export const getTemplate = (templateText: string) => {
 	//     const sk = setKeeper()
@@ -1168,84 +1283,6 @@
 	//         ? result
 	//         : sk.next('stop').value
 	// }
-
-	/*! *****************************************************************************
-	Copyright (c) Microsoft Corporation. All rights reserved.
-	Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-	this file except in compliance with the License. You may obtain a copy of the
-	License at http://www.apache.org/licenses/LICENSE-2.0
-
-	THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-	KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-	WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-	MERCHANTABLITY OR NON-INFRINGEMENT.
-
-	See the Apache Version 2.0 License for specific language governing permissions
-	and limitations under the License.
-	***************************************************************************** */
-
-	function __generator(thisArg, body) {
-	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-	    function verb(n) { return function (v) { return step([n, v]); }; }
-	    function step(op) {
-	        if (f) throw new TypeError("Generator is already executing.");
-	        while (_) try {
-	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [op[0] & 2, t.value];
-	            switch (op[0]) {
-	                case 0: case 1: t = op; break;
-	                case 4: _.label++; return { value: op[1], done: false };
-	                case 5: _.label++; y = op[1]; op = [0]; continue;
-	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-	                default:
-	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-	                    if (t[2]) _.ops.pop();
-	                    _.trys.pop(); continue;
-	            }
-	            op = body.call(thisArg, _);
-	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-	    }
-	}
-
-	function __values(o) {
-	    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-	    if (m) return m.call(o);
-	    if (o && typeof o.length === "number") return {
-	        next: function () {
-	            if (o && i >= o.length) o = void 0;
-	            return { value: o && o[i++], done: !o };
-	        }
-	    };
-	    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-	}
-
-	function __read(o, n) {
-	    var m = typeof Symbol === "function" && o[Symbol.iterator];
-	    if (!m) return o;
-	    var i = m.call(o), r, ar = [], e;
-	    try {
-	        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-	    }
-	    catch (error) { e = { error: error }; }
-	    finally {
-	        try {
-	            if (r && !r.done && (m = i["return"])) m.call(i);
-	        }
-	        finally { if (e) throw e.error; }
-	    }
-	    return ar;
-	}
-
-	function __spread() {
-	    for (var ar = [], i = 0; i < arguments.length; i++)
-	        ar = ar.concat(__read(arguments[i]));
-	    return ar;
-	}
 
 	var SlangType;
 	(function (SlangType) {
@@ -1627,7 +1664,7 @@
 	    },
 	});
 
-	// Generated automatically by nearley, version 2.19.1
+	// Generated automatically by nearley, version 2.19.2
 	// http://github.com/Hardmath123/nearley
 	// Bypasses TS6133. Allow declared but unused functions.
 	// @ts-ignore
@@ -1888,8 +1925,11 @@
 
 	var parseCode = function (code) {
 	    var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar$1));
-	    var result = p.feed(code).results[0];
-	    return result;
+	    var result = p.feed(code).results;
+	    if (result.length > 1) {
+	        console.error('Ambiguous template grammar', result);
+	    }
+	    return result[0];
 	};
 
 	var isUnit = function (val) { return val.kind === SlangType.Unit; };

@@ -1,5 +1,5 @@
 import parseTemplate from './template'
-import parseCode from './genpar'
+import parseCode from './closet'
 import execute from './executor'
 import { toString } from './executor/coerce'
 

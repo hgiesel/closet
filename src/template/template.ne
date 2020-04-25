@@ -1,6 +1,9 @@
 @{%
 import tokenizer from './tokenizer'
-import setKeeper from './setkeeper'
+import setKeeper from './setKeeper'
+
+const sk = setKeeper()
+sk.next()
 %}
 
 @preprocessor typescript
@@ -8,11 +11,13 @@ import setKeeper from './setkeeper'
 
 #################################
 
-start -> content {% id %}
+start -> content %EOF {% () => sk.next('stop') %}
 
-content -> _ (set _):* {% ([,sets]) => sets.map(id) %}
+content -> _ (set _):*
 
-set -> %setstart inner %setend {% ([,inner]) => inner %}
+set -> setstart inner %setend {% ([,theSet,endtoken]) => sk.next([-endtoken.offset, theSet]) %}
+
+setstart -> %setstart {% ([starttoken]) => sk.next([starttoken.offset]) %}
 
 inner -> head (%argsep args):* {% ([head,args]) => [head, ...args.map(v => v[1])] %}
 
@@ -25,3 +30,25 @@ val -> _in (set _in):*  {%
 
 _in -> %intext:* {% ([vs]) => vs.map(v => v.value).join('') %}
 _ -> %text:* {% () => null %}
+
+### FOR DEBUG
+# @{%
+# let a = 0
+# %}
+#
+# start -> content [$] {% (v) => (a++, [v, a]) %}
+#
+# content -> _ (set _):*
+#
+# set -> setstart inner "]]"
+# setstart -> "[["
+#
+# inner -> head ("::" args):*
+#
+# head -> "h":+
+# args -> val ("||" val):*
+#
+# val -> _in (set _in):*
+#
+# _in -> "i":*
+# _ -> "o":*

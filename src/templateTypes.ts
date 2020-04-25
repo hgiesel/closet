@@ -1,4 +1,4 @@
-export interface Content {
+export interface Set {
     fullName: string,
     name: string,
     idx: number | null,
@@ -11,7 +11,7 @@ const getSub = (valueSetName: string) => 0
 const initialChars = /^[^0-9]+/u
 const trailingNumbers = /[0-9]*$/u
 
-export const mkContent = (head: string, values: string[][]): Set => {
+export const mkSet = (head: string, values: string[][]): Set => {
     console.log(head, values)
     const name: string = head.match(initialChars)[0]
 

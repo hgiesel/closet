@@ -6,6 +6,9 @@ export const lexer = moo.states({
             match: '[[',
             push: 'inSet',
         },
+        EOF: {
+            match: /\$$/u,
+        },
         text: {
             match: /[\s\S]/u,
             lineBreaks: true,

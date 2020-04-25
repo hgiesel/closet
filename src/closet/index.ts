@@ -6,7 +6,10 @@ export const parseCode = (code: string) => {
     const result = p.feed(code).results
 
     if (result.length > 1) {
-        console.error('Ambiguous template grammar', result)
+        console.error('Ambiguous closet grammar', result)
+    }
+    else if (result.length < 1) {
+        console.error('Closet grammar does not match')
     }
 
     return result[0]

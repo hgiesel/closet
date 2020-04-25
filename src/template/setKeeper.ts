@@ -1,7 +1,5 @@
 import {
-    Set,
     mkSet,
-    SetInfo,
     mkSetInfo,
 } from '../templateTypes'
 
@@ -17,7 +15,7 @@ import {
 // console.log(gen.next([-55, elems]))
 //
 // gen.next('stop')
-export default const setKeeper = function*() {
+export const setKeeper = function*() {
     const setInfos = []
 
     const getSetInfo = (idxs: number[]) => {
@@ -35,6 +33,7 @@ export default const setKeeper = function*() {
 
     while (true) {
         let value = yield setStack
+        console.log('the value', value)
 
         if (value === 'stop') {
             return setInfos
@@ -59,3 +58,5 @@ export default const setKeeper = function*() {
         }
     }
 }
+
+export default setKeeper

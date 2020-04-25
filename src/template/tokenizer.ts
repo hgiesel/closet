@@ -10,7 +10,7 @@ export const lexer = moo.states({
             match: /\$$/u,
         },
         text: {
-            match: /[\s\S]/u,
+            match: /[\s\S]+?(?=\[\[|\$$)/u,
             lineBreaks: true,
         },
     },
@@ -26,7 +26,7 @@ export const lexer = moo.states({
         argsep: '::',
         altsep: '||',
         intext: {
-            match: /[\s\S]/u,
+            match: /[\s\S]+?(?=::|\|\||\[\[|\]\])/u,
             lineBreaks: true,
         },
     },

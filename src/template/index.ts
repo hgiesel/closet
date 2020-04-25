@@ -11,7 +11,7 @@ import grammar from './template'
 
 export const parseTemplate = (text: string) => {
     const p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
-    const result = p.feed(`${text}$`).results
+    const result = p.feed(text + '$').results
 
     if (result.length > 1) {
         console.error('Ambiguous template grammar', result)

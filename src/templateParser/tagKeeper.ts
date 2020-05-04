@@ -49,11 +49,12 @@ const tagKeeper = function*() {
         }
 
         else /* end */ {
+            console.log('f', value)
             const endIndex = Math.abs(value[0]) + 2 /* two delimiter characters */
             const poppedLevel = tagStack.pop()
             const foundTag = getTagInfo(tagStack)[poppedLevel]
             foundTag.end = endIndex
-            foundTag.tag = tm.mkTag(value[1][0], value[1].slice(1))
+            foundTag.data = tm.mkTag(value[1][0], value[1][1])
 
             nextLevel = poppedLevel + 1
         }

@@ -5,7 +5,7 @@ export const lexer = moo.states({
     main: {
         tagstart: {
             match: '[[',
-            push: 'inTag',
+            push: 'key',
         },
         EOF: {
             match: /\$$/u,
@@ -15,19 +15,26 @@ export const lexer = moo.states({
             lineBreaks: true,
         },
     },
-    inTag: {
+    key: {
+        keyname: {
+            match: /[a-zA-Z]+\d*/u,
+        },
+        sep: {
+            match: '::',
+            next: 'intag',
+        },
+    },
+    intag: {
         tagstart: {
             match: '[[',
-            push: 'inTag',
+            push: 'key',
         },
         tagend: {
             match: ']]',
             pop: 1,
         },
-        argsep: '::',
-        altsep: '||',
-        intext: {
-            match: /[\s\S]+?(?=::|\|\||\[\[|\]\])/u,
+        valuestext: {
+            match: /[\s\S]+?(?=\[\[|\]\])/u,
             lineBreaks: true,
         },
     },

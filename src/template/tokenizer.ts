@@ -1,10 +1,11 @@
 import moo from 'moo'
 
+// img tags are parsed via HTML (!)
 export const lexer = moo.states({
     main: {
-        setstart: {
+        tagstart: {
             match: '[[',
-            push: 'inSet',
+            push: 'inTag',
         },
         EOF: {
             match: /\$$/u,
@@ -14,12 +15,12 @@ export const lexer = moo.states({
             lineBreaks: true,
         },
     },
-    inSet: {
-        setstart: {
+    inTag: {
+        tagstart: {
             match: '[[',
-            push: 'inSet',
+            push: 'inTag',
         },
-        setend: {
+        tagend: {
             match: ']]',
             pop: 1,
         },
@@ -31,6 +32,5 @@ export const lexer = moo.states({
         },
     },
 })
-
 
 export default lexer

@@ -1,9 +1,9 @@
 export interface Tag {
     fullKey: string,
-    fullSub: number,
+    fullOccur: number,
     key: string,
     idx: number | null,
-    sub: number,
+    occur: number,
     values: string[][],
 }
 
@@ -27,17 +27,17 @@ export const tagMaker = () => {
         const key = match[1]
         const idx = match[2].length === 0 ? null : Number(match[2])
 
-        const fullSub = getAndInc(fullKey)
-        const sub = fullKey === key
-            ? fullSub
+        const fullOccur = getAndInc(fullKey)
+        const occur = fullKey === key
+            ? fullOccur
             : getAndInc(key)
 
         return {
             fullKey: fullKey,
-            fullSub: fullSub,
+            fullOccur: fullOccur,
             key: key,
             idx: idx,
-            sub: sub,
+            occur: occur,
             values: values,
         }
     }

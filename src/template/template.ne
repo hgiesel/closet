@@ -13,24 +13,24 @@ tk.next()
 
 start -> content %EOF {% () => tk.next('stop').value %}
 
-content -> _ (set _):*
+content -> _ (tag _):*
 
-set -> setstart inner %setend {% ([starttoken,theSet,endtoken]) => [
+tag -> tagstart inner %tagend {% ([startToken,tag,endToken]) => [
     [
-    starttoken[0] /* '[[' */,
-    theSet,
-    endtoken.value /* ']]' */
+    startToken[0] /* '[[' */,
+    tag,
+    endToken.value /* ']]' */
     ],
-tk.next([-endtoken.offset, theSet])] %}
+tk.next([-endToken.offset, tag])] %}
 
-setstart -> %setstart {% ([starttoken]) => [starttoken.value, tk.next([starttoken.offset])] %}
+tagstart -> %tagstart {% ([startToken]) => [startToken.value, tk.next([startToken.offset])] %}
 
-inner -> head (%argsep args):* {% ([head,args]) => [head, ...args.map(v => v[1])] %}
+inner -> key (%argsep args):* {% ([key,args]) => [key, ...args.map(v => v[1])] %}
 
-head -> %intext:+ {% ([vs]) => vs.map(v => v.value).join('') %}
+key -> %intext:+ {% ([vs]) => vs.map(v => v.value).join('') %}
 args -> val (%altsep val):* {% ([first, rest]) => [first, ...rest.map(v => v[1])] %}
 
-val -> _in (set _in):*  {%
+val -> _in (tag _in):*  {%
     ([first,rest]) => (console.log('foo', first, rest), rest.reduce((accu, v) => [accu, [v[0][0][0], [v[0][0][1][0], v[0][0][1].slice(1).flat().join('||')].join('::'), v[0][0][2]].join(''), v[1]].join(''), first))
 %}
 
@@ -44,17 +44,17 @@ _ -> %text:* {% () => null %}
 #
 # start -> content [$] {% (v) => (a++, [v, a]) %}
 #
-# content -> _ (set _):*
+# content -> _ (tag _):*
 #
-# set -> setstart inner "]]"
-# setstart -> "[["
+# tag -> tagstart inner "]]"
+# tagstart -> "[["
 #
-# inner -> head ("::" args):*
+# inner -> key ("::" args):*
 #
-# head -> "h":+
+# key -> "h":+
 # args -> val ("||" val):*
 #
-# val -> _in (set _in):*
+# val -> _in (tag _in):*
 #
 # _in -> "i":*
 # _ -> "o":*

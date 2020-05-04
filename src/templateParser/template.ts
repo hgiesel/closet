@@ -55,7 +55,7 @@ const grammar: Grammar = {
             tag,
             endToken.value /* ']]' */,
         ], tagKeeper.endToken(endToken.offset, tag)] },
-    {"name": "tagstart", "symbols": [(tokenizer.has("tagstart") ? {type: "tagstart"} : tagstart)], "postprocess": ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset)]},
+    {"name": "tagstart", "symbols": [(tokenizer.has("tagstart") ? {type: "tagstart"} : tagstart)], "postprocess": ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset + startToken.value.length)]},
     {"name": "inner$ebnf$1", "symbols": []},
     {"name": "inner$ebnf$1$subexpression$1", "symbols": [(tokenizer.has("argsep") ? {type: "argsep"} : argsep), "args"]},
     {"name": "inner$ebnf$1", "symbols": ["inner$ebnf$1", "inner$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},

@@ -20,7 +20,7 @@ tag -> tagstart inner %tagend {% ([startToken,tag,endToken]) => [[
     endToken.value /* ']]' */,
 ], tagKeeper.endToken(endToken.offset, tag)] %}
 
-tagstart -> %tagstart {% ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset)] %}
+tagstart -> %tagstart {% ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset + startToken.value.length)] %}
 
 inner -> key (%argsep args):* {% ([key,args]) => [key, ...args.map(v => v[1])] %}
 

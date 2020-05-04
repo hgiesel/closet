@@ -1,9 +1,9 @@
 @{%
 import tokenizer from './tokenizer'
-import setKeeper from './setKeeper'
+import tagKeeper from './tagKeeper'
 
-const sk = setKeeper()
-sk.next()
+const tk = tagKeeper()
+tk.next()
 %}
 
 @preprocessor typescript
@@ -11,7 +11,7 @@ sk.next()
 
 #################################
 
-start -> content %EOF {% () => sk.next('stop').value %}
+start -> content %EOF {% () => tk.next('stop').value %}
 
 content -> _ (set _):*
 
@@ -21,9 +21,9 @@ set -> setstart inner %setend {% ([starttoken,theSet,endtoken]) => [
     theSet,
     endtoken.value /* ']]' */
     ],
-sk.next([-endtoken.offset, theSet])] %}
+tk.next([-endtoken.offset, theSet])] %}
 
-setstart -> %setstart {% ([starttoken]) => [starttoken.value, sk.next([starttoken.offset])] %}
+setstart -> %setstart {% ([starttoken]) => [starttoken.value, tk.next([starttoken.offset])] %}
 
 inner -> head (%argsep args):* {% ([head,args]) => [head, ...args.map(v => v[1])] %}
 

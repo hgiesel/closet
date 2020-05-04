@@ -1,42 +1,62 @@
-export interface Set {
-    fullName: string,
-    name: string,
+export interface Tag {
+    fullKey: string,
+    fullSub: number,
+    key: string,
     idx: number | null,
     sub: number,
     values: string[][],
 }
 
-const getSub = (valueSetName: string) => 0
+const keyPattern = /^([^0-9]+)([0-9]*)$/u
 
-const initialChars = /^[^0-9]+/u
-const trailingNumbers = /[0-9]*$/u
+export const tagMaker = () => {
+    const tagCounter = new Map()
 
-export const mkSet = (head: string, values: string[][]): Set => {
-    console.log(head, values)
-    const name: string = head.match(initialChars)[0]
+    const getAndInc = (key: string): number => {
+        const result = tagCounter.has(key)
+            ? tagCounter.get(key) + 1
+            : 0
 
-    const idxString: string = head.match(trailingNumbers)[0]
-    const idx: number = idxString.length === 0 ? null : Number(idxString)
+        tagCounter.set(key, result)
+        return result
+    }
+
+    const mkTag = (fullKey: string, values: string[][]): Tag => {
+        const match = fullKey.match(keyPattern)
+
+        const key = match[1]
+        const idx = match[2].length === 0 ? null : Number(match[2])
+
+        const fullSub = getAndInc(fullKey)
+        const sub = fullKey === key
+            ? fullSub
+            : getAndInc(key)
+
+        return {
+            fullKey: fullKey,
+            fullSub: fullSub,
+            key: key,
+            idx: idx,
+            sub: sub,
+            values: values,
+        }
+    }
 
     return {
-        fullName: head,
-        name: name,
-        idx: idx,
-        sub: getSub(head),
-        values: values.slice(1),
+        mkTag: mkTag,
     }
 }
 
-export interface SetInfo {
+export interface TagInfo {
     start: number
     end: number
-    theSet: Set,
-    innerSets: SetInfo[]
+    tag: Tag,
+    innerTags: TagInfo[]
 }
 
-export const mkSetInfo = (start: number) => ({
+export const mkTagInfo = (start: number) => ({
     start: start,
     end: 0,
-    theSet: null,
-    innerSets: [],
+    tag: null,
+    innerTags: [],
 })

@@ -1,6 +1,6 @@
 import {
-    mkSet,
-    mkSetInfo,
+    tagMaker,
+    mkTagInfo,
 } from '../templateTypes'
 
 ///// Example Usage
@@ -15,48 +15,48 @@ import {
 // console.log(gen.next([-55, elems]))
 //
 // gen.next('stop')
-export const setKeeper = function*() {
-    const setInfos = []
+export const tagKeeper = function*() {
+    const tm = tagMaker()
+    const tagInfos = []
 
-    const getSetInfo = (idxs: number[]) => {
-        let reference = setInfos
+    const getTagInfo = (idxs: number[]) => {
+        let reference = tagInfos
 
         for (const id of idxs) {
-            reference = reference[id].innerSets
+            reference = reference[id].innerTags
         }
 
         return reference
     }
 
-    const setStack: number[] = []
+    const tagStack: number[] = []
     let nextLevel = 0
 
     while (true) {
-        let value = yield setStack
-        console.log('the value', value)
+        let value = yield tagStack
 
         if (value === 'stop') {
-            return setInfos
+            return tagInfos
         }
 
         else if (value[0] >= 0) /* start */ {
             const startIndex = value[0] - 2 /* two delimiter characters */
-            getSetInfo(setStack).push(mkSetInfo(startIndex))
-            setStack.push(nextLevel)
+            getTagInfo(tagStack).push(mkTagInfo(startIndex))
+            tagStack.push(nextLevel)
 
             nextLevel = 0
         }
 
         else /* end */ {
             const endIndex = Math.abs(value[0]) + 2 /* two delimiter characters */
-            const poppedLevel = setStack.pop()
-            const foundSet = getSetInfo(setStack)[poppedLevel]
-            foundSet.end = endIndex
-            foundSet.theSet = value[1]
+            const poppedLevel = tagStack.pop()
+            const foundTag = getTagInfo(tagStack)[poppedLevel]
+            foundTag.end = endIndex
+            foundTag.tag = tm.mkTag(value[1][0], value[1].slice(1))
 
             nextLevel = poppedLevel + 1
         }
     }
 }
 
-export default setKeeper
+export default tagKeeper

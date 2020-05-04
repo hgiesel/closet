@@ -43,7 +43,7 @@ import {
     SlangThreadLast,
 } from './types'
 
-import { SlangError } from './executor/exception'
+import type { SlangError } from './closetExecutor/exception'
 
 const getValue = (v: SlangKeyword | SlangString | SlangSymbol): string => v.value
 

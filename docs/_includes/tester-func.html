@@ -57,5 +57,14 @@
     finally {
       console.timeEnd('code execute')
     }
+
+    /////////////////////
+
+    console.time('template apply')
+    const result = applyTemplate(templateTxt, templateOutput)
+    console.timeEnd('template apply')
+
+    display(templateApplied, result)
+
   })
 </script>

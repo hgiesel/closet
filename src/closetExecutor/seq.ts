@@ -179,12 +179,10 @@ export namespace Map {
             result = apply(func, [result, mkVector([theKey, value])], ctx)
         }
 
-        console.log(result)
         return result
     }
 
     export const foldr = ([func, accu, map]: [SlangArmedFunction, Slang, SlangMap], ctx: Map<string, Slang>) => {
-        console.log('hi')
         const iterator = map.table[Symbol.iterator]()
 
         const pureFoldr = (it: Iterator<Slang>) => {

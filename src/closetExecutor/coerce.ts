@@ -24,7 +24,6 @@ export const toBool = (val: Slang): SlangBool => {
 }
 
 export const pureToString = (val: Slang): string => {
-    console.log(val)
     if (reflection.isUnit(val)) {
         return '()'
     }

@@ -71,7 +71,7 @@ const grammar: Grammar = {
     {"name": "val$ebnf$1$subexpression$1", "symbols": ["tag", "_in"]},
     {"name": "val$ebnf$1", "symbols": ["val$ebnf$1", "val$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "val", "symbols": ["_in", "val$ebnf$1"], "postprocess": 
-        ([first,rest]) => (console.log('foo', first, rest), rest.reduce((accu, v) => [accu, [v[0][0][0], [v[0][0][1][0], v[0][0][1].slice(1).flat().join('||')].join('::'), v[0][0][2]].join(''), v[1]].join(''), first))
+        ([first,rest]) => rest.reduce((accu, v) => [accu, [v[0][0][0], [v[0][0][1][0], v[0][0][1].slice(1).flat().join('||')].join('::'), v[0][0][2]].join(''), v[1]].join(''), first)
         },
     {"name": "_in$ebnf$1", "symbols": []},
     {"name": "_in$ebnf$1", "symbols": ["_in$ebnf$1", (tokenizer.has("intext") ? {type: "intext"} : intext)], "postprocess": (d) => d[0].concat([d[1]])},

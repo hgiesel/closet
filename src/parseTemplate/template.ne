@@ -1,9 +1,8 @@
 @{%
 import tokenizer from './tokenizer'
-import tagKeeper from './tagKeeper'
+import initTagKeeper from './tagKeeper'
 
-const tk = tagKeeper()
-tk.next()
+const tagKeeper = initTagKeeper()
 %}
 
 @preprocessor typescript
@@ -11,19 +10,17 @@ tk.next()
 
 #################################
 
-start -> content %EOF {% () => tk.next('stop').value %}
+start -> content %EOF {% () => tagKeeper.stop().value %}
 
 content -> _ (tag _):*
 
-tag -> tagstart inner %tagend {% ([startToken,tag,endToken]) => [
-    [
+tag -> tagstart inner %tagend {% ([startToken,tag,endToken]) => [[
     startToken[0] /* '[[' */,
     tag,
-    endToken.value /* ']]' */
-    ],
-tk.next([-endToken.offset, tag])] %}
+    endToken.value /* ']]' */,
+], tagKeeper.endToken(endToken.offset, tag)] %}
 
-tagstart -> %tagstart {% ([startToken]) => [startToken.value, tk.next([startToken.offset])] %}
+tagstart -> %tagstart {% ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset)] %}
 
 inner -> key (%argsep args):* {% ([key,args]) => [key, ...args.map(v => v[1])] %}
 

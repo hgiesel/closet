@@ -15,7 +15,8 @@ import {
 // console.log(gen.next([-55, elems]))
 //
 // gen.next('stop')
-export const tagKeeper = function*() {
+//
+const tagKeeper = function*() {
     const tm = tagMaker()
     const tagInfos = []
 
@@ -35,7 +36,7 @@ export const tagKeeper = function*() {
     while (true) {
         let value = yield tagStack
 
-        if (value === 'stop') {
+        if (value === 'stop') /* stop */{
             return tagInfos
         }
 
@@ -59,4 +60,32 @@ export const tagKeeper = function*() {
     }
 }
 
-export default tagKeeper
+export const initTagKeeper = () => {
+    let tk = tagKeeper()
+    tk.next()
+
+    const stop = () => {
+        const result = tk.next('stop')
+
+        tk = tagKeeper()
+        tk.next()
+
+        return result
+    }
+
+    const startToken = (offset) => {
+        return tk.next([offset])
+    }
+
+    const endToken = (offset, tag) => {
+        return tk.next([-offset, tag])
+    }
+
+    return {
+        stop: stop,
+        startToken: startToken,
+        endToken: endToken,
+    }
+}
+
+export default initTagKeeper

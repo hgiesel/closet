@@ -1181,8 +1181,11 @@
 	            match: '[[',
 	            push: 'inSet',
 	        },
+	        EOF: {
+	            match: /\$$/u,
+	        },
 	        text: {
-	            match: /[\s\S]/u,
+	            match: /[\s\S]+?(?=\[\[|\$$)/u,
 	            lineBreaks: true,
 	        },
 	    },
@@ -1198,31 +1201,113 @@
 	        argsep: '::',
 	        altsep: '||',
 	        intext: {
-	            match: /[\s\S]/u,
+	            match: /[\s\S]+?(?=::|\|\||\[\[|\]\])/u,
 	            lineBreaks: true,
 	        },
 	    },
 	});
+	//# sourceMappingURL=tokenizer.js.map
 
-	// Generated automatically by nearley, version 2.19.2
-	// http://github.com/Hardmath123/nearley
-	// Bypasses TS6133. Allow declared but unused functions.
-	// @ts-ignore
-	function id(d) { return d[0]; }
+	var mkSetInfo = function (start) { return ({
+	    start: start,
+	    end: 0,
+	    theSet: null,
+	    innerSets: [],
+	}); };
+	//# sourceMappingURL=templateTypes.js.map
+
+	///// Example Usage
+	// const gen = setKeeper()
+	// gen.next()
+	//
+	// console.log(gen.next([5]))
+	// console.log(gen.next([8]))
+	// console.log(gen.next([-12, elems]))
+	// console.log(gen.next([30]))
+	// console.log(gen.next([-35, elems]))
+	// console.log(gen.next([-55, elems]))
+	//
+	// gen.next('stop')
+	var setKeeper = function () {
+	    var setInfos, getSetInfo, setStack, nextLevel, value, startIndex, endIndex, poppedLevel, foundSet;
+	    return __generator(this, function (_a) {
+	        switch (_a.label) {
+	            case 0:
+	                setInfos = [];
+	                getSetInfo = function (idxs) {
+	                    var e_1, _a;
+	                    var reference = setInfos;
+	                    try {
+	                        for (var idxs_1 = __values(idxs), idxs_1_1 = idxs_1.next(); !idxs_1_1.done; idxs_1_1 = idxs_1.next()) {
+	                            var id = idxs_1_1.value;
+	                            reference = reference[id].innerSets;
+	                        }
+	                    }
+	                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+	                    finally {
+	                        try {
+	                            if (idxs_1_1 && !idxs_1_1.done && (_a = idxs_1.return)) _a.call(idxs_1);
+	                        }
+	                        finally { if (e_1) throw e_1.error; }
+	                    }
+	                    return reference;
+	                };
+	                setStack = [];
+	                nextLevel = 0;
+	                _a.label = 1;
+	            case 1:
+	                return [4 /*yield*/, setStack];
+	            case 2:
+	                value = _a.sent();
+	                console.log('the value', value);
+	                if (value === 'stop') {
+	                    return [2 /*return*/, setInfos];
+	                }
+	                else if (value[0] >= 0) /* start */ {
+	                    startIndex = value[0] - 2 /* two delimiter characters */;
+	                    getSetInfo(setStack).push(mkSetInfo(startIndex));
+	                    setStack.push(nextLevel);
+	                    nextLevel = 0;
+	                }
+	                else /* end */ {
+	                    endIndex = Math.abs(value[0]) + 2 /* two delimiter characters */;
+	                    poppedLevel = setStack.pop();
+	                    foundSet = getSetInfo(setStack)[poppedLevel];
+	                    foundSet.end = endIndex;
+	                    foundSet.theSet = value[1];
+	                    nextLevel = poppedLevel + 1;
+	                }
+	                return [3 /*break*/, 1];
+	            case 3: return [2 /*return*/];
+	        }
+	    });
+	};
+	//# sourceMappingURL=setKeeper.js.map
+
+	var sk = setKeeper();
+	sk.next();
 	var grammar = {
 	    Lexer: lexer,
 	    ParserRules: [
-	        { "name": "start", "symbols": ["content"], "postprocess": id },
+	        { "name": "start", "symbols": ["content", (lexer.has("EOF") ? { type: "EOF" } : EOF)], "postprocess": function () { return sk.next('stop').value; } },
 	        { "name": "content$ebnf$1", "symbols": [] },
 	        { "name": "content$ebnf$1$subexpression$1", "symbols": ["set", "_"] },
 	        { "name": "content$ebnf$1", "symbols": ["content$ebnf$1", "content$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-	        { "name": "content", "symbols": ["_", "content$ebnf$1"], "postprocess": function (_a) {
-	                var _b = __read(_a, 2), sets = _b[1];
-	                return sets.map(id);
+	        { "name": "content", "symbols": ["_", "content$ebnf$1"] },
+	        { "name": "set", "symbols": ["setstart", "inner", (lexer.has("setend") ? { type: "setend" } : setend)], "postprocess": function (_a) {
+	                var _b = __read(_a, 3), starttoken = _b[0], theSet = _b[1], endtoken = _b[2];
+	                return [
+	                    [
+	                        starttoken[0] /* '[[' */,
+	                        theSet,
+	                        endtoken.value /* ']]' */
+	                    ],
+	                    sk.next([-endtoken.offset, theSet])
+	                ];
 	            } },
-	        { "name": "set", "symbols": [(lexer.has("setstart") ? { type: "setstart" } : setstart), "inner", (lexer.has("setend") ? { type: "setend" } : setend)], "postprocess": function (_a) {
-	                var _b = __read(_a, 2), inner = _b[1];
-	                return inner;
+	        { "name": "setstart", "symbols": [(lexer.has("setstart") ? { type: "setstart" } : setstart)], "postprocess": function (_a) {
+	                var _b = __read(_a, 1), starttoken = _b[0];
+	                return [starttoken.value, sk.next([starttoken.offset])];
 	            } },
 	        { "name": "inner$ebnf$1", "symbols": [] },
 	        { "name": "inner$ebnf$1$subexpression$1", "symbols": [(lexer.has("argsep") ? { type: "argsep" } : argsep), "args"] },
@@ -1249,7 +1334,7 @@
 	        { "name": "val$ebnf$1", "symbols": ["val$ebnf$1", "val$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "val", "symbols": ["_in", "val$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 2), first = _b[0], rest = _b[1];
-	                return rest.reduce(function (accu, v) { return [accu, '[[', [v[0][0], v[0].slice(1).flat().join('||')].join('::'), ']]', v[1]].join(''); }, first);
+	                return (console.log('foo', first, rest), rest.reduce(function (accu, v) { return [accu, [v[0][0][0], [v[0][0][1][0], v[0][0][1].slice(1).flat().join('||')].join('::'), v[0][0][2]].join(''), v[1]].join(''); }, first));
 	            }
 	        },
 	        { "name": "_in$ebnf$1", "symbols": [] },
@@ -1268,10 +1353,12 @@
 	// import {
 	var parseTemplate = function (text) {
 	    var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-	    var result = p.feed(text).results;
-	    console.log('meh', result);
+	    var result = p.feed(text + '$').results;
 	    if (result.length > 1) {
 	        console.error('Ambiguous template grammar', result);
+	    }
+	    else if (result.length < 1) {
+	        console.error('Template grammar does not match');
 	    }
 	    return result[0];
 	};
@@ -1283,6 +1370,7 @@
 	//         ? result
 	//         : sk.next('stop').value
 	// }
+	//# sourceMappingURL=index.js.map
 
 	var SlangType;
 	(function (SlangType) {
@@ -1328,6 +1416,7 @@
 	    OpticType["Prism"] = "prism";
 	    OpticType["Iso"] = "iso";
 	})(OpticType || (OpticType = {}));
+	//# sourceMappingURL=types.js.map
 
 	var getValue = function (v) { return v.value; };
 	////////// CONSTRUCTORS FOR BASIC TYPES
@@ -1549,6 +1638,7 @@
 	    value: value,
 	    pipes: pipes,
 	}); };
+	//# sourceMappingURL=constructors.js.map
 
 	var shcutParam = /^%([1-9][0-9]*)?$/u;
 	var shcutFuncArity = function (v, currentMax) {
@@ -1599,6 +1689,7 @@
 	            return currentMax;
 	    }
 	};
+	//# sourceMappingURL=utils.js.map
 
 	var lexer$1 = moo.compile({
 	    ws: {
@@ -1663,43 +1754,44 @@
 	        value: function (x) { return x.slice(2, -1); },
 	    },
 	});
+	//# sourceMappingURL=tokenizer.js.map
 
 	// Generated automatically by nearley, version 2.19.2
 	// http://github.com/Hardmath123/nearley
 	// Bypasses TS6133. Allow declared but unused functions.
 	// @ts-ignore
-	function id$1(d) { return d[0]; }
+	function id(d) { return d[0]; }
 	var grammar$1 = {
 	    Lexer: lexer$1,
 	    ParserRules: [
-	        { "name": "start", "symbols": ["prog"], "postprocess": id$1 },
+	        { "name": "start", "symbols": ["prog"], "postprocess": id },
 	        { "name": "prog$ebnf$1", "symbols": [] },
 	        { "name": "prog$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
 	        { "name": "prog$ebnf$1", "symbols": ["prog$ebnf$1", "prog$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "prog", "symbols": ["_", "prog$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 2), vals = _b[1];
-	                return mkDo(vals.map(id$1));
+	                return mkDo(vals.map(id));
 	            }
 	        },
-	        { "name": "expr", "symbols": ["lit"], "postprocess": id$1 },
-	        { "name": "expr", "symbols": ["shCutFn"], "postprocess": id$1 },
+	        { "name": "expr", "symbols": ["lit"], "postprocess": id },
+	        { "name": "expr", "symbols": ["shCutFn"], "postprocess": id },
 	        { "name": "lit$macrocall$2", "symbols": ["list"] },
 	        { "name": "lit$macrocall$1", "symbols": [(lexer$1.has("lparen") ? { type: "lparen" } : lparen), "_", "lit$macrocall$2", (lexer$1.has("rparen") ? { type: "rparen" } : rparen)] },
 	        { "name": "lit", "symbols": ["lit$macrocall$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), _c = __read(_b[0], 3), _d = __read(_c[2], 1), val = _d[0];
 	                return val;
 	            } },
-	        { "name": "lit", "symbols": ["vector"], "postprocess": id$1 },
-	        { "name": "lit", "symbols": ["map"], "postprocess": id$1 },
-	        { "name": "lit", "symbols": ["quoted"], "postprocess": id$1 },
-	        { "name": "lit", "symbols": ["optional"], "postprocess": id$1 },
-	        { "name": "lit", "symbols": ["deref"], "postprocess": id$1 },
-	        { "name": "lit", "symbols": ["number"], "postprocess": id$1 },
-	        { "name": "lit", "symbols": ["string"], "postprocess": id$1 },
-	        { "name": "lit", "symbols": ["regex"], "postprocess": id$1 },
-	        { "name": "lit", "symbols": ["symbol"], "postprocess": id$1 },
-	        { "name": "lit", "symbols": ["keyword"], "postprocess": id$1 },
-	        { "name": "lit", "symbols": ["bool"], "postprocess": id$1 },
+	        { "name": "lit", "symbols": ["vector"], "postprocess": id },
+	        { "name": "lit", "symbols": ["map"], "postprocess": id },
+	        { "name": "lit", "symbols": ["quoted"], "postprocess": id },
+	        { "name": "lit", "symbols": ["optional"], "postprocess": id },
+	        { "name": "lit", "symbols": ["deref"], "postprocess": id },
+	        { "name": "lit", "symbols": ["number"], "postprocess": id },
+	        { "name": "lit", "symbols": ["string"], "postprocess": id },
+	        { "name": "lit", "symbols": ["regex"], "postprocess": id },
+	        { "name": "lit", "symbols": ["symbol"], "postprocess": id },
+	        { "name": "lit", "symbols": ["keyword"], "postprocess": id },
+	        { "name": "lit", "symbols": ["bool"], "postprocess": id },
 	        { "name": "vector$macrocall$2$ebnf$1", "symbols": [] },
 	        { "name": "vector$macrocall$2$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
 	        { "name": "vector$macrocall$2$ebnf$1", "symbols": ["vector$macrocall$2$ebnf$1", "vector$macrocall$2$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
@@ -1707,7 +1799,7 @@
 	        { "name": "vector$macrocall$1", "symbols": [(lexer$1.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "vector$macrocall$2", (lexer$1.has("rbracket") ? { type: "rbracket" } : rbracket)] },
 	        { "name": "vector", "symbols": ["vector$macrocall$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), _c = __read(_b[0], 3), _d = __read(_c[2], 1), vals = _d[0];
-	                return mkVector(vals.map(id$1));
+	                return mkVector(vals.map(id));
 	            }
 	        },
 	        { "name": "map$macrocall$2$ebnf$1", "symbols": [] },
@@ -1720,9 +1812,9 @@
 	                return mkMap(vals.map(function (v) { return [v[0], v[2]]; }));
 	            }
 	        },
-	        { "name": "mapIdentifier", "symbols": ["string"], "postprocess": id$1 },
-	        { "name": "mapIdentifier", "symbols": ["keyword"], "postprocess": id$1 },
-	        { "name": "mapIdentifier", "symbols": ["number"], "postprocess": id$1 },
+	        { "name": "mapIdentifier", "symbols": ["string"], "postprocess": id },
+	        { "name": "mapIdentifier", "symbols": ["keyword"], "postprocess": id },
+	        { "name": "mapIdentifier", "symbols": ["number"], "postprocess": id },
 	        { "name": "optional", "symbols": [(lexer$1.has("nilLit") ? { type: "nilLit" } : nilLit)], "postprocess": function () { return mkOptional(null); } },
 	        { "name": "optional", "symbols": [(lexer$1.has("amp") ? { type: "amp" } : amp), "expr"], "postprocess": function (_a) {
 	                var _b = __read(_a, 2), val = _b[1];
@@ -1770,20 +1862,20 @@
 	                var _b = __read(_a, 1), re = _b[0];
 	                return mkRegex(re.value);
 	            } },
-	        { "name": "list", "symbols": ["def"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["fn"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["defn"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["do"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["let"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["if"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["case"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["cond"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["for"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["doseq"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["threadfirst"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["threadlast"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["op"], "postprocess": id$1 },
-	        { "name": "list", "symbols": ["unit"], "postprocess": id$1 },
+	        { "name": "list", "symbols": ["def"], "postprocess": id },
+	        { "name": "list", "symbols": ["fn"], "postprocess": id },
+	        { "name": "list", "symbols": ["defn"], "postprocess": id },
+	        { "name": "list", "symbols": ["do"], "postprocess": id },
+	        { "name": "list", "symbols": ["let"], "postprocess": id },
+	        { "name": "list", "symbols": ["if"], "postprocess": id },
+	        { "name": "list", "symbols": ["case"], "postprocess": id },
+	        { "name": "list", "symbols": ["cond"], "postprocess": id },
+	        { "name": "list", "symbols": ["for"], "postprocess": id },
+	        { "name": "list", "symbols": ["doseq"], "postprocess": id },
+	        { "name": "list", "symbols": ["threadfirst"], "postprocess": id },
+	        { "name": "list", "symbols": ["threadlast"], "postprocess": id },
+	        { "name": "list", "symbols": ["op"], "postprocess": id },
+	        { "name": "list", "symbols": ["unit"], "postprocess": id },
 	        { "name": "def", "symbols": [(lexer$1.has("defSym") ? { type: "defSym" } : defSym), "_", "symbol", "_", "expr", "_"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), ident = _b[2], val = _b[4];
 	                return mkDef(ident, val);
@@ -1796,7 +1888,7 @@
 	        { "name": "fn$macrocall$1", "symbols": [(lexer$1.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "fn$macrocall$2", (lexer$1.has("rbracket") ? { type: "rbracket" } : rbracket)] },
 	        { "name": "fn", "symbols": [(lexer$1.has("fnSym") ? { type: "fnSym" } : fnSym), "_", "fn$macrocall$1", "_", "expr", "_"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), _c = __read(_b[2], 3), params = _c[2], body = _b[4];
-	                return mkFunction("fn_" + Math.floor(Math.random() * 2e6), params[0].map(id$1), body);
+	                return mkFunction("fn_" + Math.floor(Math.random() * 2e6), params[0].map(id), body);
 	            }
 	        },
 	        { "name": "defn$macrocall$2$ebnf$1", "symbols": [] },
@@ -1806,7 +1898,7 @@
 	        { "name": "defn$macrocall$1", "symbols": [(lexer$1.has("lbracket") ? { type: "lbracket" } : lbracket), "_", "defn$macrocall$2", (lexer$1.has("rbracket") ? { type: "rbracket" } : rbracket)] },
 	        { "name": "defn", "symbols": [(lexer$1.has("defnSym") ? { type: "defnSym" } : defnSym), "_", "symbol", "_", "defn$macrocall$1", "_", "expr", "_"], "postprocess": function (_a) {
 	                var _b = __read(_a, 7), ident = _b[2], _c = __read(_b[4], 3), params = _c[2], body = _b[6];
-	                return mkDef(ident, mkFunction(ident, params[0].map(id$1), body));
+	                return mkDef(ident, mkFunction(ident, params[0].map(id), body));
 	            }
 	        },
 	        { "name": "do$ebnf$1", "symbols": [] },
@@ -1814,7 +1906,7 @@
 	        { "name": "do$ebnf$1", "symbols": ["do$ebnf$1", "do$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "do", "symbols": [(lexer$1.has("doSym") ? { type: "doSym" } : doSym), "_", "do$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 3), vals = _b[2];
-	                return mkDo(vals.map(id$1));
+	                return mkDo(vals.map(id));
 	            }
 	        },
 	        { "name": "let$macrocall$2$ebnf$1", "symbols": [] },
@@ -1831,7 +1923,7 @@
 	            }
 	        },
 	        { "name": "if$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
-	        { "name": "if$ebnf$1", "symbols": ["if$ebnf$1$subexpression$1"], "postprocess": id$1 },
+	        { "name": "if$ebnf$1", "symbols": ["if$ebnf$1$subexpression$1"], "postprocess": id },
 	        { "name": "if$ebnf$1", "symbols": [], "postprocess": function () { return null; } },
 	        { "name": "if", "symbols": [(lexer$1.has("ifSym") ? { type: "ifSym" } : ifSym), "_", "expr", "_", "expr", "_", "if$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 7), pred = _b[2], thenClause = _b[4], maybeElseClause = _b[6];
@@ -1881,7 +1973,7 @@
 	        { "name": "threadfirst$ebnf$1", "symbols": ["threadfirst$ebnf$1", "threadfirst$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "threadfirst", "symbols": [(lexer$1.has("arrowSym") ? { type: "arrowSym" } : arrowSym), "_", "expr", "_", "threadfirst$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), val = _b[2], pipes = _b[4];
-	                return mkThreadFirst(val, pipes.map(id$1));
+	                return mkThreadFirst(val, pipes.map(id));
 	            }
 	        },
 	        { "name": "threadlast$ebnf$1", "symbols": [] },
@@ -1889,7 +1981,7 @@
 	        { "name": "threadlast$ebnf$1", "symbols": ["threadlast$ebnf$1", "threadlast$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "threadlast", "symbols": [(lexer$1.has("darrowSym") ? { type: "darrowSym" } : darrowSym), "_", "expr", "_", "threadlast$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 5), val = _b[2], pipes = _b[4];
-	                return mkThreadLast(val, pipes.map(id$1));
+	                return mkThreadLast(val, pipes.map(id));
 	            }
 	        },
 	        { "name": "op$ebnf$1$subexpression$1", "symbols": ["expr", "_"] },
@@ -1898,7 +1990,7 @@
 	        { "name": "op$ebnf$1", "symbols": ["op$ebnf$1", "op$ebnf$1$subexpression$2"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "op", "symbols": ["op$ebnf$1"], "postprocess": function (_a) {
 	                var _b = __read(_a, 1), vals = _b[0];
-	                return mkList(id$1(id$1(vals)), vals.slice(1).map(id$1));
+	                return mkList(id(id(vals)), vals.slice(1).map(id));
 	            }
 	        },
 	        { "name": "unit", "symbols": ["_"], "postprocess": function () { return mkUnit(); }
@@ -1909,7 +2001,7 @@
 	        { "name": "shCutFn$ebnf$1", "symbols": ["shCutFn$ebnf$1", "shCutFn$ebnf$1$subexpression$2"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
 	        { "name": "shCutFn", "symbols": [(lexer$1.has("hashParen") ? { type: "hashParen" } : hashParen), "_", "shCutFn$ebnf$1", (lexer$1.has("rparen") ? { type: "rparen" } : rparen)], "postprocess": function (_a) {
 	                var _b = __read(_a, 3), vals = _b[2];
-	                var lst = mkList(vals[0][0], vals.slice(1).map(id$1));
+	                var lst = mkList(vals[0][0], vals.slice(1).map(id));
 	                return mkShcutFunction("fn_" + Math.floor(Math.random() * 2e6), shcutFuncArity(lst), lst);
 	            }
 	        },
@@ -1922,15 +2014,20 @@
 	    ],
 	    ParserStart: "start",
 	};
+	//# sourceMappingURL=slang.js.map
 
 	var parseCode = function (code) {
 	    var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar$1));
 	    var result = p.feed(code).results;
 	    if (result.length > 1) {
-	        console.error('Ambiguous template grammar', result);
+	        console.error('Ambiguous closet grammar', result);
+	    }
+	    else if (result.length < 1) {
+	        console.error('Closet grammar does not match');
 	    }
 	    return result[0];
 	};
+	//# sourceMappingURL=index.js.map
 
 	var isUnit = function (val) { return val.kind === SlangType.Unit; };
 	var isBool = function (val) { return val.kind === SlangType.Bool; };
@@ -1962,6 +2059,7 @@
 	    isMapKey(val)); };
 	var isMapKey = function (val) { return (isString(val) ||
 	    isKeyword(val)); };
+	//# sourceMappingURL=reflection.js.map
 
 	var mkTypeError = function (types, position) { return ({
 	    kind: 'TypeError',
@@ -2034,6 +2132,7 @@
 	var notExecutable = function (kind) {
 	    return mkNotExecutableError(kind);
 	};
+	//# sourceMappingURL=exception.js.map
 
 	var pureToBool = function (val) {
 	    if (isBool(val)) {
@@ -2122,6 +2221,7 @@
 	var toString = function (val) {
 	    return mkString(pureToString(val));
 	};
+	//# sourceMappingURL=coerce.js.map
 
 	var Map$1;
 	(function (Map) {
@@ -2910,6 +3010,7 @@
 	    var _c;
 	    return mkOptional((_c = listArg.members[idx.value]) !== null && _c !== void 0 ? _c : null);
 	};
+	//# sourceMappingURL=seq.js.map
 
 	var reshape = function (arr, columnSize) {
 	    var currIndex;
@@ -2929,6 +3030,7 @@
 	        }
 	    });
 	};
+	//# sourceMappingURL=utils.js.map
 
 	var indexing$1 = function (_a) {
 	    var _b = __read(_a, 2), mapArg = _b[0], idx = _b[1];
@@ -3133,6 +3235,7 @@
 	    }
 	    return mkMapDirect(newMap);
 	};
+	//# sourceMappingURL=map.js.map
 
 	var apply = function (func, args, ctx) {
 	    var result = func.apply(args, ctx);
@@ -3193,6 +3296,7 @@
 	var fire = function (exec, ctx, args) {
 	    return apply(arm(exec, ctx), args, ctx);
 	};
+	//# sourceMappingURL=functions.js.map
 
 	var identity = function (_a) {
 	    var _b = __read(_a, 1), val = _b[0];
@@ -3216,6 +3320,7 @@
 	        : constant1; },
 	    argc: function (count) { return count <= 2; },
 	}));
+	//# sourceMappingURL=combinators.js.map
 
 	var twoValueCompare = function (val1, val2) {
 	    if (val1.kind !== val2.kind) {
@@ -3337,6 +3442,7 @@
 	    }
 	    return mkBool(result);
 	};
+	//# sourceMappingURL=equality.js.map
 
 	var and = function (args) {
 	    var e_1, _a;
@@ -3378,6 +3484,7 @@
 	    var headArg = args[0];
 	    return mkBool(!toBool(headArg).value);
 	};
+	//# sourceMappingURL=bool.js.map
 
 	var addition = function (args) {
 	    var e_1, _a;
@@ -3573,6 +3680,7 @@
 	        ? Number.MIN_SAFE_INTEGER
 	        : Math.max.apply(Math, __spread(args.map(function (a) { return a.value; }))));
 	};
+	//# sourceMappingURL=math.js.map
 
 	var atom = function (_a) {
 	    var _b = __read(_a, 1), value = _b[0];
@@ -3594,6 +3702,7 @@
 	    atom.atom = val;
 	    return atom;
 	};
+	//# sourceMappingURL=atoms.js.map
 
 	var rand = function (_a) {
 	    var _b = __read(_a), props = _b.slice(0);
@@ -3655,6 +3764,7 @@
 	    var _b = __read(_a, 1), vec = _b[0];
 	    return mkVector(safeShuffle(vec.members));
 	};
+	//# sourceMappingURL=random.js.map
 
 	var String$1;
 	(function (String) {
@@ -3768,6 +3878,7 @@
 	        return mkVector(vec.members.slice().reverse());
 	    };
 	})(Vector$1 || (Vector$1 = {}));
+	//# sourceMappingURL=strings.js.map
 
 	var opticSupremum = function (type1, type2) {
 	    switch (type1) {
@@ -3901,6 +4012,7 @@
 	    }
 	    return f;
 	};
+	//# sourceMappingURL=optic-helper.js.map
 
 	var optic = function (_a) {
 	    var _b = __read(_a), headOptic = _b[0], optics = _b.slice(1);
@@ -4012,6 +4124,7 @@
 	    var f = run(setter.zooms, dictSetter, function (x) { return apply(g, [x], ctx); });
 	    return f(value);
 	};
+	//# sourceMappingURL=optic.js.map
 
 	var fixedTable = {
 	    /////////////////// COMBINATORS
@@ -4596,6 +4709,7 @@
 	        args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Setter, args[0].subkind); },
 	    })),
 	};
+	//# sourceMappingURL=fixed-table.js.map
 
 	var globalTable = new Map();
 	var globalDefine = function (key, value) {
@@ -4664,6 +4778,7 @@
 	    }
 	    return resultEnv;
 	};
+	//# sourceMappingURL=lookup.js.map
 
 	var execute = function (expr, ctx) {
 	    var e_1, _a, e_2, _b, e_3, _c, e_4, _d, e_5, _e, e_6, _f;
@@ -4817,10 +4932,14 @@
 	            return expr;
 	    }
 	};
+	//# sourceMappingURL=executor.js.map
+
+	//# sourceMappingURL=index.js.map
 
 	globalThis.parseTemplate = parseTemplate;
 	globalThis.parseCode = parseCode;
 	globalThis.execute = execute;
 	globalThis.codeToString = toString;
+	//# sourceMappingURL=index.js.map
 
 }());

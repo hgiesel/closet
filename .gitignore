@@ -1,8 +1,9 @@
 .DS_Store
 
+# compiled src outside of docs
 node_modules/*
 /Main.js
-
+/dist
 
 # compiled .ne files
 src/genpar/slang.ts

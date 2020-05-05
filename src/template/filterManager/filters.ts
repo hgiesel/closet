@@ -8,31 +8,39 @@ import type {
     Tag,
 } from '../../templateTypes'
 
-const defaultFilter = ({fullKey, valuesRaw}: Tag): string => (
-    `[[${fullKey}::${valuesRaw}]]`
-)
+const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => ({
+    result: `[[${fullKey}::${valuesRaw}]]`,
+    memoize: false,
+})
 
 const standardizeFilterResult = (input: string | FilterResult): FilterResult => {
-    if (typeof input === 'string') {
-        return {
+    switch (typeof input) {
+        case 'string': return {
             result: input,
             memoize: false,
         }
+
+        // also includes null
+        case 'object': return {
+            result: input.result ?? '',
+            memoize: input.memoize ?? false,
+        }
     }
 
-    return {
-        result: input.result,
-        memoize: input.memoize ?? false,
-    }
+    // return undefined otherwise
 }
 
 export const executeFilter = (filters, name, data: Tag, internals: Internals): FilterResult => {
-    const func = filters.has(name)
-        ? filters.get(name)
-        : defaultFilter
+    if (filters.has(name)) {
+        const filter = filters.get(name)
+        const result = standardizeFilterResult(filter(data, internals)) ?? defaultFilter(data)
 
-    const result = standardizeFilterResult(func(data, internals))
-    return result
+        return result
+    }
+
+    else {
+        return defaultFilter(data)
+    }
 }
 
 export const mkFilterApi = (filters: Map<string, (Tag, Internals) => FilterResult | string>): FilterApi => {

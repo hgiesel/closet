@@ -7,12 +7,13 @@ import type {
     FilterManager,
     FilterResult,
     Iteration,
+    NextIterationApi,
 } from './types'
 
 import {
     defaultMemoizer,
     generateMemoizerKey,
-} from './utils'
+} from './memoizer'
 
 import {
     mkStoreApi,
@@ -27,7 +28,7 @@ import {
     mkDeferredApi,
 } from './deferred'
 
-const mkFilterManager = (memoizer = defaultMemoizer()): FilterManager => {
+const mkFilterManager = (meta = {}, memoizer = defaultMemoizer): FilterManager => {
     const store = new Map()
     const storeApi = mkStoreApi(store)
 
@@ -38,15 +39,16 @@ const mkFilterManager = (memoizer = defaultMemoizer()): FilterManager => {
     const deferredApi = mkDeferredApi(deferred)
 
     let nextIteration: boolean = true
-
-    const iterateAgain = (value: boolean = true) => {
-        nextIteration = Boolean(value)
+    const nextIterationApi: NextIterationApi = {
+        activate: (value = true) => {
+            nextIteration = value
+        },
+        isActivated: () => nextIteration,
     }
 
     const internals: Internals = {
-        iterateAgain: iterateAgain,
-        nextIteration: () => nextIteration,
-
+        meta: meta,
+        nextIteration: nextIterationApi,
         store: storeApi,
         filters: filterApi,
         deferred: deferredApi,
@@ -76,11 +78,9 @@ const mkFilterManager = (memoizer = defaultMemoizer()): FilterManager => {
                 processFilter: processFilter,
             }
 
-            for (const [name,def] of deferred) {
-                console.log(name, def)
-                def()
+            for (const [name, def] of deferred) {
+                def(name)
             }
-
             deferred.clear()
         }
     }

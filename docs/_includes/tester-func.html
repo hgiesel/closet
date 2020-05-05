@@ -8,15 +8,13 @@
       .replace(/'/g, '&#039;');
   }
 
-  const display = (htmlElement, obj) => {
-    try {
+  const display = (htmlElement, obj, escape = true) => {
+    if (escape) {
       htmlElement.innerHTML = escapeHtml(obj)
     }
-    catch (e) {
+    else {
       htmlElement.innerHTML = obj
     }
-
-    htmlElement.style.display = 'block'
   }
 
   const codeParsed = document.querySelector('#code-parsed > .output')
@@ -51,35 +49,14 @@
     /////////////////////
     const templateTxt = templateTA.value
 
-    const hlFilter = ({values}, {store, deferred}) => {
-      store.set('heyo', 'mytext')
-      deferred.register('myfunc', () => console.log('Hello world!'))
-
-      return values[0][0]
-    }
-
-    const emFilter = ({values}, {store}) => {
-      const result = store.has('heyo')
-        ? store.get('heyo')
-        : 'default'
-
-      console.log('foo', result, store.has('heyo'), store.get('heyo'))
-      return result
-    }
-
-    const optFilter = ({values}) => {
-      return values[0][0]
-    }
-
-    const fm = mkFilterManager()
-    fm.filters.register('hl', hlFilter)
-    fm.filters.register('em', emFilter)
+    const fm = mkFilterManager(meta = {tags: 'abc::def'})
+    filterRecipes.mix(fm, 'mix', ', ')
 
     console.time('template apply')
     const result = renderTemplate(templateTxt, fm)
     console.timeEnd('template apply')
 
-    display(templateRendered, result)
+    display(templateRendered, result, escape=false)
 
   })
 </script>

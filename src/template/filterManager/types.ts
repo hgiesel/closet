@@ -3,12 +3,11 @@ import type {
 } from '../../templateTypes'
 
 export interface Internals {
-    iterateAgain(b: boolean): void
-    nextIteration(): boolean
-
+    nextIteration: NextIterationApi
     store: StoreApi
     filters: FilterApi
     deferred: DeferredApi
+    meta: object
 }
 
 export interface FilterResult {
@@ -27,6 +26,11 @@ export interface Memoizer {
     removeItem(k: string): void
     clear(): void
     raw?(): unknown
+}
+
+export interface NextIterationApi {
+    activate(v?: boolean): void
+    isActivated(): boolean
 }
 
 export interface StoreApi {
@@ -51,6 +55,12 @@ export interface DeferredApi {
     unregister(name: string): void
     has(name: string): boolean
     clear(): void
+}
+
+export interface AnkiApi {
+    card: string
+    tagsRaw: string
+    tags: string[]
 }
 
 export interface FilterManager {

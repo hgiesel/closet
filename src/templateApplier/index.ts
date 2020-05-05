@@ -7,8 +7,8 @@ import {
     splitValues,
 } from '../templateTypes'
 
-export const applyTemplate = (text, tags) => {
-    return postfixOuter(text, tags)
+export const applyTemplate = (text, tags, filterManager) => {
+    return postfixOuter(text, tags, filterManager)
 }
 
 const spliceSlice = (str, lend, rend, add): string => {
@@ -29,26 +29,7 @@ const adjustValuesString = (tag: TagInfo, innerTag: TagInfo, adjustment: string)
     )
 }
 
-const filters = new Map()
-
-const emFilter = ({values}): string => {
-    return `<em>${values[0].join(', ')}</em>`
-}
-
-const optFilter = ({values}): string => {
-    return values[0][0]
-}
-
-filters.set('em', emFilter)
-filters.set('opt', optFilter)
-
-const defaultFilter = ({fullKey, valuesRaw}: Tag): string => `[[${fullKey}::${valuesRaw}]]`
-const getFilter = (key) =>
-    filters.has(key)
-        ? filters.get(key)
-        : defaultFilter
-
-const postfixOuter = (text, tags) => {
+const postfixOuter = (text, tags, filterManager) => {
     const stack = [0]
     let sum = 0
     let processedText = text
@@ -67,8 +48,7 @@ const postfixOuter = (text, tags) => {
         )
         tag.data.values = splitValues(tag.data.valuesRaw)
 
-        const filter = getFilter(tag.data.key)
-        const result = filter(tag.data)
+        const result = filterManager.executeFilter(tag.data.key, tag.data)
 
         const innerOffset = stack.pop()
         const leftOffset = stack.pop()

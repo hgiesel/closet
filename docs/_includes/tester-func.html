@@ -61,7 +61,25 @@
     /////////////////////
 
     console.time('template apply')
-    const result = applyTemplate(templateTxt, templateOutput)
+    const hlFilter = ({values}, {get, set}) => {
+      set('heyo', 'my stringo')
+      return values[0][0]
+    }
+
+    const emFilter = ({values}, {get, has}) => {
+
+      return has('heyo') ? get('heyo') : 'default'
+    }
+
+    const optFilter = ({values}, {get, set}) => {
+      return values[0][0]
+    }
+
+    const fm = mkFilterManager()
+    fm.registerFilter('hl', hlFilter)
+    fm.registerFilter('em', emFilter)
+
+    const result = applyTemplate(templateTxt, templateOutput, fm)
     console.timeEnd('template apply')
 
     display(templateApplied, result)

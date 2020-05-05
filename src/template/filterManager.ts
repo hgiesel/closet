@@ -6,14 +6,32 @@ const defaultFilter = ({fullKey, valuesRaw}: Tag): string => (
     `[[${fullKey}::${valuesRaw}]]`
 )
 
+interface Internals {
+    has(k: string): boolean
+    get(k: string): any
+    set(k: string, v: any): void
+    over(k: string, f: (v: any) => any): void
+    iterateAgain(b: boolean): void
+    nextIteration(): boolean
+}
+
+interface FilterResult {
+    result: string
+    memoize: boolean
+}
+
+const mkStandardFilterResult = (result): FilterResult => ({
+    result: result,
+    memoize: false,
+})
 
 const mkFilterManager = () => {
-    const filters = new Map()
+    const filters: Map<string, (Tag, Internals) => FilterResult | string> = new Map()
 
     const store = new Map()
     let nextIteration: boolean = false
 
-    const mkInternalsInterface = () => {
+    const mkInternalsInterface = (): Internals => {
         const has = (key) => store.has(key)
         const get = (key) => store.get(key)
         const set = (key, item) => store.set(key, item)
@@ -23,13 +41,14 @@ const mkFilterManager = () => {
             nextIteration = Boolean(value)
         }
 
-        const willDoNextIteration = () => nextIteration
-
         return {
             over: over,
             get: get,
             set: set,
             has: has,
+
+            iterateAgain: iterateAgain,
+            nextIteration: () => nextIteration,
         }
     }
 
@@ -39,12 +58,15 @@ const mkFilterManager = () => {
         filters.set(name, filter)
     }
 
-    const executeFilter = (key, data) => {
+    const executeFilter = (key, data): FilterResult => {
         const result = filters.has(key)
             ? filters.get(key)(data, internals)
             : defaultFilter(data)
 
-        return result
+        return typeof result === 'string'
+            ? mkStandardFilterResult(result)
+            : result
+
     }
 
     const next = () => {
@@ -53,7 +75,8 @@ const mkFilterManager = () => {
     return {
         registerFilter: registerFilter,
         executeFilter: executeFilter,
-        internals: internals,
+        store: store,
+        nextIteration: () => nextIteration,
     }
 }
 

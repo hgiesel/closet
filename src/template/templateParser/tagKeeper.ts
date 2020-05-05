@@ -36,7 +36,6 @@ const tagKeeper = function*() {
         }
 
         else /* end */ {
-            console.log('f', value)
             const endIndex = Math.abs(value[0]) + 2 /* two delimiter characters */
             const poppedLevel = tagStack.pop()
             const foundTag = getTagInfo(tagStack)[poppedLevel]

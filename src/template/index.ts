@@ -53,16 +53,16 @@ const postfixOuter = (text, tags, filterManager) => {
         )
         tag.data.values = splitValues(tag.data.valuesRaw)
 
-        const result = filterManager.executeFilter(tag.data.key, tag.data)
+        const filterOutput = filterManager.executeFilter(tag.data.key, tag.data)
 
         const innerOffset = stack.pop()
         const leftOffset = stack.pop()
-        const newOffset = result.length - (tag.end - tag.start)
+        const newOffset = filterOutput.result.length - (tag.end - tag.start)
 
-        processedText = spliceSlice(processedText, tag.start + leftOffset, tag.end + leftOffset + innerOffset, result)
+        processedText = spliceSlice(processedText, tag.start + leftOffset, tag.end + leftOffset + innerOffset, filterOutput.result)
         sum = innerOffset + leftOffset + newOffset
 
-        return result
+        return filterOutput.result
     }
 
     tags.forEach(postfixInner)

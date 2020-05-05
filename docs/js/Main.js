@@ -5015,7 +5015,6 @@
         tags.forEach(postfixInner);
         return processedText;
     };
-    //# sourceMappingURL=index.js.map
 
     var map = new Map();
     var defaultMemoizer = {

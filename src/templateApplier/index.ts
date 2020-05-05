@@ -29,7 +29,24 @@ const adjustValuesString = (tag: TagInfo, innerTag: TagInfo, adjustment: string)
     )
 }
 
+const filters = new Map()
+
+const emFilter = ({values}): string => {
+    return `<em>${values[0].join(', ')}</em>`
+}
+
+const optFilter = ({values}): string => {
+    return values[0][0]
+}
+
+filters.set('em', emFilter)
+filters.set('opt', optFilter)
+
 const defaultFilter = ({fullKey, valuesRaw}: Tag): string => `[[${fullKey}::${valuesRaw}]]`
+const getFilter = (key) =>
+    filters.has(key)
+        ? filters.get(key)
+        : defaultFilter
 
 const postfixOuter = (text, tags) => {
     const stack = [0]
@@ -50,7 +67,8 @@ const postfixOuter = (text, tags) => {
         )
         tag.data.values = splitValues(tag.data.valuesRaw)
 
-        const result = defaultFilter(tag.data)
+        const filter = getFilter(tag.data.key)
+        const result = filter(tag.data)
 
         const innerOffset = stack.pop()
         const leftOffset = stack.pop()

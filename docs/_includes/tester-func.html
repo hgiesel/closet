@@ -51,23 +51,29 @@
     /////////////////////
     const templateTxt = templateTA.value
 
-    const hlFilter = ({values}, {get, set}) => {
-      set('heyo', 'my stringo')
+    const hlFilter = ({values}, {store, deferred}) => {
+      store.set('heyo', 'mytext')
+      deferred.register('myfunc', () => console.log('Hello world!'))
+
       return values[0][0]
     }
 
-    const emFilter = ({values}, {get, has}) => {
+    const emFilter = ({values}, {store}) => {
+      const result = store.has('heyo')
+        ? store.get('heyo')
+        : 'default'
 
-      return has('heyo') ? get('heyo') : 'default'
+      console.log('foo', result, store.has('heyo'), store.get('heyo'))
+      return result
     }
 
-    const optFilter = ({values}, {get, set}) => {
+    const optFilter = ({values}) => {
       return values[0][0]
     }
 
     const fm = mkFilterManager()
-    fm.registerFilter('hl', hlFilter)
-    fm.registerFilter('em', emFilter)
+    fm.filters.register('hl', hlFilter)
+    fm.filters.register('em', emFilter)
 
     console.time('template apply')
     const result = renderTemplate(templateTxt, fm)

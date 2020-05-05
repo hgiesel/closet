@@ -10,10 +10,13 @@ import {
 } from '../templateTypes'
 
 const renderTemplate = (text, filterManager) => {
-    const tags = parseTemplate(text)
-    const result = postfixOuter(text, tags, filterManager)
 
-    return result
+    for (const iteration of filterManager.iterations()) {
+        const tags = parseTemplate(text)
+        text = postfixOuter(text, tags, iteration)
+    }
+
+    return text
 }
 
 const spliceSlice = (str, lend, rend, add): string => {
@@ -53,7 +56,7 @@ const postfixOuter = (text, tags, filterManager) => {
         )
         tag.data.values = splitValues(tag.data.valuesRaw)
 
-        const filterOutput = filterManager.executeFilter(tag.data.key, tag.data)
+        const filterOutput = filterManager.processFilter(tag.data.key, tag.data)
 
         const innerOffset = stack.pop()
         const leftOffset = stack.pop()

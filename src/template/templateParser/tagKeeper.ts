@@ -1,21 +1,8 @@
 import {
     tagMaker,
     mkTagInfo,
-} from '../templateTypes'
+} from '../../templateTypes'
 
-///// Example Usage
-// const gen = setKeeper()
-// gen.next()
-//
-// console.log(gen.next([5]))
-// console.log(gen.next([8]))
-// console.log(gen.next([-12, elems]))
-// console.log(gen.next([30]))
-// console.log(gen.next([-35, elems]))
-// console.log(gen.next([-55, elems]))
-//
-// gen.next('stop')
-//
 const tagKeeper = function*() {
     const tm = tagMaker()
     const tagInfos = []
@@ -61,7 +48,7 @@ const tagKeeper = function*() {
     }
 }
 
-export const initTagKeeper = () => {
+const initTagKeeper = () => {
     let tk = tagKeeper()
     tk.next()
 

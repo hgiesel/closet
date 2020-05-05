@@ -19,23 +19,13 @@
     htmlElement.style.display = 'block'
   }
 
-  const templateParsed = document.querySelector('#template-parsed > .output')
   const codeParsed = document.querySelector('#code-parsed > .output')
   const codeExecuted = document.querySelector('#code-executed > .output')
-  const templateApplied = document.querySelector('#template-applied > .output')
+  const templateRendered = document.querySelector('#template-applied > .output')
 
   const btn = document.getElementById('btn-execute')
 
   btn.addEventListener('click', (_e) => {
-    const templateTxt = templateTA.value
-    console.time('template parse')
-    const templateOutput = parseTemplate(templateTxt)
-    console.timeEnd('template parse')
-
-    display(templateParsed, JSON.stringify(templateOutput, null, 4))
-
-    /////////////////////
-
     const code = codeCM.getValue()
     console.time('code parse')
     const codeOutput = parseCode(code)
@@ -59,8 +49,8 @@
     }
 
     /////////////////////
+    const templateTxt = templateTA.value
 
-    console.time('template apply')
     const hlFilter = ({values}, {get, set}) => {
       set('heyo', 'my stringo')
       return values[0][0]
@@ -79,10 +69,11 @@
     fm.registerFilter('hl', hlFilter)
     fm.registerFilter('em', emFilter)
 
-    const result = applyTemplate(templateTxt, templateOutput, fm)
+    console.time('template apply')
+    const result = renderTemplate(templateTxt, fm)
     console.timeEnd('template apply')
 
-    display(templateApplied, result)
+    display(templateRendered, result)
 
   })
 </script>

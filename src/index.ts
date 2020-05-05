@@ -1,14 +1,13 @@
-import parseCode from './closetParser'
-import execute from './closetExecutor'
 import { toString } from './closetExecutor/coerce'
 
-import parseTemplate from './templateParser'
-import applyTemplate from './templateApplier'
-import mkFilterManager from './templateApplier/filterManager'
+import parseCode from './closetParser'
+import execute from './closetExecutor'
+import renderTemplate from './template'
+import mkFilterManager from './template/filterManager'
 
-globalThis.parseTemplate = parseTemplate
+globalThis.codeToString = toString
+
 globalThis.parseCode = parseCode
 globalThis.execute = execute
-globalThis.codeToString = toString
-globalThis.applyTemplate = applyTemplate
+globalThis.renderTemplate = renderTemplate
 globalThis.mkFilterManager = mkFilterManager

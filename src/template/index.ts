@@ -1,3 +1,5 @@
+import parseTemplate from './templateParser'
+
 import type {
     Tag,
     TagInfo,
@@ -7,8 +9,11 @@ import {
     splitValues,
 } from '../templateTypes'
 
-export const applyTemplate = (text, tags, filterManager) => {
-    return postfixOuter(text, tags, filterManager)
+const renderTemplate = (text, filterManager) => {
+    const tags = parseTemplate(text)
+    const result = postfixOuter(text, tags, filterManager)
+
+    return result
 }
 
 const spliceSlice = (str, lend, rend, add): string => {
@@ -64,4 +69,4 @@ const postfixOuter = (text, tags, filterManager) => {
     return processedText
 }
 
-export default applyTemplate
+export default renderTemplate

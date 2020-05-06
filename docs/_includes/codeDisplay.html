@@ -1,6 +1,11 @@
 <div class="code-example" id="{{ include.content.name | slugify }}">
   <div class="display"></div>
-  <button type="button" name="button" class="btn btn-outline btn-green">Rerender</button>
+
+  <div class="btn-group-tester">
+    <button type="button" name="button" class="btn btn-outline btn-green btn-rerender">Render</button>
+    <button type="button" name="button" class="btn btn-outline btn-blue btn-edit">Try it yourself</button>
+  </div>
+
   <script>
     {% include_relative assets/js/codeDisplay.js %}
   </script>

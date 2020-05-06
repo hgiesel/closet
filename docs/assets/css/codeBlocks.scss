@@ -3,9 +3,10 @@
 
 .code-example {
   position: relative;
+  min-height: 4rem;
 }
 
-.code-example button {
+.code-example .btn-group-tester {
   position: absolute;
   bottom: 1rem;
   right: 1rem;

@@ -9,5 +9,3 @@ has_children: true
 # Recipes
 
 **Closet** offers a wide array of default functionality, that you can use out-of-the-box.
-
-{% include codeDisplay.html content=site.data.snippets.firsttest %}

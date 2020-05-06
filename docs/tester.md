@@ -1,13 +1,14 @@
 ---
-layout: page
-title: Tester
-permalink: tester/
+layout: default
+title: Try it out!
+nav_order: 3
+permalink: /try
 ---
+
+# Try Closet!
 
 <link rel="stylesheet" type="text/css" href="../css/tester.css">
 <script src="../js/Main.js"></script>
-
-Let's see if this will be displayed.
 
 {% include tester.html %}
 {% include tester-func.html %}

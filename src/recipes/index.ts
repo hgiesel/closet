@@ -1,7 +1,7 @@
-import installMixFilter from './mix'
+import mixRecipe from './mix'
 
 const recipes = {
-    mix: installMixFilter,
+    mix: mixRecipe,
 }
 
 export default recipes

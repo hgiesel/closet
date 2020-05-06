@@ -1,24 +1,10 @@
 <!-- Code Mirror CDN -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.css" integrity="sha256-vZ3SaLOjnKO/gGvcUWegySoDU6ff33CS5i9ot8J9Czk=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.js" integrity="sha256-C1kVf8tUtnM4eBSZM0mE7kcDrTYuVGxACdyYvhMEeRo=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/mode/clojure/clojure.min.js" integrity="sha256-rdlGcdCWKSU7f61JkJGn29gSD+38dLJ/KeIiDjN/1v8=" crossorigin="anonymous"></script>
-
 <div id="mybody">
-  <textarea id="template" cols="30" rows="10"></textarea>
   <textarea id="code" class="codearea" cols="30" rows="10"></textarea>
 
   <div id="btn-group">
-    <button id="btn-execute" type="button">Execute!</button>
-  </div>
-
-  <div id="code-parsed" class="bordered">
-    <div class="output"></div>
-    <span class="desc">Code Parsed</span>
-  </div>
-
-  <div id="code-executed" class="bordered">
-    <div class="output"></div>
-    <span class="desc">Code Executed</span>
+    <button id="btn-execute" class="btn btn-outline btn-green" type="button">Execute!</button>
+    <button id="btn-copy" class="btn btn-outline btn-blue" type="button">Copy as link</button>
   </div>
 
   <div id="template-applied" class="bordered">
@@ -28,27 +14,6 @@
 </div>
 
 <script>
-  const templateTA = document.getElementById('template');
-  const codeTA = document.getElementById('code');
-  const codeCM = CodeMirror.fromTextArea(codeTA);
-
-  const sparams = new URLSearchParams(location.search);
-
-  if (sparams.has('template')) {
-    templateTA.value = sparams.get('template');
-  }
-  else if (templateTA.value === '') {
-    templateTA.value = 'This is a [[hl::sample::text]].\nReplace it with whatever you [[em::w[[opt::ish||ant]]||desire]]!';
-  };
-
-  if (sparams.has('code')) {
-    codeTA.value = sparams.get('code');
-  }
-  else if (codeTA.value === '') {
-    codeTA.value = '(def x [1 2 3])\n(->> x\n     (map #(+ % 1))\n)'
-  }
+  {% include_relative assets/js/testerPreset.js %}
+  {% include_relative assets/js/testerFunc.js %}
 </script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/prism.min.js" integrity="sha256-YZQM6/hLBZYkb01VYf17isoQM4qpaOP+aX96hhYrWhg=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/components/prism-clojure.min.js" integrity="sha256-dqJuEK5/MPu3IaeQRlBYg0ZPuodNyPUDziwjDBlcEbI=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/themes/prism-tomorrow.min.css" integrity="sha256-xevuwyBEb2ZYh4nDhj0g3Z/rDBnM569hg9Vq6gEw/Sg=" crossorigin="anonymous" />

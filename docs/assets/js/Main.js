@@ -123,6 +123,7 @@
         OpticType["Prism"] = "prism";
         OpticType["Iso"] = "iso";
     })(OpticType || (OpticType = {}));
+    //# sourceMappingURL=types.js.map
 
     var getValue = function (v) { return v.value; };
     ////////// CONSTRUCTORS FOR BASIC TYPES
@@ -344,6 +345,7 @@
         value: value,
         pipes: pipes,
     }); };
+    //# sourceMappingURL=constructors.js.map
 
     var isUnit = function (val) { return val.kind === SlangType.Unit; };
     var isBool = function (val) { return val.kind === SlangType.Bool; };
@@ -375,6 +377,7 @@
         isMapKey(val)); };
     var isMapKey = function (val) { return (isString(val) ||
         isKeyword(val)); };
+    //# sourceMappingURL=reflection.js.map
 
     var pureToBool = function (val) {
         if (isBool(val)) {
@@ -462,6 +465,7 @@
     var toString = function (val) {
         return mkString(pureToString(val));
     };
+    //# sourceMappingURL=coerce.js.map
 
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -1008,6 +1012,7 @@
                 return currentMax;
         }
     };
+    //# sourceMappingURL=utils.js.map
 
     var moo = createCommonjsModule(function (module) {
     (function(root, factory) {
@@ -1672,6 +1677,7 @@
             value: function (x) { return x.slice(2, -1); },
         },
     });
+    //# sourceMappingURL=tokenizer.js.map
 
     // Generated automatically by nearley, version 2.19.2
     // http://github.com/Hardmath123/nearley
@@ -1931,6 +1937,7 @@
         ],
         ParserStart: "start",
     };
+    //# sourceMappingURL=slang.js.map
 
     var parseCode = function (code) {
         var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
@@ -1943,6 +1950,7 @@
         }
         return result[0];
     };
+    //# sourceMappingURL=index.js.map
 
     var mkTypeError = function (types, position) { return ({
         kind: 'TypeError',
@@ -2015,6 +2023,7 @@
     var notExecutable = function (kind) {
         return mkNotExecutableError(kind);
     };
+    //# sourceMappingURL=exception.js.map
 
     var Map$1;
     (function (Map) {
@@ -2801,6 +2810,7 @@
         var _c;
         return mkOptional((_c = listArg.members[idx.value]) !== null && _c !== void 0 ? _c : null);
     };
+    //# sourceMappingURL=seq.js.map
 
     var reshape = function (arr, columnSize) {
         var currIndex;
@@ -2820,6 +2830,7 @@
             }
         });
     };
+    //# sourceMappingURL=utils.js.map
 
     var indexing$1 = function (_a) {
         var _b = __read(_a, 2), mapArg = _b[0], idx = _b[1];
@@ -3024,6 +3035,7 @@
         }
         return mkMapDirect(newMap);
     };
+    //# sourceMappingURL=map.js.map
 
     var apply = function (func, args, ctx) {
         var result = func.apply(args, ctx);
@@ -3084,6 +3096,7 @@
     var fire = function (exec, ctx, args) {
         return apply(arm(exec, ctx), args, ctx);
     };
+    //# sourceMappingURL=functions.js.map
 
     var identity = function (_a) {
         var _b = __read(_a, 1), val = _b[0];
@@ -3107,6 +3120,7 @@
             : constant1; },
         argc: function (count) { return count <= 2; },
     }));
+    //# sourceMappingURL=combinators.js.map
 
     var twoValueCompare = function (val1, val2) {
         if (val1.kind !== val2.kind) {
@@ -3228,6 +3242,7 @@
         }
         return mkBool(result);
     };
+    //# sourceMappingURL=equality.js.map
 
     var and = function (args) {
         var e_1, _a;
@@ -3269,6 +3284,7 @@
         var headArg = args[0];
         return mkBool(!toBool(headArg).value);
     };
+    //# sourceMappingURL=bool.js.map
 
     var addition = function (args) {
         var e_1, _a;
@@ -3464,6 +3480,7 @@
             ? Number.MIN_SAFE_INTEGER
             : Math.max.apply(Math, __spread(args.map(function (a) { return a.value; }))));
     };
+    //# sourceMappingURL=math.js.map
 
     var atom = function (_a) {
         var _b = __read(_a, 1), value = _b[0];
@@ -3485,6 +3502,7 @@
         atom.atom = val;
         return atom;
     };
+    //# sourceMappingURL=atoms.js.map
 
     var rand = function (_a) {
         var _b = __read(_a), props = _b.slice(0);
@@ -3546,6 +3564,7 @@
         var _b = __read(_a, 1), vec = _b[0];
         return mkVector(safeShuffle(vec.members));
     };
+    //# sourceMappingURL=random.js.map
 
     var String$1;
     (function (String) {
@@ -3659,6 +3678,7 @@
             return mkVector(vec.members.slice().reverse());
         };
     })(Vector$1 || (Vector$1 = {}));
+    //# sourceMappingURL=strings.js.map
 
     var opticSupremum = function (type1, type2) {
         switch (type1) {
@@ -3792,6 +3812,7 @@
         }
         return f;
     };
+    //# sourceMappingURL=optic-helper.js.map
 
     var optic = function (_a) {
         var _b = __read(_a), headOptic = _b[0], optics = _b.slice(1);
@@ -3903,6 +3924,7 @@
         var f = run(setter.zooms, dictSetter, function (x) { return apply(g, [x], ctx); });
         return f(value);
     };
+    //# sourceMappingURL=optic.js.map
 
     var fixedTable = {
         /////////////////// COMBINATORS
@@ -4487,6 +4509,7 @@
             args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Setter, args[0].subkind); },
         })),
     };
+    //# sourceMappingURL=fixed-table.js.map
 
     var globalTable = new Map();
     var globalDefine = function (key, value) {
@@ -4555,6 +4578,7 @@
         }
         return resultEnv;
     };
+    //# sourceMappingURL=lookup.js.map
 
     var execute = function (expr, ctx) {
         var e_1, _a, e_2, _b, e_3, _c, e_4, _d, e_5, _e, e_6, _f;
@@ -4708,6 +4732,9 @@
                 return expr;
         }
     };
+    //# sourceMappingURL=executor.js.map
+
+    //# sourceMappingURL=index.js.map
 
     // img tags are parsed via HTML (!)
     var lexer$1 = moo.states({
@@ -4748,6 +4775,7 @@
             },
         },
     });
+    //# sourceMappingURL=tokenizer.js.map
 
     var keyPattern = /^([^0-9]+)([0-9]*)$/u;
     var splitValues = function (valuesRaw) {
@@ -4789,6 +4817,7 @@
         data: null,
         innerTags: [],
     }); };
+    //# sourceMappingURL=templateTypes.js.map
 
     var tagKeeper = function () {
         var tm, tagInfos, getTagInfo, tagStack, nextLevel, value, startIndex, endIndex, poppedLevel, foundTag;
@@ -4865,6 +4894,7 @@
             endToken: endToken,
         };
     };
+    //# sourceMappingURL=tagKeeper.js.map
 
     // Generated automatically by nearley, version 2.19.2
     // http://github.com/Hardmath123/nearley
@@ -4917,6 +4947,7 @@
         ],
         ParserStart: "start",
     };
+    //# sourceMappingURL=template.js.map
 
     var parseTemplate = function (text) {
         var parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar$1));
@@ -4929,6 +4960,7 @@
         }
         return result[0];
     };
+    //# sourceMappingURL=index.js.map
 
     var renderTemplate = function (text, filterManager) {
         var e_1, _a;
@@ -4983,6 +5015,7 @@
         tags.forEach(postfixInner);
         return processedText;
     };
+    //# sourceMappingURL=index.js.map
 
     var map = new Map();
     var defaultMemoizer = {
@@ -4996,6 +5029,7 @@
         var key = _a.key, idx = _a.idx, valuesRaw = _a.valuesRaw;
         return (key + ":" + idx + ":" + valuesRaw);
     };
+    //# sourceMappingURL=memoizer.js.map
 
     var mkStoreApi = function (store) {
         var set = function (name, value) {
@@ -5021,6 +5055,7 @@
             clear: clear,
         };
     };
+    //# sourceMappingURL=store.js.map
 
     var defaultFilter = function (_a) {
         var fullKey = _a.fullKey, valuesRaw = _a.valuesRaw;
@@ -5073,6 +5108,7 @@
             clear: clearFilters,
         };
     };
+    //# sourceMappingURL=filters.js.map
 
     var mkDeferredApi = function (deferred) {
         var registerDeferred = function (name, filter) {
@@ -5092,9 +5128,10 @@
             clear: clearDeferred,
         };
     };
+    //# sourceMappingURL=deferred.js.map
 
-    var mkFilterManager = function (meta, memoizer) {
-        if (meta === void 0) { meta = {}; }
+    var mkFilterManager = function (custom, memoizer) {
+        if (custom === void 0) { custom = {}; }
         if (memoizer === void 0) { memoizer = defaultMemoizer; }
         var store = new Map();
         var storeApi = mkStoreApi(store);
@@ -5111,7 +5148,7 @@
             isActivated: function () { return nextIteration; },
         };
         var internals = {
-            meta: meta,
+            custom: custom,
             nextIteration: nextIterationApi,
             store: storeApi,
             filters: filterApi,
@@ -5127,6 +5164,9 @@
                 memoizer.setItem(memoizerKey, result);
             }
             return result;
+        };
+        var addRecipe = function (recipe) {
+            recipe(filterApi);
         };
         var iterations = function () {
             var deferred_1, deferred_1_1, _a, name_1, def;
@@ -5161,12 +5201,14 @@
             });
         };
         return {
-            iterations: iterations,
             filters: filterApi,
+            addRecipe: addRecipe,
+            iterations: iterations,
         };
     };
+    //# sourceMappingURL=index.js.map
 
-    var installMixFilter = function (fm, keyword, separator) {
+    var mixRecipe = function (keyword, separator) { return function (filterApi) {
         var shuffle = function (array) {
             var result = array.slice(0);
             var currentIndex = array.length, temporaryValue = null, randomIndex = null;
@@ -5213,12 +5255,14 @@
             }
             return popped.join(separator);
         };
-        fm.filters.register(keyword, mixPrepareFilter);
-    };
+        filterApi.register(keyword, mixPrepareFilter);
+    }; };
+    //# sourceMappingURL=mix.js.map
 
     var recipes = {
-        mix: installMixFilter,
+        mix: mixRecipe,
     };
+    //# sourceMappingURL=index.js.map
 
     globalThis.codeToString = toString;
     globalThis.parseCode = parseCode;
@@ -5226,5 +5270,6 @@
     globalThis.renderTemplate = renderTemplate;
     globalThis.mkFilterManager = mkFilterManager;
     globalThis.filterRecipes = recipes;
+    //# sourceMappingURL=index.js.map
 
 }());

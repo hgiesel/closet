@@ -1,12 +1,10 @@
 ---
-layout: default
+layout: tester
 title: Try it out!
 nav_order: 3
-permalink: /try
+permalink: /tester
 ---
 
 # Try Closet!
 
-
 {% include tester.html %}
-{% include tester-func.html %}

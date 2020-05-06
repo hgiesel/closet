@@ -10,4 +10,4 @@ has_children: true
 
 **Closet** offers a wide array of default functionality, that you can use out-of-the-box.
 
-{% include codedisplay.html content=site.data.snippets.firsttest %}
+{% include codeDisplay.html content=site.data.snippets.firsttest %}

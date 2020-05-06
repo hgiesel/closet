@@ -1,4 +1,4 @@
-const installMixFilter = (fm, keyword, separator) => {
+const mixRecipe = (keyword, separator) => (filterApi) => {
     const shuffle = (array) => {
         const result = array.slice(0)
         let currentIndex = array.length, temporaryValue = null, randomIndex = null
@@ -58,7 +58,7 @@ const installMixFilter = (fm, keyword, separator) => {
         return popped.join(separator)
     }
 
-    fm.filters.register(keyword, mixPrepareFilter)
+    filterApi.register(keyword, mixPrepareFilter)
 }
 
-export default installMixFilter
+export default mixRecipe

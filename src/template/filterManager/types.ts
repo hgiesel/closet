@@ -7,7 +7,7 @@ export interface Internals {
     store: StoreApi
     filters: FilterApi
     deferred: DeferredApi
-    meta: object
+    custom: object
 }
 
 export interface FilterResult {
@@ -64,6 +64,7 @@ export interface AnkiApi {
 }
 
 export interface FilterManager {
-    iterations: any
-    filters: FilterApi
+    filters: FilterApi,
+    addRecipe: any,
+    iterations: any,
 }

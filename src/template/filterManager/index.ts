@@ -8,6 +8,7 @@ import type {
     FilterResult,
     Iteration,
     NextIterationApi,
+    FilterApi,
 } from './types'
 
 import {
@@ -28,7 +29,7 @@ import {
     mkDeferredApi,
 } from './deferred'
 
-const mkFilterManager = (meta = {}, memoizer = defaultMemoizer): FilterManager => {
+const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager => {
     const store = new Map()
     const storeApi = mkStoreApi(store)
 
@@ -47,7 +48,7 @@ const mkFilterManager = (meta = {}, memoizer = defaultMemoizer): FilterManager =
     }
 
     const internals: Internals = {
-        meta: meta,
+        custom: custom,
         nextIteration: nextIterationApi,
         store: storeApi,
         filters: filterApi,
@@ -70,6 +71,10 @@ const mkFilterManager = (meta = {}, memoizer = defaultMemoizer): FilterManager =
         return result
     }
 
+    const addRecipe = (recipe: (filterApi: FilterApi) => void): void => {
+        recipe(filterApi)
+    }
+
     const iterations = function*() {
         while (nextIteration) {
             nextIteration = false
@@ -86,8 +91,9 @@ const mkFilterManager = (meta = {}, memoizer = defaultMemoizer): FilterManager =
     }
 
     return {
-        iterations: iterations,
         filters: filterApi,
+        addRecipe: addRecipe,
+        iterations: iterations,
     }
 }
 

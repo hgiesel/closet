@@ -34,15 +34,28 @@ const processTemplateText = () => {
 
 btnExecute.addEventListener('click', processTemplateText)
 
+///////////////////
 
-const btnCopy = document.getElementById('btn-copy')
+const btnCopyLink = document.getElementById('btn-copy-link')
 const copyTemplateTextAsLink = () => {
     const allText = codeCM.getValue()
-    const link = window.location.pathname + `?txt=${allText}`
+    const link = (window.location.pathname + `?txt=${allText}`)
+        .replace(/ /gu, '%20')
+        .replace(/\n/gu, '%0A')
 
     navigator.clipboard.writeText(window.location.host + link)
         .then(() => console.info('Successfully copied to clipboard'))
     window.location.replace(link)
 }
 
-btnCopy.addEventListener('click', copyTemplateTextAsLink)
+btnCopyLink.addEventListener('click', copyTemplateTextAsLink)
+
+///////////////////
+
+const btnCopyText = document.getElementById('btn-copy-text')
+const copyTemplateTextAsText = () => {
+    const allText = codeCM.getValue()
+    navigator.clipboard.writeText(allText)
+}
+
+btnCopyText.addEventListener('click', copyTemplateTextAsText)

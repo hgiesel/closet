@@ -39,9 +39,7 @@ btnExecute.addEventListener('click', processTemplateText)
 const btnCopyLink = document.getElementById('btn-copy-link')
 const copyTemplateTextAsLink = () => {
     const allText = codeCM.getValue()
-    const link = (window.location.pathname + `?txt=${allText}`)
-        .replace(/ /gu, '%20')
-        .replace(/\n/gu, '%0A')
+    const link = (window.location.pathname + `?txt=${encodeURIComponent(allText)}`)
 
     navigator.clipboard.writeText(
         `${window.location.protocol}//${window.location.host}${link}`

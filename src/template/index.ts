@@ -10,7 +10,6 @@ import {
 } from '../templateTypes'
 
 const renderTemplate = (text, filterManager) => {
-
     for (const iteration of filterManager.iterations()) {
         const tags = parseTemplate(text)
         text = postfixOuter(text, tags, iteration)

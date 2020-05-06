@@ -7,8 +7,6 @@ permalink: /try
 
 # Try Closet!
 
-<link rel="stylesheet" type="text/css" href="../css/tester.css">
-<script src="../js/Main.js"></script>
 
 {% include tester.html %}
 {% include tester-func.html %}

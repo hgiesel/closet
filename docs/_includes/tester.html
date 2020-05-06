@@ -28,21 +28,21 @@
 </div>
 
 <script>
-  const templateTA = document.getElementById('template')
-  const codeTA = document.getElementById('code')
-  const codeCM = CodeMirror.fromTextArea(codeTA)
+  const templateTA = document.getElementById('template');
+  const codeTA = document.getElementById('code');
+  const codeCM = CodeMirror.fromTextArea(codeTA);
 
-  const sparams = new URLSearchParams(location.search)
+  const sparams = new URLSearchParams(location.search);
 
   if (sparams.has('template')) {
-    templateTA.value = sparams.get('template')
+    templateTA.value = sparams.get('template');
   }
   else if (templateTA.value === '') {
-    templateTA.value = 'This is a [[hl::sample::text]].\nReplace it with whatever you [[em::w[[opt::ish||ant]]||desire]]!'
-  }
+    templateTA.value = 'This is a [[hl::sample::text]].\nReplace it with whatever you [[em::w[[opt::ish||ant]]||desire]]!';
+  };
 
-  if(sparams.has('code')) {
-    codeTA.value = sparams.get('code')
+  if (sparams.has('code')) {
+    codeTA.value = sparams.get('code');
   }
   else if (codeTA.value === '') {
     codeTA.value = '(def x [1 2 3])\n(->> x\n     (map #(+ % 1))\n)'

@@ -1,0 +1,10 @@
+<div class="code-example" id="{{ include.content.name | slugify }}">
+  <div class="display"></div>
+  <button type="button" name="button">Rerender</button>
+  <script>
+    {% include_relative assets/js/codedisplay.js %}
+  </script>
+
+</div>
+```
+{{ include.content.code }}```

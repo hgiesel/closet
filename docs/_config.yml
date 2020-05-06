@@ -14,14 +14,14 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: "Closet"
+title: "The Closet Language"
 email: hengiesel@example.com
 
 description: >- # this means to ignore newlines until "baseurl:"
     Closet is a technology to manipulate text and graphics for the use of flashcards.
 
 url: "https://hgiesel.github.io" # the base hostname & protocol for your site, e.g. http://example.com
-baseurl: "/closet"              # the subpath of your site, e.g. /blog
+baseurl: "/closet/"              # the subpath of your site, e.g. /blog
 github_username: hgiesel
 
 # Docs: https://pmarsceill.github.io/just-the-docs/
@@ -29,16 +29,16 @@ remote_theme: pmarsceill/just-the-docs
 
 aux_links:
   "Closet on GitHub":
-    - "//github.com/hgiesel/closet"
+    - "//github.com/hgiesel/closet/"
 
 # TODO create a logo
 # logo: "/assets/images/just-the-docs.png"
+
 search_enabled: true
 heading_anchors: true
 color_scheme: "dark"
 
-plugins:
-  - jekyll-feed
+strict_front_matter: true
 
 # Exclude from processing.
 # The following items will not be processed, by default.
@@ -59,3 +59,7 @@ plugins:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+#
+
+compress_html:
+  blanklines: true

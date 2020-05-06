@@ -2,13 +2,10 @@
 
 # compiled src outside of docs
 node_modules/*
-/Main.js
-/dist
 
 # compiled .ne files
 src/genpar/slang.ts
 src/template/template.ts
-
 
 # for Jekyll
 _site

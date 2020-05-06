@@ -56,13 +56,16 @@ const grammar: Grammar = {
             endToken.value /* ']]' */,
         ], tagKeeper.endToken(endToken.offset, tag)] },
     {"name": "tagstart", "symbols": [(tokenizer.has("tagstart") ? {type: "tagstart"} : tagstart)], "postprocess": ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset + startToken.value.length)]},
-    {"name": "inner$ebnf$1", "symbols": []},
-    {"name": "inner$ebnf$1$subexpression$1", "symbols": ["tag", "_values"]},
-    {"name": "inner$ebnf$1", "symbols": ["inner$ebnf$1", "inner$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},
-    {"name": "inner", "symbols": [(tokenizer.has("keyname") ? {type: "keyname"} : keyname), (tokenizer.has("sep") ? {type: "sep"} : sep), "_values", "inner$ebnf$1"], "postprocess":  ([key,,first,rest]) => [
-            key.value,
-            first + rest.map(([tag, vtxt]) => id(tag).join('') + vtxt),
-        ] },
+    {"name": "inner$ebnf$1$subexpression$1$ebnf$1", "symbols": []},
+    {"name": "inner$ebnf$1$subexpression$1$ebnf$1$subexpression$1", "symbols": ["tag", "_values"]},
+    {"name": "inner$ebnf$1$subexpression$1$ebnf$1", "symbols": ["inner$ebnf$1$subexpression$1$ebnf$1", "inner$ebnf$1$subexpression$1$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},
+    {"name": "inner$ebnf$1$subexpression$1", "symbols": [(tokenizer.has("sep") ? {type: "sep"} : sep), "_values", "inner$ebnf$1$subexpression$1$ebnf$1"]},
+    {"name": "inner$ebnf$1", "symbols": ["inner$ebnf$1$subexpression$1"], "postprocess": id},
+    {"name": "inner$ebnf$1", "symbols": [], "postprocess": () => null},
+    {"name": "inner", "symbols": [(tokenizer.has("keyname") ? {type: "keyname"} : keyname), "inner$ebnf$1"], "postprocess":  ([key,rest]) => rest
+        ? [key.value, rest[1] + rest[2].map(([tag, vtxt]) => id(tag).join('') + vtxt)]
+        : [key.value],
+        },
     {"name": "_values$ebnf$1", "symbols": []},
     {"name": "_values$ebnf$1", "symbols": ["_values$ebnf$1", (tokenizer.has("valuestext") ? {type: "valuestext"} : valuestext)], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "_values", "symbols": ["_values$ebnf$1"], "postprocess": ([vs]) => vs.map(v => v.value).join('')},

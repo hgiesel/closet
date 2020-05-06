@@ -40,7 +40,7 @@ const tagKeeper = function*() {
             const poppedLevel = tagStack.pop()
             const foundTag = getTagInfo(tagStack)[poppedLevel]
             foundTag.end = endIndex
-            foundTag.data = tm.mkTag(value[1][0], value[1][1])
+            foundTag.data = tm.mkTag(value[1][0], value[1][1] ?? null)
 
             nextLevel = poppedLevel + 1
         }

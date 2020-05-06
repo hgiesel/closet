@@ -22,10 +22,10 @@ tag -> tagstart inner %tagend {% ([startToken,tag,endToken]) => [[
 
 tagstart -> %tagstart {% ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset + startToken.value.length)] %}
 
-inner -> %keyname %sep _values (tag _values):* {% ([key,,first,rest]) => [
-    key.value,
-    first + rest.map(([tag, vtxt]) => id(tag).join('') + vtxt),
-] %}
+inner -> %keyname (%sep _values (tag _values):* ):? {% ([key,rest]) => rest
+    ? [key.value, rest[1] + rest[2].map(([tag, vtxt]) => id(tag).join('') + vtxt)]
+    : [key.value],
+%}
 
 _values -> %valuestext:* {% ([vs]) => vs.map(v => v.value).join('') %}
 _ -> %text:* {% () => null %}

@@ -23,6 +23,10 @@ export const lexer = moo.states({
             match: '::',
             next: 'intag',
         },
+        tagend: {
+            match: ']]',
+            pop: 1,
+        },
     },
     intag: {
         tagstart: {

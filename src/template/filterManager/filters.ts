@@ -9,7 +9,9 @@ import type {
 } from '../../templateTypes'
 
 const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => ({
-    result: `[[${fullKey}::${valuesRaw}]]`,
+    result: valuesRaw === null
+        ? `[[${fullKey}]]`
+        : `[[${fullKey}::${valuesRaw}]]`,
     memoize: false,
 })
 

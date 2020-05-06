@@ -41,7 +41,7 @@ const postfixOuter = (text, tags, filterManager) => {
     let sum = 0
     let processedText = text
 
-    const postfixInner = (tag) => {
+    const postfixInner = (tag, i) => {
         stack.push(sum)
         const innerResults = tag.innerTags.map(postfixInner)
 

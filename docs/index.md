@@ -1,8 +1,9 @@
-----
+---
 layout: default
 title: Home
 nav_order: 0
-----
+---
+
 # The Closet Language
 
 *Closet* is a unique mix between a [templating language](https://en.wikipedia.org/wiki/Template_processor) and a [text formatter]() written in [TypeScript](https://www.typescriptlang.org/) for the generation of flashcards, especially for the use in the [Anki](https://apps.ankiweb.net/) flashcard program.

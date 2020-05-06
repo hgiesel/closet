@@ -43,7 +43,9 @@ const copyTemplateTextAsLink = () => {
         .replace(/ /gu, '%20')
         .replace(/\n/gu, '%0A')
 
-    navigator.clipboard.writeText(window.location.host + link)
+    navigator.clipboard.writeText(
+        `${window.location.protocol}//${window.location.host}${link}`
+    )
         .then(() => console.info('Successfully copied to clipboard'))
     window.location.replace(link)
 }

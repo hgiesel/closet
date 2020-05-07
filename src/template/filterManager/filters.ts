@@ -14,10 +14,10 @@ import {
     ARG_SEP,
 } from '../../templateTypes'
 
-const defaultFilter = ({fullKey, valuesRaw, path}: Tag): FilterResult => ({
+const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => ({
     result: valuesRaw === null
-        ? `${TAG_START}${fullKey}${TAG_END}${path}`
-        : `${TAG_START}${fullKey}${ARG_SEP}${valuesRaw}${TAG_END}${path}`,
+        ? `${TAG_START}${fullKey}${TAG_END}`
+        : `${TAG_START}${fullKey}${ARG_SEP}${valuesRaw}${TAG_END}`,
     memoize: false,
 })
 

@@ -6,13 +6,13 @@ import type {
 
 import type {
     Tag,
-} from '../../templateTypes'
+} from '../../types'
 
 import {
     TAG_START,
     TAG_END,
     ARG_SEP,
-} from '../../templateTypes'
+} from '../../types'
 
 const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => ({
     result: valuesRaw === null

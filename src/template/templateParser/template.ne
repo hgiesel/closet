@@ -4,7 +4,7 @@ import initTagKeeper from './tagKeeper'
 
 import {
     ARG_SEP,
-} from '../../templateTypes.ts'
+} from '../../types.ts'
 
 const tagKeeper = initTagKeeper()
 %}

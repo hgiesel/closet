@@ -7,14 +7,14 @@ import type {
 import type {
     Tag,
     TagInfo,
-} from '../templateTypes'
+} from '../types'
 
 import {
     TAG_START,
     TAG_END,
     ARG_SEP,
     splitValues,
-} from '../templateTypes'
+} from '../types'
 
 const renderTemplate = (text, filterManager) => {
     let result = text

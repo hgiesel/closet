@@ -4,7 +4,7 @@ import {
     TAG_START,
     TAG_END,
     ARG_SEP,
-} from '../../templateTypes'
+} from '../../types'
 
 // img tags are parsed via HTML (!)
 export const lexer = moo.states({

@@ -3,7 +3,7 @@ import {
     TAG_END,
     tagMaker,
     mkTagInfo,
-} from '../../templateTypes'
+} from '../../types'
 
 const tagKeeper = function*() {
     const tm = tagMaker()

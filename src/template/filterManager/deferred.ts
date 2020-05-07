@@ -4,7 +4,7 @@ import type {
 
 import type {
     Tag,
-} from '../../templateTypes'
+} from '../../types'
 
 export const mkDeferredApi = (deferred: Map<string, () => void>): DeferredApi => {
     const registerDeferred = (name, filter) => {

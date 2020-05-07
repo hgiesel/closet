@@ -1,6 +1,6 @@
 import type {
     Tag,
-} from '../templateTypes'
+} from '../types'
 
 export interface TagsApi {
     getText(): string

@@ -1,6 +1,6 @@
 import type {
     Tag,
-} from '../../templateTypes'
+} from '../../types'
 
 import type {
     TagsApi,

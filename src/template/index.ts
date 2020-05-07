@@ -17,12 +17,14 @@ import {
 } from '../templateTypes'
 
 const renderTemplate = (text, filterManager) => {
+    let result = text
+
     for (const iteration of filterManager.iterations()) {
         const tags = parseTemplate(text)
-        text = postfixOuter(text, tags, iteration)
+        result = postfixOuter(text, tags, iteration)
     }
 
-    return text
+    return result
 }
 
 const spliceSlice = (str, lend, rend, add): string => {
@@ -34,11 +36,59 @@ const spliceSlice = (str, lend, rend, add): string => {
     return str.slice(0, leftend) + (add || "") + str.slice(rend)
 }
 
+const mkTagApi = (text, tags) => {
+    const getText = (): string => text
+    const updateText = (newText: string): void => {
+        text = newText
+    }
+
+    const exists = (path: number[]): boolean => {
+        let currentPos = tags
+
+        for (const p of path) {
+            if (currentPos.innerTags[p]) {
+                currentPos = currentPos.innerTags[p]
+            }
+
+            else {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    const getPath = (path: number[]): TagInfo => {
+        let currentPos = tags
+
+        for (const p of path) {
+            if (currentPos.innerTags[p]) {
+                currentPos = currentPos.innerTags[p]
+            }
+
+            else {
+                return null
+            }
+        }
+
+        return currentPos
+    }
+
+    return {
+        getText: getText,
+        updateText: updateText,
+        get: getPath,
+        exists: exists,
+    }
+}
+
 const postfixOuter = (text, tags, filterManager) => {
     const stack = [0]
 
     let sum = 0
     let processedText = text
+
+    const tagApi = mkTagApi(text, tags)
 
     const postfixInner = (tag: TagInfo, i: number): FilterResult => {
         stack.push(sum)
@@ -58,9 +108,8 @@ const postfixOuter = (text, tags, filterManager) => {
             tag.start + leftOffset + TAG_START.length + tag.data.fullKey.length + ARG_SEP.length,
             tag.end + leftOffset + innerOffset - TAG_END.length,
         ))
-        console.log('fu', tag.data.values)
 
-        const filterOutput = filterManager.processFilter(tag.data.key, tag.data)
+        const filterOutput = filterManager.processFilter(tag.data.key, tag.data, tagApi)
         const newOffset = filterOutput.result.length - (tag.end - tag.start)
 
         sum = innerOffset + leftOffset + newOffset

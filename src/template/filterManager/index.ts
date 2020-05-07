@@ -3,6 +3,10 @@ import type {
 } from '../../templateTypes'
 
 import type {
+    TagsApi,
+} from '../types'
+
+import type {
     Internals,
     FilterManager,
     FilterResult,
@@ -10,6 +14,7 @@ import type {
     NextIterationApi,
     FilterApi,
 } from './types'
+
 
 import {
     defaultMemoizer,
@@ -47,19 +52,20 @@ const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager
         isActivated: () => nextIteration,
     }
 
-    const internals: Internals = {
-        custom: custom,
-        nextIteration: nextIterationApi,
-        store: storeApi,
-        filters: filterApi,
-        deferred: deferredApi,
-    }
-
-    const processFilter = (key: string, data: Tag): FilterResult => {
+    const processFilter = (key: string, data: Tag, tagsApi: TagsApi): FilterResult => {
         const memoizerKey = generateMemoizerKey(data)
 
         if (memoizer.hasItem(memoizerKey)) {
             return memoizer.getItem(memoizerKey)
+        }
+
+        const internals: Internals = {
+            custom: custom,
+            nextIteration: nextIterationApi,
+            store: storeApi,
+            filters: filterApi,
+            deferred: deferredApi,
+            tags: tagsApi,
         }
 
         const result = executeFilter(filters, key, data, internals)

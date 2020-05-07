@@ -123,7 +123,6 @@
         OpticType["Prism"] = "prism";
         OpticType["Iso"] = "iso";
     })(OpticType || (OpticType = {}));
-    //# sourceMappingURL=types.js.map
 
     var getValue = function (v) { return v.value; };
     ////////// CONSTRUCTORS FOR BASIC TYPES
@@ -345,7 +344,6 @@
         value: value,
         pipes: pipes,
     }); };
-    //# sourceMappingURL=constructors.js.map
 
     var isUnit = function (val) { return val.kind === SlangType.Unit; };
     var isBool = function (val) { return val.kind === SlangType.Bool; };
@@ -377,7 +375,6 @@
         isMapKey(val)); };
     var isMapKey = function (val) { return (isString(val) ||
         isKeyword(val)); };
-    //# sourceMappingURL=reflection.js.map
 
     var pureToBool = function (val) {
         if (isBool(val)) {
@@ -465,7 +462,6 @@
     var toString = function (val) {
         return mkString(pureToString(val));
     };
-    //# sourceMappingURL=coerce.js.map
 
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -1012,7 +1008,6 @@
                 return currentMax;
         }
     };
-    //# sourceMappingURL=utils.js.map
 
     var moo = createCommonjsModule(function (module) {
     (function(root, factory) {
@@ -1677,7 +1672,6 @@
             value: function (x) { return x.slice(2, -1); },
         },
     });
-    //# sourceMappingURL=tokenizer.js.map
 
     // Generated automatically by nearley, version 2.19.2
     // http://github.com/Hardmath123/nearley
@@ -1937,7 +1931,6 @@
         ],
         ParserStart: "start",
     };
-    //# sourceMappingURL=slang.js.map
 
     var parseCode = function (code) {
         var p = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
@@ -1950,7 +1943,6 @@
         }
         return result[0];
     };
-    //# sourceMappingURL=index.js.map
 
     var mkTypeError = function (types, position) { return ({
         kind: 'TypeError',
@@ -2023,7 +2015,6 @@
     var notExecutable = function (kind) {
         return mkNotExecutableError(kind);
     };
-    //# sourceMappingURL=exception.js.map
 
     var Map$1;
     (function (Map) {
@@ -2810,7 +2801,6 @@
         var _c;
         return mkOptional((_c = listArg.members[idx.value]) !== null && _c !== void 0 ? _c : null);
     };
-    //# sourceMappingURL=seq.js.map
 
     var reshape = function (arr, columnSize) {
         var currIndex;
@@ -2830,7 +2820,6 @@
             }
         });
     };
-    //# sourceMappingURL=utils.js.map
 
     var indexing$1 = function (_a) {
         var _b = __read(_a, 2), mapArg = _b[0], idx = _b[1];
@@ -3035,7 +3024,6 @@
         }
         return mkMapDirect(newMap);
     };
-    //# sourceMappingURL=map.js.map
 
     var apply = function (func, args, ctx) {
         var result = func.apply(args, ctx);
@@ -3096,7 +3084,6 @@
     var fire = function (exec, ctx, args) {
         return apply(arm(exec, ctx), args, ctx);
     };
-    //# sourceMappingURL=functions.js.map
 
     var identity = function (_a) {
         var _b = __read(_a, 1), val = _b[0];
@@ -3120,7 +3107,6 @@
             : constant1; },
         argc: function (count) { return count <= 2; },
     }));
-    //# sourceMappingURL=combinators.js.map
 
     var twoValueCompare = function (val1, val2) {
         if (val1.kind !== val2.kind) {
@@ -3242,7 +3228,6 @@
         }
         return mkBool(result);
     };
-    //# sourceMappingURL=equality.js.map
 
     var and = function (args) {
         var e_1, _a;
@@ -3284,7 +3269,6 @@
         var headArg = args[0];
         return mkBool(!toBool(headArg).value);
     };
-    //# sourceMappingURL=bool.js.map
 
     var addition = function (args) {
         var e_1, _a;
@@ -3480,7 +3464,6 @@
             ? Number.MIN_SAFE_INTEGER
             : Math.max.apply(Math, __spread(args.map(function (a) { return a.value; }))));
     };
-    //# sourceMappingURL=math.js.map
 
     var atom = function (_a) {
         var _b = __read(_a, 1), value = _b[0];
@@ -3502,7 +3485,6 @@
         atom.atom = val;
         return atom;
     };
-    //# sourceMappingURL=atoms.js.map
 
     var rand = function (_a) {
         var _b = __read(_a), props = _b.slice(0);
@@ -3564,7 +3546,6 @@
         var _b = __read(_a, 1), vec = _b[0];
         return mkVector(safeShuffle(vec.members));
     };
-    //# sourceMappingURL=random.js.map
 
     var String$1;
     (function (String) {
@@ -3678,7 +3659,6 @@
             return mkVector(vec.members.slice().reverse());
         };
     })(Vector$1 || (Vector$1 = {}));
-    //# sourceMappingURL=strings.js.map
 
     var opticSupremum = function (type1, type2) {
         switch (type1) {
@@ -3812,7 +3792,6 @@
         }
         return f;
     };
-    //# sourceMappingURL=optic-helper.js.map
 
     var optic = function (_a) {
         var _b = __read(_a), headOptic = _b[0], optics = _b.slice(1);
@@ -3924,7 +3903,6 @@
         var f = run(setter.zooms, dictSetter, function (x) { return apply(g, [x], ctx); });
         return f(value);
     };
-    //# sourceMappingURL=optic.js.map
 
     var fixedTable = {
         /////////////////// COMBINATORS
@@ -4509,7 +4487,6 @@
             args: function (args) { return isOptic(args[0]) && opticLE(OpticType.Setter, args[0].subkind); },
         })),
     };
-    //# sourceMappingURL=fixed-table.js.map
 
     var globalTable = new Map();
     var globalDefine = function (key, value) {
@@ -4578,7 +4555,6 @@
         }
         return resultEnv;
     };
-    //# sourceMappingURL=lookup.js.map
 
     var execute = function (expr, ctx) {
         var e_1, _a, e_2, _b, e_3, _c, e_4, _d, e_5, _e, e_6, _f;
@@ -4732,15 +4708,59 @@
                 return expr;
         }
     };
-    //# sourceMappingURL=executor.js.map
 
-    //# sourceMappingURL=index.js.map
+    var TAG_START = '[[';
+    var TAG_END = ']]';
+    var ARG_SEP = '::';
+    var keyPattern = /^([^0-9]+)([0-9]*)$/u;
+    var splitValues = function (valuesRaw) {
+        return valuesRaw === null
+            ? []
+            : valuesRaw.split(ARG_SEP).map(function (arg) { return arg.split('||'); });
+    };
+    var tagMaker = function () {
+        var tagCounter = new Map();
+        var getAndInc = function (key) {
+            var result = tagCounter.has(key)
+                ? tagCounter.get(key) + 1
+                : 0;
+            tagCounter.set(key, result);
+            return result;
+        };
+        var mkTag = function (fullKey, valuesRaw, path) {
+            var match = fullKey.match(keyPattern);
+            var key = match[1];
+            var idx = match[2].length === 0 ? null : Number(match[2]);
+            var fullOccur = getAndInc(fullKey);
+            var occur = fullKey === key
+                ? fullOccur
+                : getAndInc(key);
+            return {
+                fullKey: fullKey,
+                fullOccur: fullOccur,
+                key: key,
+                idx: idx,
+                occur: occur,
+                valuesRaw: valuesRaw,
+                path: path,
+            };
+        };
+        return {
+            mkTag: mkTag,
+        };
+    };
+    var mkTagInfo = function (start) { return ({
+        start: start,
+        end: 0,
+        data: null,
+        innerTags: [],
+    }); };
 
     // img tags are parsed via HTML (!)
     var lexer$1 = moo.states({
         main: {
             tagstart: {
-                match: '[[',
+                match: TAG_START,
                 push: 'key',
             },
             EOF: {
@@ -4756,21 +4776,21 @@
                 match: /[a-zA-Z]+\d*/u,
             },
             sep: {
-                match: '::',
+                match: ARG_SEP,
                 next: 'intag',
             },
             tagend: {
-                match: ']]',
+                match: TAG_END,
                 pop: 1,
             },
         },
         intag: {
             tagstart: {
-                match: '[[',
+                match: TAG_START,
                 push: 'key',
             },
             tagend: {
-                match: ']]',
+                match: TAG_END,
                 pop: 1,
             },
             valuestext: {
@@ -4779,52 +4799,6 @@
             },
         },
     });
-    //# sourceMappingURL=tokenizer.js.map
-
-    var tagStart = '[[';
-    var keyPattern = /^([^0-9]+)([0-9]*)$/u;
-    var splitValues = function (valuesRaw) {
-        return valuesRaw === null
-            ? []
-            : valuesRaw.split('::').map(function (arg) { return arg.split('||'); });
-    };
-    var tagMaker = function () {
-        var tagCounter = new Map();
-        var getAndInc = function (key) {
-            var result = tagCounter.has(key)
-                ? tagCounter.get(key) + 1
-                : 0;
-            tagCounter.set(key, result);
-            return result;
-        };
-        var mkTag = function (fullKey, valuesRaw) {
-            var match = fullKey.match(keyPattern);
-            var key = match[1];
-            var idx = match[2].length === 0 ? null : Number(match[2]);
-            var fullOccur = getAndInc(fullKey);
-            var occur = fullKey === key
-                ? fullOccur
-                : getAndInc(key);
-            return {
-                fullKey: fullKey,
-                fullOccur: fullOccur,
-                key: key,
-                idx: idx,
-                occur: occur,
-                valuesRaw: valuesRaw,
-            };
-        };
-        return {
-            mkTag: mkTag,
-        };
-    };
-    var mkTagInfo = function (start) { return ({
-        start: start,
-        end: 0,
-        data: null,
-        innerTags: [],
-    }); };
-    //# sourceMappingURL=templateTypes.js.map
 
     var tagKeeper = function () {
         var tm, tagInfos, getTagInfo, tagStack, nextLevel, value, startIndex, endIndex, poppedLevel, foundTag;
@@ -4863,17 +4837,17 @@
                         return [2 /*return*/, tagInfos];
                     }
                     else if (value[0] >= 0) /* start */ {
-                        startIndex = value[0] - tagStart.length;
+                        startIndex = value[0] - TAG_START.length;
                         getTagInfo(tagStack).push(mkTagInfo(startIndex));
                         tagStack.push(nextLevel);
                         nextLevel = 0;
                     }
                     else /* end */ {
-                        endIndex = Math.abs(value[0]) + 2 /* two delimiter characters */;
+                        endIndex = Math.abs(value[0]) + TAG_END.length;
                         poppedLevel = tagStack.pop();
                         foundTag = getTagInfo(tagStack)[poppedLevel];
                         foundTag.end = endIndex;
-                        foundTag.data = tm.mkTag(value[1][0], (_a = value[1][1]) !== null && _a !== void 0 ? _a : null);
+                        foundTag.data = tm.mkTag(value[1][0], (_a = value[1][1]) !== null && _a !== void 0 ? _a : null, __spread(tagStack, [poppedLevel]));
                         nextLevel = poppedLevel + 1;
                     }
                     return [3 /*break*/, 1];
@@ -4957,7 +4931,6 @@
         ],
         ParserStart: "start",
     };
-    //# sourceMappingURL=template.js.map
 
     var parseTemplate = function (text) {
         var parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar$1));
@@ -4970,15 +4943,15 @@
         }
         return result[0];
     };
-    //# sourceMappingURL=index.js.map
 
     var renderTemplate = function (text, filterManager) {
         var e_1, _a;
+        var result = text;
         try {
             for (var _b = __values(filterManager.iterations()), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var iteration = _c.value;
                 var tags = parseTemplate(text);
-                text = postfixOuter(text, tags, iteration);
+                result = postfixOuter(text, tags, iteration);
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -4988,7 +4961,7 @@
             }
             finally { if (e_1) throw e_1.error; }
         }
-        return text;
+        return result;
     };
     var spliceSlice = function (str, lend, rend, add) {
         // We cannot pass negative lend directly to the 2nd slicing operation.
@@ -4997,35 +4970,88 @@
             : lend;
         return str.slice(0, leftend) + (add || "") + str.slice(rend);
     };
-    var adjustValuesString = function (tag, innerTag, adjustment) {
-        return spliceSlice(tag.data.valuesRaw, innerTag.start - (tag.start + 2 /* opendelim */ + tag.data.fullKey.length + 2 /* sep */), innerTag.end - innerTag.start + 1, adjustment);
+    var mkTagApi = function (text, tags) {
+        var getText = function () { return text; };
+        var updateText = function (newText) {
+            text = newText;
+        };
+        var exists = function (path) {
+            var e_2, _a;
+            var currentPos = tags;
+            try {
+                for (var path_1 = __values(path), path_1_1 = path_1.next(); !path_1_1.done; path_1_1 = path_1.next()) {
+                    var p = path_1_1.value;
+                    if (currentPos.innerTags[p]) {
+                        currentPos = currentPos.innerTags[p];
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (path_1_1 && !path_1_1.done && (_a = path_1.return)) _a.call(path_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+            return true;
+        };
+        var getPath = function (path) {
+            var e_3, _a;
+            var currentPos = tags;
+            try {
+                for (var path_2 = __values(path), path_2_1 = path_2.next(); !path_2_1.done; path_2_1 = path_2.next()) {
+                    var p = path_2_1.value;
+                    if (currentPos.innerTags[p]) {
+                        currentPos = currentPos.innerTags[p];
+                    }
+                    else {
+                        return null;
+                    }
+                }
+            }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (path_2_1 && !path_2_1.done && (_a = path_2.return)) _a.call(path_2);
+                }
+                finally { if (e_3) throw e_3.error; }
+            }
+            return currentPos;
+        };
+        return {
+            getText: getText,
+            updateText: updateText,
+            get: getPath,
+            exists: exists,
+        };
     };
     var postfixOuter = function (text, tags, filterManager) {
         var stack = [0];
         var sum = 0;
         var processedText = text;
+        var tagApi = mkTagApi(text, tags);
         var postfixInner = function (tag, i) {
             stack.push(sum);
             var innerResults = tag.innerTags.map(postfixInner);
             stack.push(tag.innerTags.length > 0
                 ? sum - stack[stack.length - 1] /* stack.peek() */
                 : 0);
-            tag.innerTags.forEach(function (it, idx) {
-                return tag.data.valuesRaw = adjustValuesString(tag, it, innerResults[idx]);
-            });
-            tag.data.values = splitValues(tag.data.valuesRaw);
-            var filterOutput = filterManager.processFilter(tag.data.key, tag.data);
             var innerOffset = stack.pop();
             var leftOffset = stack.pop();
+            // values is still null at this point
+            tag.data.values = splitValues(processedText.slice(tag.start + leftOffset + TAG_START.length + tag.data.fullKey.length + ARG_SEP.length, tag.end + leftOffset + innerOffset - TAG_END.length));
+            var filterOutput = filterManager.processFilter(tag.data.key, tag.data, tagApi);
             var newOffset = filterOutput.result.length - (tag.end - tag.start);
-            processedText = spliceSlice(processedText, tag.start + leftOffset, tag.end + leftOffset + innerOffset, filterOutput.result);
             sum = innerOffset + leftOffset + newOffset;
-            return filterOutput.result;
+            processedText = spliceSlice(processedText, tag.start + leftOffset, tag.end + leftOffset + innerOffset, filterOutput.result);
+            return filterOutput;
         };
         tags.forEach(postfixInner);
         return processedText;
     };
-    //# sourceMappingURL=index.js.map
 
     var map = new Map();
     var defaultMemoizer = {
@@ -5039,7 +5065,6 @@
         var key = _a.key, idx = _a.idx, valuesRaw = _a.valuesRaw;
         return (key + ":" + idx + ":" + valuesRaw);
     };
-    //# sourceMappingURL=memoizer.js.map
 
     var mkStoreApi = function (store) {
         var set = function (name, value) {
@@ -5065,14 +5090,13 @@
             clear: clear,
         };
     };
-    //# sourceMappingURL=store.js.map
 
     var defaultFilter = function (_a) {
         var fullKey = _a.fullKey, valuesRaw = _a.valuesRaw;
         return ({
             result: valuesRaw === null
-                ? "[[" + fullKey + "]]"
-                : "[[" + fullKey + "::" + valuesRaw + "]]",
+                ? "" + TAG_START + fullKey + TAG_END
+                : "" + TAG_START + fullKey + ARG_SEP + valuesRaw + TAG_END,
             memoize: false,
         });
     };
@@ -5120,7 +5144,6 @@
             clear: clearFilters,
         };
     };
-    //# sourceMappingURL=filters.js.map
 
     var mkDeferredApi = function (deferred) {
         var registerDeferred = function (name, filter) {
@@ -5140,7 +5163,6 @@
             clear: clearDeferred,
         };
     };
-    //# sourceMappingURL=deferred.js.map
 
     var mkFilterManager = function (custom, memoizer) {
         if (custom === void 0) { custom = {}; }
@@ -5159,18 +5181,19 @@
             },
             isActivated: function () { return nextIteration; },
         };
-        var internals = {
-            custom: custom,
-            nextIteration: nextIterationApi,
-            store: storeApi,
-            filters: filterApi,
-            deferred: deferredApi,
-        };
-        var processFilter = function (key, data) {
+        var processFilter = function (key, data, tagsApi) {
             var memoizerKey = generateMemoizerKey(data);
             if (memoizer.hasItem(memoizerKey)) {
                 return memoizer.getItem(memoizerKey);
             }
+            var internals = {
+                custom: custom,
+                nextIteration: nextIterationApi,
+                store: storeApi,
+                filters: filterApi,
+                deferred: deferredApi,
+                tags: tagsApi,
+            };
             var result = executeFilter(filters, key, data, internals);
             if (result.memoize) {
                 memoizer.setItem(memoizerKey, result);
@@ -5218,7 +5241,6 @@
             iterations: iterations,
         };
     };
-    //# sourceMappingURL=index.js.map
 
     var mixRecipe = function (keyword, separator) { return function (filterApi) {
         var shuffle = function (array) {
@@ -5269,12 +5291,10 @@
         };
         filterApi.register(keyword, mixPrepareFilter);
     }; };
-    //# sourceMappingURL=mix.js.map
 
     var recipes = {
         mix: mixRecipe,
     };
-    //# sourceMappingURL=index.js.map
 
     globalThis.codeToString = toString;
     globalThis.parseCode = parseCode;
@@ -5282,6 +5302,5 @@
     globalThis.renderTemplate = renderTemplate;
     globalThis.mkFilterManager = mkFilterManager;
     globalThis.filterRecipes = recipes;
-    //# sourceMappingURL=index.js.map
 
 }());

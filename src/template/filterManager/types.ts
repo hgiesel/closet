@@ -2,12 +2,17 @@ import type {
     Tag,
 } from '../../templateTypes'
 
+import type {
+    TagsApi,
+} from '../types'
+
 export interface Internals {
     nextIteration: NextIterationApi
     store: StoreApi
     filters: FilterApi
     deferred: DeferredApi
     custom: object
+    tags: TagsApi
 }
 
 export interface FilterResult {
@@ -55,13 +60,6 @@ export interface DeferredApi {
     unregister(name: string): void
     has(name: string): boolean
     clear(): void
-}
-
-export interface TagApi {
-    getTag(path: number[]): Tag,
-    isFinal(path: number[]): boolean,
-    areAllFinal(): boolean,
-    exists(path: number[]): boolean,
 }
 
 export interface AnkiApi {

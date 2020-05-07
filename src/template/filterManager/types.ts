@@ -57,6 +57,13 @@ export interface DeferredApi {
     clear(): void
 }
 
+export interface TagApi {
+    getTag(path: number[]): Tag,
+    isFinal(path: number[]): boolean,
+    areAllFinal(): boolean,
+    exists(path: number[]): boolean,
+}
+
 export interface AnkiApi {
     card: string
     tagsRaw: string

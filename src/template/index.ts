@@ -1,11 +1,18 @@
 import parseTemplate from './templateParser'
 
 import type {
+    FilterResult,
+} from './filterManager/types'
+
+import type {
     Tag,
     TagInfo,
 } from '../templateTypes'
 
 import {
+    TAG_START,
+    TAG_END,
+    ARG_SEP,
     splitValues,
 } from '../templateTypes'
 
@@ -27,22 +34,15 @@ const spliceSlice = (str, lend, rend, add): string => {
     return str.slice(0, leftend) + (add || "") + str.slice(rend)
 }
 
-const adjustValuesString = (tag: TagInfo, innerTag: TagInfo, adjustment: string): string => {
-    return spliceSlice(
-        tag.data.valuesRaw,
-        innerTag.start - (tag.start + 2 /* opendelim */ + tag.data.fullKey.length + 2 /* sep */),
-        innerTag.end - innerTag.start + 1,
-        adjustment,
-    )
-}
-
 const postfixOuter = (text, tags, filterManager) => {
     const stack = [0]
+
     let sum = 0
     let processedText = text
 
-    const postfixInner = (tag, i) => {
+    const postfixInner = (tag: TagInfo, i: number): FilterResult => {
         stack.push(sum)
+
         const innerResults = tag.innerTags.map(postfixInner)
 
         stack.push(tag.innerTags.length > 0
@@ -50,21 +50,28 @@ const postfixOuter = (text, tags, filterManager) => {
             : 0
         )
 
-        tag.innerTags.forEach((it, idx) =>
-            tag.data.valuesRaw = adjustValuesString(tag, it, innerResults[idx])
-        )
-        tag.data.values = splitValues(tag.data.valuesRaw)
-
-        const filterOutput = filterManager.processFilter(tag.data.key, tag.data)
-
         const innerOffset = stack.pop()
         const leftOffset = stack.pop()
+
+        // values is still null at this point
+        tag.data.values = splitValues(processedText.slice(
+            tag.start + leftOffset + TAG_START.length + tag.data.fullKey.length + ARG_SEP.length,
+            tag.end + leftOffset + innerOffset - TAG_END.length,
+        ))
+        console.log('fu', tag.data.values)
+
+        const filterOutput = filterManager.processFilter(tag.data.key, tag.data)
         const newOffset = filterOutput.result.length - (tag.end - tag.start)
 
-        processedText = spliceSlice(processedText, tag.start + leftOffset, tag.end + leftOffset + innerOffset, filterOutput.result)
         sum = innerOffset + leftOffset + newOffset
+        processedText = spliceSlice(
+            processedText,
+            tag.start + leftOffset,
+            tag.end + leftOffset + innerOffset,
+            filterOutput.result,
+        )
 
-        return filterOutput.result
+        return filterOutput
     }
 
     tags.forEach(postfixInner)

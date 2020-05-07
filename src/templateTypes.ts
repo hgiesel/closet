@@ -6,6 +6,7 @@ export interface Tag {
     occur: number,
     valuesRaw: string,
     values?: string[][],
+    path: number[],
 }
 
 export const TAG_START = '[['

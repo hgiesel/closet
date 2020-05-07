@@ -4759,6 +4759,10 @@
                 match: '::',
                 next: 'intag',
             },
+            tagend: {
+                match: ']]',
+                pop: 1,
+            },
         },
         intag: {
             tagstart: {
@@ -4777,9 +4781,12 @@
     });
     //# sourceMappingURL=tokenizer.js.map
 
+    var tagStart = '[[';
     var keyPattern = /^([^0-9]+)([0-9]*)$/u;
     var splitValues = function (valuesRaw) {
-        return valuesRaw.split('::').map(function (arg) { return arg.split('||'); });
+        return valuesRaw === null
+            ? []
+            : valuesRaw.split('::').map(function (arg) { return arg.split('||'); });
     };
     var tagMaker = function () {
         var tagCounter = new Map();
@@ -4821,8 +4828,9 @@
 
     var tagKeeper = function () {
         var tm, tagInfos, getTagInfo, tagStack, nextLevel, value, startIndex, endIndex, poppedLevel, foundTag;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     tm = tagMaker();
                     tagInfos = [];
@@ -4846,16 +4854,16 @@
                     };
                     tagStack = [];
                     nextLevel = 0;
-                    _a.label = 1;
+                    _b.label = 1;
                 case 1:
                     return [4 /*yield*/, tagStack];
                 case 2:
-                    value = _a.sent();
+                    value = _b.sent();
                     if (value === 'stop') /* stop */ {
                         return [2 /*return*/, tagInfos];
                     }
                     else if (value[0] >= 0) /* start */ {
-                        startIndex = value[0] - 2 /* two delimiter characters */;
+                        startIndex = value[0] - tagStart.length;
                         getTagInfo(tagStack).push(mkTagInfo(startIndex));
                         tagStack.push(nextLevel);
                         nextLevel = 0;
@@ -4865,7 +4873,7 @@
                         poppedLevel = tagStack.pop();
                         foundTag = getTagInfo(tagStack)[poppedLevel];
                         foundTag.end = endIndex;
-                        foundTag.data = tm.mkTag(value[1][0], value[1][1]);
+                        foundTag.data = tm.mkTag(value[1][0], (_a = value[1][1]) !== null && _a !== void 0 ? _a : null);
                         nextLevel = poppedLevel + 1;
                     }
                     return [3 /*break*/, 1];
@@ -4894,7 +4902,6 @@
             endToken: endToken,
         };
     };
-    //# sourceMappingURL=tagKeeper.js.map
 
     // Generated automatically by nearley, version 2.19.2
     // http://github.com/Hardmath123/nearley
@@ -4922,19 +4929,22 @@
                     var _b = __read(_a, 1), startToken = _b[0];
                     return [startToken.value, tagKeeper$1.startToken(startToken.offset + startToken.value.length)];
                 } },
-            { "name": "inner$ebnf$1", "symbols": [] },
-            { "name": "inner$ebnf$1$subexpression$1", "symbols": ["tag", "_values"] },
-            { "name": "inner$ebnf$1", "symbols": ["inner$ebnf$1", "inner$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-            { "name": "inner", "symbols": [(lexer$1.has("keyname") ? { type: "keyname" } : keyname), (lexer$1.has("sep") ? { type: "sep" } : sep), "_values", "inner$ebnf$1"], "postprocess": function (_a) {
-                    var _b = __read(_a, 4), key = _b[0], first = _b[2], rest = _b[3];
-                    return [
-                        key.value,
-                        first + rest.map(function (_a) {
-                            var _b = __read(_a, 2), tag = _b[0], vtxt = _b[1];
-                            return id$1(tag).join('') + vtxt;
-                        }),
-                    ];
-                } },
+            { "name": "inner$ebnf$1$subexpression$1$ebnf$1", "symbols": [] },
+            { "name": "inner$ebnf$1$subexpression$1$ebnf$1$subexpression$1", "symbols": ["tag", "_values"] },
+            { "name": "inner$ebnf$1$subexpression$1$ebnf$1", "symbols": ["inner$ebnf$1$subexpression$1$ebnf$1", "inner$ebnf$1$subexpression$1$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+            { "name": "inner$ebnf$1$subexpression$1", "symbols": [(lexer$1.has("sep") ? { type: "sep" } : sep), "_values", "inner$ebnf$1$subexpression$1$ebnf$1"] },
+            { "name": "inner$ebnf$1", "symbols": ["inner$ebnf$1$subexpression$1"], "postprocess": id$1 },
+            { "name": "inner$ebnf$1", "symbols": [], "postprocess": function () { return null; } },
+            { "name": "inner", "symbols": [(lexer$1.has("keyname") ? { type: "keyname" } : keyname), "inner$ebnf$1"], "postprocess": function (_a) {
+                    var _b = __read(_a, 2), key = _b[0], rest = _b[1];
+                    return rest
+                        ? [key.value, rest[1] + rest[2].map(function (_a) {
+                                var _b = __read(_a, 2), tag = _b[0], vtxt = _b[1];
+                                return id$1(tag).join('') + vtxt;
+                            })]
+                        : [key.value];
+                },
+            },
             { "name": "_values$ebnf$1", "symbols": [] },
             { "name": "_values$ebnf$1", "symbols": ["_values$ebnf$1", (lexer$1.has("valuestext") ? { type: "valuestext" } : valuestext)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
             { "name": "_values", "symbols": ["_values$ebnf$1"], "postprocess": function (_a) {
@@ -4994,7 +5004,7 @@
         var stack = [0];
         var sum = 0;
         var processedText = text;
-        var postfixInner = function (tag) {
+        var postfixInner = function (tag, i) {
             stack.push(sum);
             var innerResults = tag.innerTags.map(postfixInner);
             stack.push(tag.innerTags.length > 0
@@ -5060,7 +5070,9 @@
     var defaultFilter = function (_a) {
         var fullKey = _a.fullKey, valuesRaw = _a.valuesRaw;
         return ({
-            result: "[[" + fullKey + "::" + valuesRaw + "]]",
+            result: valuesRaw === null
+                ? "[[" + fullKey + "]]"
+                : "[[" + fullKey + "::" + valuesRaw + "]]",
             memoize: false,
         });
     };

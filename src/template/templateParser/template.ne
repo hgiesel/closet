@@ -2,6 +2,10 @@
 import tokenizer from './tokenizer'
 import initTagKeeper from './tagKeeper'
 
+import {
+    ARG_SEP,
+} from '../../templateTypes.ts'
+
 const tagKeeper = initTagKeeper()
 %}
 
@@ -14,10 +18,10 @@ start -> content %EOF {% () => tagKeeper.stop().value %}
 
 content -> _ (tag _):*
 
-tag -> tagstart inner %tagend {% ([startToken,tag,endToken]) => [[
-    id(startToken) /* '[[' */,
-    tag.join('::'),
-    endToken.value /* ']]' */,
+tag -> tagstart inner %tagend {% ([,tag,]) => [[
+    TAG_START,
+    tag.join(ARG_SEP),
+    TAG_END,
 ], tagKeeper.endToken(endToken.offset, tag)] %}
 
 tagstart -> %tagstart {% ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset + startToken.value.length)] %}

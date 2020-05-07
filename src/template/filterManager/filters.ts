@@ -8,10 +8,16 @@ import type {
     Tag,
 } from '../../templateTypes'
 
+import {
+    TAG_START,
+    TAG_END,
+    ARG_SEP,
+} from '../../templateTypes'
+
 const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => ({
     result: valuesRaw === null
-        ? `[[${fullKey}]]`
-        : `[[${fullKey}::${valuesRaw}]]`,
+        ? `${TAG_START}${fullKey}${TAG_END}`
+        : `${TAG_START}${fullKey}${ARG_SEP}${valuesRaw}${TAG_END}`,
     memoize: false,
 })
 

@@ -1,4 +1,6 @@
 import {
+    TAG_START,
+    TAG_END,
     tagMaker,
     mkTagInfo,
 } from '../../templateTypes'
@@ -28,7 +30,7 @@ const tagKeeper = function*() {
         }
 
         else if (value[0] >= 0) /* start */ {
-            const startIndex = value[0] - 2 /* two delimiter characters */
+            const startIndex = value[0] - TAG_START.length
             getTagInfo(tagStack).push(mkTagInfo(startIndex))
             tagStack.push(nextLevel)
 
@@ -36,11 +38,11 @@ const tagKeeper = function*() {
         }
 
         else /* end */ {
-            const endIndex = Math.abs(value[0]) + 2 /* two delimiter characters */
+            const endIndex = Math.abs(value[0]) + TAG_END.length
             const poppedLevel = tagStack.pop()
             const foundTag = getTagInfo(tagStack)[poppedLevel]
             foundTag.end = endIndex
-            foundTag.data = tm.mkTag(value[1][0], value[1][1] ?? null)
+            foundTag.data = tm.mkTag(value[1][0], value[1][1] ?? null, [...tagStack, poppedLevel])
 
             nextLevel = poppedLevel + 1
         }

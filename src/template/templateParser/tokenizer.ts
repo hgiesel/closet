@@ -1,10 +1,16 @@
 import moo from 'moo'
 
+import {
+    TAG_START,
+    TAG_END,
+    ARG_SEP,
+} from '../../templateTypes'
+
 // img tags are parsed via HTML (!)
 export const lexer = moo.states({
     main: {
         tagstart: {
-            match: '[[',
+            match: TAG_START,
             push: 'key',
         },
         EOF: {
@@ -15,26 +21,28 @@ export const lexer = moo.states({
             lineBreaks: true,
         },
     },
+
     key: {
         keyname: {
             match: /[a-zA-Z]+\d*/u,
         },
         sep: {
-            match: '::',
+            match: ARG_SEP,
             next: 'intag',
         },
         tagend: {
-            match: ']]',
+            match: TAG_END,
             pop: 1,
         },
     },
+
     intag: {
         tagstart: {
-            match: '[[',
+            match: TAG_START,
             push: 'key',
         },
         tagend: {
-            match: ']]',
+            match: TAG_END,
             pop: 1,
         },
         valuestext: {

@@ -8,12 +8,18 @@ export interface Tag {
     values?: string[][],
 }
 
+export const TAG_START = '[['
+export const TAG_END = ']]'
+
+export const ARG_SEP = '::'
+export const ALT_SEP = '||'
+
 const keyPattern = /^([^0-9]+)([0-9]*)$/u
 
 export const splitValues = (valuesRaw: string | null): string[][] =>
     valuesRaw === null
         ? []
-        : valuesRaw.split('::').map(arg => arg.split('||'))
+        : valuesRaw.split(ARG_SEP).map(arg => arg.split('||'))
 
 export const tagMaker = () => {
     const tagCounter = new Map()
@@ -27,7 +33,7 @@ export const tagMaker = () => {
         return result
     }
 
-    const mkTag = (fullKey: string, valuesRaw: string | null): Tag => {
+    const mkTag = (fullKey: string, valuesRaw: string | null, path: number[]): Tag => {
         const match = fullKey.match(keyPattern)
 
         const key = match[1]
@@ -45,6 +51,7 @@ export const tagMaker = () => {
             idx: idx,
             occur: occur,
             valuesRaw: valuesRaw,
+            path: path,
         }
     }
 

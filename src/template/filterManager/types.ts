@@ -3,7 +3,7 @@ import type {
 } from '../../types'
 
 import type {
-    TagsApi,
+    TagApi,
 } from '../types'
 
 export interface Internals {
@@ -12,8 +12,10 @@ export interface Internals {
     filters: FilterApi
     deferred: DeferredApi
     custom: object
-    tags: TagsApi
+    tag: TagApi
 }
+
+export type Filter = (Tag, Internals) => FilterResult | string
 
 export interface FilterResult {
     result: string
@@ -49,6 +51,8 @@ export interface StoreApi {
 }
 
 export interface FilterApi {
+    get(name: string): Filter | null,
+    getOrDefault(name: string): Filter,
     register(name: string, filter: (t: Tag, i: Internals) => string | FilterResult): void
     unregister(name: string): void
     has(name: string): boolean
@@ -60,6 +64,7 @@ export interface DeferredApi {
     unregister(name: string): void
     has(name: string): boolean
     clear(): void
+    forEach(...args: any[]): void
 }
 
 export interface AnkiApi {

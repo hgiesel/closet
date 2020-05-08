@@ -68,9 +68,9 @@ export interface TagInfo {
     innerTags: TagInfo[]
 }
 
-export const mkTagInfo = (start: number) => ({
+export const mkTagInfo = (start: number, end = 0, innerTags = []) => ({
     start: start,
-    end: 0,
+    end: end,
     data: null,
-    innerTags: [],
+    innerTags: innerTags,
 })

@@ -1,4 +1,5 @@
 import type {
+    Filter,
     FilterApi,
     FilterResult,
     Internals,
@@ -21,6 +22,11 @@ const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => ({
     memoize: false,
 })
 
+const rawFilter = ({valuesRaw}: Tag): FilterResult => ({
+    result: valuesRaw,
+    memoize: false,
+})
+
 const standardizeFilterResult = (input: string | FilterResult): FilterResult => {
     switch (typeof input) {
         case 'string': return {
@@ -38,27 +44,27 @@ const standardizeFilterResult = (input: string | FilterResult): FilterResult => 
     // return undefined otherwise
 }
 
-export const executeFilter = (filters, name, data: Tag, internals: Internals): FilterResult => {
-    if (filters.has(name)) {
-        const filter = filters.get(name)
-        const result = standardizeFilterResult(filter(data, internals)) ?? defaultFilter(data)
+export const executeFilter = (filter: Filter, data: Tag, internals: Internals): FilterResult =>
+    standardizeFilterResult(filter(data, internals))
 
-        return result
-    }
-
-    else {
-        return defaultFilter(data)
-    }
-}
-
-export const mkFilterApi = (filters: Map<string, (Tag, Internals) => FilterResult | string>): FilterApi => {
+export const mkFilterApi = (filters: Map<string, Filter>): FilterApi => {
     const registerFilter = (name, filter) => {
         filters.set(name, filter)
     }
 
-    const hasFilter = (name) => filters.has(name)
+    const hasFilter = (name: string) => name === 'raw'
+        ? true
+        : filters.has(name)
 
-    const unregisterFilter = (name) => {
+    const getFilter = (name: string) => name === 'raw'
+        ? rawFilter
+        : filters.has(name)
+        ? filters.get(name) 
+        : null
+
+    const getOrDefaultFilter = (name: string) => getFilter(name) ?? defaultFilter
+
+    const unregisterFilter = (name: string) => {
         filters.delete(name)
     }
 
@@ -67,6 +73,9 @@ export const mkFilterApi = (filters: Map<string, (Tag, Internals) => FilterResul
     }
 
     return {
+        get: getFilter,
+        getOrDefault: getOrDefaultFilter,
+
         register: registerFilter,
         has: hasFilter,
         unregister: unregisterFilter,

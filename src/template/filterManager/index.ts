@@ -3,7 +3,7 @@ import type {
 } from '../../types'
 
 import type {
-    TagsApi,
+    TagApi,
 } from '../types'
 
 import type {
@@ -35,14 +35,9 @@ import {
 } from './deferred'
 
 const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager => {
-    const store = new Map()
-    const storeApi = mkStoreApi(store)
-
-    const filters = new Map()
-    const filterApi = mkFilterApi(filters)
-
-    const deferred = new Map()
-    const deferredApi = mkDeferredApi(deferred)
+    const store = mkStoreApi(new Map())
+    const filters = mkFilterApi(new Map())
+    const deferred = mkDeferredApi(new Map())
 
     let nextIteration: boolean = true
     const nextIterationApi: NextIterationApi = {
@@ -52,7 +47,7 @@ const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager
         isActivated: () => nextIteration,
     }
 
-    const processFilter = (key: string, data: Tag, tagsApi: TagsApi): FilterResult => {
+    const processFilter = (key: string, data: Tag, tagApi: TagApi): FilterResult => {
         const memoizerKey = generateMemoizerKey(data)
 
         if (memoizer.hasItem(memoizerKey)) {
@@ -62,13 +57,13 @@ const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager
         const internals: Internals = {
             custom: custom,
             nextIteration: nextIterationApi,
-            store: storeApi,
-            filters: filterApi,
-            deferred: deferredApi,
-            tags: tagsApi,
+            store: store,
+            filters: filters,
+            deferred: deferred,
+            tag: tagApi,
         }
 
-        const result = executeFilter(filters, key, data, internals)
+        const result = executeFilter(filters.getOrDefault(key), data, internals)
 
         if (result.memoize) {
             memoizer.setItem(memoizerKey, result)
@@ -77,8 +72,8 @@ const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager
         return result
     }
 
-    const addRecipe = (recipe: (filterApi: FilterApi) => void): void => {
-        recipe(filterApi)
+    const addRecipe = (recipe: (filters: FilterApi) => void): void => {
+        recipe(filters)
     }
 
     const iterations = function*() {
@@ -89,15 +84,13 @@ const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager
                 processFilter: processFilter,
             }
 
-            for (const [name, def] of deferred) {
-                def(name)
-            }
+            deferred.forEach()
             deferred.clear()
         }
     }
 
     return {
-        filters: filterApi,
+        filters: filters,
         addRecipe: addRecipe,
         iterations: iterations,
     }

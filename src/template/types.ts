@@ -2,7 +2,7 @@ import type {
     Tag,
 } from '../types'
 
-export interface TagsApi {
+export interface TagApi {
     getText(): string
     updateText(newText: string): void
     get(path: number[]): Tag

@@ -20,8 +20,8 @@ const renderTemplate = (text, filterManager) => {
     let result = text
 
     for (const iteration of filterManager.iterations()) {
-        const tags = parseTemplate(text)
-        result = postfixOuter(text, tags, iteration)
+        const rootTag = parseTemplate(text)
+        result = postfixOuter(text, rootTag, iteration)
     }
 
     return result
@@ -44,6 +44,7 @@ const mkTagApi = (text, tags) => {
 
     const exists = (path: number[]): boolean => {
         let currentPos = tags
+        console.log(currentPos)
 
         for (const p of path) {
             if (currentPos.innerTags[p]) {
@@ -60,6 +61,7 @@ const mkTagApi = (text, tags) => {
 
     const getPath = (path: number[]): TagInfo => {
         let currentPos = tags
+        console.log(currentPos)
 
         for (const p of path) {
             if (currentPos.innerTags[p]) {
@@ -82,13 +84,13 @@ const mkTagApi = (text, tags) => {
     }
 }
 
-const postfixOuter = (text, tags, filterManager) => {
+const postfixOuter = (text: string, rootTag: TagInfo, filterManager) => {
     const stack = [0]
 
     let sum = 0
     let processedText = text
 
-    const tagApi = mkTagApi(text, tags)
+    const tagApi = mkTagApi(text, rootTag)
 
     const postfixInner = (tag: TagInfo, i: number): FilterResult => {
         stack.push(sum)
@@ -123,7 +125,7 @@ const postfixOuter = (text, tags, filterManager) => {
         return filterOutput
     }
 
-    tags.forEach(postfixInner)
+    rootTag.innerTags.forEach(postfixInner)
     return processedText
 }
 

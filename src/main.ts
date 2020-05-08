@@ -14,7 +14,7 @@ import {
     TAG_END,
     ARG_SEP,
     splitValues,
-} from '../types'
+} from '../utils'
 
 const renderTemplate = (text, filterManager) => {
     let result = text

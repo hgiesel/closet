@@ -3,7 +3,7 @@ import grammar from './template'
 
 import {
     mkTagInfo,
-} from '../../types'
+} from '../types'
 
 const parseTemplate = (text: string) => {
     const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))

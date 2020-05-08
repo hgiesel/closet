@@ -7,13 +7,13 @@ import type {
 
 import type {
     Tag,
-} from '../../types'
+} from '../types'
 
 import {
     TAG_START,
     TAG_END,
     ARG_SEP,
-} from '../../types'
+} from '../utils'
 
 const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => ({
     result: valuesRaw === null

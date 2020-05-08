@@ -1,8 +1,5 @@
 import type {
     Tag,
-} from '../../types'
-
-import type {
     TagApi,
 } from '../types'
 

@@ -1,9 +1,12 @@
 import {
-    TAG_START,
-    TAG_END,
     tagMaker,
     mkTagInfo,
-} from '../../types'
+} from '../types'
+
+import {
+    TAG_START,
+    TAG_END,
+} from '../utils'
 
 const tagKeeper = function*() {
     const tm = tagMaker()

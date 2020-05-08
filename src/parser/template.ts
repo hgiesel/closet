@@ -14,6 +14,12 @@ declare var text: any;
 import tokenizer from './tokenizer'
 import initTagKeeper from './tagKeeper'
 
+import {
+    TAG_START,
+    TAG_END,
+    ARG_SEP,
+} from '../utils'
+
 const tagKeeper = initTagKeeper()
 
 interface NearleyToken {  value: any;
@@ -50,11 +56,11 @@ const grammar: Grammar = {
     {"name": "content$ebnf$1$subexpression$1", "symbols": ["tag", "_"]},
     {"name": "content$ebnf$1", "symbols": ["content$ebnf$1", "content$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "content", "symbols": ["_", "content$ebnf$1"]},
-    {"name": "tag", "symbols": ["tagstart", "inner", (tokenizer.has("tagend") ? {type: "tagend"} : tagend)], "postprocess":  ([startToken,tag,endToken]) => [[
-            id(startToken) /* '[[' */,
-            tag.join('::'),
-            endToken.value /* ']]' */,
-        ], tagKeeper.endToken(endToken.offset, tag)] },
+    {"name": "tag", "symbols": ["tagstart", "inner", (tokenizer.has("tagend") ? {type: "tagend"} : tagend)], "postprocess":  ([,tag,tagend]) => [[
+            TAG_START,
+            tag.join(ARG_SEP),
+            TAG_END,
+        ], tagKeeper.endToken(tagend.offset, tag)] },
     {"name": "tagstart", "symbols": [(tokenizer.has("tagstart") ? {type: "tagstart"} : tagstart)], "postprocess": ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset + startToken.value.length)]},
     {"name": "inner$ebnf$1$subexpression$1$ebnf$1", "symbols": []},
     {"name": "inner$ebnf$1$subexpression$1$ebnf$1$subexpression$1", "symbols": ["tag", "_values"]},

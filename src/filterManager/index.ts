@@ -1,8 +1,5 @@
 import type {
     Tag,
-} from '../../types'
-
-import type {
     TagApi,
 } from '../types'
 
@@ -14,7 +11,6 @@ import type {
     NextIterationApi,
     FilterApi,
 } from './types'
-
 
 import {
     defaultMemoizer,

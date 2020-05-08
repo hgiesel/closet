@@ -9,18 +9,21 @@ export interface Tag {
     path: number[],
 }
 
-export const TAG_START = '[['
-export const TAG_END = ']]'
+export interface TagInfo {
+    start: number
+    end: number
+    data: Tag,
+    innerTags: TagInfo[]
+}
 
-export const ARG_SEP = '::'
-export const ALT_SEP = '||'
+export interface TagApi {
+    getText(): string
+    updateText(newText: string): void
+    get(path: number[]): Tag
+    exists(path: number[]): boolean
+}
 
 const keyPattern = /^([^0-9]+)([0-9]*)$/u
-
-export const splitValues = (valuesRaw: string | null): string[][] =>
-    valuesRaw === null
-        ? []
-        : valuesRaw.split(ARG_SEP).map(arg => arg.split('||'))
 
 export const tagMaker = () => {
     const tagCounter = new Map()
@@ -59,13 +62,6 @@ export const tagMaker = () => {
     return {
         mkTag: mkTag,
     }
-}
-
-export interface TagInfo {
-    start: number
-    end: number
-    data: Tag,
-    innerTags: TagInfo[]
 }
 
 export const mkTagInfo = (start: number, end = 0, innerTags = []) => ({

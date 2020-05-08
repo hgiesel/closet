@@ -3,8 +3,10 @@ import tokenizer from './tokenizer'
 import initTagKeeper from './tagKeeper'
 
 import {
+    TAG_START,
+    TAG_END,
     ARG_SEP,
-} from '../../types.ts'
+} from '../utils'
 
 const tagKeeper = initTagKeeper()
 %}
@@ -18,11 +20,11 @@ start -> content %EOF {% () => tagKeeper.stop().value %}
 
 content -> _ (tag _):*
 
-tag -> tagstart inner %tagend {% ([,tag,]) => [[
+tag -> tagstart inner %tagend {% ([,tag,tagend]) => [[
     TAG_START,
     tag.join(ARG_SEP),
     TAG_END,
-], tagKeeper.endToken(endToken.offset, tag)] %}
+], tagKeeper.endToken(tagend.offset, tag)] %}
 
 tagstart -> %tagstart {% ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset + startToken.value.length)] %}
 

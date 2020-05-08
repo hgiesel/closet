@@ -1,17 +1,13 @@
 const debugRecipe = (filterApi) => {
 
-    const pathFilter = (
-        {path},
-    ) => {
-        return path.join(':')
-    }
-
-
-    const testFilter = ({}, {tags}) => {
-        return tags.get([0])
-    }
-
+    const pathFilter = ({path}) => path.join(':')
     filterApi.register('tagpath', pathFilter)
+
+    const testFilter = ({}, {tag}) => {
+        console.log(tag.get([0]))
+        return ''
+    }
+
     filterApi.register('test', testFilter)
 }
 

@@ -1,9 +1,7 @@
-import renderTemplate from './parser'
+import renderTemplate from './main'
 import mkFilterManager from './filterManager'
+import filterRecipes from './recipes'
 
 globalThis.renderTemplate = renderTemplate
 globalThis.mkFilterManager = mkFilterManager
-
-import filterRecipes from './recipes'
-
 globalThis.filterRecipes = filterRecipes

@@ -51,17 +51,17 @@ interface Grammar {
 const grammar: Grammar = {
   Lexer: tokenizer,
   ParserRules: [
-    {"name": "start", "symbols": ["content", (tokenizer.has("EOF") ? {type: "EOF"} : EOF)], "postprocess": () => tagKeeper.stop().value},
+    {"name": "start", "symbols": ["content", (tokenizer.has("EOF") ? {type: "EOF"} : EOF)], "postprocess": () => tagKeeper},
     {"name": "content$ebnf$1", "symbols": []},
     {"name": "content$ebnf$1$subexpression$1", "symbols": ["tag", "_"]},
     {"name": "content$ebnf$1", "symbols": ["content$ebnf$1", "content$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},
     {"name": "content", "symbols": ["_", "content$ebnf$1"]},
-    {"name": "tag", "symbols": ["tagstart", "inner", (tokenizer.has("tagend") ? {type: "tagend"} : tagend)], "postprocess":  ([,tag,tagend]) => [[
+    {"name": "tag", "symbols": ["tagstart", "inner", (tokenizer.has("tagend") ? {type: "tagend"} : tagend)], "postprocess":  ([,[keyname, valuesRaw],tagend]) => [[
             TAG_START,
-            tag.join(ARG_SEP),
+            `${keyname}${ARG_SEP}${valuesRaw}`,
             TAG_END,
-        ], tagKeeper.endToken(tagend.offset, tag)] },
-    {"name": "tagstart", "symbols": [(tokenizer.has("tagstart") ? {type: "tagstart"} : tagstart)], "postprocess": ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset + startToken.value.length)]},
+        ], tagKeeper.endToken(tagend.offset + TAG_END.length, keyname, valuesRaw)] },
+    {"name": "tagstart", "symbols": [(tokenizer.has("tagstart") ? {type: "tagstart"} : tagstart)], "postprocess": ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset + startToken.value.length - TAG_START.length)]},
     {"name": "inner$ebnf$1$subexpression$1$ebnf$1", "symbols": []},
     {"name": "inner$ebnf$1$subexpression$1$ebnf$1$subexpression$1", "symbols": ["tag", "_values"]},
     {"name": "inner$ebnf$1$subexpression$1$ebnf$1", "symbols": ["inner$ebnf$1$subexpression$1$ebnf$1", "inner$ebnf$1$subexpression$1$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},

@@ -16,17 +16,17 @@ const tagKeeper = initTagKeeper()
 
 #################################
 
-start -> content %EOF {% () => tagKeeper.stop().value %}
+start -> content %EOF {% () => tagKeeper %}
 
 content -> _ (tag _):*
 
-tag -> tagstart inner %tagend {% ([,tag,tagend]) => [[
+tag -> tagstart inner %tagend {% ([,[keyname, valuesRaw],tagend]) => [[
     TAG_START,
-    tag.join(ARG_SEP),
+    `${keyname}${ARG_SEP}${valuesRaw}`,
     TAG_END,
-], tagKeeper.endToken(tagend.offset, tag)] %}
+], tagKeeper.endToken(tagend.offset + TAG_END.length, keyname, valuesRaw)] %}
 
-tagstart -> %tagstart {% ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset + startToken.value.length)] %}
+tagstart -> %tagstart {% ([startToken]) => [startToken.value, tagKeeper.startToken(startToken.offset + startToken.value.length - TAG_START.length)] %}
 
 inner -> %keyname (%sep _values (tag _values):* ):? {% ([key,rest]) => rest
     ? [key.value, rest[1] + rest[2].map(([tag, vtxt]) => id(tag).join('') + vtxt)]

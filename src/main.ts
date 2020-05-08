@@ -1,5 +1,3 @@
-import parseTemplate from './templateParser'
-
 import type {
     FilterResult,
 } from './filterManager/types'
@@ -7,14 +5,16 @@ import type {
 import type {
     Tag,
     TagInfo,
-} from '../types'
+} from './types'
+
+import parseTemplate from './parser'
 
 import {
     TAG_START,
     TAG_END,
     ARG_SEP,
     splitValues,
-} from '../utils'
+} from './utils'
 
 const renderTemplate = (text, filterManager) => {
     let result = text
@@ -44,7 +44,6 @@ const mkTagApi = (text, tags) => {
 
     const exists = (path: number[]): boolean => {
         let currentPos = tags
-        console.log(currentPos)
 
         for (const p of path) {
             if (currentPos.innerTags[p]) {
@@ -61,7 +60,6 @@ const mkTagApi = (text, tags) => {
 
     const getPath = (path: number[]): TagInfo => {
         let currentPos = tags
-        console.log(currentPos)
 
         for (const p of path) {
             if (currentPos.innerTags[p]) {

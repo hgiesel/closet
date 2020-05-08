@@ -1178,50 +1178,12 @@
     var TAG_START = '[[';
     var TAG_END = ']]';
     var ARG_SEP = '::';
-    var keyPattern = /^([^0-9]+)([0-9]*)$/u;
     var splitValues = function (valuesRaw) {
         return valuesRaw === null
             ? []
             : valuesRaw.split(ARG_SEP).map(function (arg) { return arg.split('||'); });
     };
-    var tagMaker = function () {
-        var tagCounter = new Map();
-        var getAndInc = function (key) {
-            var result = tagCounter.has(key)
-                ? tagCounter.get(key) + 1
-                : 0;
-            tagCounter.set(key, result);
-            return result;
-        };
-        var mkTag = function (fullKey, valuesRaw, path) {
-            var match = fullKey.match(keyPattern);
-            var key = match[1];
-            var idx = match[2].length === 0 ? null : Number(match[2]);
-            var fullOccur = getAndInc(fullKey);
-            var occur = fullKey === key
-                ? fullOccur
-                : getAndInc(key);
-            return {
-                fullKey: fullKey,
-                fullOccur: fullOccur,
-                key: key,
-                idx: idx,
-                occur: occur,
-                valuesRaw: valuesRaw,
-                path: path,
-            };
-        };
-        return {
-            mkTag: mkTag,
-        };
-    };
-    var mkTagInfo = function (start) { return ({
-        start: start,
-        end: 0,
-        data: null,
-        innerTags: [],
-    }); };
-    //# sourceMappingURL=types.js.map
+    //# sourceMappingURL=utils.js.map
 
     // img tags are parsed via HTML (!)
     var lexer = moo.states({
@@ -1268,27 +1230,71 @@
     });
     //# sourceMappingURL=tokenizer.js.map
 
+    var keyPattern = /^([^0-9]+)([0-9]*)$/u;
+    var tagMaker = function () {
+        var tagCounter = new Map();
+        var getAndInc = function (key) {
+            var result = tagCounter.has(key)
+                ? tagCounter.get(key) + 1
+                : 0;
+            tagCounter.set(key, result);
+            return result;
+        };
+        var mkTag = function (fullKey, valuesRaw, path) {
+            var match = fullKey.match(keyPattern);
+            var key = match[1];
+            var idx = match[2].length === 0 ? null : Number(match[2]);
+            var fullOccur = getAndInc(fullKey);
+            var occur = fullKey === key
+                ? fullOccur
+                : getAndInc(key);
+            return {
+                fullKey: fullKey,
+                fullOccur: fullOccur,
+                key: key,
+                idx: idx,
+                occur: occur,
+                valuesRaw: valuesRaw,
+                path: path,
+            };
+        };
+        return {
+            mkTag: mkTag,
+        };
+    };
+    var mkTagInfo = function (start, end, innerTags) {
+        if (end === void 0) { end = 0; }
+        if (innerTags === void 0) { innerTags = []; }
+        return ({
+            start: start,
+            end: end,
+            data: null,
+            innerTags: innerTags,
+        });
+    };
+    //# sourceMappingURL=types.js.map
+
     var tagKeeper = function () {
-        var tm, tagInfos, getTagInfo, tagStack, nextLevel, value, startIndex, endIndex, poppedLevel, foundTag;
+        var tm, tagInfos, getTagInfo, tagStack, nextLevel, value, startIndex, endIndex, foundTag;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     tm = tagMaker();
-                    tagInfos = [];
-                    getTagInfo = function (idxs) {
+                    tagInfos = mkTagInfo(0);
+                    getTagInfo = function (path) {
                         var e_1, _a;
                         var reference = tagInfos;
                         try {
-                            for (var idxs_1 = __values(idxs), idxs_1_1 = idxs_1.next(); !idxs_1_1.done; idxs_1_1 = idxs_1.next()) {
-                                var id = idxs_1_1.value;
-                                reference = reference[id].innerTags;
+                            for (var path_1 = __values(path), path_1_1 = path_1.next(); !path_1_1.done; path_1_1 = path_1.next()) {
+                                var id = path_1_1.value;
+                                reference = reference.innerTags[id];
                             }
                         }
                         catch (e_1_1) { e_1 = { error: e_1_1 }; }
                         finally {
                             try {
-                                if (idxs_1_1 && !idxs_1_1.done && (_a = idxs_1.return)) _a.call(idxs_1);
+                                if (path_1_1 && !path_1_1.done && (_a = path_1.return)) _a.call(path_1);
                             }
                             finally { if (e_1) throw e_1.error; }
                         }
@@ -1301,22 +1307,23 @@
                     return [4 /*yield*/, tagStack];
                 case 2:
                     value = _b.sent();
-                    if (value === 'stop') /* stop */ {
-                        return [2 /*return*/, tagInfos];
-                    }
-                    else if (value[0] >= 0) /* start */ {
-                        startIndex = value[0] - TAG_START.length;
-                        getTagInfo(tagStack).push(mkTagInfo(startIndex));
+                    if (value[0] >= 0) /* start */ {
+                        startIndex = value[0];
+                        getTagInfo(tagStack).innerTags.push(mkTagInfo(startIndex));
                         tagStack.push(nextLevel);
                         nextLevel = 0;
                     }
                     else /* end */ {
-                        endIndex = Math.abs(value[0]) + TAG_END.length;
-                        poppedLevel = tagStack.pop();
-                        foundTag = getTagInfo(tagStack)[poppedLevel];
+                        endIndex = Math.abs(value[0]);
+                        foundTag = getTagInfo(tagStack);
                         foundTag.end = endIndex;
-                        foundTag.data = tm.mkTag(value[1][0], (_a = value[1][1]) !== null && _a !== void 0 ? _a : null, __spread(tagStack, [poppedLevel]));
-                        nextLevel = poppedLevel + 1;
+                        foundTag.data = tm.mkTag(value[1], (_a = value[2]) !== null && _a !== void 0 ? _a : null, __spread(tagStack));
+                        if (tagStack.length === 0) {
+                            return [2 /*return*/, tagInfos];
+                        }
+                        else {
+                            nextLevel = tagStack.pop() + 1;
+                        }
                     }
                     return [3 /*break*/, 1];
                 case 3: return [2 /*return*/];
@@ -1326,25 +1333,22 @@
     var initTagKeeper = function () {
         var tk = tagKeeper();
         tk.next();
-        var stop = function () {
-            var result = tk.next('stop');
-            tk = tagKeeper();
-            tk.next();
-            return result;
-        };
         var startToken = function (offset) {
             return tk.next([offset]);
         };
-        var endToken = function (offset, tag) {
-            return tk.next([-offset, tag]);
+        var endToken = function (offset, key, valuesRaw) {
+            return tk.next([-offset, key, valuesRaw]);
+        };
+        var restart = function () {
+            tk = tagKeeper();
+            tk.next();
         };
         return {
-            stop: stop,
             startToken: startToken,
             endToken: endToken,
+            restart: restart,
         };
     };
-    //# sourceMappingURL=tagKeeper.js.map
 
     // Generated automatically by nearley, version 2.19.2
     // http://github.com/Hardmath123/nearley
@@ -1355,22 +1359,22 @@
     var grammar = {
         Lexer: lexer,
         ParserRules: [
-            { "name": "start", "symbols": ["content", (lexer.has("EOF") ? { type: "EOF" } : EOF)], "postprocess": function () { return tagKeeper$1.stop().value; } },
+            { "name": "start", "symbols": ["content", (lexer.has("EOF") ? { type: "EOF" } : EOF)], "postprocess": function () { return tagKeeper$1; } },
             { "name": "content$ebnf$1", "symbols": [] },
             { "name": "content$ebnf$1$subexpression$1", "symbols": ["tag", "_"] },
             { "name": "content$ebnf$1", "symbols": ["content$ebnf$1", "content$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
             { "name": "content", "symbols": ["_", "content$ebnf$1"] },
             { "name": "tag", "symbols": ["tagstart", "inner", (lexer.has("tagend") ? { type: "tagend" } : tagend)], "postprocess": function (_a) {
-                    var _b = __read(_a, 3), startToken = _b[0], tag = _b[1], endToken = _b[2];
+                    var _b = __read(_a, 3), _c = __read(_b[1], 2), keyname = _c[0], valuesRaw = _c[1], tagend = _b[2];
                     return [[
-                            id(startToken) /* '[[' */,
-                            tag.join('::'),
-                            endToken.value /* ']]' */,
-                        ], tagKeeper$1.endToken(endToken.offset, tag)];
+                            TAG_START,
+                            "" + keyname + ARG_SEP + valuesRaw,
+                            TAG_END,
+                        ], tagKeeper$1.endToken(tagend.offset + TAG_END.length, keyname, valuesRaw)];
                 } },
             { "name": "tagstart", "symbols": [(lexer.has("tagstart") ? { type: "tagstart" } : tagstart)], "postprocess": function (_a) {
                     var _b = __read(_a, 1), startToken = _b[0];
-                    return [startToken.value, tagKeeper$1.startToken(startToken.offset + startToken.value.length)];
+                    return [startToken.value, tagKeeper$1.startToken(startToken.offset + startToken.value.length - TAG_START.length)];
                 } },
             { "name": "inner$ebnf$1$subexpression$1$ebnf$1", "symbols": [] },
             { "name": "inner$ebnf$1$subexpression$1$ebnf$1$subexpression$1", "symbols": ["tag", "_values"] },
@@ -1404,16 +1408,17 @@
 
     var parseTemplate = function (text) {
         var parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-        var result = parser.feed(text + '$').results;
-        if (result.length > 1) {
-            console.error('Ambiguous template grammar', result);
+        var parsed = parser.feed(text + '$').results;
+        if (parsed.length > 1) {
+            console.error('Ambiguous template grammar');
         }
-        else if (result.length < 1) {
+        else if (parsed.length < 1) {
             console.error('Template grammar does not match');
         }
-        return result[0];
+        var result = parsed[0].endToken(text.length, 'raw', text).value;
+        parsed[0].restart();
+        return result;
     };
-    //# sourceMappingURL=index.js.map
 
     var renderTemplate = function (text, filterManager) {
         var e_1, _a;
@@ -1421,8 +1426,8 @@
         try {
             for (var _b = __values(filterManager.iterations()), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var iteration = _c.value;
-                var tags = parseTemplate(text);
-                result = postfixOuter(text, tags, iteration);
+                var rootTag = parseTemplate(text);
+                result = postfixOuter(text, rootTag, iteration);
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -1499,11 +1504,11 @@
             exists: exists,
         };
     };
-    var postfixOuter = function (text, tags, filterManager) {
+    var postfixOuter = function (text, rootTag, filterManager) {
         var stack = [0];
         var sum = 0;
         var processedText = text;
-        var tagApi = mkTagApi(text, tags);
+        var tagApi = mkTagApi(text, rootTag);
         var postfixInner = function (tag, i) {
             stack.push(sum);
             var innerResults = tag.innerTags.map(postfixInner);
@@ -1520,10 +1525,9 @@
             processedText = spliceSlice(processedText, tag.start + leftOffset, tag.end + leftOffset + innerOffset, filterOutput.result);
             return filterOutput;
         };
-        tags.forEach(postfixInner);
+        rootTag.innerTags.forEach(postfixInner);
         return processedText;
     };
-    //# sourceMappingURL=index.js.map
 
     var map = new Map();
     var defaultMemoizer = {
@@ -1574,6 +1578,13 @@
             memoize: false,
         });
     };
+    var rawFilter = function (_a) {
+        var valuesRaw = _a.valuesRaw;
+        return ({
+            result: valuesRaw,
+            memoize: false,
+        });
+    };
     var standardizeFilterResult = function (input) {
         var _a, _b;
         switch (typeof input) {
@@ -1589,22 +1600,22 @@
         }
         // return undefined otherwise
     };
-    var executeFilter = function (filters, name, data, internals) {
-        var _a;
-        if (filters.has(name)) {
-            var filter = filters.get(name);
-            var result = (_a = standardizeFilterResult(filter(data, internals))) !== null && _a !== void 0 ? _a : defaultFilter(data);
-            return result;
-        }
-        else {
-            return defaultFilter(data);
-        }
+    var executeFilter = function (filter, data, internals) {
+        return standardizeFilterResult(filter(data, internals));
     };
     var mkFilterApi = function (filters) {
         var registerFilter = function (name, filter) {
             filters.set(name, filter);
         };
-        var hasFilter = function (name) { return filters.has(name); };
+        var hasFilter = function (name) { return name === 'raw'
+            ? true
+            : filters.has(name); };
+        var getFilter = function (name) { return name === 'raw'
+            ? rawFilter
+            : filters.has(name)
+                ? filters.get(name)
+                : null; };
+        var getOrDefaultFilter = function (name) { var _a; return (_a = getFilter(name)) !== null && _a !== void 0 ? _a : defaultFilter; };
         var unregisterFilter = function (name) {
             filters.delete(name);
         };
@@ -1612,6 +1623,8 @@
             filters.clear();
         };
         return {
+            get: getFilter,
+            getOrDefault: getOrDefaultFilter,
             register: registerFilter,
             has: hasFilter,
             unregister: unregisterFilter,
@@ -1621,8 +1634,8 @@
     //# sourceMappingURL=filters.js.map
 
     var mkDeferredApi = function (deferred) {
-        var registerDeferred = function (name, filter) {
-            deferred.set(name, filter);
+        var registerDeferred = function (name, proc) {
+            deferred.set(name, proc);
         };
         var hasDeferred = function (name) { return deferred.has(name); };
         var unregisterDeferred = function (name) {
@@ -1631,11 +1644,32 @@
         var clearDeferred = function () {
             deferred.clear();
         };
+        var forEachDeferred = function () {
+            var e_1, _a;
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            try {
+                for (var deferred_1 = __values(deferred), deferred_1_1 = deferred_1.next(); !deferred_1_1.done; deferred_1_1 = deferred_1.next()) {
+                    var _b = __read(deferred_1_1.value, 2), name_1 = _b[0], func = _b[1];
+                    func.apply(void 0, __spread([name_1], args));
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (deferred_1_1 && !deferred_1_1.done && (_a = deferred_1.return)) _a.call(deferred_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+        };
         return {
             register: registerDeferred,
             has: hasDeferred,
             unregister: unregisterDeferred,
             clear: clearDeferred,
+            forEach: forEachDeferred,
         };
     };
     //# sourceMappingURL=deferred.js.map
@@ -1643,12 +1677,9 @@
     var mkFilterManager = function (custom, memoizer) {
         if (custom === void 0) { custom = {}; }
         if (memoizer === void 0) { memoizer = defaultMemoizer; }
-        var store = new Map();
-        var storeApi = mkStoreApi(store);
-        var filters = new Map();
-        var filterApi = mkFilterApi(filters);
-        var deferred = new Map();
-        var deferredApi = mkDeferredApi(deferred);
+        var store = mkStoreApi(new Map());
+        var filters = mkFilterApi(new Map());
+        var deferred = mkDeferredApi(new Map());
         var nextIteration = true;
         var nextIterationApi = {
             activate: function (value) {
@@ -1657,7 +1688,7 @@
             },
             isActivated: function () { return nextIteration; },
         };
-        var processFilter = function (key, data, tagsApi) {
+        var processFilter = function (key, data, tagApi) {
             var memoizerKey = generateMemoizerKey(data);
             if (memoizer.hasItem(memoizerKey)) {
                 return memoizer.getItem(memoizerKey);
@@ -1665,25 +1696,23 @@
             var internals = {
                 custom: custom,
                 nextIteration: nextIterationApi,
-                store: storeApi,
-                filters: filterApi,
-                deferred: deferredApi,
-                tags: tagsApi,
+                store: store,
+                filters: filters,
+                deferred: deferred,
+                tag: tagApi,
             };
-            var result = executeFilter(filters, key, data, internals);
+            var result = executeFilter(filters.getOrDefault(key), data, internals);
             if (result.memoize) {
                 memoizer.setItem(memoizerKey, result);
             }
             return result;
         };
         var addRecipe = function (recipe) {
-            recipe(filterApi);
+            recipe(filters);
         };
         var iterations = function () {
-            var deferred_1, deferred_1_1, _a, name_1, def;
-            var e_1, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         if (!nextIteration) return [3 /*break*/, 2];
                         nextIteration = false;
@@ -1691,20 +1720,8 @@
                                 processFilter: processFilter,
                             }];
                     case 1:
-                        _c.sent();
-                        try {
-                            for (deferred_1 = (e_1 = void 0, __values(deferred)), deferred_1_1 = deferred_1.next(); !deferred_1_1.done; deferred_1_1 = deferred_1.next()) {
-                                _a = __read(deferred_1_1.value, 2), name_1 = _a[0], def = _a[1];
-                                def(name_1);
-                            }
-                        }
-                        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                        finally {
-                            try {
-                                if (deferred_1_1 && !deferred_1_1.done && (_b = deferred_1.return)) _b.call(deferred_1);
-                            }
-                            finally { if (e_1) throw e_1.error; }
-                        }
+                        _a.sent();
+                        deferred.forEach();
                         deferred.clear();
                         return [3 /*break*/, 0];
                     case 2: return [2 /*return*/];
@@ -1712,7 +1729,7 @@
             });
         };
         return {
-            filters: filterApi,
+            filters: filters,
             addRecipe: addRecipe,
             iterations: iterations,
         };
@@ -1770,8 +1787,24 @@
     }; };
     //# sourceMappingURL=mix.js.map
 
+    var debugRecipe = function (filterApi) {
+        var pathFilter = function (_a) {
+            var path = _a.path;
+            return path.join(':');
+        };
+        filterApi.register('tagpath', pathFilter);
+        var testFilter = function (_a, _b) {
+            var tag = _b.tag;
+            console.log(tag.get([0]));
+            return '';
+        };
+        filterApi.register('test', testFilter);
+    };
+    //# sourceMappingURL=debug.js.map
+
     var recipes = {
         mix: mixRecipe,
+        debug: debugRecipe,
     };
     //# sourceMappingURL=index.js.map
 

@@ -19,7 +19,8 @@ export interface TagInfo {
 export interface TagApi {
     getText(): string
     updateText(newText: string): void
-    get(path: number[]): Tag
+
+    get(path: number[]): TagInfo | null
     exists(path: number[]): boolean
 }
 

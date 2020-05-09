@@ -15,7 +15,7 @@ import {
     ARG_SEP,
 } from '../utils'
 
-const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => ({
+const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => (console.log('meh', valuesRaw), {
     result: valuesRaw === null
         ? `${TAG_START}${fullKey}${TAG_END}`
         : `${TAG_START}${fullKey}${ARG_SEP}${valuesRaw}${TAG_END}`,
@@ -28,20 +28,31 @@ const rawFilter = ({valuesRaw}: Tag): FilterResult => ({
 })
 
 const standardizeFilterResult = (input: string | FilterResult): FilterResult => {
+    let result = null
+
     switch (typeof input) {
-        case 'string': return {
-            result: input,
-            memoize: false,
-        }
+        case 'string':
+            result = {
+                result: input,
+                memoize: false,
+            }
+            break
 
         // also includes null
-        case 'object': return {
-            result: input.result ?? '',
-            memoize: input.memoize ?? false,
-        }
+        case 'object':
+            result = {
+                result: input.result ?? '',
+                memoize: input.memoize ?? false,
+            }
+            break
+
+        default:
+            // leave as null
+            // TODO meant to continue iterations
+            break
     }
 
-    // return undefined otherwise
+    return result
 }
 
 export const executeFilter = (filter: Filter, data: Tag, internals: Internals): FilterResult =>

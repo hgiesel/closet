@@ -76,9 +76,7 @@ const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager
         while (nextIteration) {
             nextIteration = false
 
-            yield {
-                processFilter: processFilter,
-            }
+            yield processFilter
 
             deferred.forEach()
             deferred.clear()

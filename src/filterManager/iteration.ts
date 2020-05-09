@@ -1,4 +1,8 @@
 import type {
+    Internals,
+} from '.'
+
+import type {
     Tag,
 } from '../tags'
 
@@ -6,10 +10,6 @@ import {
     FilterResult,
     Filter,
 } from './filters'
-
-import type {
-    Internals,
-} from './types'
 
 const standardizeFilterResult = (input: string | FilterResult): FilterResult => {
     switch (typeof input) {

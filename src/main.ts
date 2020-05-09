@@ -1,6 +1,6 @@
 import type {
     FilterManager,
-} from './filterManager/types'
+} from './filterManager'
 
 import type {
     TagInfo,

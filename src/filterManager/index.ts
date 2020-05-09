@@ -3,12 +3,6 @@ import type {
     TagApi,
 } from '../tags'
 
-import type {
-    Internals,
-    FilterManager,
-    NextIterationApi,
-} from './types'
-
 import {
     defaultMemoizer,
     generateMemoizerKey,
@@ -30,6 +24,26 @@ import {
 import {
     DeferredApi,
 } from './deferred'
+
+export interface Internals {
+    nextIteration: NextIterationApi
+    store: Store
+    filters: FilterApi
+    deferred: DeferredApi
+    custom: object
+    tag: TagApi
+}
+
+export interface NextIterationApi {
+    activate(v?: boolean): void
+    isActivated(): boolean
+}
+
+export interface FilterManager {
+    filters: FilterApi,
+    addRecipe: any,
+    iterations: any,
+}
 
 const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager => {
     const store = new Store()

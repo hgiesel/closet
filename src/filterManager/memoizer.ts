@@ -27,4 +27,3 @@ export const defaultMemoizer:  Memoizer = {
     removeItem: (k: string) => map.delete(k),
     clear: () => map.clear(),
 }
-

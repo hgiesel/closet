@@ -1,6 +1,6 @@
 import type {
     Internals,
-} from './types'
+} from '.'
 
 import type {
     Tag,

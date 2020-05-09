@@ -1,34 +1,32 @@
-import type {
-    StoreApi,
-} from './types'
+class Store {
+    private store: Map<string, unknown>
 
-export const mkStoreApi = (store: Map<string, unknown>): StoreApi => {
-    const set = (name: string, value: unknown) => {
-        store.set(name, value)
+    constructor() {
+        this.store = new Map()
     }
 
-    const has = (name: string) => store.has(name)
-    const get = (name: string) => store.get(name)
-
-    const over = (name: string, f: (v: any) => any) => {
-        store.set(name, f(store.get(name)))
+    set(name: string, value: unknown): void {
+        this.store.set(name, value)
     }
 
-    const deleteStore = (name: string) => {
-        store.delete(name)
+    has(name: string): boolean {
+        return this.store.has(name)
+    }
+    get(name: string, defaultValue: unknown): unknown {
+        return this.store.get(name) ?? defaultValue
     }
 
-    const clear = () => {
-        store.clear()
+    over(name: string, f: (v: unknown) => unknown): void {
+        this.store.set(name, f(this.store.get(name)))
     }
 
-    return {
-        set: set,
-        get: get,
-        has: has,
-        over: over,
+    delete(name: string): void {
+        this.store.delete(name)
+    }
 
-        delete: deleteStore,
-        clear: clear,
+    clear(): void {
+        this.store.clear()
     }
 }
+
+export default Store

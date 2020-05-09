@@ -3,9 +3,11 @@ import type {
     TagApi,
 } from '../tags'
 
+import type Store from './store'
+
 export interface Internals {
     nextIteration: NextIterationApi
-    store: StoreApi
+    store: Store
     filters: FilterApi
     deferred: DeferredApi
     custom: object

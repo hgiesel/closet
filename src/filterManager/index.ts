@@ -16,9 +16,7 @@ import {
     generateMemoizerKey,
 } from './memoizer'
 
-import {
-    mkStoreApi,
-} from './store'
+import Store from './store'
 
 import {
     executeFilter,
@@ -30,7 +28,7 @@ import {
 } from './deferred'
 
 const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager => {
-    const store = mkStoreApi(new Map())
+    const store = new Store()
     const filters = mkFilterApi(new Map())
     const deferred = mkDeferredApi(new Map())
 

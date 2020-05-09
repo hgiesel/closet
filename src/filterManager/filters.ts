@@ -1,6 +1,4 @@
 import type {
-    Filter,
-    FilterApi,
     FilterResult,
     Internals,
 } from './types'
@@ -55,38 +53,42 @@ const standardizeFilterResult = (input: string | FilterResult): FilterResult => 
 export const executeFilter = (filter: Filter, data: Tag, internals: Internals): FilterResult =>
     standardizeFilterResult(filter(data, internals))
 
-export const mkFilterApi = (filters: Map<string, Filter>): FilterApi => {
-    const registerFilter = (name, filter) => {
-        filters.set(name, filter)
+export type Filter = (t: Tag, i: Internals) => FilterResult | string
+
+export class FilterApi {
+    private filters: Map<string, any>
+
+    constructor() {
+        this.filters = new Map()
     }
 
-    const hasFilter = (name: string) => name === 'raw'
-        ? true
-        : filters.has(name)
-
-    const getFilter = (name: string) => name === 'raw'
-        ? rawFilter
-        : filters.has(name)
-        ? filters.get(name) 
-        : null
-
-    const getOrDefaultFilter = (name: string) => getFilter(name) ?? defaultFilter
-
-    const unregisterFilter = (name: string) => {
-        filters.delete(name)
+    register(name: string, filter: Filter): void {
+        this.filters.set(name, filter)
     }
 
-    const clearFilters = () => {
-        filters.clear()
+    has(name: string): boolean {
+        return name === 'raw'
+            ? true
+            : this.filters.has(name)
     }
 
-    return {
-        get: getFilter,
-        getOrDefault: getOrDefaultFilter,
+    get(name: string): Filter | null {
+        return name === 'raw'
+            ? rawFilter
+            : this.filters.has(name)
+            ? this.filters.get(name) 
+            : null
+    }
 
-        register: registerFilter,
-        has: hasFilter,
-        unregister: unregisterFilter,
-        clear: clearFilters,
+    getOrDefault(name: string): Filter {
+        return this.get(name) ?? defaultFilter
+    }
+
+    unregisterFilter(name: string): void {
+        this.filters.delete(name)
+    }
+
+    clearFilters(): void {
+        this.filters.clear()
     }
 }

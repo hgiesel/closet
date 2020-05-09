@@ -3,6 +3,10 @@ import type {
     TagApi,
 } from '../tags'
 
+import type {
+    FilterApi,
+} from './filters'
+
 import type Store from './store'
 
 export interface Internals {
@@ -49,14 +53,6 @@ export interface StoreApi {
     clear(): void
 }
 
-export interface FilterApi {
-    get(name: string): Filter | null,
-    getOrDefault(name: string): Filter,
-    register(name: string, filter: (t: Tag, i: Internals) => string | FilterResult): void
-    unregister(name: string): void
-    has(name: string): boolean
-    clear(): void
-}
 
 export interface DeferredApi {
     register(name: string, f: () => void): void

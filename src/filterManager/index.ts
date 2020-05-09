@@ -8,7 +8,6 @@ import type {
     FilterManager,
     FilterResult,
     NextIterationApi,
-    FilterApi,
 } from './types'
 
 import {
@@ -20,7 +19,7 @@ import Store from './store'
 
 import {
     executeFilter,
-    mkFilterApi,
+    FilterApi,
 } from './filters'
 
 import {
@@ -29,7 +28,7 @@ import {
 
 const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager => {
     const store = new Store()
-    const filters = mkFilterApi(new Map())
+    const filters = new FilterApi()
     const deferred = mkDeferredApi(new Map())
 
     let nextIteration: boolean = true

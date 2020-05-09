@@ -1,5 +1,4 @@
 import type {
-    FilterResult,
     Internals,
 } from './types'
 
@@ -13,7 +12,12 @@ import {
     ARG_SEP,
 } from '../utils'
 
-const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => (console.log('meh', valuesRaw), {
+export interface FilterResult {
+    result: string
+    memoize?: boolean
+}
+
+const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => ({
     result: valuesRaw === null
         ? `${TAG_START}${fullKey}${TAG_END}`
         : `${TAG_START}${fullKey}${ARG_SEP}${valuesRaw}${TAG_END}`,
@@ -24,34 +28,6 @@ const rawFilter = ({valuesRaw}: Tag): FilterResult => ({
     result: valuesRaw,
     memoize: false,
 })
-
-const standardizeFilterResult = (input: string | FilterResult): FilterResult => {
-    switch (typeof input) {
-        case 'string':
-            return {
-                result: input,
-                memoize: false,
-            }
-
-        // includes null
-        case 'object':
-            return {
-                result: input.result ?? '',
-                memoize: input.memoize ?? false,
-            }
-
-        // undefined
-        default:
-            return {
-                // this will mark as "not ready"
-                result: null,
-                memoize: false,
-            }
-    }
-}
-
-export const executeFilter = (filter: Filter, data: Tag, internals: Internals): FilterResult =>
-    standardizeFilterResult(filter(data, internals))
 
 export type Filter = (t: Tag, i: Internals) => FilterResult | string
 

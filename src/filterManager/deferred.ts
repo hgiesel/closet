@@ -1,37 +1,31 @@
-import type {
-    DeferredApi,
-} from './types'
+export type Deferred = (name: string, ...rest: any[]) => void
 
-import type {
-    Tag,
-} from '../tags'
+export class DeferredApi {
+    private deferred: Map<string, Deferred>
 
-export const mkDeferredApi = (deferred: Map<string, (...any) => void>): DeferredApi => {
-    const registerDeferred = (name: string, proc: (...any) => void): void => {
-        deferred.set(name, proc)
+    constructor() {
+        this.deferred = new Map()
     }
 
-    const hasDeferred = (name: string): boolean => deferred.has(name)
-
-    const unregisterDeferred = (name: string): void => {
-        deferred.delete(name)
+    register(name: string, proc: Deferred): void {
+        this.deferred.set(name, proc)
     }
 
-    const clearDeferred = (): void => {
-        deferred.clear()
+    has(name: string): boolean {
+        return this.deferred.has(name)
     }
 
-    const forEachDeferred = (...args: any[]): void => {
-        for (const [name, func] of deferred) {
+    unregister(name: string): void {
+        this.deferred.delete(name)
+    }
+
+    clear(): void {
+        this.deferred.clear()
+    }
+
+    forEach(...args: any[]): void {
+        for (const [name, func] of this.deferred) {
             func(name, ...args)
         }
-    }
-
-    return {
-        register: registerDeferred,
-        has: hasDeferred,
-        unregister: unregisterDeferred,
-        clear: clearDeferred,
-        forEach: forEachDeferred,
     }
 }

@@ -6,7 +6,6 @@ import type {
 import type {
     Internals,
     FilterManager,
-    FilterResult,
     NextIterationApi,
 } from './types'
 
@@ -15,21 +14,27 @@ import {
     generateMemoizerKey,
 } from './memoizer'
 
-import Store from './store'
+import {
+    Store,
+} from './store'
 
 import {
-    executeFilter,
     FilterApi,
+    FilterResult,
 } from './filters'
 
 import {
-    mkDeferredApi,
+    executeFilter,
+} from './iteration'
+
+import {
+    DeferredApi,
 } from './deferred'
 
 const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager => {
     const store = new Store()
     const filters = new FilterApi()
-    const deferred = mkDeferredApi(new Map())
+    const deferred = new DeferredApi()
 
     let nextIteration: boolean = true
     const nextIterationApi: NextIterationApi = {

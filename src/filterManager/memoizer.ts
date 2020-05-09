@@ -4,11 +4,22 @@ import type {
 
 import type {
     FilterResult,
-    Memoizer,
-} from './types'
+} from './filters'
+
+export const generateMemoizerKey = ({key, idx, valuesRaw}: Tag): string => (
+    `${key}:${idx}:${valuesRaw}`
+)
+
+export interface Memoizer {
+    hasItem(k: string): boolean
+    getItem(k: string): FilterResult
+    setItem(k: string, v: FilterResult): void
+    removeItem(k: string): void
+    clear(): void
+    raw?(): unknown
+}
 
 const map: Map<string, FilterResult> = new Map()
-
 export const defaultMemoizer:  Memoizer = {
     hasItem: (k: string) => map.has(k),
     getItem: (k: string) => map.get(k),
@@ -17,6 +28,3 @@ export const defaultMemoizer:  Memoizer = {
     clear: () => map.clear(),
 }
 
-export const generateMemoizerKey = ({key, idx, valuesRaw}: Tag): string => (
-    `${key}:${idx}:${valuesRaw}`
-)

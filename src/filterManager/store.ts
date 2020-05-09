@@ -1,4 +1,4 @@
-class Store {
+export class Store {
     private store: Map<string, unknown>
 
     constructor() {
@@ -28,5 +28,3 @@ class Store {
         this.store.clear()
     }
 }
-
-export default Store

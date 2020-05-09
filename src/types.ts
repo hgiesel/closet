@@ -9,21 +9,6 @@ export interface Tag {
     path: number[],
 }
 
-export interface TagInfo {
-    start: number
-    end: number
-    data: Tag,
-    innerTags: TagInfo[]
-}
-
-export interface TagApi {
-    getText(): string
-    updateText(newText: string): void
-
-    get(path: number[]): TagInfo | null
-    exists(path: number[]): boolean
-}
-
 const keyPattern = /^([^0-9]+)([0-9]*)$/u
 
 export const tagMaker = () => {
@@ -63,6 +48,13 @@ export const tagMaker = () => {
     return {
         mkTag: mkTag,
     }
+}
+
+export interface TagInfo {
+    start: number
+    end: number
+    data: Tag,
+    innerTags: TagInfo[]
 }
 
 export const mkTagInfo = (start: number, end = 0, innerTags = []) => ({

@@ -1,7 +1,8 @@
 import type {
     Tag,
-    TagApi,
 } from '../types'
+
+import TagApi from '../tags'
 
 export interface Internals {
     nextIteration: NextIterationApi

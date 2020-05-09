@@ -6,10 +6,11 @@ import type {
 import type {
     Tag,
     TagInfo,
-    TagApi,
 } from './types'
 
 import parseTemplate from './parser'
+
+import TagApi from './tags'
 
 import {
     TAG_START,
@@ -23,7 +24,7 @@ const renderTemplate = (text, filterManager) => {
 
     for (const iteration of filterManager.iterations()) {
         const rootTag = parseTemplate(text)
-        const tagApi = mkTagApi(text, rootTag)
+        const tagApi: TagApi = new TagApi(text, rootTag)
 
         result = postfixTraverse(text, rootTag, tagApi, iteration)
     }
@@ -31,59 +32,13 @@ const renderTemplate = (text, filterManager) => {
     return result
 }
 
-const spliceSlice = (str, lend, rend, add): string => {
+const spliceSlice = (str: string, lend: number, rend: number, add: string = ''): string => {
     // We cannot pass negative lend directly to the 2nd slicing operation.
     const leftend = lend < 0
         ? Math.min(0, str.length + lend)
         : lend
 
-    return str.slice(0, leftend) + (add || "") + str.slice(rend)
-}
-
-const mkTagApi = (text, tags) => {
-    const getText = (): string => text
-    const updateText = (newText: string): void => {
-        text = newText
-    }
-
-    const exists = (path: number[]): boolean => {
-        let currentPos = tags
-
-        for (const p of path) {
-            if (currentPos.innerTags[p]) {
-                currentPos = currentPos.innerTags[p]
-            }
-
-            else {
-                return false
-            }
-        }
-
-        return true
-    }
-
-    const getPath = (path: number[]): TagInfo | null => {
-        let currentPos = tags
-
-        for (const p of path) {
-            if (currentPos.innerTags[p]) {
-                currentPos = currentPos.innerTags[p]
-            }
-
-            else {
-                return null
-            }
-        }
-
-        return currentPos
-    }
-
-    return {
-        getText: getText,
-        updateText: updateText,
-        get: getPath,
-        exists: exists,
-    }
+    return str.slice(0, leftend) + add + str.slice(rend)
 }
 
 const getNewValuesRaw = (

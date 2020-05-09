@@ -1,7 +1,8 @@
 import type {
     Tag,
-    TagApi,
 } from '../types'
+
+import type TagApi from '../../src/tags'
 
 import type {
     Internals,

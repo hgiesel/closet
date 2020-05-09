@@ -28,31 +28,28 @@ const rawFilter = ({valuesRaw}: Tag): FilterResult => ({
 })
 
 const standardizeFilterResult = (input: string | FilterResult): FilterResult => {
-    let result = null
-
     switch (typeof input) {
         case 'string':
-            result = {
+            return {
                 result: input,
                 memoize: false,
             }
-            break
 
-        // also includes null
+        // includes null
         case 'object':
-            result = {
+            return {
                 result: input.result ?? '',
                 memoize: input.memoize ?? false,
             }
-            break
 
+        // undefined
         default:
-            // leave as null
-            // TODO meant to continue iterations
-            break
+            return {
+                // this will mark as "not ready"
+                result: null,
+                memoize: false,
+            }
     }
-
-    return result
 }
 
 export const executeFilter = (filter: Filter, data: Tag, internals: Internals): FilterResult =>

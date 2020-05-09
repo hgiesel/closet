@@ -12,7 +12,7 @@ declare var valuestext: any;
 declare var text: any;
 
 import tokenizer from './tokenizer'
-import initTagKeeper from './tagKeeper'
+import TagKeeper from './tagKeeper'
 
 import {
     TAG_START,
@@ -20,7 +20,7 @@ import {
     ARG_SEP,
 } from '../utils'
 
-const tagKeeper = initTagKeeper()
+const tagKeeper = new TagKeeper()
 
 interface NearleyToken {  value: any;
   [key: string]: any;

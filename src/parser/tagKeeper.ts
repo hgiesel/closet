@@ -47,28 +47,26 @@ const tagKeeper = function*() {
     }
 }
 
-const initTagKeeper = () => {
-    let tk = tagKeeper()
-    tk.next()
+class TagKeeper {
+    tk: any
 
-    const startToken = (offset: number) => {
-        return tk.next([offset])
+    constructor() {
+        this.tk = tagKeeper()
+        this.tk.next()
     }
 
-    const endToken = (offset: number, key: string, valuesRaw: number) => {
-        return tk.next([-offset, key, valuesRaw])
+    startToken(offset: number) {
+        return this.tk.next([offset])
     }
 
-    const restart = () => {
-        tk = tagKeeper()
-        tk.next()
+    endToken(offset: number, key: string, valuesRaw: number) {
+        return this.tk.next([-offset, key, valuesRaw])
     }
 
-    return {
-        startToken: startToken,
-        endToken: endToken,
-        restart: restart,
+    restart() {
+        this.tk = tagKeeper()
+        this.tk.next()
     }
 }
 
-export default initTagKeeper
+export default TagKeeper

@@ -7,7 +7,7 @@ import {
 } from '../utils'
 
 // img tags are parsed via HTML (!)
-export const lexer = moo.states({
+export const tokenizer = moo.states({
     main: {
         tagstart: {
             match: TAG_START,
@@ -52,4 +52,4 @@ export const lexer = moo.states({
     },
 })
 
-export default lexer
+export default tokenizer

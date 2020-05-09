@@ -4,7 +4,7 @@ import type {
 
 import type {
     Tag,
-} from '../types'
+} from '../tags'
 
 export const mkDeferredApi = (deferred: Map<string, (...any) => void>): DeferredApi => {
     const registerDeferred = (name: string, proc: (...any) => void): void => {

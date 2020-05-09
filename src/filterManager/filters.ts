@@ -7,7 +7,7 @@ import type {
 
 import type {
     Tag,
-} from '../types'
+} from '../tags'
 
 import {
     TAG_START,

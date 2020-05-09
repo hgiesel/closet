@@ -1,14 +1,12 @@
 import type {
     Tag,
-} from '../types'
-
-import type TagApi from '../../src/tags'
+    TagApi,
+} from '../tags'
 
 import type {
     Internals,
     FilterManager,
     FilterResult,
-    Iteration,
     NextIterationApi,
     FilterApi,
 } from './types'

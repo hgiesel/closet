@@ -1,16 +1,11 @@
 import {
-    tagMaker,
-    mkTagInfo,
-} from '../types'
-
-import {
-    TAG_START,
-    TAG_END,
-} from '../utils'
+    TagMaker,
+    TagInfo,
+} from '../tags'
 
 const tagKeeper = function*() {
-    const tm = tagMaker()
-    const tagInfos = mkTagInfo(0)
+    const tm = new TagMaker()
+    const tagInfos = new TagInfo(0)
 
     const getTagInfo = (path: number[]) => {
         let reference = tagInfos
@@ -30,7 +25,7 @@ const tagKeeper = function*() {
 
         if (value[0] >= 0) /* start */ {
             const startIndex = value[0]
-            getTagInfo(tagStack).innerTags.push(mkTagInfo(startIndex))
+            getTagInfo(tagStack).addInnerTag(new TagInfo(startIndex))
 
             tagStack.push(nextLevel)
             nextLevel = 0
@@ -40,8 +35,7 @@ const tagKeeper = function*() {
             const endIndex = Math.abs(value[0])
 
             const foundTag = getTagInfo(tagStack)
-            foundTag.end = endIndex
-            foundTag.data = tm.mkTag(value[1], value[2] ?? null, [...tagStack])
+            foundTag.close(endIndex, tm.makeTag(value[1], value[2] ?? null, [...tagStack]))
 
             if (tagStack.length === 0) {
                 return tagInfos
@@ -57,11 +51,11 @@ const initTagKeeper = () => {
     let tk = tagKeeper()
     tk.next()
 
-    const startToken = (offset) => {
+    const startToken = (offset: number) => {
         return tk.next([offset])
     }
 
-    const endToken = (offset, key, valuesRaw) => {
+    const endToken = (offset: number, key: string, valuesRaw: number) => {
         return tk.next([-offset, key, valuesRaw])
     }
 

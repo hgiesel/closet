@@ -1,8 +1,7 @@
 import type {
     Tag,
-} from '../types'
-
-import TagApi from '../tags'
+    TagApi,
+} from '../tags'
 
 export interface Internals {
     nextIteration: NextIterationApi
@@ -13,7 +12,7 @@ export interface Internals {
     tag: TagApi
 }
 
-export type Filter = (Tag, Internals) => FilterResult | string
+export type Filter = (t: Tag, i: Internals) => FilterResult | string
 
 export interface FilterResult {
     result: string

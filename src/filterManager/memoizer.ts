@@ -1,6 +1,6 @@
 import type {
     Tag,
-} from '../types'
+} from '../tags'
 
 import type {
     FilterResult,

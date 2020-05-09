@@ -1,25 +1,24 @@
 import type {
-    FilterResult,
     FilterManager,
 } from './filterManager/types'
 
 import type {
-    Tag,
     TagInfo,
-} from './types'
+} from './tags'
+
+import {
+    TagApi,
+} from './tags'
 
 import parseTemplate from './parser'
-
-import TagApi from './tags'
 
 import {
     TAG_START,
     TAG_END,
     ARG_SEP,
-    splitValues,
 } from './utils'
 
-const renderTemplate = (text, filterManager) => {
+const renderTemplate = (text: string, filterManager: FilterManager): string => {
     let result = text
 
     for (const iteration of filterManager.iterations()) {
@@ -91,9 +90,7 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, tagApi: TagApi, fil
                 : TAG_END.length,
         )
 
-        tag.data.valuesRaw = newValuesRaw
-        // values is still null at this point
-        tag.data.values = splitValues(tag.data.valuesRaw)
+        tag.data.updatevaluesRaw(newValuesRaw)
 
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tag.data.key, tag.data, tagApi)

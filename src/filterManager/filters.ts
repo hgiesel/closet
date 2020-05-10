@@ -2,37 +2,51 @@ import type {
     Internals,
 } from '.'
 
-import type {
-    Tag,
-} from '../tags'
-
-import {
-    TAG_START,
-    TAG_END,
-    ARG_SEP,
-} from '../utils'
-
 export interface FilterResult {
     result: string
     memoize?: boolean
 }
 
-const defaultFilter = ({fullKey, valuesRaw}: Tag): FilterResult => ({
-    result: valuesRaw === null
-        ? `${TAG_START}${fullKey}${TAG_END}`
-        : `${TAG_START}${fullKey}${ARG_SEP}${valuesRaw}${TAG_END}`,
+export interface Filterable {
+    getDefaultRepresentation(): string
+    getRawRepresentation(): string
+    getFilterKey(): string
+}
+
+const wrapWithNonMemoize = (result: string): FilterResult => ({
+    result: result,
     memoize: false,
 })
 
-const rawFilter = ({valuesRaw}: Tag): FilterResult => ({
-    result: valuesRaw,
-    memoize: false,
-})
+const standardizeFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: Internals): FilterResult => {
+    const input = wf(t, i)
 
-export type Filter = (t: Tag, i: Internals) => FilterResult | string
+    switch (typeof input) {
+        case 'string':
+            return wrapWithNonMemoize(input)
+
+        // includes null
+        case 'object':
+            return {
+                result: input.result ?? '',
+                memoize: input.memoize ?? false,
+            }
+
+        // undefined
+        default:
+            return {
+                // this will mark as "not ready"
+                result: null,
+                memoize: false,
+            }
+    }
+}
+
+export type WeakFilter = (t: Filterable, i: Internals) => FilterResult | string
+export type Filter = (t: Filterable, i: Internals) => FilterResult
 
 export class FilterApi {
-    private filters: Map<string, any>
+    private filters: Map<string, WeakFilter>
 
     constructor() {
         this.filters = new Map()
@@ -50,14 +64,21 @@ export class FilterApi {
 
     get(name: string): Filter | null {
         return name === 'raw'
-            ? rawFilter
+            ? (t) => wrapWithNonMemoize(t.getRawRepresentation())
             : this.filters.has(name)
-            ? this.filters.get(name) 
+            ? standardizeFilterResult(this.filters.get(name))
             : null
     }
 
     getOrDefault(name: string): Filter {
-        return this.get(name) ?? defaultFilter
+        const maybeResult =  this.get(name)
+
+        if (maybeResult) {
+            return standardizeFilterResult(maybeResult)
+        }
+
+        const defaultFilter = (t: Filterable) => wrapWithNonMemoize(t.getDefaultRepresentation())
+        return defaultFilter
     }
 
     unregisterFilter(name: string): void {
@@ -67,4 +88,9 @@ export class FilterApi {
     clearFilters(): void {
         this.filters.clear()
     }
+
+    execute(data: Filterable, internals: Internals): FilterResult {
+        return standardizeFilterResult(this.getOrDefault(data.getFilterKey()))(data, internals)
+    }
 }
+

@@ -1,5 +1,15 @@
-const mixRecipe = (keyword, separator) => (filterApi) => {
-    const shuffle = (array) => {
+import type {
+    FilterApi
+} from '../filters'
+
+import {
+    Internals,
+} from '..'
+
+import type { Tag } from '../../tags'
+
+const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi) => {
+    const shuffle = (array: unknown[]) => {
         const result = array.slice(0)
         let currentIndex = array.length, temporaryValue = null, randomIndex = null
 
@@ -19,15 +29,15 @@ const mixRecipe = (keyword, separator) => (filterApi) => {
     }
 
     const mixPrepareFilter = (
-        {fullKey, key, idx, values},
-        {store, filters, deferred, nextIteration},
+        {fullKey, key, idx, values}: Tag,
+        {store, filters, deferred}: Internals,
     ) => {
         if (idx === null) {
             return shuffle(values[0]).join(separator)
         }
 
         if (store.has(fullKey)) {
-            store.over(fullKey, v => v.concat(values[0]))
+            store.over(fullKey, (v: unknown[]) => v.concat(values[0]))
         }
         else {
             store.set(fullKey, values[0])
@@ -35,7 +45,7 @@ const mixRecipe = (keyword, separator) => (filterApi) => {
 
         const replaceKey = `replaceFilter:${key}`
         if (!deferred.has(replaceKey)) {
-            deferred.register(replaceKey, () => filters.register(key, mixApplyFilter))
+            deferred.register(replaceKey, () => filters.register(key, mixApplyFilter as any))
         }
 
         const mixKey = `mix:${fullKey}`
@@ -43,22 +53,23 @@ const mixRecipe = (keyword, separator) => (filterApi) => {
             deferred.register(`mix:${fullKey}`, () => store.over(fullKey, shuffle))
         }
 
-        nextIteration.activate()
+        // TODO
+        // nextIteration.activate()
     }
 
     const mixApplyFilter = (
-        {fullKey, key, idx, values},
-        {store},
+        {fullKey, values}: Tag,
+        {store}: Internals,
     ) => {
         const popped = []
         for (let x = 0; x < values[0].length; x++) {
-            popped.push(store.get(fullKey).shift())
+            popped.push((store.get(fullKey, []) as unknown[]).shift())
         }
 
         return popped.join(separator)
     }
 
-    filterApi.register(keyword, mixPrepareFilter)
+    filterApi.register(keyword, mixPrepareFilter as any)
 }
 
 export default mixRecipe

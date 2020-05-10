@@ -1,14 +1,15 @@
 import {
-    TagMaker,
     TagInfo,
 } from '../tags'
 
-const tagKeeper = function*() {
+import TagMaker from './tagMaker'
+
+const tagKeeper = function*(): Generator<number[], TagInfo, [number, string?, string?]> {
     const tm = new TagMaker()
-    const tagInfos = new TagInfo(0)
+    const rootTag = new TagInfo(0)
 
     const getTagInfo = (path: number[]) => {
-        let reference = tagInfos
+        let reference = rootTag
 
         for (const id of path) {
             reference = reference.innerTags[id]
@@ -38,7 +39,7 @@ const tagKeeper = function*() {
             foundTag.close(endIndex, tm.makeTag(value[1], value[2] ?? null, [...tagStack]))
 
             if (tagStack.length === 0) {
-                return tagInfos
+                return rootTag
             }
             else {
                 nextLevel = tagStack.pop() + 1
@@ -48,7 +49,7 @@ const tagKeeper = function*() {
 }
 
 class TagKeeper {
-    tk: any
+    tk: Generator<number[], TagInfo, [number, string?, string?]>
 
     constructor() {
         this.tk = tagKeeper()
@@ -59,7 +60,7 @@ class TagKeeper {
         return this.tk.next([offset])
     }
 
-    endToken(offset: number, key: string, valuesRaw: number) {
+    endToken(offset: number, key: string, valuesRaw: string | null) {
         return this.tk.next([-offset, key, valuesRaw])
     }
 

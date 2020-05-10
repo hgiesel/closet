@@ -23,7 +23,7 @@ export class DeferredApi {
         this.deferred.clear()
     }
 
-    forEach(...args: any[]): void {
+    executeEach(...args: any[]): void {
         for (const [name, func] of this.deferred) {
             func(name, ...args)
         }

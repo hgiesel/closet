@@ -18,11 +18,13 @@ import {
     ARG_SEP,
 } from './utils'
 
+const MAX_ITERATIONS = 50
+
 const renderTemplate = (text: string, filterManager: FilterManager): string => {
     let result = text
-    let ready = true
+    let ready = false
 
-    do {
+    for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
         const rootTag = parseTemplate(result)
         const templateApi = new TemplateApi(rootTag)
 
@@ -34,10 +36,9 @@ const renderTemplate = (text: string, filterManager: FilterManager): string => {
 
         ready = innerReady
         result = newText
-        console.log('foo', ready)
 
         filterManager.executeAndClearDeferred()
-    } while (!ready)
+    }
 
         return result
 }
@@ -68,7 +69,7 @@ const getNewValuesRaw = (
 
 // try to make it more PDA
 const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: FilterProcessor): [string, number[], boolean]=> {
-    const tagReduce = ([text, stack, _ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {
+    const tagReduce = ([text, stack, ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {
 
         // going DOWN
         stack.push(stack[stack.length - 1])
@@ -122,7 +123,13 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
         modStack.push(sum)
 
         console.info('going up', filterOutput.ready)
-        return [newText, modStack, filterOutput.ready]
+        return [
+            newText,
+            modStack,
+            // ready means everything to the left is ready
+            // filterOutput.ready means everything within and themselves are ready
+            ready && filterOutput.ready
+        ]
     }
 
     return tagReduce([baseText, [0,0], true], rootTag)

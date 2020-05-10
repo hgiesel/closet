@@ -28,7 +28,7 @@ const standardizeFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: I
         // includes null
         case 'object':
             return {
-                result: input.result ?? '',
+                result: input.result,
                 memoize: input.memoize ?? false,
             }
 
@@ -44,6 +44,10 @@ const standardizeFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: I
 
 export type WeakFilter = (t: Filterable, i: Internals) => FilterResult | string
 export type Filter = (t: Filterable, i: Internals) => FilterResult
+
+const baseFilter = (t: Filterable, i: Internals) => i.ready ? wrapWithNonMemoize(t.getRawRepresentation()) : undefined
+const rawFilter = (t: Filterable) => wrapWithNonMemoize(t.getRawRepresentation())
+const defaultFilter = (t: Filterable) => wrapWithNonMemoize(t.getDefaultRepresentation())
 
 export class FilterApi {
     private filters: Map<string, WeakFilter>
@@ -64,9 +68,9 @@ export class FilterApi {
 
     get(name: string): Filter | null {
         return name === 'base'
-            ? (t, i) => i.ready ? wrapWithNonMemoize(t.getRawRepresentation()) : undefined
+            ? baseFilter
             : name === 'raw'
-            ? (t) => wrapWithNonMemoize(t.getRawRepresentation())
+            ? rawFilter
             : this.filters.has(name)
             ? standardizeFilterResult(this.filters.get(name))
             : null
@@ -76,10 +80,9 @@ export class FilterApi {
         const maybeResult =  this.get(name)
 
         if (maybeResult) {
-            return standardizeFilterResult(maybeResult)
+            return maybeResult
         }
 
-        const defaultFilter = (t: Filterable) => wrapWithNonMemoize(t.getDefaultRepresentation())
         return defaultFilter
     }
 

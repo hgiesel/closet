@@ -81,7 +81,7 @@ export class FilterManager {
 
             const result = this.filters.execute(data, internals)
 
-            if (!result.result) {
+            if (result.result === null) {
                 return notReady
             }
 

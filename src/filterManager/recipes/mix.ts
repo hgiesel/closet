@@ -32,6 +32,7 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
         {fullKey, idx, fullOccur, values}: Tag,
         {store, deferred, ready}: any,
     ) => {
+        console.log(fullKey, idx, values)
         const readyKey = `${fullKey}:ready`
         const applyKey = `${fullKey}:${fullOccur}:apply`
 

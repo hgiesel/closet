@@ -1,3 +1,5 @@
+import type TemplateApi from '../template'
+
 import {
     Memoizer,
     MemoizerKeyable,
@@ -23,6 +25,11 @@ export interface Internals {
     filters: FilterApi
     deferred: DeferredApi
     ready: boolean
+}
+
+export interface StockInternals {
+    template: TemplateApi,
+    iteration: { index: number }
 }
 
 export interface CustomInternals {
@@ -63,7 +70,7 @@ export class FilterManager {
         this.memoizer = memoizer
     }
 
-    filterProcessor(stock: object): FilterProcessor {
+    filterProcessor(stock: StockInternals): FilterProcessor {
         return (data: Filterable & MemoizerKeyable, custom: CustomInternals): FilterProcessorResult => {
 
             if (this.memoizer.hasItem(data)) {

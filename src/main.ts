@@ -32,7 +32,10 @@ const renderTemplate = (text: string, filterManager: FilterManager): string => {
             newText,
             finalOffset,
             innerReady,
-        ] = postfixTraverse(text, rootTag, filterManager.filterProcessor({ template: templateApi }))
+        ] = postfixTraverse(text, rootTag, filterManager.filterProcessor({
+            iteration: { index: i },
+            template: templateApi,
+        }))
 
         ready = innerReady
         result = newText

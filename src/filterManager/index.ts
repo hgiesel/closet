@@ -31,6 +31,16 @@ interface FilterProcessorResult {
 
 export type FilterProcessor = (data: Filterable & MemoizerKeyable, custom?: object) => FilterProcessorResult
 
+const notReady = {
+    result: null,
+    ready: false,
+}
+
+const makeReady = (value: string): FilterProcessorResult => ({
+    result: value,
+    ready: true,
+})
+
 export class FilterManager {
     readonly filters: FilterApi
     private readonly deferred: DeferredApi
@@ -66,21 +76,15 @@ export class FilterManager {
 
             const result = this.filters.execute(data, internals)
 
-            if (!result) {
-                return {
-                    result: null,
-                    ready: false,
-                }
+            if (!result.result) {
+                return notReady
             }
 
             if (result.memoize) {
                 this.memoizer.setItem(data, result)
             }
 
-            return {
-                result: result.result,
-                ready: true,
-            }
+            return makeReady(result.result)
         }
     }
 

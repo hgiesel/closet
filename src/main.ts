@@ -67,7 +67,7 @@ const getNewValuesRaw = (
 
 // try to make it more PDA
 const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: FilterProcessor): [string, number[], boolean]=> {
-    const tagReduce = ([text, stack, ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {
+    const tagReduce = ([text, stack, _ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {
 
         // going DOWN
         stack.push(stack[stack.length - 1])
@@ -93,36 +93,36 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
             tag.end,
             leftOffset,
             innerOffset,
-            tag.naked
-                ? 0
-                : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length,
-            tag.naked
-                ? 0
-                : TAG_END.length,
+            tag.naked ? 0 : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length,
+            tag.naked ? 0 : TAG_END.length,
         )
 
         const tagData = tag.data.shadowValuesRaw(newValuesRaw)
 
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tagData, { ready: modReady })
-        const newOffset = filterOutput.result.length - (tag.end - tag.start)
+        const newOffset = filterOutput.ready
+            ? filterOutput.result.length - (tag.end - tag.start)
+            : 0
 
         const sliceFrom = tag.start + leftOffset
         const sliceTill = tag.end + leftOffset + innerOffset
 
-        const newText = spliceSlice(
-            modText,
-            sliceFrom,
-            sliceTill,
-            filterOutput.result,
-        )
+        const newText = filterOutput.ready
+            ? spliceSlice(
+                modText,
+                sliceFrom,
+                sliceTill,
+                filterOutput.result,
+            )
+            : modText
 
         // going UP
         const sum = innerOffset + leftOffset + newOffset
         modStack.push(sum)
 
         console.info('going up')
-        return [newText, modStack, modReady]
+        return [newText, modStack, filterOutput.ready]
     }
 
     return tagReduce([baseText, [0,0], true], rootTag)

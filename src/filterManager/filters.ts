@@ -57,13 +57,15 @@ export class FilterApi {
     }
 
     has(name: string): boolean {
-        return name === 'raw'
+        return name === 'raw' || name === 'base'
             ? true
             : this.filters.has(name)
     }
 
     get(name: string): Filter | null {
-        return name === 'raw'
+        return name === 'base'
+            ? (t, i) => i.ready ? wrapWithNonMemoize(t.getRawRepresentation()) : undefined
+            : name === 'raw'
             ? (t) => wrapWithNonMemoize(t.getRawRepresentation())
             : this.filters.has(name)
             ? standardizeFilterResult(this.filters.get(name))

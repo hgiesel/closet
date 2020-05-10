@@ -22,6 +22,11 @@ export interface Internals {
     store: Store
     filters: FilterApi
     deferred: DeferredApi
+    ready: boolean
+}
+
+export interface CustomInternals {
+    ready: boolean
 }
 
 interface FilterProcessorResult {
@@ -59,7 +64,7 @@ export class FilterManager {
     }
 
     filterProcessor(stock: object): FilterProcessor {
-        return (data: Filterable & MemoizerKeyable, custom: object = {}): FilterProcessorResult => {
+        return (data: Filterable & MemoizerKeyable, custom: CustomInternals): FilterProcessorResult => {
 
             if (this.memoizer.hasItem(data)) {
                 return {

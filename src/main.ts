@@ -34,6 +34,7 @@ const renderTemplate = (text: string, filterManager: FilterManager): string => {
 
         ready = innerReady
         result = newText
+        console.log('foo', ready)
 
         filterManager.executeAndClearDeferred()
     } while (!ready)
@@ -84,7 +85,6 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
 
         const innerOffset = modStack.pop()
         const leftOffset = modStack.pop()
-        console.log('oooo', innerOffset, leftOffset, ':::', modStack, tag.data.path)
 
         ///////////////////// Updating valuesRaw and values with innerTags
         const newValuesRaw = getNewValuesRaw(
@@ -121,7 +121,7 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
         const sum = innerOffset + leftOffset + newOffset
         modStack.push(sum)
 
-        console.info('going up')
+        console.info('going up', filterOutput.ready)
         return [newText, modStack, filterOutput.ready]
     }
 

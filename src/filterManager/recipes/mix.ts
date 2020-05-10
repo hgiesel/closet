@@ -32,7 +32,9 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
         {fullKey, key, idx, values}: Tag,
         {store, filters, deferred, ready}: any,
     ) => {
-        console.log('hi from prepare', ready)
+        if (!ready) {
+            return
+        }
 
         if (idx === null) {
             return shuffle(values[0]).join(separator)

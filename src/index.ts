@@ -1,7 +1,7 @@
 import renderTemplate from './main'
-import mkFilterManager from './filterManager'
-import filterRecipes from './recipes'
+import FilterManager from './filterManager'
+import filterRecipes from './filterManager/recipes'
 
 globalThis.renderTemplate = renderTemplate
-globalThis.mkFilterManager = mkFilterManager
+globalThis.FilterManager = FilterManager
 globalThis.filterRecipes = filterRecipes

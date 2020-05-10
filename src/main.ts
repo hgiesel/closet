@@ -1,12 +1,14 @@
 import type {
     FilterManager,
+    FilterProcessor,
 } from './filterManager'
+
 
 import type {
     TagInfo,
 } from './tags'
 
-import TagApi from './tags'
+import TemplateApi from './template'
 
 import parseTemplate from './parser'
 
@@ -18,15 +20,25 @@ import {
 
 const renderTemplate = (text: string, filterManager: FilterManager): string => {
     let result = text
+    let ready = true
 
-    for (const iteration of filterManager.iterations(rootTag)) {
-        const rootTag = parseTemplate(text)
-        const tagApi: TagApi = new TagApi(text, rootTag)
+    do {
+        const rootTag = parseTemplate(result)
+        const templateApi = new TemplateApi(rootTag)
 
-        result = postfixTraverse(text, rootTag, tagApi, iteration)
-    }
+        const [
+            newText,
+            finalOffset,
+            innerReady,
+        ] = postfixTraverse(text, rootTag, filterManager.filterProcessor({ template: templateApi }))
 
-    return result
+        ready = innerReady
+        result = newText
+
+        filterManager.executeAndClearDeferred()
+    } while (!ready)
+
+        return result
 }
 
 const spliceSlice = (str: string, lend: number, rend: number, add: string = ''): string => {
@@ -54,8 +66,8 @@ const getNewValuesRaw = (
 }
 
 // try to make it more PDA
-const postfixTraverse = (baseText: string, rootTag: TagInfo, tagApi: TagApi, filterProcessor) => {
-    const tagReduce = ([text, stack]: [string, number[]], tag: TagInfo): [string, number[]] => {
+const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: FilterProcessor): [string, number[], boolean]=> {
+    const tagReduce = ([text, stack, ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {
 
         // going DOWN
         stack.push(stack[stack.length - 1])
@@ -64,7 +76,8 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, tagApi: TagApi, fil
         const [
             modText,
             modStack,
-        ] = tag.innerTags.reduce(tagReduce, [text, stack])
+            modReady,
+        ] = tag.innerTags.reduce(tagReduce, [text, stack, true])
 
         // get offsets
         modStack.push(modStack.pop() - modStack[modStack.length - 1])
@@ -81,17 +94,17 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, tagApi: TagApi, fil
             leftOffset,
             innerOffset,
             tag.data.path.length === 0
-                ? 0
-                : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length,
+            ? 0
+            : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length,
             tag.data.path.length === 0
-                ? 0
-                : TAG_END.length,
+            ? 0
+            : TAG_END.length,
         )
 
-        tag.data.updatevaluesRaw(newValuesRaw)
+        const tagData = tag.data.shadowValuesRaw(newValuesRaw)
 
         ///////////////////// Evaluate current tag
-        const filterOutput = filterProcessor(tag.data.key, tag.data, tagApi)
+        const filterOutput = filterProcessor(tagData, { ready: modReady })
         const newOffset = filterOutput.result.length - (tag.end - tag.start)
 
         const sliceFrom = tag.start + leftOffset
@@ -109,14 +122,10 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, tagApi: TagApi, fil
         modStack.push(sum)
 
         console.info('going up')
-        console.log('yyy', filterOutput.result, filterOutput.result.length, tag.start, tag.end, tag)
-        console.log('zzz', newOffset, sum, modStack)
-        return [newText, modStack]
+        return [newText, modStack, modReady]
     }
 
-    const result = tagReduce([baseText, [0,0]], rootTag)
-    console.info('result: ', result)
-    return result[0]
+    return tagReduce([baseText, [0,0], true], rootTag)
 }
 
 export default renderTemplate

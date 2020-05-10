@@ -29,7 +29,7 @@ interface FilterProcessorResult {
     ready: boolean
 }
 
-export type FilterProcessor = (data: Filterable & MemoizerKeyable) => FilterProcessorResult
+export type FilterProcessor = (data: Filterable & MemoizerKeyable, custom?: object) => FilterProcessorResult
 
 export class FilterManager {
     readonly filters: FilterApi
@@ -37,18 +37,19 @@ export class FilterManager {
 
     private readonly store: Store
     private readonly memoizer: Memoizer
+    private readonly preset: object
 
-    constructor(memoizer = defaultMemoizer) {
+    constructor(preset = {}, memoizer = defaultMemoizer) {
         this.filters = new FilterApi()
         this.deferred = new DeferredApi()
 
+        this.preset = preset
         this.store = new Store()
-
         this.memoizer = memoizer
     }
 
-    filterProcessor(extension: object): FilterProcessor {
-        return (data: Filterable & MemoizerKeyable): FilterProcessorResult => {
+    filterProcessor(stock: object): FilterProcessor {
+        return (data: Filterable & MemoizerKeyable, custom: object = {}): FilterProcessorResult => {
 
             if (this.memoizer.hasItem(data)) {
                 return {
@@ -57,7 +58,7 @@ export class FilterManager {
                 }
             }
 
-            const internals: Internals = Object.assign(extension, {
+            const internals: Internals = Object.assign(this.preset, stock, custom, {
                 store: this.store,
                 filters: this.filters,
                 deferred: this.deferred,
@@ -93,4 +94,4 @@ export class FilterManager {
     }
 }
 
-export default mkFilterManager
+export default FilterManager

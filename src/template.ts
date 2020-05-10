@@ -11,12 +11,10 @@ type TagPath = number[]
 
 class TemplateApi {
     private rootTag: TagInfo
-    private text: string
     private zoom: TagPath
 
-    constructor(text: string) {
-        this.rootTag = parseText(text)
-        this.text = text
+    constructor(rootTag: TagInfo) {
+        this.rootTag = rootTag
         this.zoom = []
     }
 
@@ -42,10 +40,6 @@ class TemplateApi {
         return resultTag
             ? true
             : false
-    }
-
-    getBaseText(): string {
-        return this.text
     }
 
     getTagInfo(path = this.zoom): TagInfo | null {
@@ -75,70 +69,6 @@ class TemplateApi {
     setZoom(path: TagPath): void {
         this.zoom = path
     }
-
-
-    resolve(_filterManager: FilterManager): string {
-        return ''
-    }
-
-//     reduceInner(pat
-
-//     private *iterations() {
-//         while (!rootTag.isReadyRecursive()) {
-//             yield this.filterManager processFilter
-
-//             filterManager.executeAndClearDeferred()
-
-//         }
-//     }
-
 }
 
-export default TagApi
-
-
-
-
-const postfixTraverse = (template: TemplateApi): [string, number[]] => {
-
-    // return tagReduce([template.getBaseText(), template.getOffsets()], template.getTagInfo())
-    return tagReduce([template.getBaseText(), template.getOffsets()], template.getTagInfo())
-}
-
-const tagReduce = ([text, stack]: [string, number[]], tag: TagInfo): number[] => {
-
-    // going DOWN
-    stack.push(stack[stack.length - 1])
-
-    const [
-        modText,
-        modStack,
-    ] = tag.innerTags.reduce(tagReduce, [text, stack])
-
-    // get offsets
-    modStack.push(modStack.pop() - modStack[modStack.length - 1])
-    const innerOffset = modStack.pop()
-    const leftOffset = modStack.pop()
-
-    const [
-        lend,
-        rend,
-    ] = calculateCoordinates(tag.start, tag.end, leftOffset, innerOffset)
-
-    const repl = filterProcessor(tag.data)
-
-    const [
-        _newValuesRaw,
-        newText,
-    ] = pureReplace(modText, repl, lend, rend)
-
-    // tag.data.updateValuesRaw(newValuesRaw)
-
-    const newOffset = getNewOffset(repl, tag.start, tag.end)
-
-    // going UP
-    const sum = innerOffset + leftOffset + newOffset
-    modStack.push(sum)
-
-    return [newText, modStack]
-}
+export default TemplateApi

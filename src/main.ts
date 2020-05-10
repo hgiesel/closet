@@ -93,12 +93,12 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
             tag.end,
             leftOffset,
             innerOffset,
-            tag.data.path.length === 0
-            ? 0
-            : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length,
-            tag.data.path.length === 0
-            ? 0
-            : TAG_END.length,
+            tag.naked
+                ? 0
+                : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length,
+            tag.naked
+                ? 0
+                : TAG_END.length,
         )
 
         const tagData = tag.data.shadowValuesRaw(newValuesRaw)

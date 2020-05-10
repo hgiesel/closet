@@ -101,19 +101,40 @@ export class TagMaker {
 
 export class TagInfo {
     readonly start: number
-    end: number
-    data: Tag
+    private _end: number
+    private _ready: boolean
+
+    private _data: Tag
     readonly innerTags: TagInfo[]
 
-    constructor(start: number, end: number = 0, innerTags = []) {
+    constructor(start: number) {
         this.start = start
-        this.end = end
-        this.innerTags = innerTags
+        this._ready = false
     }
 
     close(end: number, data: Tag) {
-        this.end = end
-        this.data = data
+        this._end = end
+        this._data = data
+    }
+
+    get end() {
+        return this._end
+    }
+
+    get data() {
+        return this._data
+    }
+
+    isReady() {
+        return this._ready
+    }
+
+    isReadyRecursive() {
+        return this._ready && this.innerTags.map(t => t.isReadyRecursive())
+    }
+
+    setReady(b: boolean) {
+        this._ready = b
     }
 
     addInnerTag(tag: TagInfo) {
@@ -121,13 +142,15 @@ export class TagInfo {
     }
 }
 
+type TagPath = number[]
+
 export class TagApi {
     private text: string
-    private tags: TagInfo
+    private tag: TagInfo
 
-    constructor(text: string, tags: TagInfo) {
+    constructor(text: string, tag: TagInfo) {
         this.text = text
-        this.tags = tags
+        this.tag = tag
     }
 
     getText(): string {
@@ -138,24 +161,8 @@ export class TagApi {
         this.text = newText
     }
 
-    exists(path: number[]): boolean {
-        let currentPos = this.tags
-
-        for (const p of path) {
-            if (currentPos.innerTags[p]) {
-                currentPos = currentPos.innerTags[p]
-            }
-
-            else {
-                return false
-            }
-        }
-
-        return true
-    }
-
-    getPath(path: number[]): TagInfo | null {
-        let currentPos = this.tags
+    private traverse(path: TagPath): TagInfo | null {
+        let currentPos = this.tag
 
         for (const p of path) {
             if (currentPos.innerTags[p]) {
@@ -168,5 +175,34 @@ export class TagApi {
         }
 
         return currentPos
+    }
+
+    exists(path: TagPath): boolean {
+        const resultTag = this.traverse(path)
+
+        return resultTag
+            ? true
+            : false
+    }
+
+    isReady(path: TagPath) {
+        const resultTag = this.traverse(path)
+        return resultTag.ready
+    }
+
+    isReadyRecursive(path: TagPath) {
+        const resultTag = this.traverse(path)
+
+        return resultTag.ready && resultTag.innerTags.map(t => t.
+    }
+
+    getPath(path: TagPath): TagInfo | null {
+        const resultTag = this.traverse(path)
+        return resultTag
+    }
+
+    setRootTag(path: TagPath): TagApi {
+        const resultTag = this.traverse(path)
+        return new TagApi(this.text, resultTag)
     }
 }

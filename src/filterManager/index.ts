@@ -1,9 +1,11 @@
 import type {
     Tag,
+    TagInfo,
     TagApi,
 } from '../tags'
 
 import {
+    Memoizer,
     defaultMemoizer,
     generateMemoizerKey,
 } from './memoizer'
@@ -14,7 +16,6 @@ import {
 
 import {
     FilterApi,
-    FilterResult,
 } from './filters'
 
 import {
@@ -26,7 +27,6 @@ import {
 } from './deferred'
 
 export interface Internals {
-    nextIteration: NextIterationApi
     store: Store
     filters: FilterApi
     deferred: DeferredApi
@@ -34,74 +34,78 @@ export interface Internals {
     tag: TagApi
 }
 
-export interface NextIterationApi {
-    activate(v?: boolean): void
-    isActivated(): boolean
+interface FilterResult2 {
+    result: string | null
+    ready: boolean
 }
 
-export interface FilterManager {
-    filters: FilterApi,
-    addRecipe: any,
-    iterations: any,
-}
+export class FilterManager {
+    readonly filters: FilterApi
+    private readonly deferred: DeferredApi
 
-const mkFilterManager = (custom = {}, memoizer = defaultMemoizer): FilterManager => {
-    const store = new Store()
-    const filters = new FilterApi()
-    const deferred = new DeferredApi()
+    private readonly custom: object
+    private readonly store: Store
 
-    let nextIteration: boolean = true
-    const nextIterationApi: NextIterationApi = {
-        activate: (value = true) => {
-            nextIteration = value
-        },
-        isActivated: () => nextIteration,
+    private readonly memoizer: Memoizer
+
+    constructor(custom = {}, memoizer = defaultMemoizer) {
+        this.filters = new FilterApi()
+        this.deferred = new DeferredApi()
+
+        this.custom = custom
+        this.store = new Store()
+
+        this.memoizer = memoizer
     }
 
-    const processFilter = (key: string, data: Tag, tagApi: TagApi): FilterResult => {
+    private processFilter(key: string, data: Tag, tagApi: TagApi): FilterResult2 {
         const memoizerKey = generateMemoizerKey(data)
 
-        if (memoizer.hasItem(memoizerKey)) {
-            return memoizer.getItem(memoizerKey)
+        if (this.memoizer.hasItem(memoizerKey)) {
+            return {
+                result: this.memoizer.getItem(memoizerKey).result,
+                ready: true,
+            }
         }
 
         const internals: Internals = {
-            custom: custom,
-            nextIteration: nextIterationApi,
-            store: store,
-            filters: filters,
-            deferred: deferred,
+            custom: this.custom,
+            store: this.store,
+            filters: this.filters,
+            deferred: this.deferred,
             tag: tagApi,
         }
 
-        const result = executeFilter(filters.getOrDefault(key), data, internals)
+        const result = executeFilter(this.filters.getOrDefault(key), data, internals)
+
+        if (!result) {
+            return {
+                result: null,
+                ready: false,
+            }
+        }
 
         if (result.memoize) {
-            memoizer.setItem(memoizerKey, result)
+            this.memoizer.setItem(memoizerKey, result)
         }
 
-        return result
-    }
-
-    const addRecipe = (recipe: (filters: FilterApi) => void): void => {
-        recipe(filters)
-    }
-
-    const iterations = function*() {
-        while (nextIteration) {
-            nextIteration = false
-
-            yield processFilter
-
-            deferred.forEach()
-            deferred.clear()
+        return {
+            result: result.result,
+            ready: true,
         }
     }
 
-    return {
-        filters: filters,
-        addRecipe: addRecipe,
-        iterations: iterations,
+    *iterations(rootTag: TagInfo) {
+        while (!rootTag.isReadyRecursive()) {
+            yield this.processFilter
+
+            this.deferred.forEach()
+            this.deferred.clear()
+        }
+    }
+
+    addRecipe(recipe: (filters: FilterApi) => void): void {
+        recipe(this.filters)
     }
 }
 

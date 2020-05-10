@@ -21,7 +21,7 @@ import {
 const renderTemplate = (text: string, filterManager: FilterManager): string => {
     let result = text
 
-    for (const iteration of filterManager.iterations()) {
+    for (const iteration of filterManager.iterations(rootTag)) {
         const rootTag = parseTemplate(text)
         const tagApi: TagApi = new TagApi(text, rootTag)
 

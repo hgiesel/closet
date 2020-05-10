@@ -14,7 +14,7 @@ const parseTemplate = (text: string): TagInfo => {
         console.error('Template grammar does not match')
     }
 
-    const result = parsed[0].endToken(text.length, 'raw', text).value
+    const result = parsed[0].endToken(text.length, 'raw', text, true).value
     parsed[0].restart()
 
     return result

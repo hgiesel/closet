@@ -4,7 +4,7 @@ import {
 
 import TagMaker from './tagMaker'
 
-const tagKeeper = function*(): Generator<number[], TagInfo, [number, string?, string?]> {
+const tagKeeper = function*(): Generator<number[], TagInfo, [number, string?, string?, boolean?]> {
     const tm = new TagMaker()
     const rootTag = new TagInfo(0)
 
@@ -34,9 +34,12 @@ const tagKeeper = function*(): Generator<number[], TagInfo, [number, string?, st
 
         else /* end */ {
             const endIndex = Math.abs(value[0])
+            const fullKey = value[1]
+            const valuesRaw = value[2] ?? null
+            const naked = value[3]
 
             const foundTag = getTagInfo(tagStack)
-            foundTag.close(endIndex, tm.makeTag(value[1], value[2] ?? null, [...tagStack]))
+            foundTag.close(endIndex, tm.makeTag(fullKey, valuesRaw, [...tagStack]), naked)
 
             if (tagStack.length === 0) {
                 return rootTag
@@ -49,7 +52,7 @@ const tagKeeper = function*(): Generator<number[], TagInfo, [number, string?, st
 }
 
 class TagKeeper {
-    tk: Generator<number[], TagInfo, [number, string?, string?]>
+    tk: Generator<number[], TagInfo, [number, string?, string?, boolean?]>
 
     constructor() {
         this.tk = tagKeeper()
@@ -60,8 +63,8 @@ class TagKeeper {
         return this.tk.next([offset])
     }
 
-    endToken(offset: number, key: string, valuesRaw: string | null) {
-        return this.tk.next([-offset, key, valuesRaw])
+    endToken(offset: number, key: string, valuesRaw: string | null, naked = false) {
+        return this.tk.next([-offset, key, valuesRaw, naked])
     }
 
     restart() {

@@ -20,7 +20,7 @@ const btnExecute = document.getElementById('btn-execute')
 const templateRendered = document.querySelector('#template-applied > .output')
 
 const processTemplateText = () => {
-    const filterManager = mkFilterManager()
+    const filterManager = new FilterManager()
     filterManager.addRecipe(filterRecipes.mix('mix', ', '))
     filterManager.addRecipe(filterRecipes.debug)
 

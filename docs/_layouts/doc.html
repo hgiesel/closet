@@ -11,7 +11,7 @@ layout: default
     const btnRerender = document.querySelector(buttonQuery)
 
     btnRerender.addEventListener('click', () => {
-      const filterManager = mkFilterManager()
+      const filterManager = new FilterManager()
       filterManager.addRecipe(filterRecipes.mix('mix', ', '))
 
       theDisplay.innerHTML = renderTemplate(code, filterManager)

@@ -79,6 +79,69 @@
         return ar;
     }
 
+    var TemplateApi = /** @class */ (function () {
+        function TemplateApi(rootTag) {
+            this.rootTag = rootTag;
+            this.zoom = [];
+        }
+        TemplateApi.prototype.traverse = function (path) {
+            var e_1, _a;
+            if (path === void 0) { path = this.zoom; }
+            var currentPos = this.rootTag;
+            try {
+                for (var path_1 = __values(path), path_1_1 = path_1.next(); !path_1_1.done; path_1_1 = path_1.next()) {
+                    var p = path_1_1.value;
+                    if (currentPos.innerTags[p]) {
+                        currentPos = currentPos.innerTags[p];
+                    }
+                    else {
+                        return null;
+                    }
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (path_1_1 && !path_1_1.done && (_a = path_1.return)) _a.call(path_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return currentPos;
+        };
+        TemplateApi.prototype.exists = function (path) {
+            if (path === void 0) { path = this.zoom; }
+            var resultTag = this.traverse(path);
+            return resultTag
+                ? true
+                : false;
+        };
+        TemplateApi.prototype.getTagInfo = function (path) {
+            if (path === void 0) { path = this.zoom; }
+            return this.traverse(path);
+        };
+        TemplateApi.prototype.getTag = function (path) {
+            if (path === void 0) { path = this.zoom; }
+            var maybeTagInfo = this.traverse(path);
+            if (maybeTagInfo) {
+                return maybeTagInfo.data;
+            }
+            return null;
+        };
+        TemplateApi.prototype.getOffsets = function (path) {
+            if (path === void 0) { path = this.zoom; }
+            var maybeTagInfo = this.traverse(path);
+            if (maybeTagInfo) {
+                return [0, maybeTagInfo.start];
+            }
+            return null;
+        };
+        TemplateApi.prototype.setZoom = function (path) {
+            this.zoom = path;
+        };
+        return TemplateApi;
+    }());
+    //# sourceMappingURL=template.js.map
+
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
     function createCommonjsModule(fn, module) {
@@ -1178,15 +1241,10 @@
     var TAG_START = '[[';
     var TAG_END = ']]';
     var ARG_SEP = '::';
-    var splitValues = function (valuesRaw) {
-        return valuesRaw === null
-            ? []
-            : valuesRaw.split(ARG_SEP).map(function (arg) { return arg.split('||'); });
-    };
     //# sourceMappingURL=utils.js.map
 
     // img tags are parsed via HTML (!)
-    var lexer = moo.states({
+    var tokenizer = moo.states({
         main: {
             tagstart: {
                 match: TAG_START,
@@ -1230,61 +1288,120 @@
     });
     //# sourceMappingURL=tokenizer.js.map
 
+    var splitValues = function (valuesRaw) {
+        return valuesRaw === null
+            ? []
+            : valuesRaw.split(ARG_SEP).map(function (arg) { return arg.split('||'); });
+    };
+    var Tag = /** @class */ (function () {
+        function Tag(fullKey, key, idx, valuesRaw, fullOccur, occur, path) {
+            this.fullKey = fullKey;
+            this.key = key;
+            this.idx = idx;
+            this.valuesRaw = valuesRaw;
+            this.values = splitValues(valuesRaw);
+            this.fullOccur = fullOccur;
+            this.occur = occur;
+            this.path = path;
+        }
+        Tag.prototype.shadowValuesRaw = function (newValuesRaw) {
+            return new Tag(this.fullKey, this.key, this.idx, newValuesRaw, this.fullOccur, this.occur, this.path);
+        };
+        Tag.prototype.makeMemoizerKey = function () {
+            return this.key + ":" + this.idx + ":" + this.valuesRaw;
+        };
+        Tag.prototype.getDefaultRepresentation = function () {
+            return this.valuesRaw === null
+                ? "" + TAG_START + this.fullKey + TAG_END
+                : "" + TAG_START + this.fullKey + ARG_SEP + this.valuesRaw + TAG_END;
+        };
+        Tag.prototype.getRawRepresentation = function () {
+            var _a;
+            return (_a = this.valuesRaw) !== null && _a !== void 0 ? _a : '';
+        };
+        Tag.prototype.getFilterKey = function () {
+            return this.key;
+        };
+        return Tag;
+    }());
+    //# sourceMappingURL=tagPure.js.map
+
+    var TagInfo = /** @class */ (function () {
+        function TagInfo(start) {
+            this.start = start;
+            this._ready = false;
+            this.innerTags = [];
+        }
+        TagInfo.prototype.close = function (end, data) {
+            this._end = end;
+            this._data = data;
+        };
+        Object.defineProperty(TagInfo.prototype, "end", {
+            get: function () {
+                return this._end;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TagInfo.prototype, "data", {
+            get: function () {
+                return this._data;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        TagInfo.prototype.isReady = function () {
+            return this._ready;
+        };
+        TagInfo.prototype.isReadyRecursive = function () {
+            return this._ready && this.innerTags.map(function (t) { return t.isReadyRecursive(); });
+        };
+        TagInfo.prototype.setReady = function (b) {
+            this._ready = b;
+        };
+        TagInfo.prototype.addInnerTag = function (tag) {
+            this.innerTags.push(tag);
+        };
+        return TagInfo;
+    }());
+
     var keyPattern = /^([^0-9]+)([0-9]*)$/u;
-    var tagMaker = function () {
-        var tagCounter = new Map();
-        var getAndInc = function (key) {
-            var result = tagCounter.has(key)
-                ? tagCounter.get(key) + 1
+    var TagMaker = /** @class */ (function () {
+        function TagMaker() {
+            this.tagCounter = new Map();
+        }
+        TagMaker.prototype.getAndInc = function (key) {
+            var result = this.tagCounter.has(key)
+                ? this.tagCounter.get(key) + 1
                 : 0;
-            tagCounter.set(key, result);
+            this.tagCounter.set(key, result);
             return result;
         };
-        var mkTag = function (fullKey, valuesRaw, path) {
+        TagMaker.prototype.makeTag = function (fullKey, valuesRaw, path) {
             var match = fullKey.match(keyPattern);
             var key = match[1];
             var idx = match[2].length === 0 ? null : Number(match[2]);
-            var fullOccur = getAndInc(fullKey);
+            var fullOccur = this.getAndInc(fullKey);
             var occur = fullKey === key
                 ? fullOccur
-                : getAndInc(key);
-            return {
-                fullKey: fullKey,
-                fullOccur: fullOccur,
-                key: key,
-                idx: idx,
-                occur: occur,
-                valuesRaw: valuesRaw,
-                path: path,
-            };
+                : this.getAndInc(key);
+            return new Tag(fullKey, key, idx, valuesRaw, fullOccur, occur, path);
         };
-        return {
-            mkTag: mkTag,
-        };
-    };
-    var mkTagInfo = function (start, end, innerTags) {
-        if (end === void 0) { end = 0; }
-        if (innerTags === void 0) { innerTags = []; }
-        return ({
-            start: start,
-            end: end,
-            data: null,
-            innerTags: innerTags,
-        });
-    };
-    //# sourceMappingURL=types.js.map
+        return TagMaker;
+    }());
+    //# sourceMappingURL=tagMaker.js.map
 
     var tagKeeper = function () {
-        var tm, tagInfos, getTagInfo, tagStack, nextLevel, value, startIndex, endIndex, foundTag;
+        var tm, rootTag, getTagInfo, tagStack, nextLevel, value, startIndex, endIndex, foundTag;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    tm = tagMaker();
-                    tagInfos = mkTagInfo(0);
+                    tm = new TagMaker();
+                    rootTag = new TagInfo(0);
                     getTagInfo = function (path) {
                         var e_1, _a;
-                        var reference = tagInfos;
+                        var reference = rootTag;
                         try {
                             for (var path_1 = __values(path), path_1_1 = path_1.next(); !path_1_1.done; path_1_1 = path_1.next()) {
                                 var id = path_1_1.value;
@@ -1309,17 +1426,16 @@
                     value = _b.sent();
                     if (value[0] >= 0) /* start */ {
                         startIndex = value[0];
-                        getTagInfo(tagStack).innerTags.push(mkTagInfo(startIndex));
+                        getTagInfo(tagStack).addInnerTag(new TagInfo(startIndex));
                         tagStack.push(nextLevel);
                         nextLevel = 0;
                     }
                     else /* end */ {
                         endIndex = Math.abs(value[0]);
                         foundTag = getTagInfo(tagStack);
-                        foundTag.end = endIndex;
-                        foundTag.data = tm.mkTag(value[1], (_a = value[2]) !== null && _a !== void 0 ? _a : null, __spread(tagStack));
+                        foundTag.close(endIndex, tm.makeTag(value[1], (_a = value[2]) !== null && _a !== void 0 ? _a : null, __spread(tagStack)));
                         if (tagStack.length === 0) {
-                            return [2 /*return*/, tagInfos];
+                            return [2 /*return*/, rootTag];
                         }
                         else {
                             nextLevel = tagStack.pop() + 1;
@@ -1330,41 +1446,40 @@
             }
         });
     };
-    var initTagKeeper = function () {
-        var tk = tagKeeper();
-        tk.next();
-        var startToken = function (offset) {
-            return tk.next([offset]);
+    var TagKeeper = /** @class */ (function () {
+        function TagKeeper() {
+            this.tk = tagKeeper();
+            this.tk.next();
+        }
+        TagKeeper.prototype.startToken = function (offset) {
+            return this.tk.next([offset]);
         };
-        var endToken = function (offset, key, valuesRaw) {
-            return tk.next([-offset, key, valuesRaw]);
+        TagKeeper.prototype.endToken = function (offset, key, valuesRaw) {
+            return this.tk.next([-offset, key, valuesRaw]);
         };
-        var restart = function () {
-            tk = tagKeeper();
-            tk.next();
+        TagKeeper.prototype.restart = function () {
+            this.tk = tagKeeper();
+            this.tk.next();
         };
-        return {
-            startToken: startToken,
-            endToken: endToken,
-            restart: restart,
-        };
-    };
+        return TagKeeper;
+    }());
+    //# sourceMappingURL=tagKeeper.js.map
 
     // Generated automatically by nearley, version 2.19.2
     // http://github.com/Hardmath123/nearley
     // Bypasses TS6133. Allow declared but unused functions.
     // @ts-ignore
     function id(d) { return d[0]; }
-    var tagKeeper$1 = initTagKeeper();
+    var tagKeeper$1 = new TagKeeper();
     var grammar = {
-        Lexer: lexer,
+        Lexer: tokenizer,
         ParserRules: [
-            { "name": "start", "symbols": ["content", (lexer.has("EOF") ? { type: "EOF" } : EOF)], "postprocess": function () { return tagKeeper$1; } },
+            { "name": "start", "symbols": ["content", (tokenizer.has("EOF") ? { type: "EOF" } : EOF)], "postprocess": function () { return tagKeeper$1; } },
             { "name": "content$ebnf$1", "symbols": [] },
             { "name": "content$ebnf$1$subexpression$1", "symbols": ["tag", "_"] },
             { "name": "content$ebnf$1", "symbols": ["content$ebnf$1", "content$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
             { "name": "content", "symbols": ["_", "content$ebnf$1"] },
-            { "name": "tag", "symbols": ["tagstart", "inner", (lexer.has("tagend") ? { type: "tagend" } : tagend)], "postprocess": function (_a) {
+            { "name": "tag", "symbols": ["tagstart", "inner", (tokenizer.has("tagend") ? { type: "tagend" } : tagend)], "postprocess": function (_a) {
                     var _b = __read(_a, 3), _c = __read(_b[1], 2), keyname = _c[0], valuesRaw = _c[1], tagend = _b[2];
                     return [[
                             TAG_START,
@@ -1372,17 +1487,17 @@
                             TAG_END,
                         ], tagKeeper$1.endToken(tagend.offset + TAG_END.length, keyname, valuesRaw)];
                 } },
-            { "name": "tagstart", "symbols": [(lexer.has("tagstart") ? { type: "tagstart" } : tagstart)], "postprocess": function (_a) {
+            { "name": "tagstart", "symbols": [(tokenizer.has("tagstart") ? { type: "tagstart" } : tagstart)], "postprocess": function (_a) {
                     var _b = __read(_a, 1), startToken = _b[0];
                     return [startToken.value, tagKeeper$1.startToken(startToken.offset + startToken.value.length - TAG_START.length)];
                 } },
             { "name": "inner$ebnf$1$subexpression$1$ebnf$1", "symbols": [] },
             { "name": "inner$ebnf$1$subexpression$1$ebnf$1$subexpression$1", "symbols": ["tag", "_values"] },
             { "name": "inner$ebnf$1$subexpression$1$ebnf$1", "symbols": ["inner$ebnf$1$subexpression$1$ebnf$1", "inner$ebnf$1$subexpression$1$ebnf$1$subexpression$1"], "postprocess": function (d) { return d[0].concat([d[1]]); } },
-            { "name": "inner$ebnf$1$subexpression$1", "symbols": [(lexer.has("sep") ? { type: "sep" } : sep), "_values", "inner$ebnf$1$subexpression$1$ebnf$1"] },
+            { "name": "inner$ebnf$1$subexpression$1", "symbols": [(tokenizer.has("sep") ? { type: "sep" } : sep), "_values", "inner$ebnf$1$subexpression$1$ebnf$1"] },
             { "name": "inner$ebnf$1", "symbols": ["inner$ebnf$1$subexpression$1"], "postprocess": id },
             { "name": "inner$ebnf$1", "symbols": [], "postprocess": function () { return null; } },
-            { "name": "inner", "symbols": [(lexer.has("keyname") ? { type: "keyname" } : keyname), "inner$ebnf$1"], "postprocess": function (_a) {
+            { "name": "inner", "symbols": [(tokenizer.has("keyname") ? { type: "keyname" } : keyname), "inner$ebnf$1"], "postprocess": function (_a) {
                     var _b = __read(_a, 2), key = _b[0], rest = _b[1];
                     return rest
                         ? [key.value, rest[1] + rest[2].map(function (_a) {
@@ -1393,13 +1508,13 @@
                 },
             },
             { "name": "_values$ebnf$1", "symbols": [] },
-            { "name": "_values$ebnf$1", "symbols": ["_values$ebnf$1", (lexer.has("valuestext") ? { type: "valuestext" } : valuestext)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+            { "name": "_values$ebnf$1", "symbols": ["_values$ebnf$1", (tokenizer.has("valuestext") ? { type: "valuestext" } : valuestext)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
             { "name": "_values", "symbols": ["_values$ebnf$1"], "postprocess": function (_a) {
                     var _b = __read(_a, 1), vs = _b[0];
                     return vs.map(function (v) { return v.value; }).join('');
                 } },
             { "name": "_$ebnf$1", "symbols": [] },
-            { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", (lexer.has("text") ? { type: "text" } : text)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
+            { "name": "_$ebnf$1", "symbols": ["_$ebnf$1", (tokenizer.has("text") ? { type: "text" } : text)], "postprocess": function (d) { return d[0].concat([d[1]]); } },
             { "name": "_", "symbols": ["_$ebnf$1"], "postprocess": function () { return null; } }
         ],
         ParserStart: "start",
@@ -1419,321 +1534,262 @@
         parsed[0].restart();
         return result;
     };
+    //# sourceMappingURL=index.js.map
 
     var renderTemplate = function (text, filterManager) {
-        var e_1, _a;
         var result = text;
-        try {
-            for (var _b = __values(filterManager.iterations()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var iteration = _c.value;
-                var rootTag = parseTemplate(text);
-                result = postfixOuter(text, rootTag, iteration);
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
+        var ready = true;
+        do {
+            var rootTag = parseTemplate(result);
+            var templateApi = new TemplateApi(rootTag);
+            var _a = __read(postfixTraverse(text, rootTag, filterManager.filterProcessor({ template: templateApi })), 3), newText = _a[0], finalOffset = _a[1], innerReady = _a[2];
+            ready = innerReady;
+            result = newText;
+            filterManager.executeAndClearDeferred();
+        } while (!ready);
         return result;
     };
     var spliceSlice = function (str, lend, rend, add) {
+        if (add === void 0) { add = ''; }
         // We cannot pass negative lend directly to the 2nd slicing operation.
         var leftend = lend < 0
             ? Math.min(0, str.length + lend)
             : lend;
-        return str.slice(0, leftend) + (add || "") + str.slice(rend);
+        return str.slice(0, leftend) + add + str.slice(rend);
     };
-    var mkTagApi = function (text, tags) {
-        var getText = function () { return text; };
-        var updateText = function (newText) {
-            text = newText;
-        };
-        var exists = function (path) {
-            var e_2, _a;
-            var currentPos = tags;
-            try {
-                for (var path_1 = __values(path), path_1_1 = path_1.next(); !path_1_1.done; path_1_1 = path_1.next()) {
-                    var p = path_1_1.value;
-                    if (currentPos.innerTags[p]) {
-                        currentPos = currentPos.innerTags[p];
-                    }
-                    else {
-                        return false;
-                    }
-                }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (path_1_1 && !path_1_1.done && (_a = path_1.return)) _a.call(path_1);
-                }
-                finally { if (e_2) throw e_2.error; }
-            }
-            return true;
-        };
-        var getPath = function (path) {
-            var e_3, _a;
-            var currentPos = tags;
-            try {
-                for (var path_2 = __values(path), path_2_1 = path_2.next(); !path_2_1.done; path_2_1 = path_2.next()) {
-                    var p = path_2_1.value;
-                    if (currentPos.innerTags[p]) {
-                        currentPos = currentPos.innerTags[p];
-                    }
-                    else {
-                        return null;
-                    }
-                }
-            }
-            catch (e_3_1) { e_3 = { error: e_3_1 }; }
-            finally {
-                try {
-                    if (path_2_1 && !path_2_1.done && (_a = path_2.return)) _a.call(path_2);
-                }
-                finally { if (e_3) throw e_3.error; }
-            }
-            return currentPos;
-        };
-        return {
-            getText: getText,
-            updateText: updateText,
-            get: getPath,
-            exists: exists,
-        };
+    var getNewValuesRaw = function (fromText, tagStartIndex, tagEndIndex, leftOffset, innerOffset, customLend, customRend) {
+        var lend = tagStartIndex + leftOffset + customLend;
+        var rend = tagEndIndex + leftOffset + innerOffset - customRend;
+        return fromText.slice(lend, rend);
     };
-    var postfixOuter = function (text, rootTag, filterManager) {
-        var stack = [0];
-        var sum = 0;
-        var processedText = text;
-        var tagApi = mkTagApi(text, rootTag);
-        var postfixInner = function (tag, i) {
-            stack.push(sum);
-            var innerResults = tag.innerTags.map(postfixInner);
-            stack.push(tag.innerTags.length > 0
-                ? sum - stack[stack.length - 1] /* stack.peek() */
-                : 0);
-            var innerOffset = stack.pop();
-            var leftOffset = stack.pop();
-            // values is still null at this point
-            tag.data.values = splitValues(processedText.slice(tag.start + leftOffset + TAG_START.length + tag.data.fullKey.length + ARG_SEP.length, tag.end + leftOffset + innerOffset - TAG_END.length));
-            var filterOutput = filterManager.processFilter(tag.data.key, tag.data, tagApi);
+    // try to make it more PDA
+    var postfixTraverse = function (baseText, rootTag, filterProcessor) {
+        var tagReduce = function (_a, tag) {
+            var _b = __read(_a, 3), text = _b[0], stack = _b[1], ready = _b[2];
+            // going DOWN
+            stack.push(stack[stack.length - 1]);
+            console.info('going down');
+            var _c = __read(tag.innerTags.reduce(tagReduce, [text, stack, true]), 3), modText = _c[0], modStack = _c[1], modReady = _c[2];
+            // get offsets
+            modStack.push(modStack.pop() - modStack[modStack.length - 1]);
+            var innerOffset = modStack.pop();
+            var leftOffset = modStack.pop();
+            console.log('oooo', innerOffset, leftOffset, ':::', modStack, tag.data.path);
+            ///////////////////// Updating valuesRaw and values with innerTags
+            var newValuesRaw = getNewValuesRaw(modText, tag.start, tag.end, leftOffset, innerOffset, tag.data.path.length === 0
+                ? 0
+                : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length, tag.data.path.length === 0
+                ? 0
+                : TAG_END.length);
+            var tagData = tag.data.shadowValuesRaw(newValuesRaw);
+            ///////////////////// Evaluate current tag
+            var filterOutput = filterProcessor(tagData, { ready: modReady });
             var newOffset = filterOutput.result.length - (tag.end - tag.start);
-            sum = innerOffset + leftOffset + newOffset;
-            processedText = spliceSlice(processedText, tag.start + leftOffset, tag.end + leftOffset + innerOffset, filterOutput.result);
-            return filterOutput;
+            var sliceFrom = tag.start + leftOffset;
+            var sliceTill = tag.end + leftOffset + innerOffset;
+            var newText = spliceSlice(modText, sliceFrom, sliceTill, filterOutput.result);
+            // going UP
+            var sum = innerOffset + leftOffset + newOffset;
+            modStack.push(sum);
+            console.info('going up');
+            return [newText, modStack, modReady];
         };
-        rootTag.innerTags.forEach(postfixInner);
-        return processedText;
+        return tagReduce([baseText, [0, 0], true], rootTag);
     };
+    //# sourceMappingURL=main.js.map
 
     var map = new Map();
     var defaultMemoizer = {
-        hasItem: function (k) { return map.has(k); },
-        getItem: function (k) { return map.get(k); },
-        setItem: function (k, v) { return map.set(k, v); },
-        removeItem: function (k) { return map.delete(k); },
+        hasItem: function (k) { return map.has(k.makeMemoizerKey()); },
+        getItem: function (k) { return map.get(k.makeMemoizerKey()); },
+        setItem: function (k, v) { return map.set(k.makeMemoizerKey(), v); },
+        removeItem: function (k) { return map.delete(k.makeMemoizerKey()); },
         clear: function () { return map.clear(); },
-    };
-    var generateMemoizerKey = function (_a) {
-        var key = _a.key, idx = _a.idx, valuesRaw = _a.valuesRaw;
-        return (key + ":" + idx + ":" + valuesRaw);
     };
     //# sourceMappingURL=memoizer.js.map
 
-    var mkStoreApi = function (store) {
-        var set = function (name, value) {
-            store.set(name, value);
+    var Store = /** @class */ (function () {
+        function Store() {
+            this.store = new Map();
+        }
+        Store.prototype.set = function (name, value) {
+            this.store.set(name, value);
         };
-        var has = function (name) { return store.has(name); };
-        var get = function (name) { return store.get(name); };
-        var over = function (name, f) {
-            store.set(name, f(store.get(name)));
+        Store.prototype.has = function (name) {
+            return this.store.has(name);
         };
-        var deleteStore = function (name) {
-            store.delete(name);
+        Store.prototype.get = function (name, defaultValue) {
+            var _a;
+            return (_a = this.store.get(name)) !== null && _a !== void 0 ? _a : defaultValue;
         };
-        var clear = function () {
-            store.clear();
+        Store.prototype.over = function (name, f) {
+            this.store.set(name, f(this.store.get(name)));
         };
-        return {
-            set: set,
-            get: get,
-            has: has,
-            over: over,
-            delete: deleteStore,
-            clear: clear,
+        Store.prototype.delete = function (name) {
+            this.store.delete(name);
         };
-    };
+        Store.prototype.clear = function () {
+            this.store.clear();
+        };
+        return Store;
+    }());
     //# sourceMappingURL=store.js.map
 
-    var defaultFilter = function (_a) {
-        var fullKey = _a.fullKey, valuesRaw = _a.valuesRaw;
-        return ({
-            result: valuesRaw === null
-                ? "" + TAG_START + fullKey + TAG_END
-                : "" + TAG_START + fullKey + ARG_SEP + valuesRaw + TAG_END,
-            memoize: false,
-        });
-    };
-    var rawFilter = function (_a) {
-        var valuesRaw = _a.valuesRaw;
-        return ({
-            result: valuesRaw,
-            memoize: false,
-        });
-    };
-    var standardizeFilterResult = function (input) {
+    var wrapWithNonMemoize = function (result) { return ({
+        result: result,
+        memoize: false,
+    }); };
+    var standardizeFilterResult = function (wf) { return function (t, i) {
         var _a, _b;
+        var input = wf(t, i);
         switch (typeof input) {
-            case 'string': return {
-                result: input,
-                memoize: false,
-            };
-            // also includes null
-            case 'object': return {
-                result: (_a = input.result) !== null && _a !== void 0 ? _a : '',
-                memoize: (_b = input.memoize) !== null && _b !== void 0 ? _b : false,
-            };
+            case 'string':
+                return wrapWithNonMemoize(input);
+            // includes null
+            case 'object':
+                return {
+                    result: (_a = input.result) !== null && _a !== void 0 ? _a : '',
+                    memoize: (_b = input.memoize) !== null && _b !== void 0 ? _b : false,
+                };
+            // undefined
+            default:
+                return {
+                    // this will mark as "not ready"
+                    result: null,
+                    memoize: false,
+                };
         }
-        // return undefined otherwise
-    };
-    var executeFilter = function (filter, data, internals) {
-        return standardizeFilterResult(filter(data, internals));
-    };
-    var mkFilterApi = function (filters) {
-        var registerFilter = function (name, filter) {
-            filters.set(name, filter);
+    }; };
+    var FilterApi = /** @class */ (function () {
+        function FilterApi() {
+            this.filters = new Map();
+        }
+        FilterApi.prototype.register = function (name, filter) {
+            this.filters.set(name, filter);
         };
-        var hasFilter = function (name) { return name === 'raw'
-            ? true
-            : filters.has(name); };
-        var getFilter = function (name) { return name === 'raw'
-            ? rawFilter
-            : filters.has(name)
-                ? filters.get(name)
-                : null; };
-        var getOrDefaultFilter = function (name) { var _a; return (_a = getFilter(name)) !== null && _a !== void 0 ? _a : defaultFilter; };
-        var unregisterFilter = function (name) {
-            filters.delete(name);
+        FilterApi.prototype.has = function (name) {
+            return name === 'raw'
+                ? true
+                : this.filters.has(name);
         };
-        var clearFilters = function () {
-            filters.clear();
+        FilterApi.prototype.get = function (name) {
+            return name === 'raw'
+                ? function (t) { return wrapWithNonMemoize(t.getRawRepresentation()); }
+                : this.filters.has(name)
+                    ? standardizeFilterResult(this.filters.get(name))
+                    : null;
         };
-        return {
-            get: getFilter,
-            getOrDefault: getOrDefaultFilter,
-            register: registerFilter,
-            has: hasFilter,
-            unregister: unregisterFilter,
-            clear: clearFilters,
+        FilterApi.prototype.getOrDefault = function (name) {
+            var maybeResult = this.get(name);
+            if (maybeResult) {
+                return standardizeFilterResult(maybeResult);
+            }
+            var defaultFilter = function (t) { return wrapWithNonMemoize(t.getDefaultRepresentation()); };
+            return defaultFilter;
         };
-    };
+        FilterApi.prototype.unregisterFilter = function (name) {
+            this.filters.delete(name);
+        };
+        FilterApi.prototype.clearFilters = function () {
+            this.filters.clear();
+        };
+        FilterApi.prototype.execute = function (data, internals) {
+            return standardizeFilterResult(this.getOrDefault(data.getFilterKey()))(data, internals);
+        };
+        return FilterApi;
+    }());
     //# sourceMappingURL=filters.js.map
 
-    var mkDeferredApi = function (deferred) {
-        var registerDeferred = function (name, proc) {
-            deferred.set(name, proc);
+    var DeferredApi = /** @class */ (function () {
+        function DeferredApi() {
+            this.deferred = new Map();
+        }
+        DeferredApi.prototype.register = function (name, proc) {
+            this.deferred.set(name, proc);
         };
-        var hasDeferred = function (name) { return deferred.has(name); };
-        var unregisterDeferred = function (name) {
-            deferred.delete(name);
+        DeferredApi.prototype.has = function (name) {
+            return this.deferred.has(name);
         };
-        var clearDeferred = function () {
-            deferred.clear();
+        DeferredApi.prototype.unregister = function (name) {
+            this.deferred.delete(name);
         };
-        var forEachDeferred = function () {
+        DeferredApi.prototype.clear = function () {
+            this.deferred.clear();
+        };
+        DeferredApi.prototype.executeEach = function () {
             var e_1, _a;
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
             try {
-                for (var deferred_1 = __values(deferred), deferred_1_1 = deferred_1.next(); !deferred_1_1.done; deferred_1_1 = deferred_1.next()) {
-                    var _b = __read(deferred_1_1.value, 2), name_1 = _b[0], func = _b[1];
+                for (var _b = __values(this.deferred), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var _d = __read(_c.value, 2), name_1 = _d[0], func = _d[1];
                     func.apply(void 0, __spread([name_1], args));
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (deferred_1_1 && !deferred_1_1.done && (_a = deferred_1.return)) _a.call(deferred_1);
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
         };
-        return {
-            register: registerDeferred,
-            has: hasDeferred,
-            unregister: unregisterDeferred,
-            clear: clearDeferred,
-            forEach: forEachDeferred,
-        };
-    };
+        return DeferredApi;
+    }());
     //# sourceMappingURL=deferred.js.map
 
-    var mkFilterManager = function (custom, memoizer) {
-        if (custom === void 0) { custom = {}; }
-        if (memoizer === void 0) { memoizer = defaultMemoizer; }
-        var store = mkStoreApi(new Map());
-        var filters = mkFilterApi(new Map());
-        var deferred = mkDeferredApi(new Map());
-        var nextIteration = true;
-        var nextIterationApi = {
-            activate: function (value) {
-                if (value === void 0) { value = true; }
-                nextIteration = value;
-            },
-            isActivated: function () { return nextIteration; },
-        };
-        var processFilter = function (key, data, tagApi) {
-            var memoizerKey = generateMemoizerKey(data);
-            if (memoizer.hasItem(memoizerKey)) {
-                return memoizer.getItem(memoizerKey);
-            }
-            var internals = {
-                custom: custom,
-                nextIteration: nextIterationApi,
-                store: store,
-                filters: filters,
-                deferred: deferred,
-                tag: tagApi,
-            };
-            var result = executeFilter(filters.getOrDefault(key), data, internals);
-            if (result.memoize) {
-                memoizer.setItem(memoizerKey, result);
-            }
-            return result;
-        };
-        var addRecipe = function (recipe) {
-            recipe(filters);
-        };
-        var iterations = function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!nextIteration) return [3 /*break*/, 2];
-                        nextIteration = false;
-                        return [4 /*yield*/, {
-                                processFilter: processFilter,
-                            }];
-                    case 1:
-                        _a.sent();
-                        deferred.forEach();
-                        deferred.clear();
-                        return [3 /*break*/, 0];
-                    case 2: return [2 /*return*/];
+    var FilterManager = /** @class */ (function () {
+        function FilterManager(preset, memoizer) {
+            if (preset === void 0) { preset = {}; }
+            if (memoizer === void 0) { memoizer = defaultMemoizer; }
+            this.filters = new FilterApi();
+            this.deferred = new DeferredApi();
+            this.preset = preset;
+            this.store = new Store();
+            this.memoizer = memoizer;
+        }
+        FilterManager.prototype.filterProcessor = function (stock) {
+            var _this = this;
+            return function (data, custom) {
+                if (custom === void 0) { custom = {}; }
+                if (_this.memoizer.hasItem(data)) {
+                    return {
+                        result: _this.memoizer.getItem(data).result,
+                        ready: true,
+                    };
                 }
-            });
+                var internals = Object.assign(_this.preset, stock, custom, {
+                    store: _this.store,
+                    filters: _this.filters,
+                    deferred: _this.deferred,
+                });
+                var result = _this.filters.execute(data, internals);
+                if (!result) {
+                    return {
+                        result: null,
+                        ready: false,
+                    };
+                }
+                if (result.memoize) {
+                    _this.memoizer.setItem(data, result);
+                }
+                return {
+                    result: result.result,
+                    ready: true,
+                };
+            };
         };
-        return {
-            filters: filters,
-            addRecipe: addRecipe,
-            iterations: iterations,
+        FilterManager.prototype.executeAndClearDeferred = function () {
+            this.deferred.executeEach();
+            this.deferred.clear();
         };
-    };
+        FilterManager.prototype.addRecipe = function (recipe) {
+            recipe(this.filters);
+        };
+        return FilterManager;
+    }());
     //# sourceMappingURL=index.js.map
 
     var mixRecipe = function (keyword, separator) { return function (filterApi) {
@@ -1754,7 +1810,7 @@
         };
         var mixPrepareFilter = function (_a, _b) {
             var fullKey = _a.fullKey, key = _a.key, idx = _a.idx, values = _a.values;
-            var store = _b.store, filters = _b.filters, deferred = _b.deferred, nextIteration = _b.nextIteration;
+            var store = _b.store, filters = _b.filters, deferred = _b.deferred;
             if (idx === null) {
                 return shuffle(values[0]).join(separator);
             }
@@ -1772,14 +1828,15 @@
             if (!deferred.has(mixKey)) {
                 deferred.register("mix:" + fullKey, function () { return store.over(fullKey, shuffle); });
             }
-            nextIteration.activate();
+            // TODO
+            // nextIteration.activate()
         };
         var mixApplyFilter = function (_a, _b) {
-            var fullKey = _a.fullKey, key = _a.key, idx = _a.idx, values = _a.values;
+            var fullKey = _a.fullKey, values = _a.values;
             var store = _b.store;
             var popped = [];
             for (var x = 0; x < values[0].length; x++) {
-                popped.push(store.get(fullKey).shift());
+                popped.push(store.get(fullKey, []).shift());
             }
             return popped.join(separator);
         };
@@ -1795,7 +1852,7 @@
         filterApi.register('tagpath', pathFilter);
         var testFilter = function (_a, _b) {
             var tag = _b.tag;
-            console.log(tag.get([0]));
+            console.log(tag.getPath([0]));
             return '';
         };
         filterApi.register('test', testFilter);
@@ -1809,7 +1866,7 @@
     //# sourceMappingURL=index.js.map
 
     globalThis.renderTemplate = renderTemplate;
-    globalThis.mkFilterManager = mkFilterManager;
+    globalThis.FilterManager = FilterManager;
     globalThis.filterRecipes = recipes;
     //# sourceMappingURL=index.js.map
 

@@ -8,7 +8,7 @@ const tagKeeper = function*(): Generator<number[], TagInfo, [number, string?, st
     const tm = new TagMaker()
     const rootTag = new TagInfo(0)
 
-    const getTagInfo = (path: number[]) => {
+    const getTagInfo = (path: number[]): TagInfo => {
         let reference = rootTag
 
         for (const id of path) {

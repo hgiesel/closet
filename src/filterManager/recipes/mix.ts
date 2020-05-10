@@ -28,52 +28,54 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
         return result
     }
 
-    const mixPrepareFilter = (
-        {fullKey, key, idx, values}: Tag,
-        {store, filters, deferred, ready}: any,
+    const mixFilter = (
+        {fullKey, idx, fullOccur, values}: Tag,
+        {store, deferred, ready}: any,
     ) => {
+        const readyKey = `${fullKey}:ready`
+        const applyKey = `${fullKey}:${fullOccur}:apply`
+
+        if (store.get(applyKey, false)) {
+            if (!store.get(readyKey, true)) {
+                return
+            }
+
+            const popped = []
+            for (let x = 0; x < values[0].length; x++) {
+                popped.push((store.get(fullKey, []) as unknown[]).shift())
+            }
+
+            const result = popped.join(separator)
+            return result
+        }
+
         if (!ready) {
+            store.set(readyKey, false)
+
+            deferred.registerIfNotExists(readyKey, () => {
+                store.set(readyKey, true)
+            })
+
             return
         }
 
-        if (idx === null) {
+        if (!idx) {
             return shuffle(values[0]).join(separator)
         }
 
-        if (store.has(fullKey)) {
-            store.over(fullKey, (v: unknown[]) => v.concat(values[0]))
-        }
-        else {
-            store.set(fullKey, values[0])
-        }
+        store.fold(fullKey, (v: unknown[]) => v.concat(values[0]), [])
 
-        const replaceKey = `replaceFilter:${key}`
-        if (!deferred.has(replaceKey)) {
-            deferred.register(replaceKey, () => filters.register(key, mixApplyFilter as any))
-        }
+        deferred.registerIfNotExists(applyKey, () => {
+            store.set(applyKey, true)
+        })
 
-        const mixKey = `mix:${fullKey}`
-        if (!deferred.has(mixKey)) {
-            deferred.register(`mix:${fullKey}`, () => store.over(fullKey, shuffle))
-        }
-
-        // TODO
-        // nextIteration.activate()
+        const mixKey = `${fullKey}:mix`
+        deferred.registerIfNotExists(mixKey, () => {
+            store.fold(fullKey, shuffle, [])
+        })
     }
 
-    const mixApplyFilter = (
-        {fullKey, values}: Tag,
-        {store}: Internals,
-    ) => {
-        const popped = []
-        for (let x = 0; x < values[0].length; x++) {
-            popped.push((store.get(fullKey, []) as unknown[]).shift())
-        }
-
-        return popped.join(separator)
-    }
-
-    filterApi.register(keyword, mixPrepareFilter as any)
+    filterApi.register(keyword, mixFilter as any)
 }
 
 export default mixRecipe

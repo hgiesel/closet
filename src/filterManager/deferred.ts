@@ -11,6 +11,12 @@ export class DeferredApi {
         this.deferred.set(name, proc)
     }
 
+    registerIfNotExists(name: string, proc: Deferred): void {
+        if (!this.has(name)) {
+            this.register(name, proc)
+        }
+    }
+
     has(name: string): boolean {
         return this.deferred.has(name)
     }

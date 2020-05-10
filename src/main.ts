@@ -73,7 +73,7 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
 
         // going DOWN
         stack.push(stack[stack.length - 1])
-        console.info('going down')
+        // console.info('going down', tag.data.path)
 
         const [
             modText,
@@ -122,7 +122,7 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
         const sum = innerOffset + leftOffset + newOffset
         modStack.push(sum)
 
-        console.info('going up', filterOutput.ready)
+        // console.info('going up', tag.data.path, filterOutput.ready)
         return [
             newText,
             modStack,

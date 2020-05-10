@@ -12,12 +12,14 @@ export class Store {
     has(name: string): boolean {
         return this.store.has(name)
     }
-    get(name: string, defaultValue: unknown): unknown {
-        return this.store.get(name) ?? defaultValue
+    get(name: string, defaultValue: unknown = null): unknown {
+        return this.has(name)
+            ? this.store.get(name)
+            : defaultValue
     }
 
-    over(name: string, f: (v: unknown) => unknown): void {
-        this.store.set(name, f(this.store.get(name)))
+    fold(name: string, f: (v: unknown) => unknown, mempty: unknown): void {
+        this.set(name, f(this.get(name, mempty)))
     }
 
     delete(name: string): void {

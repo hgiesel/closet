@@ -67,6 +67,11 @@ const mixRecipe = (
 
         const mixKey = `${fullKey}:mix`
         deferred.registerIfNotExists(mixKey, () => {
+            const waitingSet = store.get(waitingSetKey, new Set()) as Set<string>
+            if (waitingSet.size > 0) {
+                return
+            }
+
             store.fold(fullKey, shuffle, [])
         })
     }

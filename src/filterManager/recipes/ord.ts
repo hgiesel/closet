@@ -12,8 +12,8 @@ import type {
 
 const ordRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi) => {
     const ordFilter = (
-        {values, valuesRaw}: Tag,
-        {}: Internals,
+        { key, fullOccur, values, valuesRaw }: Tag,
+        { deferred, store}: Internals,
     ) => {
         let toBeOrdered = null
 
@@ -24,6 +24,11 @@ const ordRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi
             toBeOrdered = values[0].map(v => Number(v))
         }
 
+        const mixKeys = toBeOrdered.map(v => `${mixKeyword}${v}:mix`)
+
+        const ordKey = `${key}:${fullOccur}:ord`
+        deferred.register(ordKey, () => {
+        }, 40)
 
     }
 

@@ -6,7 +6,13 @@ import {
     PriorityQueue,
 } from './priorityQueue'
 
-export type Deferred = (keyword: string, ...rest: any[]) => void
+export type Deferred = (keyword: string, ...rest: any[]) => WeakDeferredResult
+
+type WeakDeferredResult = DeferredResult | void
+
+interface DeferredResult {
+    persist: boolean
+}
 
 interface DeferredEntry {
     keyword: string,

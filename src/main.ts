@@ -3,6 +3,9 @@ import type {
     FilterProcessor,
 } from './filterManager'
 
+import {
+    calculateCoordinates,
+} from './utils'
 
 import type {
     TagInfo,
@@ -55,21 +58,6 @@ const spliceSlice = (str: string, lend: number, rend: number, add: string = ''):
     return str.slice(0, leftend) + add + str.slice(rend)
 }
 
-const getNewValuesRaw = (
-    fromText: string,
-    tagStartIndex: number,
-    tagEndIndex: number,
-    leftOffset: number,
-    innerOffset: number,
-    customLend: number,
-    customRend: number,
-): string => {
-    const lend = tagStartIndex + leftOffset + customLend
-    const rend = tagEndIndex + leftOffset + innerOffset - customRend
-
-    return fromText.slice(lend, rend)
-}
-
 // try to make it more PDA
 const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: FilterProcessor): [string, number[], boolean]=> {
     const tagReduce = ([text, stack, ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {
@@ -89,19 +77,21 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
 
         const innerOffset = modStack.pop()
         const leftOffset = modStack.pop()
+        console.info('pop time', tag.data.path, modStack, innerOffset, leftOffset)
 
         ///////////////////// Updating valuesRaw and values with innerTags
-        const newValuesRaw = getNewValuesRaw(
-            modText,
-            tag.start,
-            tag.end,
-            leftOffset,
-            innerOffset,
-            tag.naked ? 0 : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length,
-            tag.naked ? 0 : TAG_END.length,
+        const [
+            lend,
+            rend,
+        ] = calculateCoordinates(tag.start, tag.end, leftOffset, innerOffset)
+
+        const newValuesRaw = modText.slice(
+            lend + (tag.naked ? 0 : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length),
+            rend - (tag.naked ? 0 : TAG_END.length),
         )
 
         const tagData = tag.data.shadowValuesRaw(newValuesRaw)
+        console.log('data?', modText, tag.naked, tag.data.valuesRaw, newValuesRaw)
 
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tagData, { ready: modReady })
@@ -109,23 +99,15 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
             ? filterOutput.result.length - (tag.end - tag.start)
             : 0
 
-        const sliceFrom = tag.start + leftOffset
-        const sliceTill = tag.end + leftOffset + innerOffset
-
         const newText = filterOutput.ready
-            ? spliceSlice(
-                modText,
-                sliceFrom,
-                sliceTill,
-                filterOutput.result,
-            )
+            ? spliceSlice(modText, lend, rend, filterOutput.result)
             : modText
 
         // going UP
         const sum = innerOffset + leftOffset + newOffset
         modStack.push(sum)
+        console.info('going up', tag.data.path, modText, '+++', filterOutput.result, '===', newText, modStack)
 
-        // console.info('going up', tag.data.path, filterOutput.ready)
         return [
             newText,
             modStack,

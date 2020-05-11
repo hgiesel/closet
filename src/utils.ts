@@ -33,12 +33,10 @@ export const calculateCoordinates = (
     tagEnd: number,
     leftOffset: number,
     innerOffset: number,
-    customLend: number = 0,
-    customRend: number = 0,
 ): [number, number] => {
     return [
-        tagStart + leftOffset + customLend,
-        tagEnd + leftOffset + innerOffset - customRend,
+        tagStart + leftOffset,
+        tagEnd + leftOffset + innerOffset
     ]
 }
 

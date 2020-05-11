@@ -30,9 +30,9 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
 
     const mixFilter = (
         {fullKey, idx, fullOccur, values}: Tag,
-        {store, deferred, ready}: any,
+        {store, deferred, ready, iteration}: any,
     ) => {
-        console.log(fullKey, idx, values)
+        console.log(fullKey, idx, values, iteration.index)
         const readyKey = `${fullKey}:ready`
         const applyKey = `${fullKey}:${fullOccur}:apply`
 
@@ -61,7 +61,9 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
         }
 
         if (!idx) {
-            return shuffle(values[0]).join(separator)
+            const result = shuffle(values[0]).join(separator)
+            console.log('no idx result', result)
+            return result
         }
 
         store.fold(fullKey, (v: unknown[]) => v.concat(values[0]), [])

@@ -13,3 +13,5 @@ _site
 .jekyll-cache
 .jekyll-metadata
 vendor
+docs/assets/js/dev.js
+docs/assets/js/dev.js.map

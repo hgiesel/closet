@@ -20,10 +20,10 @@ const production = !process.env.ROLLUP_WATCH
 export default {
     input: 'src/index.ts',
     output: {
-        file: 'docs/assets/js/Main.js',
+        file: `docs/assets/js/${production ? 'main' : 'dev'}.js`,
         format: 'iife', // immediately-invoked function expression — suitable for <script> tags
         name: 'Closet',
-        sourcemap: true,
+        sourcemap: !production,
     },
     plugins: [
         typescript(typescriptOptions),

@@ -1,37 +1,58 @@
-export type Deferred = (name: string, ...rest: any[]) => void
+import type {
+    Comparator,
+} from './priorityQueue'
+
+import {
+    PriorityQueue,
+} from './priorityQueue'
+
+export type Deferred = (keyword: string, ...rest: any[]) => void
+
+interface DeferredEntry {
+    keyword: string,
+    procedure: Deferred
+    priority: number
+}
+
+const deferredComparator: Comparator = (x: DeferredEntry, y: DeferredEntry) => x.priority < y.priority
 
 export class DeferredApi {
-    private deferred: Map<string, Deferred>
+    private readonly _deferred: Map<string, DeferredEntry>
 
     constructor() {
-        this.deferred = new Map()
+        this._deferred = new Map()
     }
 
-    register(name: string, proc: Deferred): void {
-        this.deferred.set(name, proc)
+    register(keyword: string, procedure: Deferred, priority=50): void {
+        this._deferred.set(keyword, {
+            keyword: keyword,
+            procedure: procedure,
+            priority: priority,
+        })
     }
 
-    registerIfNotExists(name: string, proc: Deferred): void {
-        if (!this.has(name)) {
-            this.register(name, proc)
+    registerIfNotExists(keyword: string, proc: Deferred, prio=50): void {
+        if (!this.has(keyword)) {
+            this.register(keyword, proc, prio)
         }
     }
 
-    has(name: string): boolean {
-        return this.deferred.has(name)
+    has(keyword: string): boolean {
+        return this._deferred.has(keyword)
     }
 
-    unregister(name: string): void {
-        this.deferred.delete(name)
+    unregister(keyword: string): void {
+        this._deferred.delete(keyword)
     }
 
     clear(): void {
-        this.deferred.clear()
+        this._deferred.clear()
     }
 
     executeEach(...args: any[]): void {
-        for (const [name, func] of this.deferred) {
-            func(name, ...args)
-        }
+        const prioQueue = new PriorityQueue(deferredComparator)
+
+        prioQueue.push(...this._deferred.values())
+        prioQueue.forEach(({ procedure, keyword }) => procedure(keyword, ...args))
     }
 }

@@ -42,7 +42,7 @@ const standardizeFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: I
     }
 }
 
-export type WeakFilter = (t: Filterable, i: Internals) => FilterResult | string
+export type WeakFilter = (t: Filterable, i: Internals) => FilterResult | string | void
 export type Filter = (t: Filterable, i: Internals) => FilterResult
 
 const baseFilter = (t: Filterable, i: Internals) => i.ready ? wrapWithNonMemoize(t.getRawRepresentation()) : undefined
@@ -56,7 +56,7 @@ export class FilterApi {
         this.filters = new Map()
     }
 
-    register(name: string, filter: Filter): void {
+    register(name: string, filter: WeakFilter): void {
         this.filters.set(name, filter)
     }
 

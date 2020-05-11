@@ -32,8 +32,6 @@ const renderTemplate = (text: string, filterManager: FilterManager): string => {
         const rootTag = parseTemplate(result)
         const templateApi = new TemplateApi(rootTag)
 
-        console.error('ITERATION: ', i, result, ready)
-
         const [
             newText,
             finalOffset,
@@ -42,6 +40,8 @@ const renderTemplate = (text: string, filterManager: FilterManager): string => {
             iteration: { index: i },
             template: templateApi,
         }))
+
+        console.error(`ITERATION ${i}: `, `"${result}"`, `"${newText}"`)
 
         ready = innerReady
         result = newText

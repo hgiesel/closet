@@ -21,7 +21,7 @@ description: >-
     Closet is a technology to manipulate text and graphics for the use in flashcards.
 
 url: "https://hgiesel.github.io"
-baseurl: "/closet/"
+baseurl: "/closet"
 github_username: hgiesel
 
 # Docs: https://pmarsceill.github.io/just-the-docs/

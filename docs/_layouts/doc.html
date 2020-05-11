@@ -2,8 +2,15 @@
 layout: default
 ---
 
+{% assign hasDevJs = site.static_files | where: "basename", "dev" | size %}
+{% if hasDevJs == 1 %}
+  {% assign codefilename = "dev" %}
+{% else %}
+  {% assign codefilename = "main" %}
+{% endif %}
+
 <link rel="stylesheet" href="/closet/assets/css/codeBlocks.css"/>
-<script src="/closet/assets/js/Main.js"></script>
+<script src="/closet/assets/js/{{ codefilename }}.js"></script>
 
 <script>
   {% include_relative assets/js/doc.js %}

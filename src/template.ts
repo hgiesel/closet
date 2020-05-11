@@ -1,11 +1,7 @@
-import { TagInfo, Tag } from './tags'
-import parseText from './parser'
-
 import {
-    pureReplace,
-    calculateCoordinates,
-    getNewOffset,
-} from './utils'
+    TagInfo,
+    Tag,
+} from './tags'
 
 type TagPath = number[]
 

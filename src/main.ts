@@ -5,6 +5,7 @@ import type {
 
 import {
     calculateCoordinates,
+    replaceAndGetOffset,
 } from './utils'
 
 import type {
@@ -51,15 +52,6 @@ const renderTemplate = (text: string, filterManager: FilterManager): string => {
         return result
 }
 
-const spliceSlice = (str: string, lend: number, rend: number, add: string = ''): string => {
-    // We cannot pass negative lend directly to the 2nd slicing operation.
-    const leftend = lend < 0
-        ? Math.min(0, str.length + lend)
-        : lend
-
-    return str.slice(0, leftend) + add + str.slice(rend)
-}
-
 // try to make it more PDA
 const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: FilterProcessor): [string, number[], boolean]=> {
     const tagReduce = ([text, stack, ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {
@@ -92,24 +84,22 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
         )
 
         const tagData = tag.data.shadowValuesRaw(newValuesRaw)
-        console.log('data?', modText, tag.naked, tag.data.valuesRaw, newValuesRaw)
+        // console.log('data?', modText, tag.naked, tag.data.valuesRaw, newValuesRaw)
 
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tagData, { ready: modReady })
-        const newOffset = filterOutput.ready
-            ? filterOutput.result.length - (rend - lend)
-            : 0
 
-        console.info('OFFSETS:', tag.data.path, 'i,l,n:', innerOffset, leftOffset, newOffset)
-
-        const newText = filterOutput.ready
-            ? spliceSlice(modText, lend, rend, filterOutput.result)
-            : modText
+        const [
+            newText,
+            newOffset,
+        ] = filterOutput.ready
+            ? replaceAndGetOffset(modText, filterOutput.result, lend, rend)
+            : [modText, 0]
 
         // going UP
         const sum = innerOffset + leftOffset + newOffset
         modStack.push(sum)
-        console.info('going up', tag.data.path, modText, '+++', filterOutput.result, '===', newText, modStack)
+        // console.info('going up', tag.data.path, modText, '+++', filterOutput.result, '===', newText, modStack)
 
         return [
             newText,

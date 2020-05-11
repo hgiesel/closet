@@ -4,30 +4,6 @@ export const TAG_END = ']]'
 export const ARG_SEP = '::'
 export const ALT_SEP = '||'
 
-const spliceSlice = (str: string, lend: number, rend: number, add: string = ''): string => {
-    // We cannot pass negative lend directly to the 2nd slicing operation.
-    const leftend = lend < 0
-        ? Math.min(0, str.length + lend)
-        : lend
-
-    return str.slice(0, leftend) + add + str.slice(rend)
-}
-
-export const pureReplace = (
-    text: string,
-    replacement: string,
-    lend: number,
-    rend: number,
-): [string, string] => {
-    const newValuesRaw = text.slice(lend, rend)
-    const newText = spliceSlice(text, lend, rend, replacement)
-
-    return [
-        newValuesRaw,
-        newText,
-    ]
-}
-
 export const calculateCoordinates = (
     tagStart: number,
     tagEnd: number,
@@ -40,6 +16,22 @@ export const calculateCoordinates = (
     ]
 }
 
-export const getNewOffset = (replacement: string, tagEnd: number, tagStart: number): number => {
-    return replacement.length - (tagEnd - tagStart)
+const spliceSlice = (text: string, lend: number, rend: number, add: string = ''): string => {
+    // We cannot pass negative lend directly to the 2nd slicing operation.
+    const leftend = lend < 0
+        ? Math.min(0, text.length + lend)
+        : lend
+
+    return text.slice(0, leftend) + add + text.slice(rend)
+}
+
+const getNewOffset = (replacement: string, lend: number, rend: number): number => {
+    return replacement.length - (rend - lend)
+}
+
+export const replaceAndGetOffset = (text: string, repl: string, lend: number, rend: number): [string, number] => {
+    return [
+        spliceSlice(text, lend, rend),
+        getNewOffset(repl, lend, rend),
+    ]
 }

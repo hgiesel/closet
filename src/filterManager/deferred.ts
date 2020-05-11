@@ -15,6 +15,16 @@ interface DeferredEntry {
     persistent: boolean
 }
 
+interface DeferredOptions {
+    priority: number
+    persistent: boolean
+}
+
+const defaultDeferredOptions = {
+    priority: 50,
+    persistent: false,
+}
+
 const deferredComparator: Comparator = (x: DeferredEntry, y: DeferredEntry) => x.priority < y.priority
 
 export class DeferredApi {
@@ -26,18 +36,18 @@ export class DeferredApi {
         this._blocked = new Set()
     }
 
-    register(keyword: string, procedure: Deferred, priority=50, persistent=false): void {
+    register(keyword: string, procedure: Deferred, options=defaultDeferredOptions): void {
         this._deferred.set(keyword, {
             keyword: keyword,
             procedure: procedure,
-            priority: priority,
-            persistent: persistent,
+            priority: options.priority,
+            persistent: options.persistent,
         })
     }
 
-    registerIfNotExists(keyword: string, procedure: Deferred, priority=50, persistent=false): void {
+    registerIfNotExists(keyword: string, procedure: Deferred, options=defaultDeferredOptions): void {
         if (!this.isRegistered(keyword)) {
-            this.register(keyword, procedure, priority, persistent)
+            this.register(keyword, procedure, options)
         }
     }
 

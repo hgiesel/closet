@@ -88,7 +88,6 @@
             tagEnd + leftOffset + innerOffset
         ];
     };
-    //# sourceMappingURL=utils.js.map
 
     var TemplateApi = /** @class */ (function () {
         function TemplateApi(rootTag) {
@@ -151,7 +150,6 @@
         };
         return TemplateApi;
     }());
-    //# sourceMappingURL=template.js.map
 
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -518,7 +516,7 @@
             // If there is more than one derivation, we only display the first one.
             var stateStacks = expectantStates
                 .map(function(state) {
-                    return this.buildFirstStateStack(state, []);
+                    return this.buildFirstStateStack(state, []) || [state];
                 }, this);
             // Display each state that is expecting a terminal symbol next.
             stateStacks.forEach(function(stateStack) {
@@ -1292,7 +1290,6 @@
             },
         },
     });
-    //# sourceMappingURL=tokenizer.js.map
 
     var splitValues = function (valuesRaw) {
         return valuesRaw === null
@@ -1330,7 +1327,6 @@
         };
         return Tag;
     }());
-    //# sourceMappingURL=tagPure.js.map
 
     var TagInfo = /** @class */ (function () {
         function TagInfo(start) {
@@ -1378,7 +1374,6 @@
         };
         return TagInfo;
     }());
-    //# sourceMappingURL=tagInfo.js.map
 
     var keyPattern = /^([^0-9]+)([0-9]*)$/u;
     var TagMaker = /** @class */ (function () {
@@ -1404,7 +1399,6 @@
         };
         return TagMaker;
     }());
-    //# sourceMappingURL=tagMaker.js.map
 
     var tagKeeper = function () {
         var tm, rootTag, getTagInfo, tagStack, nextLevel, value, startIndex, endIndex, fullKey, valuesRaw, naked, foundTag;
@@ -1482,7 +1476,6 @@
         };
         return TagKeeper;
     }());
-    //# sourceMappingURL=tagKeeper.js.map
 
     // Generated automatically by nearley, version 2.19.2
     // http://github.com/Hardmath123/nearley
@@ -1538,7 +1531,6 @@
         ],
         ParserStart: "start",
     };
-    //# sourceMappingURL=template.js.map
 
     var parseTemplate = function (text) {
         var parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
@@ -1553,7 +1545,6 @@
         parsed[0].restart();
         return result;
     };
-    //# sourceMappingURL=index.js.map
 
     var MAX_ITERATIONS = 50;
     var renderTemplate = function (text, filterManager) {
@@ -1630,7 +1621,6 @@
         removeItem: function (k) { return map.delete(k.makeMemoizerKey()); },
         clear: function () { return map.clear(); },
     };
-    //# sourceMappingURL=memoizer.js.map
 
     var Store = /** @class */ (function () {
         function Store() {
@@ -1659,7 +1649,6 @@
         };
         return Store;
     }());
-    //# sourceMappingURL=store.js.map
 
     var wrapWithNonMemoize = function (result) { return ({
         result: result,
@@ -1728,7 +1717,6 @@
         };
         return FilterApi;
     }());
-    //# sourceMappingURL=filters.js.map
 
     var DeferredApi = /** @class */ (function () {
         function DeferredApi() {
@@ -1773,7 +1761,6 @@
         };
         return DeferredApi;
     }());
-    //# sourceMappingURL=deferred.js.map
 
     var notReady = {
         result: null,
@@ -1826,7 +1813,6 @@
         };
         return FilterManager;
     }());
-    //# sourceMappingURL=index.js.map
 
     var mixRecipe = function (keyword, separator) { return function (filterApi) {
         var shuffle = function (array) {
@@ -1884,7 +1870,6 @@
         };
         filterApi.register(keyword, mixFilter);
     }; };
-    //# sourceMappingURL=mix.js.map
 
     var debugRecipe = function (filterApi) {
         var pathFilter = function (_a) {
@@ -1899,17 +1884,14 @@
             return key;
         }));
     };
-    //# sourceMappingURL=debug.js.map
 
     var recipes = {
         mix: mixRecipe,
         debug: debugRecipe,
     };
-    //# sourceMappingURL=index.js.map
 
     globalThis.renderTemplate = renderTemplate;
     globalThis.FilterManager = FilterManager;
     globalThis.filterRecipes = recipes;
-    //# sourceMappingURL=index.js.map
 
 }());

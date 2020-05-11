@@ -16,16 +16,13 @@ interface DeferredEntry {
 
 const deferredComparator: Comparator = (x: DeferredEntry, y: DeferredEntry) => x.priority < y.priority
 
-interface DeferredEntry {
-    procedure: Deferred
-    priority: number
-}
-
 export class DeferredApi {
     private readonly _deferred: Map<string, DeferredEntry>
+    private readonly _blocked: Set<string>
 
     constructor() {
         this._deferred = new Map()
+        this._blocked = new Set()
     }
 
     register(keyword: string, procedure: Deferred, priority=50): void {
@@ -37,27 +34,44 @@ export class DeferredApi {
     }
 
     registerIfNotExists(keyword: string, proc: Deferred, prio=50): void {
-        if (!this.has(keyword)) {
+        if (!this.isRegistered(keyword)) {
             this.register(keyword, proc, prio)
         }
-    }
-
-    has(keyword: string): boolean {
-        return this._deferred.has(keyword)
     }
 
     unregister(keyword: string): void {
         this._deferred.delete(keyword)
     }
 
+    isRegistered(keyword: string): boolean {
+        return this._deferred.has(keyword)
+    }
+
+    block(keyword: string) {
+        this._blocked.add(keyword)
+    }
+
+    unblock(keyword: string) {
+        this._blocked.delete(keyword)
+    }
+
+    isBlocked(keyword: string): boolean {
+        return this._blocked.has(keyword)
+    }
+
     clear(): void {
         this._deferred.clear()
+        this._blocked.clear()
     }
 
     executeEach(...args: any[]): void {
-        const prioQueue = new PriorityQueue(deferredComparator)
-
+        const prioQueue = new PriorityQueue<DeferredEntry>(deferredComparator)
         prioQueue.push(...this._deferred.values())
-        prioQueue.forEach(({ procedure, keyword }) => procedure(keyword, ...args))
+
+        for (const def of prioQueue.generate()) {
+            if (!this.isBlocked(def.keyword)) {
+                def.procedure(def.keyword, ...args)
+            }
+        }
     }
 }

@@ -5,8 +5,8 @@ const right = (i: number): number => (i + 1) << 1
 
 export type Comparator = (a: unknown, b: unknown) => boolean
 
-export class PriorityQueue {
-    private readonly _heap: unknown[]
+export class PriorityQueue<T> {
+    private readonly _heap: T[]
     private readonly _comparator: Comparator
 
     constructor(comparator: Comparator = (a, b) => a > b) {
@@ -50,11 +50,11 @@ export class PriorityQueue {
         return this.size() === 0
     }
 
-    peek(): unknown {
+    peek(): T {
         return this._heap[top]
     }
 
-    push(...values: unknown[]): number {
+    push(...values: T[]): number {
         values.forEach(value => {
             this._heap.push(value)
             this.siftUp()
@@ -63,7 +63,7 @@ export class PriorityQueue {
         return this.size()
     }
 
-    pop(): unknown {
+    pop(): T {
         const poppedValue = this.peek()
         const bottom = this.size() - 1
 
@@ -77,12 +77,14 @@ export class PriorityQueue {
         return poppedValue
     }
 
-    forEach(proc: (v: unknown) => void): void {
+    *generate(): Generator<T, null, void> {
         let nextItem = this.pop()
 
         while (nextItem /* falsy! */) {
-            proc(nextItem)
+            yield nextItem
             nextItem = this.pop()
         }
+
+        return null
     }
 }

@@ -23,7 +23,14 @@ export class Store {
     }
 
     over(name: string, f: (v: unknown) => void, mempty: unknown): void {
-        f(this.get(name, mempty))
+        if (!this.has(name)) {
+            f(mempty)
+            this.set(name, mempty)
+        }
+
+        else {
+            f(this.get(name, mempty))
+        }
     }
 
     delete(name: string): void {

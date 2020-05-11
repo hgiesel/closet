@@ -1,12 +1,14 @@
 import type {
+    Tag
+} from '../../tags'
+
+import type {
     FilterApi
 } from '../filters'
 
 import type {
     Internals,
 } from '..'
-
-import type { Tag } from '../../tags'
 
 const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi) => {
     const shuffle = (array: unknown[]) => {
@@ -29,20 +31,24 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
     }
 
     const mixFilter = (
-        {fullKey, idx, fullOccur, values}: Tag,
+        {fullKey, num, fullOccur, values}: Tag,
         {store, deferred, ready}: Internals,
     ) => {
-        const readyKey = `${fullKey}:ready`
-        const applyKey = `${fullKey}:${fullOccur}:apply`
+        const id = `${fullKey}:${fullOccur}`
+        const waitingSetKey = `${fullKey}:waitingList`
+        const applyKey = `${id}:apply`
 
         if (store.get(applyKey, false)) {
-            if (!store.get(readyKey, true)) {
+            const waitingSet = store.get(waitingSetKey, new Set()) as Set<string>
+            if (waitingSet.size > 0) {
                 return
             }
 
             const popped = []
+            const possibleValues = store.get(fullKey, []) as unknown[]
+
             for (let x = 0; x < values[0].length; x++) {
-                popped.push((store.get(fullKey, []) as unknown[]).shift())
+                popped.push(possibleValues.pop())
             }
 
             const result = popped.join(separator)
@@ -50,24 +56,21 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
         }
 
         if (!ready) {
-            store.set(readyKey, false)
-
-            deferred.registerIfNotExists(readyKey, () => {
-                store.set(readyKey, true)
-            })
-
+            store.over(waitingSetKey, (s: Set<string>) => s.add(id), new Set())
             return
         }
 
-        if (!idx) {
+        if (!num) {
             const result = shuffle(values[0]).join(separator)
             return result
         }
 
         store.fold(fullKey, (v: unknown[]) => v.concat(values[0]), [])
 
+        // mix with num is ready for shuffling
         deferred.registerIfNotExists(applyKey, () => {
             store.set(applyKey, true)
+            store.over(waitingSetKey, (set: Set<string>) => set.delete(id), new Set())
         })
 
         const mixKey = `${fullKey}:mix`

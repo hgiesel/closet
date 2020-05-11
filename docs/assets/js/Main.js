@@ -88,6 +88,7 @@
             tagEnd + leftOffset + innerOffset
         ];
     };
+    //# sourceMappingURL=utils.js.map
 
     var TemplateApi = /** @class */ (function () {
         function TemplateApi(rootTag) {
@@ -150,6 +151,7 @@
         };
         return TemplateApi;
     }());
+    //# sourceMappingURL=template.js.map
 
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -1290,6 +1292,7 @@
             },
         },
     });
+    //# sourceMappingURL=tokenizer.js.map
 
     var splitValues = function (valuesRaw) {
         return valuesRaw === null
@@ -1297,10 +1300,10 @@
             : valuesRaw.split(ARG_SEP).map(function (arg) { return arg.split('||'); });
     };
     var Tag = /** @class */ (function () {
-        function Tag(fullKey, key, idx, valuesRaw, fullOccur, occur, path) {
+        function Tag(fullKey, key, num, valuesRaw, fullOccur, occur, path) {
             this.fullKey = fullKey;
             this.key = key;
-            this.idx = idx;
+            this.num = num;
             this.valuesRaw = valuesRaw;
             this.values = splitValues(valuesRaw);
             this.fullOccur = fullOccur;
@@ -1308,10 +1311,10 @@
             this.path = path;
         }
         Tag.prototype.shadowValuesRaw = function (newValuesRaw) {
-            return new Tag(this.fullKey, this.key, this.idx, newValuesRaw, this.fullOccur, this.occur, this.path);
+            return new Tag(this.fullKey, this.key, this.num, newValuesRaw, this.fullOccur, this.occur, this.path);
         };
         Tag.prototype.makeMemoizerKey = function () {
-            return this.key + ":" + this.idx + ":" + this.valuesRaw;
+            return this.key + ":" + this.num + ":" + this.valuesRaw;
         };
         Tag.prototype.getDefaultRepresentation = function () {
             return this.valuesRaw === null
@@ -1327,6 +1330,7 @@
         };
         return Tag;
     }());
+    //# sourceMappingURL=tagPure.js.map
 
     var TagInfo = /** @class */ (function () {
         function TagInfo(start) {
@@ -1374,6 +1378,7 @@
         };
         return TagInfo;
     }());
+    //# sourceMappingURL=tagInfo.js.map
 
     var keyPattern = /^([^0-9]+)([0-9]*)$/u;
     var TagMaker = /** @class */ (function () {
@@ -1399,6 +1404,7 @@
         };
         return TagMaker;
     }());
+    //# sourceMappingURL=tagMaker.js.map
 
     var tagKeeper = function () {
         var tm, rootTag, getTagInfo, tagStack, nextLevel, value, startIndex, endIndex, fullKey, valuesRaw, naked, foundTag;
@@ -1476,6 +1482,7 @@
         };
         return TagKeeper;
     }());
+    //# sourceMappingURL=tagKeeper.js.map
 
     // Generated automatically by nearley, version 2.19.2
     // http://github.com/Hardmath123/nearley
@@ -1531,6 +1538,7 @@
         ],
         ParserStart: "start",
     };
+    //# sourceMappingURL=template.js.map
 
     var parseTemplate = function (text) {
         var parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
@@ -1545,6 +1553,7 @@
         parsed[0].restart();
         return result;
     };
+    //# sourceMappingURL=index.js.map
 
     var MAX_ITERATIONS = 50;
     var renderTemplate = function (text, filterManager) {
@@ -1612,6 +1621,7 @@
         };
         return tagReduce([baseText, [0, 0], true], rootTag);
     };
+    //# sourceMappingURL=main.js.map
 
     var map = new Map();
     var defaultMemoizer = {
@@ -1621,6 +1631,7 @@
         removeItem: function (k) { return map.delete(k.makeMemoizerKey()); },
         clear: function () { return map.clear(); },
     };
+    //# sourceMappingURL=memoizer.js.map
 
     var Store = /** @class */ (function () {
         function Store() {
@@ -1641,6 +1652,15 @@
         Store.prototype.fold = function (name, f, mempty) {
             this.set(name, f(this.get(name, mempty)));
         };
+        Store.prototype.over = function (name, f, mempty) {
+            if (!this.has(name)) {
+                f(mempty);
+                this.set(name, mempty);
+            }
+            else {
+                f(this.get(name, mempty));
+            }
+        };
         Store.prototype.delete = function (name) {
             this.store.delete(name);
         };
@@ -1649,6 +1669,7 @@
         };
         return Store;
     }());
+    //# sourceMappingURL=store.js.map
 
     var wrapWithNonMemoize = function (result) { return ({
         result: result,
@@ -1717,6 +1738,7 @@
         };
         return FilterApi;
     }());
+    //# sourceMappingURL=filters.js.map
 
     var DeferredApi = /** @class */ (function () {
         function DeferredApi() {
@@ -1761,6 +1783,7 @@
         };
         return DeferredApi;
     }());
+    //# sourceMappingURL=deferred.js.map
 
     var notReady = {
         result: null,
@@ -1808,11 +1831,15 @@
             this.deferred.executeEach();
             this.deferred.clear();
         };
+        FilterManager.prototype.reset = function () {
+            this.store.clear();
+        };
         FilterManager.prototype.addRecipe = function (recipe) {
             recipe(this.filters);
         };
         return FilterManager;
     }());
+    //# sourceMappingURL=index.js.map
 
     var mixRecipe = function (keyword, separator) { return function (filterApi) {
         var shuffle = function (array) {
@@ -1831,37 +1858,37 @@
             return result;
         };
         var mixFilter = function (_a, _b) {
-            var fullKey = _a.fullKey, idx = _a.idx, fullOccur = _a.fullOccur, values = _a.values;
-            var store = _b.store, deferred = _b.deferred, ready = _b.ready, iteration = _b.iteration;
-            console.log(fullKey, idx, values, iteration.index);
-            var readyKey = fullKey + ":ready";
-            var applyKey = fullKey + ":" + fullOccur + ":apply";
+            var fullKey = _a.fullKey, num = _a.num, fullOccur = _a.fullOccur, values = _a.values;
+            var store = _b.store, deferred = _b.deferred, ready = _b.ready;
+            var id = fullKey + ":" + fullOccur;
+            var waitingSetKey = fullKey + ":waitingList";
+            var applyKey = id + ":apply";
             if (store.get(applyKey, false)) {
-                if (!store.get(readyKey, true)) {
+                var waitingSet = store.get(waitingSetKey, new Set());
+                if (waitingSet.size > 0) {
                     return;
                 }
                 var popped = [];
+                var possibleValues = store.get(fullKey, []);
                 for (var x = 0; x < values[0].length; x++) {
-                    popped.push(store.get(fullKey, []).shift());
+                    popped.push(possibleValues.pop());
                 }
                 var result = popped.join(separator);
                 return result;
             }
             if (!ready) {
-                store.set(readyKey, false);
-                deferred.registerIfNotExists(readyKey, function () {
-                    store.set(readyKey, true);
-                });
+                store.over(waitingSetKey, function (s) { return s.add(id); }, new Set());
                 return;
             }
-            if (!idx) {
+            if (!num) {
                 var result = shuffle(values[0]).join(separator);
-                console.log('no idx result', result);
                 return result;
             }
             store.fold(fullKey, function (v) { return v.concat(values[0]); }, []);
+            // mix with num is ready for shuffling
             deferred.registerIfNotExists(applyKey, function () {
                 store.set(applyKey, true);
+                store.over(waitingSetKey, function (set) { return set.delete(id); }, new Set());
             });
             var mixKey = fullKey + ":mix";
             deferred.registerIfNotExists(mixKey, function () {
@@ -1870,6 +1897,28 @@
         };
         filterApi.register(keyword, mixFilter);
     }; };
+    //# sourceMappingURL=mix.js.map
+
+    var ordRecipe = function (keyword) { return function (filterApi) {
+        var ordFilter = function (_a, _b) {
+        };
+        filterApi.register(keyword, ordFilter);
+    }; };
+    //# sourceMappingURL=ord.js.map
+
+    var clozeRecipe = function (keyword) { return function (filterApi) {
+        var clozeFilter = function (_a, _b) {
+        };
+        filterApi.register(keyword, clozeFilter);
+    }; };
+    //# sourceMappingURL=cloze.js.map
+
+    var mcRecipe = function (keyword) { return function (filterApi) {
+        var mcFilter = function (_a, _b) {
+        };
+        filterApi.register(keyword, mcFilter);
+    }; };
+    //# sourceMappingURL=mc.js.map
 
     var debugRecipe = function (filterApi) {
         var pathFilter = function (_a) {
@@ -1884,14 +1933,21 @@
             return key;
         }));
     };
+    //# sourceMappingURL=debug.js.map
 
     var recipes = {
-        mix: mixRecipe,
+        shuffling: mixRecipe,
+        ordering: ordRecipe,
+        cloze: clozeRecipe,
+        multipleChoice: mcRecipe,
         debug: debugRecipe,
     };
+    //# sourceMappingURL=index.js.map
 
     globalThis.renderTemplate = renderTemplate;
     globalThis.FilterManager = FilterManager;
     globalThis.filterRecipes = recipes;
+    //# sourceMappingURL=index.js.map
 
 }());
+//# sourceMappingURL=Main.js.map

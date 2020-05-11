@@ -2,12 +2,9 @@
 ---
 
 .code-example {
-  position: relative;
-  min-height: 4rem;
+    min-height: 4rem;
 }
 
 .code-example .btn-group-tester {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
+    float: right;
 }

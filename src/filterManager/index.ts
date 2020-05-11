@@ -106,6 +106,10 @@ export class FilterManager {
         this.deferred.clear()
     }
 
+    reset() {
+        this.store.clear()
+    }
+
     addRecipe(recipe: (filters: FilterApi) => void): void {
         recipe(this.filters)
     }

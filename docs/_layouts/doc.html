@@ -6,29 +6,7 @@ layout: default
 <script src="/closet/assets/js/Main.js"></script>
 
 <script>
-  const readyRenderButton = (buttonQuery, displayQuery, code) => {
-    const theDisplay = document.querySelector(displayQuery)
-    const btnRerender = document.querySelector(buttonQuery)
-
-    btnRerender.addEventListener('click', () => {
-      const filterManager = new FilterManager()
-      filterManager.addRecipe(filterRecipes.mix('mix', ', '))
-
-      theDisplay.innerHTML = renderTemplate(code, filterManager)
-    })
-
-    btnRerender.dispatchEvent(new Event('click'))
-  }
-
-  const readyTryButton = (buttonQuery, code) => {
-    const btnEdit = document.querySelector(buttonQuery)
-
-    btnEdit.addEventListener('click', () => {
-      const link = `/closet/tester?txt=${encodeURIComponent(code.replace(/<br \/>/g, '\n'))}`
-
-      window.location = link
-    })
-  }
+  {% include_relative assets/js/doc.js %}
 </script>
 
 {{ content }}

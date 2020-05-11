@@ -22,8 +22,8 @@ export default {
     output: {
         file: 'docs/assets/js/Main.js',
         format: 'iife', // immediately-invoked function expression — suitable for <script> tags
-        name: 'SetRandomizer',
-        // sourcemap: true
+        name: 'Closet',
+        sourcemap: true,
     },
     plugins: [
         typescript(typescriptOptions),

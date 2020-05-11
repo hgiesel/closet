@@ -1,4 +1,0 @@
-name: "The First Test"
-code: |
-    This is a [[mix1::test||foobar]]
-    Let's see if [[mix2::it||works]]

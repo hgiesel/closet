@@ -16,6 +16,11 @@ interface DeferredEntry {
 
 const deferredComparator: Comparator = (x: DeferredEntry, y: DeferredEntry) => x.priority < y.priority
 
+interface DeferredEntry {
+    procedure: Deferred
+    priority: number
+}
+
 export class DeferredApi {
     private readonly _deferred: Map<string, DeferredEntry>
 

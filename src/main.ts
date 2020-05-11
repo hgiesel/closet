@@ -31,11 +31,13 @@ const renderTemplate = (text: string, filterManager: FilterManager): string => {
         const rootTag = parseTemplate(result)
         const templateApi = new TemplateApi(rootTag)
 
+        console.error('ITERATION: ', i, result, ready)
+
         const [
             newText,
             finalOffset,
             innerReady,
-        ] = postfixTraverse(text, rootTag, filterManager.filterProcessor({
+        ] = postfixTraverse(result, rootTag, filterManager.filterProcessor({
             iteration: { index: i },
             template: templateApi,
         }))
@@ -77,7 +79,6 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
 
         const innerOffset = modStack.pop()
         const leftOffset = modStack.pop()
-        console.info('pop time', tag.data.path, modStack, innerOffset, leftOffset)
 
         ///////////////////// Updating valuesRaw and values with innerTags
         const [
@@ -96,8 +97,10 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tagData, { ready: modReady })
         const newOffset = filterOutput.ready
-            ? filterOutput.result.length - (tag.end - tag.start)
+            ? filterOutput.result.length - (rend - lend)
             : 0
+
+        console.info('OFFSETS:', tag.data.path, 'i,l,n:', innerOffset, leftOffset, newOffset)
 
         const newText = filterOutput.ready
             ? spliceSlice(modText, lend, rend, filterOutput.result)

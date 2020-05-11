@@ -16,13 +16,13 @@ export const calculateCoordinates = (
     ]
 }
 
-const spliceSlice = (text: string, lend: number, rend: number, add: string = ''): string => {
+const spliceSlice = (text: string, repl: string, lend: number, rend: number): string => {
     // We cannot pass negative lend directly to the 2nd slicing operation.
     const leftend = lend < 0
         ? Math.min(0, text.length + lend)
         : lend
 
-    return text.slice(0, leftend) + add + text.slice(rend)
+    return text.slice(0, leftend) + repl + text.slice(rend)
 }
 
 const getNewOffset = (replacement: string, lend: number, rend: number): number => {
@@ -31,7 +31,7 @@ const getNewOffset = (replacement: string, lend: number, rend: number): number =
 
 export const replaceAndGetOffset = (text: string, repl: string, lend: number, rend: number): [string, number] => {
     return [
-        spliceSlice(text, lend, rend),
+        spliceSlice(text, repl, lend, rend),
         getNewOffset(repl, lend, rend),
     ]
 }

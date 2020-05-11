@@ -49,7 +49,7 @@ const renderTemplate = (text: string, filterManager: FilterManager): string => {
         filterManager.executeAndClearDeferred()
     }
 
-        return result
+    return result
 }
 
 // try to make it more PDA
@@ -84,7 +84,6 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
         )
 
         const tagData = tag.data.shadowValuesRaw(newValuesRaw)
-        // console.log('data?', modText, tag.naked, tag.data.valuesRaw, newValuesRaw)
 
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tagData, { ready: modReady })
@@ -99,7 +98,15 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
         // going UP
         const sum = innerOffset + leftOffset + newOffset
         modStack.push(sum)
-        // console.info('going up', tag.data.path, modText, '+++', filterOutput.result, '===', newText, modStack)
+
+        console.info('going up:', tag.data.path, modText, '+++', filterOutput.result, '===', newText)
+        console.groupCollapsed('offsets', tag.data.path)
+        console.log('left', leftOffset)
+        console.log('inner' , innerOffset)
+        console.log('new', newOffset)
+        console.info('lend', lend)
+        console.info('rend', rend)
+        console.groupEnd()
 
         return [
             newText,

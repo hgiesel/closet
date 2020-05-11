@@ -1,16 +1,7 @@
 export const terserOptions = {
-    parse: {
-        // parse options
-    },
-    compress: {
-        // compress options
-    },
     mangle: true,
     output: {
         ecma: 6 /* default is 5 */,
-    },
-    sourcemap: {
-        // source map options
     },
     ecma: 8, // specify one of: 5, 6, 7 or 8
     ie8: false,
@@ -23,9 +14,10 @@ export const terserOptions = {
 
 export const stripOptions = {
     debugger: true,
-    functions: ['console.*', 'assert.*'],
+    // functions: ['console.*', 'assert.*'],
     labels: [],
-    sourceMap: true
+    sourceMap: true,
+    include: '**/*.ts',
 }
 
 export const typescriptOptions = {

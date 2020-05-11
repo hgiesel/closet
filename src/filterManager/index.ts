@@ -101,13 +101,13 @@ export class FilterManager {
         }
     }
 
-    executeAndClearDeferred() {
+    executeDeferred() {
         this.deferred.executeEach()
-        this.deferred.clear()
     }
 
     reset() {
         this.store.clear()
+        this.deferred.clear()
     }
 
     addRecipe(recipe: (filters: FilterApi) => void): void {

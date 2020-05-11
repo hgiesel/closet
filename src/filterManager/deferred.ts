@@ -6,18 +6,13 @@ import {
     PriorityQueue,
 } from './priorityQueue'
 
-export type Deferred = (keyword: string, ...rest: any[]) => WeakDeferredResult
-
-type WeakDeferredResult = DeferredResult | void
-
-interface DeferredResult {
-    persist: boolean
-}
+export type Deferred = (keyword: string, ...rest: any[]) => void
 
 interface DeferredEntry {
     keyword: string,
     procedure: Deferred
     priority: number
+    persistent: boolean
 }
 
 const deferredComparator: Comparator = (x: DeferredEntry, y: DeferredEntry) => x.priority < y.priority
@@ -31,17 +26,18 @@ export class DeferredApi {
         this._blocked = new Set()
     }
 
-    register(keyword: string, procedure: Deferred, priority=50): void {
+    register(keyword: string, procedure: Deferred, priority=50, persistent=false): void {
         this._deferred.set(keyword, {
             keyword: keyword,
             procedure: procedure,
             priority: priority,
+            persistent: persistent,
         })
     }
 
-    registerIfNotExists(keyword: string, proc: Deferred, prio=50): void {
+    registerIfNotExists(keyword: string, procedure: Deferred, priority=50, persistent=false): void {
         if (!this.isRegistered(keyword)) {
-            this.register(keyword, proc, prio)
+            this.register(keyword, procedure, priority, persistent)
         }
     }
 
@@ -78,6 +74,12 @@ export class DeferredApi {
             if (!this.isBlocked(def.keyword)) {
                 def.procedure(def.keyword, ...args)
             }
+
+            if (!def.persistent) {
+                this.unregister(def.keyword)
+            }
         }
+
+        this._blocked.clear()
     }
 }

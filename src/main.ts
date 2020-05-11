@@ -46,7 +46,7 @@ const renderTemplate = (text: string, filterManager: FilterManager): string => {
         ready = innerReady
         result = newText
 
-        filterManager.executeAndClearDeferred()
+        filterManager.executeDeferred()
     }
 
     return result

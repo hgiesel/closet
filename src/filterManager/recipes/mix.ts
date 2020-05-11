@@ -2,7 +2,7 @@ import type {
     FilterApi
 } from '../filters'
 
-import {
+import type {
     Internals,
 } from '..'
 
@@ -30,9 +30,8 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
 
     const mixFilter = (
         {fullKey, idx, fullOccur, values}: Tag,
-        {store, deferred, ready, iteration}: any,
+        {store, deferred, ready}: Internals,
     ) => {
-        console.log(fullKey, idx, values, iteration.index)
         const readyKey = `${fullKey}:ready`
         const applyKey = `${fullKey}:${fullOccur}:apply`
 
@@ -62,7 +61,6 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
 
         if (!idx) {
             const result = shuffle(values[0]).join(separator)
-            console.log('no idx result', result)
             return result
         }
 

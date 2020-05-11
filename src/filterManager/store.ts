@@ -22,6 +22,10 @@ export class Store {
         this.set(name, f(this.get(name, mempty)))
     }
 
+    over(name: string, f: (v: unknown) => void, mempty: unknown): void {
+        f(this.get(name, mempty))
+    }
+
     delete(name: string): void {
         this.store.delete(name)
     }

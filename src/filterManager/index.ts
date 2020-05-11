@@ -24,6 +24,7 @@ export interface Internals {
     store: Store
     filters: FilterApi
     deferred: DeferredApi
+    iteration: {index: number }
     ready: boolean
 }
 

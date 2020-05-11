@@ -29,7 +29,7 @@ export default {
         typescript(typescriptOptions),
         resolve(), // tells Rollup how to find stuff in node_modules
         commonjs(), // converts date-fns to ES modules
-        production && terser(terserOptions),
         production && strip(stripOptions),
+        production && terser(terserOptions),
     ]
 }

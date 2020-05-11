@@ -1,0 +1,4 @@
+name: "Nested shuffling"
+code: |
+    [[mix1::The continent of Asia has the following countries: [[mix::Singapore||China||Kazakhstan||Pakistan||India]]]]
+    [[mix1::The continent of Africa has the following countries: [[mix::Ghana||Senegal||Ethiopia||Egypt]]]]

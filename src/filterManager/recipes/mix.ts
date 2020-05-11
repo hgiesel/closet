@@ -10,7 +10,14 @@ import type {
     Internals,
 } from '..'
 
-const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi) => {
+const id = (v: string): string => v
+
+const mixRecipe = (
+    keyword: string,
+    separator: string,
+    mapper: (v: string) => string = id,
+    postprocess: (v: string) => string = id,
+) => (filterApi: FilterApi) => {
     const shuffle = (array: unknown[]) => {
         const result = array.slice(0)
         let currentIndex = array.length, temporaryValue = null, randomIndex = null
@@ -29,6 +36,8 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
 
         return result
     }
+
+    const stylizeResult = (vs: string[]) => postprocess(vs.map(mapper).join(separator))
 
     const mixFilter = (
         {fullKey, num, fullOccur, values}: Tag,
@@ -51,8 +60,7 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
                 popped.push(possibleValues.pop())
             }
 
-            const result = popped.join(separator)
-            return result
+            return stylizeResult(popped)
         }
 
         if (!ready) {
@@ -61,8 +69,7 @@ const mixRecipe = (keyword: string, separator: string) => (filterApi: FilterApi)
         }
 
         if (!num) {
-            const result = shuffle(values[0]).join(separator)
-            return result
+            return stylizeResult(shuffle(values[0]) as string[])
         }
 
         store.fold(fullKey, (v: unknown[]) => v.concat(values[0]), [])

@@ -1,0 +1,4 @@
+name: "Deadlock shuffle"
+code: |
+    [[mix2::I [[mix3::will [[mix1::a||b||c]]]]]]]]
+    [[mix3::never [[mix2::resolve [[mix1::x||y||z]]]]]]

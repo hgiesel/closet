@@ -1,0 +1,5 @@
+name: "Shuffling with mixed styles"
+code: |
+    Shuffling with centered dot: [[amix1::Susan||Joanne||Lisa]]
+    Shuffling with slashes: [[mix1::Peter||John||Mark]]
+    Shuffling with centered dot again: [[amix1::Robin||Paula]]

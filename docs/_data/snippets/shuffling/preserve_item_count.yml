@@ -1,0 +1,5 @@
+name: "Shuffling preserves item count"
+code: |
+    Reddish colors: [[mix1::magenta||pink]]
+    Blueish colors: [[mix1::indigo||cyan||teal]]
+    Greenish colors: [[mix1::lime]]

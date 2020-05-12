@@ -16,3 +16,5 @@ export const shuffle = (array: unknown[]) => {
 
     return result
 }
+
+export const id = <T>(v: T): T => v

@@ -12,9 +12,8 @@ import type {
 
 import {
     shuffle,
+    id,
 } from './utils'
-
-const id = (v: string): string => v
 
 const mixRecipe = (
     keyword: string,
@@ -25,11 +24,11 @@ const mixRecipe = (
     const stylizeResult = (vs: string[]) => postprocess(vs.map(mapper).join(separator))
 
     const mixFilter = (
-        {fullKey, num, fullOccur, values}: Tag,
+        {fullKey, fullOccur, num, values}: Tag,
         {store, deferred, ready}: Internals,
     ) => {
         const id = `${fullKey}:${fullOccur}`
-        const waitingSetKey = `${fullKey}:waitingList`
+        const waitingSetKey = `${fullKey}:waitingSet`
         const applyKey = `${id}:apply`
 
         if (store.get(applyKey, false)) {

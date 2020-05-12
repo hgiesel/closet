@@ -10,6 +10,10 @@ import type {
     Internals,
 } from '..'
 
+import {
+    allowCommaStyle,
+} from './utils'
+
 const topUpSortingIndices = (indices: number[], toLength: number): number[] => {
     if (indices.length >= toLength) {
         // indices already have sufficient length
@@ -66,11 +70,7 @@ const ordRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi
         // mixes occupied by other ords
         const ordOccupiedKey = `${key}:ord:occupied`
 
-        const toBeOrdered = (valuesRaw.includes(',')
-            ? valuesRaw.split(',')
-            : values[0])
-            .map((v: string) => Number(v))
-            .filter((v: number) => !isNaN(v))
+        const toBeOrdered = allowCommaStyle(values, valuesRaw)
             .filter((v: number) => !(store.get(ordOccupiedKey, []) as number[]).includes(v))
 
         store.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])

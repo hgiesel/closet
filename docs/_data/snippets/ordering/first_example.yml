@@ -1,0 +1,5 @@
+name: "First example of ordering"
+code: |
+    Countries of Asia: [[mix1::India||China||South Korea||Kazakhstan]]
+    Capitals of Asia: [[mix2::New Delhi||Beijing||Seoul||Nur-Sultan]]
+    [[ord::1||2]]

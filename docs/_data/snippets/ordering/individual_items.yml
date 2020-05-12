@@ -1,0 +1,6 @@
+name: "Order individual items"
+code: |
+    Capital of [[mix1::India[[ord::1||2]]]]: [[mix2::New Delhi]]
+    Capital of [[mix1::China]]: [[mix2::Beijing]]
+    Population of [[mix3::South Korea[[ord::3||4]]]]: [[mix4::51,709,098]]
+    Population of [[mix3::Kazakhstan]]: [[mix4::18,448,600]]

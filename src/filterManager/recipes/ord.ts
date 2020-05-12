@@ -10,19 +10,24 @@ import type {
     Internals,
 } from '..'
 
-const adjustSortingIndices = (indices: number[], toLength: number): number[] => {
-    if (indices.length < toLength) {
-        return indices.filter(v => v >= length)
+const topUpSortingIndices = (indices: number[], toLength: number): number[] => {
+    if (indices.length >= toLength) {
+        // indices already have sufficient length
+        return indices
     }
 
     const newIndices = Array.from(
-        new Array(length - indices.length),
+        new Array(toLength - indices.length),
         (_x: undefined, i: number) => i + indices.length,
     )
 
     const result = [...indices]
     newIndices.forEach(
-        (newIndex: number) => result.splice(Math.floor(Math.random() * result.length), 0, newIndex)
+        (newIndex: number) => result.splice(
+            Math.floor(Math.random() * (result.length + 1)) /* possible insertion positions */,
+            0,
+            newIndex,
+        )
     )
 
     return result
@@ -70,45 +75,45 @@ const ordRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi
 
         store.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])
 
-        const mixKeys = toBeOrdered
-            .map((v: number) => `${mixKeyword}${v}`)
+        const mixKeys = new Set(
+            toBeOrdered.map((v: number) => `${mixKeyword}${v}`)
+        )
 
         const ordKey = `${key}:${fullOccur}:ord`
 
         deferred.register(ordKey, () => {
-            for (const [idx, mk] of mixKeys.entries()) {
+            const finishedKeys = []
+
+            for (const mk of mixKeys) {
                 deferred.block(`${mk}:mix`)
 
-                const waitingSet = store.get(`${mk}:waitingSet`, new Set()) as Set<string>
+                const waitingSet = (store.get(`${mk}:waitingSet`, new Set()) as Set<string>)
 
                 if (waitingSet.size !== 0) {
                     continue
                 }
 
                 const mixItems = store.get(mk, []) as string[]
-                const adjustedSortOrder = adjustSortingIndices(
+                const toppedUpIndices = topUpSortingIndices(
                     store.get(ordKey, []) as number[],
                     mixItems.length,
                 )
 
-                // possibly update with longer sort order
-                store.fold(
-                    ordKey,
-                    (sortOrder: number[]) => sortOrder.length < adjustedSortOrder.length
-                        ? adjustedSortOrder
-                        : sortOrder,
-                    [],
-                )
-
-                // remove mixKey from ord pool
-                mixKeys.splice(idx, 1)
-
                 // order mix items
-                store.fold(mk, (vs: string[]) => sortWithIndices(vs, adjustedSortOrder), [])
+                store.fold(mk, (vs: string[]) => sortWithIndices(vs, toppedUpIndices), [])
+
+                // mark this mix tag as done
+                finishedKeys.push(mk)
+
+                // possibly update with longer sort order
+                store.set(ordKey, toppedUpIndices)
             }
 
+            // remove mixKey from ord pool
+            finishedKeys.forEach(fk => mixKeys.delete(fk))
+
             // need to remove ord deferred because it is persistent
-            if (mixKeys.length === 0) {
+            if (mixKeys.size === 0) {
                 deferred.unregister(ordKey)
             }
         }, {
@@ -116,6 +121,7 @@ const ordRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi
             persistent: true
         })
 
+        return ''
     }
 
     filterApi.register(keyword, ordFilter as any)

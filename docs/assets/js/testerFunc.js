@@ -22,6 +22,7 @@ const templateRendered = document.querySelector('#template-applied > .output')
 const processTemplateText = () => {
     const filterManager = new FilterManager()
     filterManager.addRecipe(filterRecipes.shuffling('mix', ', '))
+    filterManager.addRecipe(filterRecipes.ordering('ord', 'mix'))
     filterManager.addRecipe(filterRecipes.debug)
 
     const text = codeCM.getValue().replace(/\n/g, '<br />')

@@ -41,7 +41,7 @@ const mixRecipe = (
             const possibleValues = store.get(fullKey, []) as unknown[]
 
             for (let x = 0; x < values[0].length; x++) {
-                popped.push(possibleValues.pop())
+                popped.push(possibleValues.shift() /* pop off start, so it looks comprehensible in simple cases */)
             }
 
             return stylizeResult(popped)

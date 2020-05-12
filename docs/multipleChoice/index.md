@@ -1,9 +1,8 @@
 ---
 layout: doc
 title: Multiple Choice
-nav_order: 4
-permalink: /recipes/multiplechoice
-parent: Recipes
+nav_order: 5
+permalink: /multiple_choice
 ---
 
 # Creating multiple choice

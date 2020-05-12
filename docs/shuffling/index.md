@@ -1,11 +1,11 @@
 ---
 layout: doc
-title: Recipes
+title: Shuffling
 nav_order: 2
-permalink: /recipes
+permalink: /shuffling/
 has_children: true
 ---
 
-# Recipes
+# Shuffling
 
 **Closet** offers a wide array of default functionality, that you can use out-of-the-box.

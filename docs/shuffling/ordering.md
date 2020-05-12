@@ -1,12 +1,14 @@
 ---
 layout: doc
-title: Ordering
+title: Preserving item orders
 nav_order: 2
-permalink: /recipes/ordering
-parent: Recipes
+permalink: /shuffling/ordering/
+parent: Shuffling
 ---
 
-# Ordering items
+{% include toc-doc.md %}
+
+## Ordering
 
 Sometimes you want to shuffle items, however you still want to preserve some relation in the text.
 In these cases, the `ord` tag can come in handy.
@@ -41,6 +43,8 @@ fm.addRecipe(filterRecipes.ordering('ord', 'mix'))
 
 return fm
 {% endcapture %}
+
+## Ordering inline and non-contiguous shuffles
 
 {% include codeDisplay.html content=site.data.snippets.ordering.inline_vs_list filterManager=vsFm %}
 

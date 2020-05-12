@@ -1,12 +1,14 @@
 ---
 layout: doc
-title: Shuffling
+title: Shuffling text items
 nav_order: 1
-permalink: /recipes/shuffling
-parent: Recipes
+permalink: /shuffling/shuffling/
+parent: Shuffling
 ---
 
-# Shuffling items
+{% include toc-doc.md %}
+
+## Inline Shuffling
 
 Items can easily be shuffled using the `mix` tag. Items to be shuffled must be separated by `||`.
 
@@ -19,7 +21,7 @@ return fm
 
 {% include codeDisplay.html content=site.data.snippets.shuffling.first_example filterManager=defaultFm %}
 
-# Shuffling non-contiguous areas
+## Shuffling non-contiguous areas
 
 If you want to shuffle non-contiguous areas, you need to use _numbered_ tags.
 Instead of using `mix`, you should use `mix1`, `mix2`, etc.
@@ -30,7 +32,7 @@ When using numbered `mix` tags, they will preserve their original amount of item
 
 {% include codeDisplay.html content=site.data.snippets.shuffling.preserve_item_count filterManager=defaultFm %}
 
-# Nested shuffling
+## Nested shuffling
 
 You can also shuffle in a nested style.
 This is useful if you have multiple levels of logical units, that you want to shuffle around.
@@ -55,7 +57,7 @@ In the example above, initially `mix1` will be shuffled.
 However after that, `mix2` in the first row will wait for `mix3` to finish; and `mix3` in the second row will wait for `mix2` to finish.
 After a few rounds, this operation will time out, and the remaining tags will stay unresolved.
 
-# Advanced
+## Advanced
 
 {% capture asianFm %}
 const fm = new FilterManager()

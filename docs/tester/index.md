@@ -1,7 +1,7 @@
 ---
 layout: tester
 title: Try it out!
-nav_order: 3
+nav_order: 10
 permalink: /tester
 ---
 

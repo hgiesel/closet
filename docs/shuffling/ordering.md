@@ -37,9 +37,9 @@ You can use the `ord` tag in two ways:
 When shuffling sentences, the `ord` tag is especially handy, because you can focus on the important parts.
 
 {% capture vsFm %}
-const fm = new FilterManager()
+const fm = new closet.FilterManager()
 
-fm.addRecipe(closet.filterRecipes.shuffling('mix', new Stylizer({
+fm.addRecipe(closet.filterRecipes.shuffling('mix', new closet.Stylizer({
   separator: ' vs ',
 })))
 
@@ -48,8 +48,12 @@ fm.addRecipe(closet.filterRecipes.ordering('ord', 'mix'))
 return fm
 {% endcapture %}
 
+---
+
 ## Ordering inline and non-contiguous shuffles
 
 {% include codeDisplay.html content=site.data.snippets.ordering.inline_vs_list filterManager=vsFm %}
 
 The `ord` tag can also relate values from a `mix` single with individual `mix` tags
+
+---

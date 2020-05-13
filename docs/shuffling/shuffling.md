@@ -21,6 +21,8 @@ return fm
 
 {% include codeDisplay.html content=site.data.snippets.shuffling.first_example filterManager=defaultFm %}
 
+---
+
 ## Shuffling non-contiguous areas
 
 If you want to shuffle non-contiguous areas, you need to use _numbered_ tags.
@@ -31,6 +33,8 @@ Instead of using `mix`, you should use `mix1`, `mix2`, etc.
 When using numbered `mix` tags, they will preserve their original amount of items.
 
 {% include codeDisplay.html content=site.data.snippets.shuffling.preserve_item_count filterManager=defaultFm %}
+
+---
 
 ## Nested shuffling
 
@@ -56,6 +60,8 @@ If there is no logical way to shuffle the elements, it will cause something call
 In the example above, initially `mix1` will be shuffled.
 However after that, `mix2` in the first row will wait for `mix3` to finish; and `mix3` in the second row will wait for `mix2` to finish.
 After a few rounds, this operation will time out, and the remaining tags will stay unresolved.
+
+---
 
 ## Advanced
 
@@ -107,3 +113,5 @@ In the case that you want multiple shuffling styles at the same time, you can pu
 Note how they items from tags with different keywords don't mix.
 
 For more on setting options, see [here](TODO)
+
+---

@@ -19,17 +19,68 @@ const display = (htmlElement, obj, escape = true) => {
 const btnExecute = document.getElementById('btn-execute')
 const templateRendered = document.querySelector('#template-applied > .output')
 
+let run = 0
+const templateErrorMessage = '<i>Run failed: There is a syntax error in the template text.</i>'
+const presetErrorMessage = '<i>Error parsing preset JSON: Please fix syntax error or remove entirely</i>'
+const presetMustBeObjectMessage = '<i>Error with preset JSON: preset must be an object</i>'
+
 const processTemplateText = () => {
-    const filterManager = new closet.FilterManager()
+    presetCM.getWrapperElement().classList.remove('failed')
+    codeCM.getWrapperElement().classList.remove('failed')
+
+    /////////////////////////////
+
+    const rawPresetText = presetCM.getValue().trim()
+    let preset = null
+
+    try {
+        preset = rawPresetText.length > 0
+            ? JSON.parse(rawPresetText)
+            : {}
+    }
+    catch (e) {
+        console.error(presetErrorMessage, e)
+        presetCM.getWrapperElement().classList.add('failed')
+        display(templateRendered, presetErrorMessage, escape=false)
+        return
+    }
+
+    if (typeof preset !== 'object' || !preset) {
+        console.error(presetMustBeObjectMessage)
+        presetCM.getWrapperElement().classList.add('failed')
+        display(templateRendered, presetMustBeObjectMessage, escape=false)
+        return
+    }
+
+    /////////////////////////////
+
+    const filterManager = new closet.FilterManager(preset)
     filterManager.addRecipe(closet.filterRecipes.shuffling('mix'))
     filterManager.addRecipe(closet.filterRecipes.ordering('ord', 'mix'))
     filterManager.addRecipe(closet.filterRecipes.debug)
 
+    /////////////////////////////
+
     const text = codeCM.getValue().replace(/\n/g, '<br />')
 
+    console.groupCollapsed(`Run ${run}`)
     console.time('Render template')
-    const result = closet.renderTemplate(text, filterManager)
-    console.timeEnd('Render template')
+
+    let result = null
+    try {
+        result = closet.renderTemplate(text, filterManager)
+    }
+    catch (e) {
+        console.error(templateErrorMessage, e)
+        codeCM.getWrapperElement().classList.add('failed')
+        display(templateRendered, templateErrorMessage, escape=false)
+        return
+    }
+    finally {
+        console.timeEnd('Render template')
+        console.groupEnd(`Run ${run}`)
+        run++
+    }
 
     display(templateRendered, result, escape=false)
 }

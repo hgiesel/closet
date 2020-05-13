@@ -2,7 +2,7 @@
 layout: doc
 title: Preserving item orders
 nav_order: 2
-permalink: /shuffling/ordering/
+permalink: /ordering/
 parent: Shuffling
 ---
 

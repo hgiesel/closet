@@ -1,0 +1,3 @@
+= JavaScript for docs
+
+This is where the compiled Closet.js ends up

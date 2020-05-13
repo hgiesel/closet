@@ -2,7 +2,7 @@
 layout: doc
 title: Random numbers
 nav_order: 1
-permalink: /generation/random/
+permalink: /generation/random
 parent: Generation
 ---
 

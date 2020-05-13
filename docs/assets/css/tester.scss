@@ -41,3 +41,16 @@ textarea {
 .CodeMirror-empty {
     color: lightgray;
 }
+
+
+// Toggle Memoization Checkbox
+input[type="checkbox"] {
+    display: none;
+}
+
+.memoize-label::after {
+    content: " ❌";
+}
+#memoize-checkbox:checked ~ .memoize-label::after {
+    content: " ✔️";
+}

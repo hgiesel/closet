@@ -19,7 +19,6 @@ import {
     DeferredApi,
 } from './deferred'
 
-
 export interface Internals {
     store: Store
     filters: FilterApi

@@ -7,6 +7,7 @@ readyRenderButton(
     '#{{ theId }} > .display',
     '{{ theCode }}',
     {% if fm %}
+    // inject filterManager
     (() => { {{ fm }} })(),
     {% endif %}
 )

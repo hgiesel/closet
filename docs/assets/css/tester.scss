@@ -2,26 +2,35 @@
 ---
 
 #mybody {
-  display: flex;
-  flex-direction: column;
-  grid-row-gap: 10px;
+    display: flex;
+    flex-direction: column;
+    grid-row-gap: 10px;
 }
 
 textarea {
-  resize: none;
+    resize: none;
 }
 
 .bordered {
-  padding: 20px 5px;
-  border: 2px solid grey;
-  border-radius: 8px;
+    padding: 20px 5px;
+    border: 2px solid grey;
+    border-radius: 8px;
 
-  position: relative;
+    position: relative;
 }
 
 .desc {
-  position: absolute;
-  right: 3px;
-  bottom: 3px;
-  opacity: 0.5;
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    opacity: 0.5;
+}
+
+.CodeMirror {
+    border: 5px solid #eee;
+    height: auto;
+}
+
+.CodeMirror-empty {
+    color: lightgray;
 }

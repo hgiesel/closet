@@ -41,7 +41,6 @@ const mixRecipe = (
                 popped.push(possibleValues.shift() /* pop off start, so it looks comprehensible in simple cases */)
             }
 
-            console.log(stylizer)
             return stylizer.stylizeInner(popped)
         }
 
@@ -51,7 +50,6 @@ const mixRecipe = (
         }
 
         if (!num) {
-            console.log(stylizer)
             return stylizer.stylizeInner(shuffle(values[0]) as string[])
         }
 

@@ -19,12 +19,15 @@ export const shuffle = (array: unknown[]) => {
 
 export const id = <T>(v: T): T => v
 
-export const allowCommaStyle = (values: string[][], valuesRaw: string): number[] => {
-    const vs = valuesRaw.includes(',')
-        ? valuesRaw.split(',')
-        : values[0]
-
+export const toNumbers = (vs: string[]) => {
     return vs
         .map((v: string) => Number(v))
         .filter((v: number) => !isNaN(v))
+}
+
+export const allowCommaStyle = (values: string[][], valuesRaw: string): string[] => {
+    return valuesRaw.includes(',')
+        ? valuesRaw.split(',')
+        : values[0]
+
 }

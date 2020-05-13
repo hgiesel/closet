@@ -20,15 +20,15 @@ const btnExecute = document.getElementById('btn-execute')
 const templateRendered = document.querySelector('#template-applied > .output')
 
 const processTemplateText = () => {
-    const filterManager = new FilterManager()
-    filterManager.addRecipe(filterRecipes.shuffling('mix', ', '))
-    filterManager.addRecipe(filterRecipes.ordering('ord', 'mix'))
-    filterManager.addRecipe(filterRecipes.debug)
+    const filterManager = new closet.FilterManager()
+    filterManager.addRecipe(closet.filterRecipes.shuffling('mix'))
+    filterManager.addRecipe(closet.filterRecipes.ordering('ord', 'mix'))
+    filterManager.addRecipe(closet.filterRecipes.debug)
 
     const text = codeCM.getValue().replace(/\n/g, '<br />')
 
     console.time('Render template')
-    const result = renderTemplate(text, filterManager)
+    const result = closet.renderTemplate(text, filterManager)
     console.timeEnd('Render template')
 
     display(templateRendered, result, escape=false)

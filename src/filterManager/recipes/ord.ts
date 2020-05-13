@@ -12,6 +12,7 @@ import type {
 
 import {
     allowCommaStyle,
+    toNumbers,
 } from './utils'
 
 const topUpSortingIndices = (indices: number[], toLength: number): number[] => {
@@ -70,7 +71,7 @@ const ordRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi
         // mixes occupied by other ords
         const ordOccupiedKey = `${key}:ord:occupied`
 
-        const toBeOrdered = allowCommaStyle(values, valuesRaw)
+        const toBeOrdered = toNumbers(allowCommaStyle(values, valuesRaw))
             .filter((v: number) => !(store.get(ordOccupiedKey, []) as number[]).includes(v))
 
         store.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])

@@ -6,23 +6,20 @@ import type {
     FilterApi
 } from '../filters'
 
+import Stylizer from './stylizer'
+
 import type {
     Internals,
 } from '..'
 
 import {
     shuffle,
-    id,
 } from './utils'
 
 const mixRecipe = (
     keyword: string,
-    separator: string,
-    mapper: (v: string) => string = id,
-    postprocess: (v: string) => string = id,
+    stylizer = new Stylizer(),
 ) => (filterApi: FilterApi) => {
-    const stylizeResult = (vs: string[]) => postprocess(vs.map(mapper).join(separator))
-
     const mixFilter = (
         {fullKey, fullOccur, num, values}: Tag,
         {store, deferred, ready}: Internals,
@@ -37,14 +34,15 @@ const mixRecipe = (
                 return
             }
 
-            const popped = []
-            const possibleValues = store.get(fullKey, []) as unknown[]
+            const popped: string[] = []
+            const possibleValues = store.get(fullKey, []) as string[]
 
             for (let x = 0; x < values[0].length; x++) {
                 popped.push(possibleValues.shift() /* pop off start, so it looks comprehensible in simple cases */)
             }
 
-            return stylizeResult(popped)
+            console.log(stylizer)
+            return stylizer.stylizeInner(popped)
         }
 
         if (!ready) {
@@ -53,7 +51,8 @@ const mixRecipe = (
         }
 
         if (!num) {
-            return stylizeResult(shuffle(values[0]) as string[])
+            console.log(stylizer)
+            return stylizer.stylizeInner(shuffle(values[0]) as string[])
         }
 
         store.fold(fullKey, (v: unknown[]) => v.concat(values[0]), [])

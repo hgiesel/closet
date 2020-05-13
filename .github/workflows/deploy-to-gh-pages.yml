@@ -26,13 +26,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          allow_empty_commit: false
-          keep_files: false
-          # Keep only the latest commit on a GitHub Pages branch
-          force_orphan: # optional, default is false
-          # Set Git user.name
+          publish_dir: ./docs
+
           user_name: Henrik Giesel
           user_email: hengiesel@gmail.com
-          enable_jekyll: false
-          disable_nojekyll: false
-          cname: # optional

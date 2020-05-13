@@ -2,7 +2,7 @@
 layout: doc
 title: Shuffling
 nav_order: 2
-permalink: /
+permalink: /shuffling
 has_children: true
 ---
 

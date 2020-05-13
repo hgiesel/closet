@@ -2,7 +2,7 @@
 layout: doc
 title: Shuffling text items
 nav_order: 1
-permalink: /shuffling/
+permalink: /shuffling/shuffling
 parent: Shuffling
 ---
 

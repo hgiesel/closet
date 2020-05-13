@@ -1,4 +1,5 @@
 name: Build and Deploy
+
 on:
   push:
     branches:
@@ -6,7 +7,9 @@ on:
 
 jobs:
   build-and-deploy:
+
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -18,7 +21,7 @@ jobs:
           npm install
           npm run-script build
 
-      - name: Deplyoy to GitHub Pages 🚀
+      - name: Deploy to GitHub Pages 🚀
           uses: peaceiris/actions-gh-pages@v3.6.1
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,5 @@
-import Tag from './tags/tagPure'
-import TagInfo from './tags/tagInfo'
+import Tag from './tagTypes/tagPure'
+import TagInfo from './tagTypes/tagInfo'
 
 export {
     Tag,

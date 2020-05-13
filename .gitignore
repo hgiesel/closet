@@ -4,7 +4,6 @@
 node_modules/*
 
 # compiled .ne files
-src/genpar/slang.ts
 src/template/template.ts
 
 # for Jekyll

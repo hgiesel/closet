@@ -20,7 +20,11 @@ import {
     ARG_SEP,
 } from '../utils'
 
-const tagKeeper = new TagKeeper()
+export const tagKeeper = new TagKeeper()
+
+
+
+console.log('foo')
 
 interface NearleyToken {  value: any;
   [key: string]: any;

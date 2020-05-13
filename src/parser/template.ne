@@ -8,7 +8,7 @@ import {
     ARG_SEP,
 } from '../utils'
 
-const tagKeeper = new TagKeeper()
+export const tagKeeper = new TagKeeper()
 %}
 
 @preprocessor typescript

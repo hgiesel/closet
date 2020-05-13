@@ -2,20 +2,26 @@ import nearley from 'nearley'
 import grammar from './template'
 
 import { TagInfo } from '../tags'
+import { tagKeeper } from './template'
 
 const parseTemplate = (text: string): TagInfo => {
     const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
-    const parsed = parser.feed(text + '$').results
+    let parsed = []
+
+    try {
+        parsed = parser.feed(text + '$').results
+    }
+    catch (e) {
+        tagKeeper.restart()
+        throw e
+    }
 
     if (parsed.length > 1) {
         console.error('Ambiguous template grammar')
     }
-    else if (parsed.length < 1) {
-        console.error('Template grammar does not match')
-    }
 
-    const result = parsed[0].endToken(text.length, 'base', text, true).value
-    parsed[0].restart()
+    const result = tagKeeper.endToken(text.length, 'base', text, true).value as TagInfo
+    tagKeeper.restart()
 
     return result
 }

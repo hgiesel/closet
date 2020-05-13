@@ -14,29 +14,29 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: "The Closet Language"
+title: The Closet Language
 email: hengiesel@example.com
 
 description: >-
     Closet is a technology to manipulate text and graphics for the use in flashcards.
 
-url: "https://hgiesel.github.io"
-baseurl: "/closet"
+url: https://hgiesel.github.io
+baseurl: /closet
 github_username: hgiesel
 
 # Docs: https://pmarsceill.github.io/just-the-docs/
 remote_theme: pmarsceill/just-the-docs
 
 aux_links:
-  "Closet on GitHub":
-    - "//github.com/hgiesel/closet/"
+  Closet on GitHub:
+    - //github.com/hgiesel/closet/
 
 # TODO create a logo
 # logo: "/assets/images/just-the-docs.png"
 
 search_enabled: true
 heading_anchors: true
-color_scheme: "dark"
+color_scheme: dark
 
 strict_front_matter: true
 

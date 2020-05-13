@@ -2,7 +2,7 @@
 layout: doc
 title: Generation
 nav_order: 3
-permalink: /generation/
+permalink: /generation
 has_children: true
 ---
 

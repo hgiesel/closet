@@ -1,0 +1,23 @@
+---
+layout: doc
+---
+
+<!-- CodeMirror -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.css" integrity="sha256-vZ3SaLOjnKO/gGvcUWegySoDU6ff33CS5i9ot8J9Czk=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.js" integrity="sha256-C1kVf8tUtnM4eBSZM0mE7kcDrTYuVGxACdyYvhMEeRo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.50.2/mode/javascript/javascript.min.js" integrity="sha256-VNJ6ASCktgY+YWSwWrZVdMKbqyAIY7fys5Yckd8Ij7E=" crossorigin="anonymous"></script>
+<!-- For defining Closet Tokenizer -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.50.2/addon/mode/simple.min.js" integrity="sha256-T9TR1ieYBhgslA5+Rs4hYmi4uKhag5vZJ9IYfKCXTUs=" crossorigin="anonymous"></script>
+<!-- For showing when brackets match -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.50.2/addon/edit/matchbrackets.min.js" integrity="sha256-E6SXqOxC0Z+uAGQmS9gr9Furz8Py05kCgC0XZXg9Hdo=" crossorigin="anonymous"></script>
+<!-- For showing a placeholder -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.50.2/addon/display/placeholder.min.js" integrity="sha256-dN7lIKQz8E7gN0va3PWtW88mBvEX5IG7Bp218Qqkbmc=" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="/closet/assets/css/tester.css"/>
+
+{{ content }}
+
+<script>
+  {% include js/testerPreset.js %}
+  {% include js/testerFunc.js %}
+</script>

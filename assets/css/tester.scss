@@ -1,0 +1,56 @@
+---
+---
+
+#mybody {
+    display: flex;
+    flex-direction: column;
+    grid-row-gap: 10px;
+}
+
+textarea {
+    resize: none;
+}
+
+.bordered {
+    padding: 20px 5px;
+    border: 2px solid grey;
+    border-radius: 8px;
+
+    position: relative;
+}
+
+.desc {
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    opacity: 0.5;
+}
+
+.CodeMirror {
+    height: auto;
+
+    border: 5px solid #eee;
+    padding: 5px;
+
+
+    &.failed {
+        border: 5px solid #dc322f;
+    }
+}
+
+.CodeMirror-empty {
+    color: lightgray;
+}
+
+
+// Toggle Memoization Checkbox
+input[type="checkbox"] {
+    display: none;
+}
+
+.memoize-label::after {
+    content: " ❌";
+}
+#memoize-checkbox:checked ~ .memoize-label::after {
+    content: " ✔️";
+}

@@ -1,0 +1,15 @@
+<div class="code-example" id="{{ include.content.name | slugify }}">
+  <div class="display"></div>
+
+  <div class="btn-group-tester">
+    <button type="button" name="button" class="btn btn-outline btn-green btn-rerender">Render</button>
+    <button type="button" name="button" class="btn btn-outline btn-blue btn-edit">Try it yourself</button>
+  </div>
+
+  <script>
+    {% include js/codeDisplay.js %}
+  </script>
+
+</div>
+```
+{{ include.content.code }}```

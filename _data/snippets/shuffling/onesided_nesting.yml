@@ -1,0 +1,4 @@
+name: "Shuffling with one-sided nesting"
+code: |
+    [[mix1::[[mix2::[[mix3::I am nested very deeply]]]]]]
+    [[mix1::I am nested with only one level]]

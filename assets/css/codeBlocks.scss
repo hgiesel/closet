@@ -1,0 +1,27 @@
+---
+---
+
+.code-example {
+    min-height: 4rem;
+
+    & .btn-group-tester {
+        float: right;
+    }
+}
+
+
+pre.highlight {
+    margin: auto;
+}
+
+// Prism.js
+span.token {
+    &.tagstart, &.altsep, &.argsep, &.tagend {
+        color: #268bd2;
+    }
+
+    &.tagname {
+        color: #cb4b16;
+    }
+}
+

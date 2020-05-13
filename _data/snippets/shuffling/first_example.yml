@@ -1,0 +1,4 @@
+name: "First example of shuffling"
+code: |
+    Capitals of Europe: [[mix::Paris||Rome||Berlin||London]]
+    Capitals of Asia: [[mix::New Delhi||Beijing||Seoul]]

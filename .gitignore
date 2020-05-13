@@ -4,7 +4,7 @@
 node_modules/*
 
 # compiled .ne files
-src/template/template.ts
+src/parser/template.ts
 
 # for Jekyll
 _site

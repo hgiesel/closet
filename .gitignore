@@ -12,4 +12,7 @@ _site
 .jekyll-cache
 .jekyll-metadata
 vendor
-docs/assets/js/*
+
+# compiled closet
+docs/assets/js/*.js
+docs/assets/js/*.js.map

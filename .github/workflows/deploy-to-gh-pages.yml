@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -22,18 +22,18 @@ jobs:
           npm run-script build
 
       - name: Deploy to GitHub Pages 🚀
-          uses: peaceiris/actions-gh-pages@v3.6.1
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_branch: gh-pages
-            publish_dir: docs
-            allow_empty_commit: false
-            keep_files: false
-            # Keep only the latest commit on a GitHub Pages branch
-            force_orphan: # optional, default is false
-            # Set Git user.name
-            user_name: Henrik Giesel
-            user_email: hengiesel@gmail.com
-            enable_jekyll: false
-            disable_nojekyll: false
-            cname: # optional
+        uses: peaceiris/actions-gh-pages@v3.6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: docs
+          allow_empty_commit: false
+          keep_files: false
+          # Keep only the latest commit on a GitHub Pages branch
+          force_orphan: # optional, default is false
+          # Set Git user.name
+          user_name: Henrik Giesel
+          user_email: hengiesel@gmail.com
+          enable_jekyll: false
+          disable_nojekyll: false
+          cname: # optional

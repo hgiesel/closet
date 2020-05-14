@@ -48,9 +48,14 @@ input[type="checkbox"] {
     display: none;
 }
 
-.memoize-label::after {
-    content: " ❌";
+.memoize-label {
+    &::after {
+        content: " ❌";
+    }
+
+    margin-top: 0.5rem;
 }
+
 #memoize-checkbox:checked ~ .memoize-label::after {
     content: " ✔️";
 }

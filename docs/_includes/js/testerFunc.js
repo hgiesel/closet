@@ -92,7 +92,23 @@ btnExecute.addEventListener('click', processTemplateText)
 const btnCopyLink = document.getElementById('btn-copy-link')
 const copyTemplateTextAsLink = () => {
     const allText = codeCM.getValue()
-    const link = (window.location.pathname + `?txt=${encodeURIComponent(allText)}`)
+    const allPreset = presetCM.getValue()
+
+    const queryText = allText.length > 0
+        ? `text=${encodeURIComponent(allText)}`
+        : ''
+
+    const queryPreset = allPreset.length > 0
+        ? `preset=${encodeURIComponent(allPreset)}`
+        : ''
+
+    const joinedQueries = [queryText, queryPreset]
+        .filter(v => v.length > 0)
+        .join('&')
+
+    const link = window.location.pathname + (joinedQueries.length > 0
+        ? `?${joinedQueries}`
+        : '')
 
     navigator.clipboard.writeText(
         `${window.location.protocol}//${window.location.host}${link}`

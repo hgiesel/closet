@@ -10,11 +10,11 @@ const readyRenderButton = (buttonQuery, displayQuery, code, filterManager = new 
     btnRerender.dispatchEvent(new Event('click'))
 }
 
-const readyTryButton = (buttonQuery, code) => {
+const readyTryButton = (buttonQuery, code, preset) => {
     const btnEdit = document.querySelector(buttonQuery)
 
     btnEdit.addEventListener('click', () => {
-        const link = `/closet/tester?txt=${encodeURIComponent(code.replace(/<br \/>/g, '\n'))}`
+        const link = `/closet/tester?text=${encodeURIComponent(code.replace(/<br \/>/g, '\n'))}&preset=${encodeURIComponent(preset)}`
 
         window.location = link
     })

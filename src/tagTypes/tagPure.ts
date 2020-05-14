@@ -44,7 +44,7 @@ class Tag {
         this.path = path
     }
 
-    shadowValuesRaw(newValuesRaw: string): Tag {
+    shadowValuesRaw(newValuesRaw: string | null): Tag {
         return new Tag(
             this.fullKey,
             this.key,

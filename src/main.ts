@@ -78,10 +78,12 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
             rend,
         ] = calculateCoordinates(tag.start, tag.end, leftOffset, innerOffset)
 
-        const newValuesRaw = modText.slice(
-            lend + (tag.naked ? 0 : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length),
-            rend - (tag.naked ? 0 : TAG_END.length),
-        )
+        const newValuesRaw = tag.data.valuesRaw === null
+            ? null
+            : modText.slice(
+                lend + (tag.naked ? 0 : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length),
+                rend - (tag.naked ? 0 : TAG_END.length),
+            )
 
         const tagData = tag.data.shadowValuesRaw(newValuesRaw)
 

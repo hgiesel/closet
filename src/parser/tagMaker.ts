@@ -5,8 +5,13 @@ const keyPattern = /^([^0-9]+)([0-9]*)$/u
 class TagMaker {
     private readonly tagCounter: Map<string, number>
 
+    private readonly tagPathStack: number[]
+    private tagPathNext: number
+
     constructor() {
         this.tagCounter = new Map()
+        this.tagPathStack = []
+        this.tagPathNext = 0
     }
 
     private getAndInc(key: string): number {
@@ -18,7 +23,12 @@ class TagMaker {
         return result
     }
 
-    makeTag(fullKey: string, valuesRaw: string | null, path: number[]): Tag {
+    signalTagOpen(): void {
+        this.tagPathStack.push(this.tagPathNext)
+        this.tagPathNext = 0
+    }
+
+    makeTag(fullKey: string, valuesRaw: string | null): Tag {
         const match = fullKey.match(keyPattern)
 
         const key = match[1]
@@ -29,15 +39,24 @@ class TagMaker {
             ? fullOccur
             : this.getAndInc(key)
 
-        return new Tag(
+        const result = new Tag(
             fullKey,
             key,
             idx,
             valuesRaw,
             fullOccur,
             occur,
-            path,
+            [...this.tagPathStack],
         )
+
+        this.tagPathNext = this.tagPathStack.pop() + 1
+        return result
+    }
+
+    reset() {
+        this.tagCounter.clear()
+        this.tagPathStack.length = 0
+        this.tagPathNext = 0
     }
 }
 

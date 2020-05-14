@@ -3,6 +3,8 @@ const TAG_END = /\]\]/u
 const ARG_SEP = /::/u
 const ALT_SEP = /\|\|/u
 
+//////////////////// codeCM
+
 CodeMirror.defineSimpleMode('closet', {
     // The start state contains the rules that are intially used
     start: [
@@ -45,16 +47,11 @@ const codeCM = CodeMirror.fromTextArea(codeTA, {
 
 const sparams = new URLSearchParams(location.search)
 
-
 if (sparams.has('text')) {
     codeCM.setValue(sparams.get('text'))
 }
 
-if (sparams.has('preset')) {
-    codeCM.setValue(sparams.get('text'))
-}
-
-////////////////////
+//////////////////// presetCM
 
 const presetTA = document.getElementById('preset')
 const presetCM = CodeMirror.fromTextArea(presetTA, {
@@ -63,3 +60,7 @@ const presetCM = CodeMirror.fromTextArea(presetTA, {
     matchBrackets: true,
     placeholder: 'Define your preset options in JSON here...',
 })
+
+if (sparams.has('preset')) {
+    presetCM.setValue(sparams.get('preset'))
+}

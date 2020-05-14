@@ -14,7 +14,7 @@
   },
 
   "scripts": {
-    "compile-parser": "./bin/compile-parser.sh",
+    "compile-parser": "bin/compile-parser.sh",
 
     "build": "run-p build-docs",
     "build-docs": "run-s compile-parser rollup-docs",
@@ -24,8 +24,8 @@
     "watch-docs": "run-s compile-parser rollup-docs-watch",
     "rollup-docs-watch": "rollup -c rollup.config.docs.js -w",
 
-    "start": "serve dist",
-    "dev": "run-p start watch"
+    "serve": "bin/serve.sh",
+    "dev": "run-p serve watch"
   },
 
   "dependencies": {

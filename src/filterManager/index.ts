@@ -1,14 +1,9 @@
 import type TemplateApi from '../template'
 
 import {
-    Memoizer,
-    MemoizerKeyable,
-    defaultMemoizer,
-} from './memoizer'
-
-import {
-    Store,
-} from './store'
+    Storage,
+    StorageType,
+} from './storage'
 
 import {
     FilterApi,
@@ -20,7 +15,8 @@ import {
 } from './deferred'
 
 export interface Internals {
-    store: Store
+    cache: Storage,
+    memory: Storage,
     filters: FilterApi
     deferred: DeferredApi
     iteration: {index: number }
@@ -41,7 +37,7 @@ interface FilterProcessorResult {
     ready: boolean
 }
 
-export type FilterProcessor = (data: Filterable & MemoizerKeyable, custom?: object) => FilterProcessorResult
+export type FilterProcessor = (data: Filterable, custom?: object) => FilterProcessorResult
 
 const notReady = {
     result: null,
@@ -57,31 +53,25 @@ export class FilterManager {
     readonly filters: FilterApi
     private readonly deferred: DeferredApi
 
-    private readonly store: Store
-    private readonly memoizer: Memoizer
+    private readonly cache: Storage
+    private readonly memory: Storage
+
     private readonly preset: object
 
-    constructor(preset = {}, memoizer = defaultMemoizer) {
+    constructor(preset = {}, memory: StorageType = new Map()) {
         this.filters = new FilterApi()
         this.deferred = new DeferredApi()
 
         this.preset = preset
-        this.store = new Store()
-        this.memoizer = memoizer
+        this.cache = new Storage(new Map())
+        this.memory = new Storage(memory)
     }
 
     filterProcessor(stock: StockInternals): FilterProcessor {
-        return (data: Filterable & MemoizerKeyable, custom: CustomInternals): FilterProcessorResult => {
-
-            if (this.memoizer.hasItem(data)) {
-                return {
-                    result: this.memoizer.getItem(data).result,
-                    ready: true,
-                }
-            }
-
+        return (data: Filterable, custom: CustomInternals): FilterProcessorResult => {
             const internals: Internals = Object.assign(this.preset, stock, custom, {
-                store: this.store,
+                cache: this.cache,
+                memory: this.memory,
                 filters: this.filters,
                 deferred: this.deferred,
             })
@@ -90,10 +80,6 @@ export class FilterManager {
 
             if (result.result === null) {
                 return notReady
-            }
-
-            if (result.memoize) {
-                this.memoizer.setItem(data, result)
             }
 
             return makeReady(result.result)
@@ -105,7 +91,7 @@ export class FilterManager {
     }
 
     reset() {
-        this.store.clear()
+        this.cache.clear()
         this.deferred.clear()
     }
 

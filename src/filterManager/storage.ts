@@ -1,20 +1,28 @@
-export class Store {
-    private store: Map<string, unknown>
+export interface StorageType {
+    has(k: string): boolean
+    get(k: string): unknown
+    set(k: string, v: unknown): void
+    delete(k: string): void
+    clear(): void
+}
 
-    constructor() {
-        this.store = new Map()
+export class Storage {
+    private readonly storage: StorageType
+
+    constructor(v: StorageType) {
+        this.storage = v
     }
 
     set(name: string, value: unknown): void {
-        this.store.set(name, value)
+        this.storage.set(name, value)
     }
 
     has(name: string): boolean {
-        return this.store.has(name)
+        return this.storage.has(name)
     }
     get(name: string, defaultValue: unknown = null): unknown {
         return this.has(name)
-            ? this.store.get(name)
+            ? this.storage.get(name)
             : defaultValue
     }
 
@@ -34,10 +42,10 @@ export class Store {
     }
 
     delete(name: string): void {
-        this.store.delete(name)
+        this.storage.delete(name)
     }
 
     clear(): void {
-        this.store.clear()
+        this.storage.clear()
     }
 }

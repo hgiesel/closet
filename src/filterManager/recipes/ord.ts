@@ -66,15 +66,15 @@ const sortWithIndices = <T>(items: T[], indices: number[]): T[] => {
 const ordRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi) => {
     const ordFilter = (
         { key, fullOccur, values, valuesRaw }: Tag,
-        { deferred, store }: Internals,
+        { deferred, cache }: Internals,
     ) => {
         // mixes occupied by other ords
         const ordOccupiedKey = `${key}:ord:occupied`
 
         const toBeOrdered = toNumbers(allowCommaStyle(values, valuesRaw))
-            .filter((v: number) => !(store.get(ordOccupiedKey, []) as number[]).includes(v))
+            .filter((v: number) => !(cache.get(ordOccupiedKey, []) as number[]).includes(v))
 
-        store.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])
+        cache.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])
 
         const mixKeys = new Set(
             toBeOrdered.map((v: number) => `${mixKeyword}${v}`)
@@ -88,26 +88,26 @@ const ordRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi
             for (const mk of mixKeys) {
                 deferred.block(`${mk}:mix`)
 
-                const waitingSet = (store.get(`${mk}:waitingSet`, new Set()) as Set<string>)
+                const waitingSet = (cache.get(`${mk}:waitingSet`, new Set()) as Set<string>)
 
                 if (waitingSet.size !== 0) {
                     continue
                 }
 
-                const mixItems = store.get(mk, []) as string[]
+                const mixItems = cache.get(mk, []) as string[]
                 const toppedUpIndices = topUpSortingIndices(
-                    store.get(ordKey, []) as number[],
+                    cache.get(ordKey, []) as number[],
                     mixItems.length,
                 )
 
                 // order mix items
-                store.fold(mk, (vs: string[]) => sortWithIndices(vs, toppedUpIndices), [])
+                cache.fold(mk, (vs: string[]) => sortWithIndices(vs, toppedUpIndices), [])
 
                 // mark this mix tag as done
                 finishedKeys.push(mk)
 
                 // possibly update with longer sort order
-                store.set(ordKey, toppedUpIndices)
+                cache.set(ordKey, toppedUpIndices)
             }
 
             // remove mixKey from ord pool

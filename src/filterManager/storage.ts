@@ -26,8 +26,11 @@ export class Storage {
             : defaultValue
     }
 
-    fold(name: string, f: (v: unknown) => unknown, mempty: unknown): void {
-        this.set(name, f(this.get(name, mempty)))
+    fold(name: string, f: (v: unknown) => unknown, mempty: unknown): unknown {
+        const result = f(this.get(name, mempty))
+        this.set(name, result)
+
+        return result
     }
 
     over(name: string, f: (v: unknown) => void, mempty: unknown): void {

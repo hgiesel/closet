@@ -20,6 +20,8 @@ const btnExecute = document.getElementById('btn-execute')
 const templateRendered = document.querySelector('#template-applied > .output')
 
 let run = 0
+let memory = new Map()
+
 const templateErrorMessage = '<i>Run failed: There is a syntax error in the template text.</i>'
 const presetErrorMessage = '<i>Error parsing preset JSON: Please fix syntax error or remove entirely</i>'
 const presetMustBeObjectMessage = '<i>Error with preset JSON: preset must be an object</i>'
@@ -51,10 +53,15 @@ const processTemplateText = () => {
         display(templateRendered, presetMustBeObjectMessage, escape=false)
         return
     }
+    /////////////////////////////
+
+    if (!checkboxMemoization.checked) {
+        memory = new Map()
+    }
 
     /////////////////////////////
 
-    const filterManager = new closet.FilterManager(preset)
+    const filterManager = new closet.FilterManager(preset, memory)
     filterManager.addRecipe(closet.filterRecipes.shuffling('mix'))
     filterManager.addRecipe(closet.filterRecipes.ordering('ord', 'mix'))
     filterManager.addRecipe(closet.filterRecipes.debug)
@@ -93,6 +100,7 @@ const btnCopyLink = document.getElementById('btn-copy-link')
 const copyTemplateTextAsLink = () => {
     const allText = codeCM.getValue()
     const allPreset = presetCM.getValue()
+    const reuseMemory = checkboxMemoization.checked
 
     const queryText = allText.length > 0
         ? `text=${encodeURIComponent(allText)}`
@@ -102,7 +110,11 @@ const copyTemplateTextAsLink = () => {
         ? `preset=${encodeURIComponent(allPreset)}`
         : ''
 
-    const joinedQueries = [queryText, queryPreset]
+    const queryMemory = reuseMemory
+        ? 'memory=t'
+        : ''
+
+    const joinedQueries = [queryText, queryPreset, queryMemory]
         .filter(v => v.length > 0)
         .join('&')
 

@@ -64,3 +64,11 @@ const presetCM = CodeMirror.fromTextArea(presetTA, {
 if (sparams.has('preset')) {
     presetCM.setValue(sparams.get('preset'))
 }
+
+//////////////////// usememory
+
+const checkboxMemoization = document.getElementById('memoize-checkbox')
+
+if (sparams.has('memory')) {
+    checkboxMemoization.checked = sparams.get('memory').startsWith('t')
+}

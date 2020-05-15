@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false 
+
+      - name: Install and Build 🔧
+        run: |
+          npm install
+          npm run-script zip
+          npm run-script zip-ankiweb
+
+      - name: Upload to GitHub
+        uses: actions/upload-artifact@v2
+        with:
+          name: Anki add-ons
+          path: anki/*.ankiaddon

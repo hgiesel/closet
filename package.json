@@ -25,7 +25,10 @@
     "rollup-docs-watch": "rollup -c rollup.config.docs.js -w",
 
     "serve": "bin/serve.sh",
-    "dev": "run-p serve watch"
+    "dev": "run-p serve watch",
+
+    "zip": "bin/zip.sh",
+    "zip-ankiweb": "bin/zip.sh -a"
   },
 
   "dependencies": {

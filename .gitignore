@@ -19,3 +19,6 @@ vendor/
 # compiled closet
 docs/assets/js/*.js
 docs/assets/js/*.js.map
+
+# for anki-addon
+anki/*.ankiaddon

@@ -11,7 +11,12 @@ import {
     toNumbers,
 } from './utils'
 
-const intGenerator = function*(min: number, max: number, presetValues: number[], filter = false): Generator<number, void, void>  {
+const intGenerator = function*(
+    min: number,
+    max: number,
+    presetValues: number[],
+    filter = false,
+): Generator<number, void, void>  {
     const searchDomain: number[] = presetValues
     ? [...presetValues]
     : [...Array(max - min + 1).keys()]
@@ -34,7 +39,11 @@ const intGenerator = function*(min: number, max: number, presetValues: number[],
     }
 }
 
-const realGenerator = function*(min: number, max: number, presetValues: number[]): Generator<number, void, void>  {
+const realGenerator = function*(
+    min: number,
+    max: number,
+    presetValues: number[],
+): Generator<number, void, void>  {
     const maxTries = 100
     let tries = 0
 

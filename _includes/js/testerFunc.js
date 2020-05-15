@@ -64,6 +64,8 @@ const processTemplateText = () => {
     const filterManager = new closet.FilterManager(preset, memory)
     filterManager.addRecipe(closet.filterRecipes.shuffling('mix'))
     filterManager.addRecipe(closet.filterRecipes.ordering('ord', 'mix'))
+    filterManager.addRecipe(closet.filterRecipes.random('rand'))
+    filterManager.addRecipe(closet.filterRecipes.meta)
     filterManager.addRecipe(closet.filterRecipes.debug)
 
     /////////////////////////////

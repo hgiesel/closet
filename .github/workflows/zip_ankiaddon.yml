@@ -1,3 +1,5 @@
+name: Zip Anki add-ons ⭐️
+
 on:
   push:
     branches:
@@ -23,5 +25,11 @@ jobs:
       - name: Upload to GitHub
         uses: actions/upload-artifact@v2
         with:
-          name: Anki add-ons
+          name: Anki add-on for Ankiweb
           path: anki/*.ankiaddon
+
+      - name: Upload to GitHub
+        uses: actions/upload-artifact@v2
+        with:
+          name: Anki add-on for personal use
+          path: anki/anki_closet.ankiaddon

@@ -56,10 +56,6 @@ class Tag {
         )
     }
 
-    makeMemoizerKey(): string {
-        return `${this.key}:${this.num}:${this.valuesRaw}`
-    }
-
     getDefaultRepresentation(): string {
         return this.valuesRaw === null
             ? `${TAG_START}${this.fullKey}${TAG_END}`

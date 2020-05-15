@@ -4,7 +4,7 @@ import type {
 
 export interface FilterResult {
     result: string
-    memoize?: boolean
+    ready: boolean
 }
 
 export interface Filterable {
@@ -13,9 +13,14 @@ export interface Filterable {
     getFilterKey(): string
 }
 
-const wrapWithNonMemoize = (result: string): FilterResult => ({
+const wrapWithReady = (result: string): FilterResult => ({
     result: result,
-    memoize: false,
+    ready: true,
+})
+
+const wrapWithReadyBubbled = (result: string, ready: boolean): FilterResult => ({
+    result: result,
+    ready: ready,
 })
 
 const standardizeFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: Internals): FilterResult => {
@@ -23,13 +28,13 @@ const standardizeFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: I
 
     switch (typeof input) {
         case 'string':
-            return wrapWithNonMemoize(input)
+            return wrapWithReady(input)
 
         // includes null
         case 'object':
             return {
                 result: input.result,
-                memoize: input.memoize ?? false,
+                ready: input.ready ?? true,
             }
 
         // undefined
@@ -37,7 +42,7 @@ const standardizeFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: I
             return {
                 // this will mark as "not ready"
                 result: null,
-                memoize: false,
+                ready: false,
             }
     }
 }
@@ -45,9 +50,9 @@ const standardizeFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: I
 export type WeakFilter = (t: Filterable, i: Internals) => FilterResult | string | void
 export type Filter = (t: Filterable, i: Internals) => FilterResult
 
-const baseFilter = (t: Filterable, i: Internals) => i.ready ? wrapWithNonMemoize(t.getRawRepresentation()) : undefined
-const rawFilter = (t: Filterable) => wrapWithNonMemoize(t.getRawRepresentation())
-const defaultFilter = (t: Filterable) => wrapWithNonMemoize(t.getDefaultRepresentation())
+const baseFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getRawRepresentation(), i.ready)
+const rawFilter: Filter = (t: Filterable) => wrapWithReady(t.getRawRepresentation())
+const defaultFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getDefaultRepresentation(), i.ready)
 
 export class FilterApi {
     private filters: Map<string, WeakFilter>

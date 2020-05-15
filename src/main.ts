@@ -93,9 +93,9 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
         const [
             newText,
             newOffset,
-        ] = filterOutput.ready
-            ? replaceAndGetOffset(modText, filterOutput.result, lend, rend)
-            : [modText, 0]
+        ] = filterOutput.result === null
+            ? [modText, 0]
+            : replaceAndGetOffset(modText, filterOutput.result, lend, rend)
 
         // going UP
         const sum = innerOffset + leftOffset + newOffset

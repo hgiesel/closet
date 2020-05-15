@@ -8,6 +8,7 @@ import {
 import {
     FilterApi,
     Filterable,
+    FilterResult,
 } from './filters'
 
 import {
@@ -32,22 +33,7 @@ export interface CustomInternals {
     ready: boolean
 }
 
-interface FilterProcessorResult {
-    result: string | null
-    ready: boolean
-}
-
-export type FilterProcessor = (data: Filterable, custom?: object) => FilterProcessorResult
-
-const notReady = {
-    result: null,
-    ready: false,
-}
-
-const makeReady = (value: string): FilterProcessorResult => ({
-    result: value,
-    ready: true,
-})
+export type FilterProcessor = (data: Filterable, custom?: object) => FilterResult
 
 export class FilterManager {
     readonly filters: FilterApi
@@ -68,7 +54,7 @@ export class FilterManager {
     }
 
     filterProcessor(stock: StockInternals): FilterProcessor {
-        return (data: Filterable, custom: CustomInternals): FilterProcessorResult => {
+        return (data: Filterable, custom: CustomInternals): FilterResult => {
             const internals: Internals = Object.assign(this.preset, stock, custom, {
                 cache: this.cache,
                 memory: this.memory,
@@ -77,12 +63,7 @@ export class FilterManager {
             })
 
             const result = this.filters.execute(data, internals)
-
-            if (result.result === null) {
-                return notReady
-            }
-
-            return makeReady(result.result)
+            return result
         }
     }
 

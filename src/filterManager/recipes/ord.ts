@@ -13,55 +13,9 @@ import type {
 import {
     allowCommaStyle,
     toNumbers,
+    sortWithIndices,
+    topUpSortingIndices,
 } from './utils'
-
-const topUpSortingIndices = (indices: number[], toLength: number): number[] => {
-    if (indices.length >= toLength) {
-        // indices already have sufficient length
-        return indices
-    }
-
-    const newIndices = Array.from(
-        new Array(toLength - indices.length),
-        (_x: undefined, i: number) => i + indices.length,
-    )
-
-    const result = [...indices]
-    newIndices.forEach(
-        (newIndex: number) => result.splice(
-            Math.floor(Math.random() * (result.length + 1)) /* possible insertion positions */,
-            0,
-            newIndex,
-        )
-    )
-
-    return result
-}
-
-const sortWithIndices = <T>(items: T[], indices: number[]): T[] => {
-    const result = []
-
-    for (const idx of indices) {
-        const maybeItem = items[idx]
-
-        if (maybeItem) {
-            result.push(maybeItem)
-        }
-    }
-
-    if (indices.length < items.length) {
-        const remainingItemIndices: number[] = Array.from(
-            new Array(items.length - indices.length),
-            (_x, i) => i + indices.length
-        )
-
-        for (const idx of remainingItemIndices) {
-            result.push(items[idx])
-        }
-    }
-
-    return result
-}
 
 const ordRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi) => {
     const ordFilter = (

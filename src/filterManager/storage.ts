@@ -1,7 +1,7 @@
 export interface StorageType {
     has(k: string): boolean
-    get(k: string): unknown
-    set(k: string, v: unknown): void
+    get<T>(k: string): T
+    set<T>(k: string, v: T): void
     delete(k: string): void
     clear(): void
 }
@@ -13,27 +13,27 @@ export class Storage {
         this.storage = v
     }
 
-    set(name: string, value: unknown): void {
+    set<T>(name: string, value: T): void {
         this.storage.set(name, value)
     }
 
     has(name: string): boolean {
         return this.storage.has(name)
     }
-    get(name: string, defaultValue: unknown = null): unknown {
+    get<T>(name: string, defaultValue: T = null): T | null {
         return this.has(name)
             ? this.storage.get(name)
             : defaultValue
     }
 
-    fold(name: string, f: (v: unknown) => unknown, mempty: unknown): unknown {
+    fold<T>(name: string, f: (v: T) => T, mempty: T): T {
         const result = f(this.get(name, mempty))
         this.set(name, result)
 
         return result
     }
 
-    over(name: string, f: (v: unknown) => void, mempty: unknown): void {
+    over<T>(name: string, f: (v: T) => void, mempty: T): void {
         if (!this.has(name)) {
             f(mempty)
             this.set(name, mempty)

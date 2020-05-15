@@ -14,6 +14,8 @@ import type {
 
 import {
     shuffle,
+    sortWithIndices,
+    topUpSortingIndices,
 } from './utils'
 
 const mixRecipe = (
@@ -22,7 +24,7 @@ const mixRecipe = (
 ) => (filterApi: FilterApi) => {
     const mixFilter = (
         { fullKey, fullOccur, num, values }: Tag,
-        { cache, deferred, ready }: Internals,
+        { cache, memory, deferred, ready }: Internals,
     ) => {
         const id = `${fullKey}:${fullOccur}`
         const waitingSetKey = `${fullKey}:waitingSet`
@@ -61,14 +63,21 @@ const mixRecipe = (
             cache.over(waitingSetKey, (set: Set<string>) => set.delete(id), new Set())
         })
 
+        console.log('hi')
+
         const mixKey = `${fullKey}:mix`
         deferred.registerIfNotExists(mixKey, () => {
-            const waitingSet = cache.get(waitingSetKey, new Set()) as Set<string>
-            if (waitingSet.size > 0) {
+            if (cache.get(waitingSetKey, new Set()).size > 0) {
                 return
             }
 
-            cache.fold(fullKey, shuffle, [])
+            cache.fold(fullKey, <T>(vs: T[]) => {
+                const sortingIndices = memory.fold(fullKey, (vs: number[]) => {
+                    return topUpSortingIndices(vs, cache.get(fullKey, []).length)
+                }, [])
+
+                return sortWithIndices(vs, sortingIndices)
+            }, [])
         })
     }
 

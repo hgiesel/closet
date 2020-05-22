@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
-# declare DIR="$(realpath "${BASH_SOURCE%/*}")"
-declare DIR="$(cd "$(dirname "$0")" && pwd -P)"
+declare DIR="$(cd "$(dirname "$0")/../src/parser" && pwd -P)"
 
 if ! type nearleyc &> /dev/null; then
   echo 'No nearleyc executable found in $PATH'
   exit
 fi
 
-from="$DIR/../src/parser/template.ne"
-to="$DIR/../src/parser/template.ts"
+declare from="$DIR/template.ne"
+declare to="$DIR/template.ts"
 
 nearleyc "$from" > "$to"

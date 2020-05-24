@@ -61,12 +61,12 @@ const processTemplateText = () => {
 
     /////////////////////////////
 
-    const filterManager = new closet.FilterManager(preset, memory)
-    filterManager.addRecipe(closet.filterRecipes.shuffling('mix'))
-    filterManager.addRecipe(closet.filterRecipes.ordering('ord', 'mix'))
-    filterManager.addRecipe(closet.filterRecipes.random('rand'))
-    filterManager.addRecipe(closet.filterRecipes.meta)
-    filterManager.addRecipe(closet.filterRecipes.debug)
+    const filterManager = new Closet.FilterManager(preset, memory)
+    filterManager.addRecipe(Closet.recipes.shuffling('mix'))
+    filterManager.addRecipe(Closet.recipes.ordering('ord', 'mix'))
+    filterManager.addRecipe(Closet.recipes.random('rand'))
+    filterManager.addRecipe(Closet.recipes.meta)
+    filterManager.addRecipe(Closet.recipes.debug)
 
     /////////////////////////////
 
@@ -77,7 +77,7 @@ const processTemplateText = () => {
 
     let result = null
     try {
-        result = closet.renderTemplate(text, filterManager)
+        result = Closet.renderTemplate(text, filterManager)
     }
     catch (e) {
         console.error(templateErrorMessage, e)

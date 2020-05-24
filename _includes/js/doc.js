@@ -3,7 +3,7 @@ const readyRenderButton = (buttonQuery, displayQuery, code, filterManager = new 
     const btnRerender = document.querySelector(buttonQuery)
 
     btnRerender.addEventListener('click', () => {
-        theDisplay.innerHTML = closet.renderTemplate(code, filterManager)
+        theDisplay.innerHTML = Closet.renderTemplate(code, filterManager)
         filterManager.reset()
     })
 

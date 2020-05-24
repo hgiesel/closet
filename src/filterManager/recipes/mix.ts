@@ -1,12 +1,14 @@
 import type {
-    Tag
+    Tag,
 } from '../../tags'
 
 import type {
-    FilterApi
+    FilterApi,
 } from '../filters'
 
-import Stylizer from './stylizer'
+import {
+    Stylizer,
+} from './stylizer'
 
 import type {
     Internals,

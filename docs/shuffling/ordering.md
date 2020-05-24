@@ -16,8 +16,8 @@ Let's look at a first example:
 
 {% capture orderFm %}
 const fm = new closet.FilterManager()
-fm.addRecipe(closet.filterRecipes.shuffling('mix'))
-fm.addRecipe(closet.filterRecipes.ordering('ord', 'mix'))
+fm.addRecipe(closet.recipes.shuffling('mix'))
+fm.addRecipe(closet.recipes.ordering('ord', 'mix'))
 
 return fm
 {% endcapture %}
@@ -39,11 +39,11 @@ When shuffling sentences, the `ord` tag is especially handy, because you can foc
 {% capture vsFm %}
 const fm = new closet.FilterManager()
 
-fm.addRecipe(closet.filterRecipes.shuffling('mix', new closet.Stylizer({
+fm.addRecipe(closet.recipes.shuffling('mix', new closet.Stylizer({
   separator: ' vs ',
 })))
 
-fm.addRecipe(closet.filterRecipes.ordering('ord', 'mix'))
+fm.addRecipe(closet.recipes.ordering('ord', 'mix'))
 
 return fm
 {% endcapture %}

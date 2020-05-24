@@ -2,7 +2,7 @@ import {
     id,
 } from './utils'
 
-class Stylizer {
+export class Stylizer {
     private readonly separator: string
     private readonly separatorOuter: string
     private readonly mapper: (v: string) => string
@@ -38,5 +38,3 @@ class Stylizer {
         )
     }
 }
-
-export default Stylizer

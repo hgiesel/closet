@@ -7,7 +7,7 @@ import randRecipe from './rand'
 import debugRecipe from './debug'
 import metaRecipe from './meta'
 
-const recipes = {
+export const recipes = {
     shuffling: mixRecipe,
     ordering: ordRecipe,
     cloze: clozeRecipe,
@@ -16,5 +16,3 @@ const recipes = {
     debug: debugRecipe,
     meta: metaRecipe,
 }
-
-export default recipes

@@ -24,7 +24,7 @@ import {
 
 const MAX_ITERATIONS = 50
 
-const renderTemplate = (text: string, filterManager: FilterManager): string => {
+export const renderTemplate = (text: string, filterManager: FilterManager): string => {
     let result = text
     let ready = false
 
@@ -121,5 +121,3 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
 
     return tagReduce([baseText, [0,0], true], rootTag)
 }
-
-export default renderTemplate

@@ -14,7 +14,7 @@ Items can easily be shuffled using the `mix` tag. Items to be shuffled must be s
 
 {% capture defaultFm %}
 const fm = new closet.FilterManager()
-fm.addRecipe(closet.filterRecipes.shuffling('mix'))
+fm.addRecipe(closet.recipes.shuffling('mix'))
 
 return fm
 {% endcapture %}
@@ -79,7 +79,7 @@ const colorWheel = function*() {
 const cw = colorWheel()
 cw.next()
 
-fm.addRecipe(closet.filterRecipes.shuffling('mix', new closet.Stylizer({
+fm.addRecipe(closet.recipes.shuffling('mix', new closet.Stylizer({
   separator: '・',
   mapper: v => `<span style="color: ${cw.next().value};">${v}</span>`,
   mapperOuter: v => `〈${v}〉`,
@@ -95,11 +95,11 @@ You can stylize the appearance of shuffled items however you like.
 {% capture mixedFm %}
 const fm = new closet.FilterManager()
 
-fm.addRecipe(closet.filterRecipes.shuffling('amix', new closet.Stylizer({
+fm.addRecipe(closet.recipes.shuffling('amix', new closet.Stylizer({
   separator: '・',
 })))
 
-fm.addRecipe(closet.filterRecipes.shuffling('mix', new closet.Stylizer({
+fm.addRecipe(closet.recipes.shuffling('mix', new closet.Stylizer({
   separator: ' / ',
 })))
 

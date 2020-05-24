@@ -18,7 +18,7 @@ import {
 const production = !process.env.ROLLUP_WATCH
 
 export default {
-    input: 'src/index.ts',
+    input: 'index.ts',
     output: {
         file: `docs/assets/js/${production ? 'main' : 'dev'}.js`,
         format: 'iife', // immediately-invoked function expression — suitable for <script> tags

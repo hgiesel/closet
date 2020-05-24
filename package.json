@@ -1,5 +1,5 @@
 {
-  "name": "closet",
+  "name": "closetjs",
   "author": {
     "name": "Henrik Giesel",
     "email": "hengiesel@gmail.com",
@@ -7,6 +7,7 @@
   },
 
   "license": "GPL-3.0",
+  "version": "0.1.0",
 
   "repository": {
     "type": "git",

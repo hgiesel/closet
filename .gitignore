@@ -1,5 +1,8 @@
 .DS_Store
 
+# build for npm
+index.js
+
 # compiled src outside of docs
 node_modules/*
 

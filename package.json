@@ -5,40 +5,33 @@
     "email": "hengiesel@gmail.com",
     "url": "https://github.com/hgiesel"
   },
-
   "license": "GPL-3.0",
-  "version": "0.1.1",
-
+  "version": "0.1.4",
   "repository": {
     "type": "git",
     "url": "git://github.com/hgiesel/closet.git"
   },
-
   "scripts": {
     "compile-parser": "bin/compile-parser.sh",
-
     "build": "run-p build-docs",
     "build-docs": "run-s compile-parser rollup-docs",
     "rollup-docs": "rollup -c rollup.config.docs.js",
-
+    "build-main": "run-s compile-parser rollup-main",
+    "rollup-main": "rollup -c rollup.config.main.js",
     "watch": "run-p watch-docs",
     "watch-docs": "run-s compile-parser rollup-docs-watch",
-    "rollup-docs-watch": "rollup -c rollup.config.docs.js -w",
-
+    "rollup-watch-docs": "rollup -c rollup.config.docs.js -w",
     "serve": "bin/serve.sh",
     "dev": "run-p serve watch",
-
     "zip": "bin/zip.sh",
     "zip-ankiweb": "bin/zip.sh -a"
   },
-
   "dependencies": {
     "eslint": "^6.6.0",
     "moo": "^0.5.1",
     "nearley": "^2.19.3",
     "typescript": "^3.8.3"
   },
-
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.1.0",
     "@rollup/plugin-node-resolve": "^7.1.3",

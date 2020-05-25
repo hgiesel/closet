@@ -11,7 +11,6 @@ import {
     TAG_END,
     ARG_SEP,
 } from '../utils'
-
 const joinText = ([vs]) => vs.map(v => v.value).join('')
 
 export const tagMaker = new TagMaker()

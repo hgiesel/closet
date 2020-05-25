@@ -4,9 +4,12 @@ from aqt.utils import showInfo
 
 from .utils import find_addon_by_name
 
-script_name = 'foo'
+script_name = 'Closetjs'
+file_name = 'closet'
 version = 'v1.0'
 description = 'This is my awesome script!'
+
+base_tag = f'{script_name}Base'
 
 am = find_addon_by_name('Asset Manager')
 
@@ -16,12 +19,12 @@ if am:
 
 def setup_script():
     if not am:
-        showInfo('Closet requires Asset Manager to be installed.')
+        showInfo('Closetjs requires Asset Manager to be installed.')
 
     from pathlib import Path
     from os.path import dirname, realpath
 
-    filepath = Path(f'{dirname(realpath(__file__))}', 'web', f'{script_name}.js')
+    filepath = Path(f'{dirname(realpath(__file__))}', 'web', f'{file_name}.js')
 
     with open(filepath, 'r') as file:
         script = file.read().strip()
@@ -30,19 +33,19 @@ def setup_script():
             # The name of script tag
             # Multiple scripts can be registered under the same tag
             # Scripts under one tag share one *interface*: rules for setting, getting, generation, stored fields, readonly fields, etc.
-            tag = f"{script_name}_tag",
+            tag = base_tag,
 
             # What happens when the user tries to receive the script
             # This is is used for displaying the script in the tag window
             # the code is not necessarily the code that is actually inserted into the template: for that, see `generator`
             # however the conditions are used for calculating whether to insert
             getter = lambda id, storage: ami.make_script(
-                storage.enabled if storage.enabled is not None else True,
                 script_name,
+                storage.enabled if storage.enabled is not None else True,
                 'js',
                 version,
                 description,
-                'body',
+                'into_template',
                 storage.conditions if storage.conditions is not None else [],
                 storage.code if storage.code is not None else script,
             ),
@@ -72,8 +75,8 @@ def setup_script():
             # By default your script is reset to the getter function with an empty storage
             # this reset function does not reset the enabled status or the conditions
             reset = lambda id, storage: ami.make_script(
-                storage.enabled if storage.enabled else True,
                 script_name,
+                storage.enabled if storage.enabled else True,
                 'js',
                 version,
                 description,
@@ -96,10 +99,9 @@ def install_script():
     if not am:
         return
 
-
     my_meta_script = ami.make_meta_script(
         # this is the tag you interface above is registered on!
-        f"{script_name}_tag",
+        base_tag,
         # your id: you can register an id only once per model per tag
         f"{script_name}_id",
     )

@@ -13,6 +13,10 @@ export const tokenizer = moo.states({
             match: TAG_START,
             push: 'key',
         },
+        // SS: {
+        //     /* section separator */
+        //     match: /\$\$\$\$\$/u,
+        // },
         EOF: {
             match: /\$$/u,
         },

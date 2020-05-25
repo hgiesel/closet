@@ -1,30 +1,31 @@
 from aqt import mw
-from aqt.reviewer import Reviewer
-from aqt.webview import WebContent
 
-from aqt.gui_hooks import webview_will_set_content
+from anki.hooks import wrap
+from aqt.qt import QDialogButtonBox, qconnect
 
-def append_scripts(web_content: WebContent, context):
-    if not isinstance(context, Reviewer):
-        return
-
-    addon_package = mw.addonManager.addonFromModule(__name__)
-
-    web_content.css.append(
-        f"/_addons/{addon_package}/web/my-addon.css")
-    web_content.js.append(
-        f"/_addons/{addon_package}/web/my-addon.js")
-
-    web_content.head += "<script>console.log('my-addon')</script>"
-    web_content.body += "<div id='my-addon'></div>"
+def onCloset(self):
+    current_row = self.form.modelsList.currentRow()
+    current_notetype = self.mm.get(self.models[current_row]['id'])
+    # current_setting = # (current_notetype)
 
     from aqt.utils import showInfo
+    showInfo('clicked!')
 
-    # showInfo(str(dir(web_content)))
-    # showInfo(str(dir(context)))
+def init_closet_button(self):
+    f = self.form
+    box = f.buttonBox
+    t = QDialogButtonBox.ActionRole
+    b = box.addButton(_("Closet..."), t)
+    qconnect(b.clicked, self.onCloset)
 
-    showInfo(str(context.card))
+def setup_models_dialog():
+    from aqt.models import Models
+    Models.onCloset = onCloset
+    Models.setupModels = wrap(Models.setupModels, init_closet_button, pos='after')
 
-webview_will_set_content.append(append_scripts)
+from anki.hooks import addHook
+from .asset_hook import setup_script, install_script
 
-mw.addonManager.setWebExports(__name__, r"web/.*(css|js)")
+def setup_hook():
+    setup_script()
+    addHook('profileLoaded', install_script)

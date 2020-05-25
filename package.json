@@ -13,16 +13,30 @@
   },
   "scripts": {
     "compile-parser": "bin/compile-parser.sh",
-    "build": "run-p build-docs",
+
+    "build": "run-p build-docs build-main build-anki",
+
     "build-docs": "run-s compile-parser rollup-docs",
-    "rollup-docs": "rollup -c rollup.config.docs.js",
     "build-main": "run-s compile-parser rollup-main",
+    "build-anki": "run-s compile-parser rollup-anki",
+
+    "rollup-docs": "rollup -c rollup.config.docs.js",
     "rollup-main": "rollup -c rollup.config.main.js",
-    "watch": "run-p watch-docs",
+    "rollup-anki": "rollup -c rollup.config.anki.js",
+
+    "watch": "run-p watch-docs watch-main watch-anki",
+
     "watch-docs": "run-s compile-parser rollup-docs-watch",
+    "watch-main": "run-s compile-parser rollup-docs-main",
+    "watch-anki": "run-s compile-parser rollup-docs-anki",
+
     "rollup-watch-docs": "rollup -c rollup.config.docs.js -w",
+    "rollup-watch-main": "rollup -c rollup.config.main.js -w",
+    "rollup-watch-anki": "rollup -c rollup.config.anki.js -w",
+
     "serve": "bin/serve.sh",
     "dev": "run-p serve watch",
+
     "zip": "bin/zip.sh",
     "zip-ankiweb": "bin/zip.sh -a"
   },

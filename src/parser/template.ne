@@ -7,8 +7,8 @@ import tokenizer from './tokenizer'
 import TagMaker from './tagMaker'
 
 import {
-    TAG_START,
-    TAG_END,
+    TAG_OPEN,
+    TAG_CLOSE,
     ARG_SEP,
 } from '../utils'
 const joinText = ([vs]) => vs.map(v => v.value).join('')
@@ -41,23 +41,23 @@ content -> _ (tag _):* {% ([first, rest]) => {
 }
 %}
 
-tag -> tagstart inner %tagend {% ([startTokenIdx,[keyname, valuesRaw, innerTags],tagend]) => {
+tag -> tagopen inner %tagclose {% ([startTokenIdx,[keyname, valuesRaw, innerTags],tagclose]) => {
     // NOTE empty string is also falsy!!!
     const hasValuesRaw = typeof valuesRaw === 'string'
 
     const valuesRawArray = [
-        TAG_START,
+        TAG_OPEN,
         hasValuesRaw
             ? `${keyname}${ARG_SEP}${valuesRaw}`
             : keyname,
-        TAG_END,
+        TAG_CLOSE,
     ]
 
     return [
         valuesRawArray,
         new TagInfo(
             startTokenIdx,
-            tagend.offset + TAG_END.length,
+            tagclose.offset + TAG_CLOSE.length,
             tagMaker.makeTag(keyname, hasValuesRaw
                 ? valuesRaw
                 : null),
@@ -67,9 +67,9 @@ tag -> tagstart inner %tagend {% ([startTokenIdx,[keyname, valuesRaw, innerTags]
 }
 %}
 
-tagstart -> %tagstart {% ([startToken]) => {
+tagopen -> %tagopen {% ([startToken]) => {
     tagMaker.signalTagOpen()
-    return startToken.offset + startToken.value.length - TAG_START.length 
+    return startToken.offset + startToken.value.length - TAG_OPEN.length 
 }
 %}
 

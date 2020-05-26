@@ -1,16 +1,16 @@
 import moo from 'moo'
 
 import {
-    TAG_START,
-    TAG_END,
+    TAG_OPEN,
+    TAG_CLOSE,
     ARG_SEP,
 } from '../utils'
 
 // img tags are parsed via HTML (!)
 export const tokenizer = moo.states({
     main: {
-        tagstart: {
-            match: TAG_START,
+        tagopen: {
+            match: TAG_OPEN,
             push: 'key',
         },
         // SS: {
@@ -34,19 +34,19 @@ export const tokenizer = moo.states({
             match: ARG_SEP,
             next: 'intag',
         },
-        tagend: {
-            match: TAG_END,
+        tagclose: {
+            match: TAG_CLOSE,
             pop: 1,
         },
     },
 
     intag: {
-        tagstart: {
-            match: TAG_START,
+        tagopen: {
+            match: TAG_OPEN,
             push: 'key',
         },
-        tagend: {
-            match: TAG_END,
+        tagclose: {
+            match: TAG_CLOSE,
             pop: 1,
         },
         valuestext: {

@@ -1,6 +1,6 @@
 import {
-    TAG_START,
-    TAG_END,
+    TAG_OPEN,
+    TAG_CLOSE,
     ARG_SEP,
 } from '../utils'
 
@@ -58,8 +58,8 @@ class Tag {
 
     getDefaultRepresentation(): string {
         return this.valuesRaw === null
-            ? `${TAG_START}${this.fullKey}${TAG_END}`
-            : `${TAG_START}${this.fullKey}${ARG_SEP}${this.valuesRaw}${TAG_END}`
+            ? `${TAG_OPEN}${this.fullKey}${TAG_CLOSE}`
+            : `${TAG_OPEN}${this.fullKey}${ARG_SEP}${this.valuesRaw}${TAG_CLOSE}`
     }
 
     getRawRepresentation(): string {

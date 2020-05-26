@@ -16,8 +16,8 @@ import TemplateApi from './template'
 import parseTemplate from './parser'
 
 import {
-    TAG_START,
-    TAG_END,
+    TAG_OPEN,
+    TAG_CLOSE,
     ARG_SEP,
 } from './utils'
 
@@ -80,8 +80,8 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
         const newValuesRaw = tag.data.valuesRaw === null
             ? null
             : modText.slice(
-                lend + (tag.naked ? 0 : TAG_START.length + tag.data.fullKey.length + ARG_SEP.length),
-                rend - (tag.naked ? 0 : TAG_END.length),
+                lend + (tag.naked ? 0 : TAG_OPEN.length + tag.data.fullKey.length + ARG_SEP.length),
+                rend - (tag.naked ? 0 : TAG_CLOSE.length),
             )
 
         const tagData = tag.data.shadowValuesRaw(newValuesRaw)

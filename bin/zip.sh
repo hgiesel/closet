@@ -8,7 +8,7 @@ fi
 
 if [[ "$1" =~ ^-?a$ ]]; then
   # for uploading to AnkiWeb
-  declare addon_id='unknown'
+  declare addon_id='0'
 else
   # for installing myself
   declare addon_id='anki_closet'

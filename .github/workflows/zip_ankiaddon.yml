@@ -27,10 +27,10 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Anki add-on for Ankiweb
-          path: anki/*.ankiaddon
+          path: 0.ankiaddon
 
       - name: Upload to GitHub
         uses: actions/upload-artifact@v2
         with:
           name: Anki add-on for personal use
-          path: anki/anki_closet.ankiaddon
+          path: anki_closet.ankiaddon

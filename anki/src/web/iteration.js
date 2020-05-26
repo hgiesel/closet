@@ -8,7 +8,7 @@ var preset = {
     tags: tags,
 }
 
-var memorySwitch = (p) => {
+var memorySwitch = ((p) => {
     var path = null
 
     return {
@@ -30,22 +30,22 @@ var memorySwitch = (p) => {
         delete: (k) => path.delete(k),
         clear: () => path.clear(),
     }
-}
+})(globalThis.Persistence)
 
 var inherit_id = 1
 
 function userLogic() {
-    var elements = document.querySelectorAll('#qa')
+    var elements = null
     var filterManager = new Closet.FilterManager(
         preset,
         memorySwitch,
     )
 
-    $$userCode
+$$userCode
 
     return [
         inherit_id,
-        elements,
+        elements || document.querySelector('#qa'),
         filterManager,
     ]
 }
@@ -63,4 +63,4 @@ else {
     memorySwitch.fallback()
 }
 
-elements.innerHTML = renderTemplate(elements.innerHTML, filterManager)
+elements.innerHTML = Closet.renderTemplate(elements.innerHTML, filterManager)

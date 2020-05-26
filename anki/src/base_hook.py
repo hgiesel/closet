@@ -20,6 +20,7 @@ if am:
 def setup_script():
     if not am:
         showInfo('Closetjs requires Asset Manager to be installed.')
+        return
 
     from pathlib import Path
     from os.path import dirname, realpath

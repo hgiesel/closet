@@ -24,8 +24,12 @@ def setup_models_dialog():
     Models.setupModels = wrap(Models.setupModels, init_closet_button, pos='after')
 
 from anki.hooks import addHook
-from .asset_hook import setup_script, install_script
+from .base_hook import setup_script, install_script
+from .iteration_hook import setup_iteration_script, install_iteration_script
 
 def setup_hook():
     setup_script()
     addHook('profileLoaded', install_script)
+
+    setup_iteration_script()
+    addHook('profileLoaded', install_iteration_script)

@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# declare DIR="$(realpath "${BASH_SOURCE%/*}")"
-declare DIR="$(cd "$(dirname "$0")/../anki" && pwd -P)"
+declare DIR="$(cd "$(dirname "$0")/.." && pwd -P)"
 
 if [[ "$1" =~ ^-?a$ ]]; then
   # for uploading to AnkiWeb
@@ -10,8 +9,10 @@ else
   declare addon_id='anki_closet'
 fi
 
-rm -f "${DIR}/${addon_id}.ankiaddon"
+cd "$DIR/anki"
 
-zip -r "${DIR}/${addon_id}.ankiaddon" \
-  "${DIR}/config."{json,md} \
-  "${DIR}/__init__.py" \
+zip -r "$DIR/$addon_id.ankiaddon" \
+  ""*".py" \
+  "manifest.json" \
+  "src/"*".py" \
+  "src/web/"*".js"

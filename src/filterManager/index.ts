@@ -71,6 +71,10 @@ export class FilterManager {
         this.deferred.executeEach()
     }
 
+    clearMemory() {
+        this.memory.clear()
+    }
+
     reset() {
         this.cache.clear()
         this.deferred.clear()

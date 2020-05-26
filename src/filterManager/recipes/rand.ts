@@ -1,10 +1,5 @@
-import type {
-    Tag
-} from '../../tags'
-
-import type {
-    FilterApi
-} from '../filters'
+import type { Tag } from '../../tags'
+import type { FilterApi } from '../filters'
 
 import {
     allowCommaStyle,
@@ -61,7 +56,7 @@ const realGenerator = function*(
     }
 }
 
-const randRecipe = (
+export const randRecipe = (
     keyword: string,
 ) => (filterApi: FilterApi) => {
     const intFilter = (
@@ -92,5 +87,3 @@ const randRecipe = (
     filterApi.register(keyword, intFilter)
     // filterApi.register(`${keyword}r`, realFilter)
 }
-
-export default randRecipe

@@ -1,18 +1,8 @@
-import type {
-    Tag,
-} from '../../tags'
+import type { Tag } from '../../tags'
+import type { FilterApi } from '../filters'
+import type { Internals } from '..'
 
-import type {
-    FilterApi,
-} from '../filters'
-
-import {
-    Stylizer,
-} from './stylizer'
-
-import type {
-    Internals,
-} from '..'
+import { Stylizer } from './stylizer'
 
 import {
     shuffle,
@@ -20,7 +10,7 @@ import {
     topUpSortingIndices,
 } from './utils'
 
-const mixRecipe = (
+export const shufflingRecipe = (
     keyword: string,
     stylizer = new Stylizer(),
 ) => (filterApi: FilterApi) => {
@@ -85,5 +75,3 @@ const mixRecipe = (
 
     filterApi.register(keyword, mixFilter as any)
 }
-
-export default mixRecipe

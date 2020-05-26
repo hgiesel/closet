@@ -1,10 +1,7 @@
-import type {
-    FilterApi,
-} from '../filters'
-
+import type { FilterApi } from '../filters'
 import type { Tag } from '../../tags'
 
-const debugRecipe = (filterApi: FilterApi) => {
+export const debugRecipe = (filterApi: FilterApi) => {
     const pathFilter = ({path}: Tag) => path.join(':')
 
     filterApi.register('tagpath', pathFilter)
@@ -17,5 +14,3 @@ const debugRecipe = (filterApi: FilterApi) => {
         return String(memory.fold(memoryTestKey, (v: number) => ++v, 0))
     }))
 }
-
-export default debugRecipe

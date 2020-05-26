@@ -26,19 +26,22 @@
 
     "watch": "run-p watch-docs watch-main watch-anki",
 
-    "watch-docs": "run-s compile-parser rollup-docs-watch",
-    "watch-main": "run-s compile-parser rollup-docs-main",
-    "watch-anki": "run-s compile-parser rollup-docs-anki",
+    "watch-docs": "run-s compile-parser rollup-watch-docs",
+    "watch-main": "run-s compile-parser rollup-watch-main",
+    "watch-anki": "run-s compile-parser rollup-watch-anki",
 
     "rollup-watch-docs": "rollup -c rollup.config.docs.js -w",
     "rollup-watch-main": "rollup -c rollup.config.main.js -w",
     "rollup-watch-anki": "rollup -c rollup.config.anki.js -w",
 
     "serve": "bin/serve.sh",
-    "dev": "run-p serve watch",
+    "dev": "run-p serve watch-docs",
 
-    "zip": "bin/zip.sh",
-    "zip-ankiweb": "bin/zip.sh -a"
+    "zip": "run-s build-anki zip-sub",
+    "zip-ankiweb": "run-s build-anki zip-ankiweb-sub",
+
+    "zip-sub": "bin/zip.sh",
+    "zip-ankiweb-sub": "bin/zip.sh -a"
   },
   "dependencies": {
     "eslint": "^6.6.0",

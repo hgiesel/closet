@@ -1,6 +1,4 @@
-import type {
-    Internals,
-} from '.'
+import type { Internals } from '.'
 
 export interface FilterResult {
     result: string

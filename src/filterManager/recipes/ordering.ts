@@ -17,7 +17,7 @@ import {
     topUpSortingIndices,
 } from './utils'
 
-const ordRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi) => {
+export const orderingRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi) => {
     const ordFilter = (
         { key, fullOccur, values, valuesRaw }: Tag,
         { deferred, cache }: Internals,
@@ -81,5 +81,3 @@ const ordRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi
 
     filterApi.register(keyword, ordFilter as any)
 }
-
-export default ordRecipe

@@ -1,15 +1,9 @@
-import type {
-    FilterApi,
-    FilterResult,
-} from '../filters'
-
-import type {
-    Tag,
-} from '../../tags'
+import type { FilterApi, FilterResult } from '../filters'
+import type { Tag } from '../../tags'
 
 const paramPattern = /%(\d*)/u
 
-const metaRecipe = (filterApi: FilterApi) => {
+export const metaRecipe = (filterApi: FilterApi) => {
 
     filterApi.register('def', ({ values }: Tag, { filters }): FilterResult => {
         const outerValues = values
@@ -46,5 +40,3 @@ const metaRecipe = (filterApi: FilterApi) => {
         }
     })
 }
-
-export default metaRecipe

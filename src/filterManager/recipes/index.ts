@@ -1,18 +1,20 @@
-import mixRecipe from './mix'
-import ordRecipe from './ord'
-import clozeRecipe from './cloze'
-import mcRecipe from './mc'
-import randRecipe from './rand'
+import { shufflingRecipe } from './shuffling'
+import { orderingRecipe } from './ordering'
+import { clozeRecipe } from './clozes'
+import { mcRecipe } from './multipleChoice'
+import { randRecipe } from './rand'
+import { styleRecipe } from './stylizing'
 
-import debugRecipe from './debug'
-import metaRecipe from './meta'
+import { debugRecipe } from './debug'
+import { metaRecipe } from './meta'
 
 export const recipes = {
-    shuffling: mixRecipe,
-    ordering: ordRecipe,
+    shuffling: shufflingRecipe,
+    ordering: orderingRecipe,
     cloze: clozeRecipe,
     random: randRecipe,
     multipleChoice: mcRecipe,
     debug: debugRecipe,
     meta: metaRecipe,
+    stylizing: styleRecipe,
 }

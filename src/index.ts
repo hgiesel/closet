@@ -3,17 +3,16 @@ import type {
     FilterProcessor,
 } from './filterManager'
 
+import type {
+    TagInfo,
+} from './tags'
+
 import {
     calculateCoordinates,
     replaceAndGetOffset,
 } from './utils'
 
-import type {
-    TagInfo,
-} from './tags'
-
 import TemplateApi from './template'
-
 import parseTemplate from './parser'
 
 import {

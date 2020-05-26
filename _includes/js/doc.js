@@ -8,6 +8,9 @@ const readyRenderButton = (buttonQuery, displayQuery, code, filterManager = new 
     })
 
     btnRerender.dispatchEvent(new Event('click'))
+
+    // TODO configurable
+    filterManager.clearMemory()
 }
 
 const readyTryButton = (buttonQuery, code, preset) => {

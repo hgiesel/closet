@@ -1,5 +1,5 @@
-image:https://github.com/hgiesel/closet/workflows/Zip%20Anki%20add-ons%20%E2%AD%90%EF%B8%8F/badge.svg[link="https://github.com/hgiesel/closet/actions?query=workflow%3A%22Zip+Anki+add-ons%22"]
-image:https://github.com/hgiesel/closet/workflows/Build%20Closet%20%F0%9F%A4%96/badge.svg[link="https://github.com/hgiesel/closet/actions?query=workflow%3A%22Build+Closet%22"]
+image:https://github.com/hgiesel/closet/workflows/Zip%20Anki%20add-ons/badge.svg[link="https://github.com/hgiesel/closet/actions?query=workflow%3A%22Zip+Anki+add-ons%22"]
+image:https://github.com/hgiesel/closet/workflows/Build%20Closet/badge.svg[link="https://github.com/hgiesel/closet/actions?query=workflow%3A%22Build+Closet%22"]
 image:https://github.com/hgiesel/closet/workflows/Deploy%20to%20GitHub%20Pages/badge.svg[link="https://github.com/hgiesel/closet/actions?query=workflow%3A%22Deploy+to+GitHub+Pages%22"]
 
 = Closet

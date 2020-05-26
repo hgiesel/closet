@@ -13,8 +13,8 @@ parent: Shuffling
 Items can easily be shuffled using the `mix` tag. Items to be shuffled must be separated by `||`.
 
 {% capture defaultFm %}
-const fm = new closet.FilterManager()
-fm.addRecipe(closet.recipes.shuffling('mix'))
+const fm = new Closet.FilterManager()
+fm.addRecipe(Closet.recipes.shuffling('mix'))
 
 return fm
 {% endcapture %}
@@ -66,7 +66,7 @@ After a few rounds, this operation will time out, and the remaining tags will st
 ## Advanced
 
 {% capture asianFm %}
-const fm = new closet.FilterManager()
+const fm = new Closet.FilterManager()
 
 const colorWheel = function*() {
   while (true) {
@@ -79,7 +79,7 @@ const colorWheel = function*() {
 const cw = colorWheel()
 cw.next()
 
-fm.addRecipe(closet.recipes.shuffling('mix', new closet.Stylizer({
+fm.addRecipe(Closet.recipes.shuffling('mix', new Closet.Stylizer({
   separator: '・',
   mapper: v => `<span style="color: ${cw.next().value};">${v}</span>`,
   mapperOuter: v => `〈${v}〉`,
@@ -93,13 +93,13 @@ You can stylize the appearance of shuffled items however you like.
 {% include codeDisplay.html content=site.data.snippets.shuffling.japanese filterManager=asianFm %}
 
 {% capture mixedFm %}
-const fm = new closet.FilterManager()
+const fm = new Closet.FilterManager()
 
-fm.addRecipe(closet.recipes.shuffling('amix', new closet.Stylizer({
+fm.addRecipe(Closet.recipes.shuffling('amix', new Closet.Stylizer({
   separator: '・',
 })))
 
-fm.addRecipe(closet.recipes.shuffling('mix', new closet.Stylizer({
+fm.addRecipe(Closet.recipes.shuffling('mix', new Closet.Stylizer({
   separator: ' / ',
 })))
 

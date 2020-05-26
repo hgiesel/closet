@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 declare DIR="$(cd "$(dirname "$0")/.." && pwd -P)"
 
+if [[ ! -f  "$DIR/anki/src/web/closet.js" ]]; then
+  echo 'Refuse zipping. You need to build closet for anki first.'
+  exit -5
+fi
+
 if [[ "$1" =~ ^-?a$ ]]; then
   # for uploading to AnkiWeb
   declare addon_id='unknown'

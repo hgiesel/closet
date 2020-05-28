@@ -56,7 +56,9 @@ export const renderTemplate = (text: string, filterManager: FilterManager): stri
 }
 
 // try to make it more PDA
-const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: FilterProcessor): [string, number[], boolean]=> {
+const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: FilterProcessor): [string, number[], boolean] => {
+    const nakedStack: [number, number][] = []
+
     const tagReduce = ([text, stack, ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {
 
         // going DOWN
@@ -81,12 +83,20 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
             rend,
         ] = calculateCoordinates(tag.start, tag.end, leftOffset, innerOffset)
 
-        const newValuesRaw = tag.data.valuesRaw === null
-            ? null
-            : modText.slice(
-                lend + (tag.naked ? 0 : TAG_OPEN.length + tag.data.fullKey.length + ARG_SEP.length),
-                rend - (tag.naked ? 0 : TAG_CLOSE.length),
-            )
+        let newValuesRaw = null
+
+        if (tag.naked) {
+            nakedStack.push([lend, rend])
+            newValuesRaw = modText.slice(lend, rend)
+        }
+        else {
+            newValuesRaw = tag.data.valuesRaw === null
+                ? null
+                : modText.slice(
+                    lend + (TAG_OPEN.length + tag.data.fullKey.length + ARG_SEP.length),
+                    rend - (TAG_CLOSE.length),
+                )
+        }
 
         const tagData = tag.data.shadowValuesRaw(newValuesRaw)
 

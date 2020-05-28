@@ -1,18 +1,16 @@
 // negative result implies invalid idx
-const parseIndex = (idx: number, max: number): number => {
+const parseNegativeIndex = (idx: number, max: number): number => {
   return idx < 0
     ? max + idx 
-    : idx >= max
-    ? max - 1
     : idx
 }
 
-class ChildNodeSpan {
-    static CHILD_NODE_SPAN = 3353
-    readonly nodeType = 3353
+export class ChildNodeSpan {
+    static readonly CHILD_NODE_SPAN = 3353
+    readonly nodeType = ChildNodeSpan.CHILD_NODE_SPAN
 
     private readonly parent: Element
-    private min: number
+    private childNodes: ChildNode[]
     private max: number
 
     private fromIndex: number 
@@ -20,34 +18,76 @@ class ChildNodeSpan {
 
     constructor(parent: Element) {
         this.parent = parent
-        this.min = 0
+        this.childNodes = Array.from(this.parent.childNodes)
+
         this.max = parent.childNodes.length - 1
 
-        this.fromIndex = this.min
+        this.fromIndex = 0
         this.toIndex = this.max
     }
 
+    private fromSafe(i: number): void {
+        this.fromIndex = i < 0 || i > this.max
+            ? this.max
+            : i
+    }
+
     from(i: number): void {
-        this.fromIndex = Math.max(0, parseIndex(i, this.max))
+        const parsed = parseNegativeIndex(i, this.max)
+        this.fromSafe(parsed)
+    }
+
+    fromPredicate(pred: (v: Node) => boolean, exclusive=false): void {
+        const found = this.childNodes.findIndex(pred) + (exclusive ? 1 : 0)
+        this.fromSafe(found)
+    }
+
+    fromNode(node: Node, exclusive=false): void {
+        const found = this.childNodes.findIndex(
+            (v: ChildNode): boolean => v === node,
+        ) + (exclusive ? 1 : 0)
+        this.fromSafe(found)
+    }
+
+    toSafe(i: number) {
+        this.toIndex = i < 0 || i > this.max
+            ? 0
+            : i
     }
 
     to(i: number) {
-        const result = parseIndex(i, this.max)
-        this.toIndex = result < 0
-            ? this.max
-            : result
+        const parsed = parseNegativeIndex(i, this.max)
+        this.toSafe(parsed)
     }
 
-    getSpan(): ChildNode[] {
-        const allChildren = Array.from(this.parent.childNodes)
-
-        return allChildren.slice(this.fromIndex, this.toIndex)
+    toPredicate(pred: (v: Node) => boolean, exclusive=false): void {
+        const found = this.childNodes.findIndex(pred) - (exclusive ? 1 : 0)
+        this.toSafe(found)
     }
 
-    getSpanAsStrings(): string[] {
-        const childNodes = this.getSpan()
+    toNode(node: Node, exclusive=false): void {
+        const found = this.childNodes.findIndex(
+            (v: ChildNode): boolean => v === node,
+        ) - (exclusive ? 1 : 0)
+        this.toSafe(found)
+    }
 
-        return childNodes.map((v: ChildNode): string => {
+    isValid(): boolean {
+        return this.fromIndex <= this.toIndex
+    }
+
+    length(): number {
+        return Math.min(0, this.toIndex - this.fromIndex)
+    }
+
+    span(): ChildNode[] {
+        return this.isValid()
+            ? this.childNodes.slice(this.fromIndex, this.toIndex)
+            : []
+    }
+
+    spanAsStrings(): string[] {
+        return this.span().map((v: ChildNode): string => {
             switch (v.nodeType) {
                 case Node.TEXT_NODE:
                     return v.textContent
@@ -59,15 +99,26 @@ class ChildNodeSpan {
         })
     }
 
-    // TODO
-    // replaceSpan(newText: string): void {
-    //     const replacementNode = document.createElement('div')
-    //     const childNodes = this.getSpan()
+    replaceSpan(newText: string): void {
+        if (!this.isValid()) {
+            return
+        }
 
-    //     // might turn the original div into multiple nodes including text nodes
-    //     replacementNode.outerHTML = newText
+        const replacementNode = document.createElement('div')
+        const oldLength = this.parent.childNodes.length
 
-    //     n.parentNode.insertBefore(replacementNode, n);
-    //     n.parentNode.removeChild(n);
-    // }
+        this.parent.insertBefore(replacementNode, this.parent.childNodes[this.fromIndex])
+        for (const node of this.span()) {
+            this.parent.removeChild(node)
+        }
+
+        // might turn the original div into multiple nodes including text nodes
+        replacementNode.outerHTML = newText
+
+        // reset childNode information
+        this.childNodes = Array.from(this.parent.childNodes)
+        this.max = this.childNodes.length
+
+        this.toIndex = this.toIndex + (this.max - oldLength)
+    }
 }

@@ -1,4 +1,4 @@
-import { renderTemplate } from '.'
+import { renderTemplate } from './render'
 import { FilterManager } from './filterManager'
 
 // negative result implies invalid idx

@@ -13,7 +13,7 @@ import {
 } from './utils'
 
 import TemplateApi from './template'
-import parseTemplate from './parser'
+import { parseTemplate } from './parser'
 
 import {
     TAG_OPEN,
@@ -40,7 +40,11 @@ export const renderTemplate = (text: string, filterManager: FilterManager): stri
             template: templateApi,
         }))
 
-        console.error(`ITERATION ${i}: `, `"${result}"`, `"${newText}"`)
+        console.info(
+            `ITERATION ${i}: `,
+            `"${result}"`,
+            `"${newText}"`,
+        )
 
         ready = innerReady
         result = newText

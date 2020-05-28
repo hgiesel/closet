@@ -12,7 +12,7 @@ const makeTrivialBaseTagInfo = (text: string): TagInfo => new TagInfo(
     true,
 )
 
-const parseTemplate = (text: string): TagInfo => {
+export const parseTemplate = (text: string): TagInfo => {
     const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
     let parsed = []
 
@@ -35,5 +35,3 @@ const parseTemplate = (text: string): TagInfo => {
 
     return parsed[0]
 }
-
-export default parseTemplate

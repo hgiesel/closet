@@ -1,3 +1,6 @@
+import { renderTemplate } from '.'
+import { FilterManager } from './filterManager'
+
 // negative result implies invalid idx
 const parseNegativeIndex = (idx: number, max: number): number => {
   return idx < 0
@@ -104,21 +107,47 @@ export class ChildNodeSpan {
             return
         }
 
-        const replacementNode = document.createElement('div')
+        const placeholderNode = document.createElement('div')
         const oldLength = this.parent.childNodes.length
 
-        this.parent.insertBefore(replacementNode, this.parent.childNodes[this.fromIndex])
+        this.parent.insertBefore(placeholderNode, this.parent.childNodes[this.fromIndex])
         for (const node of this.span()) {
             this.parent.removeChild(node)
         }
 
         // might turn the original div into multiple nodes including text nodes
-        replacementNode.outerHTML = newText
+        placeholderNode.outerHTML = newText
 
         // reset childNode information
         this.childNodes = Array.from(this.parent.childNodes)
         this.max = this.childNodes.length
 
         this.toIndex = this.toIndex + (this.max - oldLength)
+    }
+}
+
+export const renderTemplateFromNode = (inputNode: Element | Text | ChildNodeSpan, filterManager: FilterManager): void => {
+    switch (inputNode.nodeType) {
+        case Node.TEXT_NODE:
+            const textNode = inputNode as Text
+            const placeholderNode = document.createElement('div')
+
+            textNode.parentElement.insertBefore(placeholderNode, textNode)
+            const textResult = renderTemplate(textNode.textContent, filterManager)
+
+            textNode.parentElement.removeChild(textNode)
+            placeholderNode.outerHTML = textResult
+
+        case Node.ELEMENT_NODE:
+            const elementNode = inputNode as Element
+            const elementResult = renderTemplate(elementNode.innerHTML, filterManager)
+
+            elementNode.innerHTML = elementResult
+
+        case ChildNodeSpan.CHILD_NODE_SPAN:
+            const span = inputNode as ChildNodeSpan
+            const spanResult = renderTemplate(span.spanAsStrings().join(''), filterManager)
+
+            span.replaceSpan(spanResult)
     }
 }

@@ -1,8 +1,8 @@
-import { Tag } from '../tags'
+import { Tag, TagInfo } from '../tags'
 
 const keyPattern = /^([^0-9]+)([0-9]*)$/u
 
-class TagMaker {
+export class TagFactory {
     private readonly tagCounter: Map<string, number>
 
     private readonly tagPathStack: number[]
@@ -28,7 +28,7 @@ class TagMaker {
         this.tagPathNext = 0
     }
 
-    makeTag(fullKey: string, valuesRaw: string | null): Tag {
+    build(fullKey: string, valuesRaw: string | null): Tag {
         const match = fullKey.match(keyPattern)
 
         const key = match[1]
@@ -60,4 +60,31 @@ class TagMaker {
     }
 }
 
-export default TagMaker
+export class TagInfoFactory {
+    private fixedLeftOffset: number
+
+    constructor() {
+        this.fixedLeftOffset = 0
+    }
+
+    addToLeftOffset(newLeftOffset: number): void {
+        this.fixedLeftOffset += newLeftOffset
+    }
+
+    resetLeftOffset(): number {
+        const saveForResult = this.fixedLeftOffset
+        this.fixedLeftOffset = 0
+
+        return saveForResult
+    }
+
+    build(start: number, end: number, data: Tag, innerTags: TagInfo[], naked: boolean = false): TagInfo {
+        return new TagInfo(
+            start + this.fixedLeftOffset,
+            end + this.fixedLeftOffset,
+            data,
+            innerTags,
+            naked,
+        )
+    }
+}

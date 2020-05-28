@@ -1,20 +1,21 @@
 import nearley from 'nearley'
 import grammar from './template'
 
-import { TagInfo, Tag } from '../tags'
-import { tagMaker } from './template'
+import type { TagInfo } from '../tags'
+import { tagFactory, tagInfoFactory } from './template'
 
-const makeTrivialBaseTagInfo = (text: string): TagInfo => new TagInfo(
+const makeTrivialBaseTagInfo = (text: string): TagInfo => tagInfoFactory.build(
     0,
     text.length,
-    new Tag('base', 'base', null, text, 0, 0, []),
+    tagFactory.build('base', text),
     [],
     true,
 )
 
-export const parseTemplate = (text: string): TagInfo => {
+
+const parse = (text: string): TagInfo => {
     const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
-    let parsed = []
+    let parsed: TagInfo[] = null
 
     try {
         parsed = parser.feed(text + '$').results
@@ -25,13 +26,41 @@ export const parseTemplate = (text: string): TagInfo => {
 
         parsed = [makeTrivialBaseTagInfo(text)]
     }
-    finally {
-        tagMaker.reset()
-    }
 
     if (parsed.length > 1) {
         console.error('Ambiguous template grammar')
     }
 
     return parsed[0]
+}
+
+export const parseTemplate = (text: string): TagInfo => {
+    const result = parse(text)
+
+    tagFactory.reset()
+    return result
+}
+
+export const parseDisconnectedTemplate = (textFragments: string[]): TagInfo => {
+    const parsedFragments: TagInfo[] = []
+
+    for (const fragment of textFragments) {
+        const parsed = parse(fragment)
+        parsedFragments.push(parsed)
+
+        tagInfoFactory.addToLeftOffset(fragment.length)
+    }
+
+    const lastOffset = tagInfoFactory.resetLeftOffset()
+
+    const result = tagInfoFactory.build(
+        0,
+        lastOffset,
+        tagFactory.build('base', textFragments.join('')),
+        parsedFragments,
+        true,
+    )
+
+    tagFactory.reset()
+    return result
 }

@@ -45,14 +45,17 @@ const setText = (input: Element | Text | ChildNodeSpan | string, newText: string
 
             textNode.parentElement.removeChild(textNode)
             placeholderNode.outerHTML = newText
+            break
 
         case Node.ELEMENT_NODE:
             const elementNode = input as Element
             elementNode.innerHTML = newText
+            break
 
         case ChildNodeSpan.CHILD_NODE_SPAN:
             const span = input as ChildNodeSpan
             span.replaceSpan(newText)
+            break
     }
 }
 

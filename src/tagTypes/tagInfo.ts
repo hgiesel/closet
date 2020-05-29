@@ -14,6 +14,7 @@ class TagInfo {
         end: number,
         data: Tag,
         innerTags: TagInfo[],
+        // TODO remove naked
         naked: boolean = false,
     ) {
         this.start = start

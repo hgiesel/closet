@@ -24,13 +24,15 @@ export interface Internals {
     ready: boolean
 }
 
-export interface StockInternals {
+export interface IterationInternals {
     template: TemplateApi,
     iteration: { index: number }
+    baseDepth: number,
 }
 
-export interface CustomInternals {
+export interface RoundInternals {
     ready: boolean
+    depth: number,
 }
 
 export type FilterProcessor = (data: Filterable, custom?: object) => FilterResult
@@ -53,9 +55,9 @@ export class FilterManager {
         this.memory = new Storage(memory)
     }
 
-    filterProcessor(stock: StockInternals): FilterProcessor {
-        return (data: Filterable, custom: CustomInternals): FilterResult => {
-            const internals: Internals = Object.assign(this.preset, stock, custom, {
+    filterProcessor(iteration: IterationInternals): FilterProcessor {
+        return (data: Filterable, round: RoundInternals): FilterResult => {
+            const internals: Internals = Object.assign(this.preset, iteration, round, {
                 cache: this.cache,
                 memory: this.memory,
                 filters: this.filters,

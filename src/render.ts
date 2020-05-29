@@ -13,7 +13,7 @@ import {
 } from './utils'
 
 import TemplateApi from './template'
-import { parseTemplate } from './parser'
+import { parseTemplate, parseDisconnectedTemplate } from './parser'
 
 import {
     TAG_OPEN,
@@ -35,10 +35,19 @@ export const renderTemplate = (text: string, filterManager: FilterManager): stri
             newText,
             /* finalOffset */,
             innerReady,
-        ] = postfixTraverse(result, rootTag, filterManager.filterProcessor({
-            iteration: { index: i },
-            template: templateApi,
-        }))
+            /* baseStack: not important here: [0, newText.length] */,
+        ] = postfixTraverse(
+            result,
+            rootTag,
+            1,
+            filterManager.filterProcessor({
+                iteration: {
+                    index: i,
+                },
+                template: templateApi,
+                baseDepth: 1,
+            })
+        )
 
         console.info(
             `ITERATION ${i}: `,
@@ -46,8 +55,8 @@ export const renderTemplate = (text: string, filterManager: FilterManager): stri
             `"${newText}"`,
         )
 
-        ready = innerReady
         result = newText
+        ready = innerReady
 
         filterManager.executeDeferred()
     }
@@ -55,15 +64,18 @@ export const renderTemplate = (text: string, filterManager: FilterManager): stri
     return result
 }
 
+// export const renderDisconnnectedTemplate = (textFragments: string[], filterManager: FilterManager): string[] => {
+// }
+
+
 // try to make it more PDA
-const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: FilterProcessor): [string, number[], boolean] => {
-    const nakedStack: [number, number][] = []
+const postfixTraverse = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean, number[]] => {
+    const baseStack = []
 
     const tagReduce = ([text, stack, ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {
 
         // going DOWN
         stack.push(stack[stack.length - 1])
-        // console.info('going down', tag.data.path)
 
         const [
             modText,
@@ -85,9 +97,15 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
 
         let newValuesRaw = null
 
-        if (tag.naked) {
-            nakedStack.push([lend, rend])
+        // correctly treat the base levels: they don't have have tags!
+        const depth = tag.data.path.length + 1
+
+        if (depth <= baseDepth) {
             newValuesRaw = modText.slice(lend, rend)
+
+            if (depth === baseDepth) {
+                baseStack.push([lend, rend])
+            }
         }
         else {
             newValuesRaw = tag.data.valuesRaw === null
@@ -101,7 +119,10 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
         const tagData = tag.data.shadowValuesRaw(newValuesRaw)
 
         ///////////////////// Evaluate current tag
-        const filterOutput = filterProcessor(tagData, { ready: modReady })
+        const filterOutput = filterProcessor(tagData, {
+            ready: modReady,
+            depth: depth - baseDepth,
+        })
 
         const [
             newText,
@@ -132,5 +153,11 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, filterProcessor: Fi
         ]
     }
 
-    return tagReduce([baseText, [0,0], true], rootTag)
+    const [
+        modifiedText,
+        stack,
+        ready,
+    ] = tagReduce([baseText, [0,0], true], rootTag)
+
+    return [modifiedText, stack, ready, baseStack]
 }

@@ -29,6 +29,7 @@ export class TagFactory {
     }
 
     build(fullKey: string, valuesRaw: string | null): Tag {
+        // you need to signalTagOpen, before you build, otherwise they have all [] path
         const match = fullKey.match(keyPattern)
 
         const key = match[1]

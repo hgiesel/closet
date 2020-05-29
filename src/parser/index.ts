@@ -12,7 +12,6 @@ const makeTrivialBaseTagInfo = (text: string): TagInfo => tagInfoFactory.build(
     true,
 )
 
-
 const parse = (text: string): TagInfo => {
     const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
     let parsed: TagInfo[] = null
@@ -45,6 +44,8 @@ export const parseDisconnectedTemplate = (textFragments: string[]): TagInfo => {
     const parsedFragments: TagInfo[] = []
 
     for (const fragment of textFragments) {
+        tagFactory.signalTagOpen()
+
         const parsed = parse(fragment)
         parsedFragments.push(parsed)
 

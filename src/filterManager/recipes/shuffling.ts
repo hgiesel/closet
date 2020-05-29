@@ -55,8 +55,6 @@ export const shufflingRecipe = (
             cache.over(waitingSetKey, (set: Set<string>) => set.delete(id), new Set())
         })
 
-        console.log('hi')
-
         const mixKey = `${fullKey}:mix`
         deferred.registerIfNotExists(mixKey, () => {
             if (cache.get(waitingSetKey, new Set()).size > 0) {

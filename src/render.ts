@@ -24,6 +24,7 @@ import {
 const MAX_ITERATIONS = 50
 
 export const renderTemplate = (text: string, filterManager: FilterManager): string => {
+    const baseDepth = 1
     let result = text
     let ready = false
 
@@ -39,13 +40,13 @@ export const renderTemplate = (text: string, filterManager: FilterManager): stri
         ] = postfixTraverse(
             result,
             rootTag,
-            1,
+            baseDepth,
             filterManager.filterProcessor({
                 iteration: {
                     index: i,
                 },
                 template: templateApi,
-                baseDepth: 1,
+                baseDepth: baseDepth,
             })
         )
 
@@ -64,12 +65,54 @@ export const renderTemplate = (text: string, filterManager: FilterManager): stri
     return result
 }
 
-// export const renderDisconnnectedTemplate = (textFragments: string[], filterManager: FilterManager): string[] => {
-// }
+const splitTextFromIntervals = (text: string, intervals: [number, number][]): string[] => {
+    const result = []
 
+    for (const [ivlStart, ivlEnd] of intervals) {
+        result.push(text.slice(ivlStart, ivlEnd))
+    }
+
+    return result
+}
+
+export const renderDisconnnectedTemplate = (textFragments: string[], filterManager: FilterManager): string[] => {
+    const baseDepth = 2
+    let result = textFragments
+    let ready = false
+
+    for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
+        const rootTag = parseDisconnectedTemplate(result)
+        const templateApi = new TemplateApi(rootTag)
+
+        const [
+            newText,
+            /* finalOffset */,
+            innerReady,
+            baseStack,
+        ] = postfixTraverse(
+            result.join(''),
+            rootTag,
+            baseDepth,
+            filterManager.filterProcessor({
+                iteration: {
+                    index: i,
+                },
+                template: templateApi,
+                baseDepth: baseDepth,
+            })
+        )
+
+        result = splitTextFromIntervals(newText, baseStack)
+        ready = innerReady
+
+        filterManager.executeDeferred()
+    }
+
+    return result
+}
 
 // try to make it more PDA
-const postfixTraverse = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean, number[]] => {
+const postfixTraverse = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean, [number, number][]] => {
     const baseStack = []
 
     const tagReduce = ([text, stack, ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {

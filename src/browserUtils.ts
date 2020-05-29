@@ -59,6 +59,26 @@ const setText = (input: Element | Text | ChildNodeSpan | string, newText: string
     }
 }
 
+interface ChildNodeIndex {
+    type: 'index'
+    value: number
+    exclusive?: boolean
+}
+
+interface ChildNodeNode {
+    type: 'node'
+    value: Element | Text | ChildNode
+    exclusive?: boolean
+}
+
+interface ChildNodePredicate {
+    type: 'predicate'
+    value: (v: Element | Text | ChildNode) => boolean
+    exclusive?: boolean
+}
+
+type ChildNodePosition = ChildNodeIndex | ChildNodeNode | ChildNodePredicate
+
 export class ChildNodeSpan {
     static readonly CHILD_NODE_SPAN = 3353
     readonly nodeType = ChildNodeSpan.CHILD_NODE_SPAN
@@ -70,63 +90,72 @@ export class ChildNodeSpan {
     private fromIndex: number 
     private toIndex: number 
 
-    constructor(parent: Element) {
+    constructor(parent: Element, fromValue: ChildNodePosition, toValue: ChildNodePosition) {
         this.parent = parent
         this.childNodes = Array.from(this.parent.childNodes)
 
         this.max = parent.childNodes.length - 1
 
-        this.fromIndex = 0
-        this.toIndex = this.max
+        this.fromIndex = fromValue.type === 'index'
+            ? this.from(fromValue.value, fromValue.exclusive ?? false)
+            : fromValue.type === 'node'
+            ? this.fromNode(fromValue.value, fromValue.exclusive ?? false)
+            : this.fromPredicate(fromValue.value, fromValue.exclusive ?? false)
+
+        this.toIndex = toValue.type === 'index'
+            ? this.to(toValue.value, toValue.exclusive ?? false)
+            : toValue.type === 'node'
+            ? this.toNode(toValue.value, toValue.exclusive ?? false)
+            : this.toPredicate(toValue.value, toValue.exclusive ?? false)
     }
 
-    private fromSafe(i: number): void {
-        this.fromIndex = i < 0 || i > this.max
+    private fromSafe(i: number): number {
+        return i < 0 || i > this.max
             ? this.max
             : i
     }
 
-    from(i: number): void {
-        const parsed = parseNegativeIndex(i, this.max)
-        this.fromSafe(parsed)
+    private from(i: number, exclusive: boolean): number {
+        const parsed = parseNegativeIndex(i, this.max) + (exclusive ? 1 : 0)
+        return this.fromSafe(parsed)
     }
 
-    fromPredicate(pred: (v: Node) => boolean, exclusive=false): void {
+    private fromPredicate(pred: (v: Node) => boolean, exclusive: boolean): number {
         const found = this.childNodes.findIndex(pred) + (exclusive ? 1 : 0)
-        this.fromSafe(found)
+        return this.fromSafe(found)
     }
 
-    fromNode(node: Node, exclusive=false): void {
+    private fromNode(node: Node, exclusive: boolean): number {
         const found = this.childNodes.findIndex(
             (v: ChildNode): boolean => v === node,
         ) + (exclusive ? 1 : 0)
-        this.fromSafe(found)
+        return this.fromSafe(found)
     }
 
-    toSafe(i: number) {
-        this.toIndex = i < 0 || i > this.max
+    private toSafe(i: number): number {
+        return i < 0 || i > this.max
             ? 0
             : i
     }
 
-    to(i: number) {
-        const parsed = parseNegativeIndex(i, this.max)
-        this.toSafe(parsed)
+    private to(i: number, exclusive: boolean): number {
+        const parsed = parseNegativeIndex(i, this.max) - (exclusive ? 1 : 0)
+        return this.toSafe(parsed)
     }
 
-    toPredicate(pred: (v: Node) => boolean, exclusive=false): void {
+    private toPredicate(pred: (v: Node) => boolean, exclusive: boolean): number {
         const found = this.childNodes.findIndex(pred) - (exclusive ? 1 : 0)
-        this.toSafe(found)
+        return this.toSafe(found)
     }
 
-    toNode(node: Node, exclusive=false): void {
+    private toNode(node: Node, exclusive: boolean): number {
         const found = this.childNodes.findIndex(
             (v: ChildNode): boolean => v === node,
         ) - (exclusive ? 1 : 0)
-        this.toSafe(found)
+        return this.toSafe(found)
     }
 
-    isValid(): boolean {
+    private isValid(): boolean {
         return this.fromIndex <= this.toIndex
     }
 

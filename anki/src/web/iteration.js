@@ -1,43 +1,19 @@
-var tagsFull = '{{Tags}}'
-var cardType = '{{Card}}'
-var tags = tagsFull.split(' ')
-
-var preset = {
-    tagsFull: tagsFull,
-    card: cardType,
-    tags: tags,
-}
-
-var memorySwitch = ((p) => {
-    var path = null
-
-    return {
-        switch: (i) => {
-            if (p.getItem(i)) {
-                path = p.getItem(i)
-            }
-            else {
-                p.setItem(i, new Map())
-                path = p.getItem(i)
-            }
-        },
-        fallback: () => {
-            path = new Map()
-        },
-        has: (k) => path.has(k),
-        get: (k) => path.get(k),
-        set: (k, v) => path.set(k, v),
-        delete: (k) => path.delete(k),
-        clear: () => path.clear(),
-    }
-})(globalThis.Persistence)
-
+var saveSwitch = Closet.anki.memorySwitch(globalThis.Persistence)
 var inherit_id = 1
 
+var qaChildren = Closet.browser.ChildNodeSpan(
+    document.getElementById('qa'),
+    { type: 'index', value: 1 },
+    { type: 'predicate', value: v => v.id === 'anki-am' || v.tagName === 'SCRIPT', exclusive: true },
+)
+
 function userLogic() {
-    var elements = null
+    var elements = [
+        qaChildren
+    ]
+
     var filterManager = new Closet.FilterManager(
-        preset,
+        Closet.anki.preset,
         memorySwitch,
     )
 
@@ -45,16 +21,12 @@ $$userCode
 
     return [
         inherit_id,
-        elements || document.querySelector('#qa'),
+        elements,
         filterManager,
     ]
 }
 
-var [
-    inherit_id,
-    elements,
-    filterManager,
-] = userLogic()
+var [inherit_id, elements, filterManager] = userLogic()
 
 if (globalThis.Persistence && Persistence.isAvailable()) {
     memorySwitch.switch(inherit_id)
@@ -63,4 +35,4 @@ else {
     memorySwitch.fallback()
 }
 
-elements.innerHTML = Closet.renderTemplate(elements.innerHTML, filterManager)
+Closet.browser.renderTemplateFromNodes(elements, filterManager)

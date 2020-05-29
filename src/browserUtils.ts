@@ -1,4 +1,4 @@
-import { renderTemplate } from './render'
+import { renderTemplate, renderDisjointTemplate } from './render'
 import { FilterManager } from './filterManager'
 
 // negative result implies invalid idx
@@ -6,6 +6,54 @@ const parseNegativeIndex = (idx: number, max: number): number => {
   return idx < 0
     ? max + idx 
     : idx
+}
+
+const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): string => {
+    if (typeof(input) === 'string') {
+        return input
+    }
+
+    switch (input.nodeType) {
+        case Node.TEXT_NODE:
+            const textNode = input as Text
+            return textNode.textContent
+
+        case Node.ELEMENT_NODE:
+            const elementNode = input as Element
+            return elementNode.innerHTML
+
+        case ChildNodeSpan.CHILD_NODE_SPAN:
+            const span = input as ChildNodeSpan
+            return span.spanAsStrings().join('')
+
+        default:
+            return ''
+    }
+}
+
+const setText = (input: Element | Text | ChildNodeSpan | string, newText: string): void => {
+    if (typeof(input) === 'string') {
+        return
+    }
+
+    switch (input.nodeType) {
+        case Node.TEXT_NODE:
+            const textNode = input as Text
+            const placeholderNode = document.createElement('div')
+
+            textNode.parentElement.insertBefore(placeholderNode, textNode)
+
+            textNode.parentElement.removeChild(textNode)
+            placeholderNode.outerHTML = newText
+
+        case Node.ELEMENT_NODE:
+            const elementNode = input as Element
+            elementNode.innerHTML = newText
+
+        case ChildNodeSpan.CHILD_NODE_SPAN:
+            const span = input as ChildNodeSpan
+            span.replaceSpan(newText)
+    }
 }
 
 export class ChildNodeSpan {
@@ -90,16 +138,7 @@ export class ChildNodeSpan {
     }
 
     spanAsStrings(): string[] {
-        return this.span().map((v: ChildNode): string => {
-            switch (v.nodeType) {
-                case Node.TEXT_NODE:
-                    return v.textContent
-                case Node.ELEMENT_NODE:
-                    return (v as Element).outerHTML
-                default:
-                    return ''
-            }
-        })
+        return this.span().map(getText)
     }
 
     replaceSpan(newText: string): void {
@@ -126,28 +165,12 @@ export class ChildNodeSpan {
     }
 }
 
-export const renderTemplateFromNode = (inputNode: Element | Text | ChildNodeSpan, filterManager: FilterManager): void => {
-    switch (inputNode.nodeType) {
-        case Node.TEXT_NODE:
-            const textNode = inputNode as Text
-            const placeholderNode = document.createElement('div')
+export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | string, filterManager: FilterManager): void => {
+    const result = renderTemplate(getText(input), filterManager)
+    setText(input, result)
+}
 
-            textNode.parentElement.insertBefore(placeholderNode, textNode)
-            const textResult = renderTemplate(textNode.textContent, filterManager)
-
-            textNode.parentElement.removeChild(textNode)
-            placeholderNode.outerHTML = textResult
-
-        case Node.ELEMENT_NODE:
-            const elementNode = inputNode as Element
-            const elementResult = renderTemplate(elementNode.innerHTML, filterManager)
-
-            elementNode.innerHTML = elementResult
-
-        case ChildNodeSpan.CHILD_NODE_SPAN:
-            const span = inputNode as ChildNodeSpan
-            const spanResult = renderTemplate(span.spanAsStrings().join(''), filterManager)
-
-            span.replaceSpan(spanResult)
-    }
+export const renderTemplateFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>, filterManager: FilterManager): void => {
+    const results = renderDisjointTemplate(inputs.map(getText), filterManager)
+    inputs.forEach((input, index: number) => setText(input, results[index]))
 }

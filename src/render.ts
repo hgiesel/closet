@@ -13,7 +13,7 @@ import {
 } from './utils'
 
 import TemplateApi from './template'
-import { parseTemplate, parseDisconnectedTemplate } from './parser'
+import { parseTemplate, parseDisjointTemplate } from './parser'
 
 import {
     TAG_OPEN,
@@ -75,13 +75,13 @@ const splitTextFromIntervals = (text: string, intervals: [number, number][]): st
     return result
 }
 
-export const renderDisconnnectedTemplate = (textFragments: string[], filterManager: FilterManager): string[] => {
+export const renderDisjointTemplate = (textFragments: string[], filterManager: FilterManager): string[] => {
     const baseDepth = 2
     let result = textFragments
     let ready = false
 
     for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
-        const rootTag = parseDisconnectedTemplate(result)
+        const rootTag = parseDisjointTemplate(result)
         const templateApi = new TemplateApi(rootTag)
 
         const [

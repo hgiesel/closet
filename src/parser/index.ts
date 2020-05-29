@@ -40,7 +40,7 @@ export const parseTemplate = (text: string): TagInfo => {
     return result
 }
 
-export const parseDisconnectedTemplate = (textFragments: string[]): TagInfo => {
+export const parseDisjointTemplate = (textFragments: string[]): TagInfo => {
     const parsedFragments: TagInfo[] = []
 
     for (const fragment of textFragments) {

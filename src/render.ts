@@ -62,6 +62,7 @@ export const renderTemplate = (text: string, filterManager: FilterManager): stri
         filterManager.executeDeferred()
     }
 
+    filterManager.reset()
     return result
 }
 
@@ -108,6 +109,7 @@ export const renderDisjointTemplate = (textFragments: string[], filterManager: F
         filterManager.executeDeferred()
     }
 
+    filterManager.reset()
     return result
 }
 

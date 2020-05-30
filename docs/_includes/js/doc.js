@@ -4,13 +4,12 @@ const readyRenderButton = (buttonQuery, displayQuery, code, filterManager = new 
 
     btnRerender.addEventListener('click', () => {
         theDisplay.innerHTML = Closet.renderTemplate(code, filterManager)
-        filterManager.reset()
+
+        // TODO configurable
+        filterManager.clearMemory()
     })
 
     btnRerender.dispatchEvent(new Event('click'))
-
-    // TODO configurable
-    filterManager.clearMemory()
 }
 
 const readyTryButton = (buttonQuery, code, preset) => {

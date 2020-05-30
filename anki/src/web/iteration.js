@@ -1,17 +1,14 @@
 var saveSwitch = Closet.anki.memorySwitch(globalThis.Persistence)
 var inherit_id = 1
 
-var qaChildren = Closet.browser.ChildNodeSpan(
+var qaChildren = new Closet.browser.ChildNodeSpan(
     document.getElementById('qa'),
     { type: 'index', value: 1 },
     { type: 'predicate', value: v => v.id === 'anki-am' || v.tagName === 'SCRIPT', exclusive: true },
 )
 
 function userLogic() {
-    var elements = [
-        qaChildren
-    ]
-
+    var elements = []
     var filterManager = new Closet.FilterManager(
         Closet.anki.preset,
         memorySwitch,

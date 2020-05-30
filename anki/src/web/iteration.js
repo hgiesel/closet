@@ -1,4 +1,4 @@
-var saveSwitch = Closet.anki.memorySwitch(globalThis.Persistence)
+var persistenceSwitch = Closet.anki.memorySwitch(globalThis.Persistence)
 var inherit_id = 1
 
 var qaChildren = new Closet.browser.ChildNodeSpan(
@@ -11,7 +11,7 @@ function userLogic() {
     var elements = []
     var filterManager = new Closet.FilterManager(
         Closet.anki.preset,
-        memorySwitch,
+        persistenceSwitch,
     )
 
 $$userCode
@@ -26,10 +26,10 @@ $$userCode
 var [inherit_id, elements, filterManager] = userLogic()
 
 if (globalThis.Persistence && Persistence.isAvailable()) {
-    memorySwitch.switch(inherit_id)
+    persistenceSwitch.switch(inherit_id)
 }
 else {
-    memorySwitch.fallback()
+    persistenceSwitch.fallback()
 }
 
 Closet.browser.renderTemplateFromNodes(elements, filterManager)

@@ -26,7 +26,7 @@ $$userCode
 var [inherit_id, elements, filterManager] = userLogic()
 
 if (globalThis.Persistence && Persistence.isAvailable()) {
-    persistenceSwitch.switch(inherit_id)
+    persistenceSwitch.switchTo(inherit_id)
 }
 else {
     persistenceSwitch.fallback()

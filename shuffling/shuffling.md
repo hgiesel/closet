@@ -44,7 +44,7 @@ Think of shuffling paragraphs, and the sentences within; or sentences, and the w
 
 {% include codeDisplay.html content=site.data.snippets.shuffling.nesting filterManager=defaultFm %}
 
-### Technical note
+### Resolution of nested tags
 
 You can shuffle as one-sided as you want to.
 Closet will try to _resolve_ the shuffling in the most logical way possible.
@@ -52,8 +52,10 @@ Take a look at the following example:
 
 {% include codeDisplay.html content=site.data.snippets.shuffling.onesided_nesting filterManager=defaultFm %}
 
-Closet will start with `mix3`, will slowly work its way outside, until it will finally shuffle the `mix1` tags.
+Closet will start with `mix3` and work its way outside, until it will finally shuffle the `mix1` tags.
 If there is no logical way to shuffle the elements, it will cause something called a [deadlock](https://en.wikipedia.org/wiki/Deadlock).
+
+### Deadlocks
 
 {% include codeDisplay.html content=site.data.snippets.shuffling.deadlock filterManager=defaultFm %}
 

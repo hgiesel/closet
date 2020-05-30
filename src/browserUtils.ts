@@ -62,18 +62,21 @@ const setText = (input: Element | Text | ChildNodeSpan | string, newText: string
 interface ChildNodeIndex {
     type: 'index'
     value: number
+    startAtIndex?: number,
     exclusive?: boolean
 }
 
 interface ChildNodeNode {
     type: 'node'
     value: Element | Text | ChildNode
+    startAtIndex?: number,
     exclusive?: boolean
 }
 
 interface ChildNodePredicate {
     type: 'predicate'
     value: (v: Element | Text | ChildNode) => boolean
+    startAtIndex?: number,
     exclusive?: boolean
 }
 

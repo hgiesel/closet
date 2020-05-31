@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>Mocha</title>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+     <!-- Loading mocha: file protocol -->
+     <!-- https://mochajs.org/#running-mocha-in-the-browser -->
+     <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+    <script src="https://unpkg.com/mocha/mocha.js"></script>
+    <script src="https://unpkg.com/chai/chai.js"></script>
+
+    <script class="mocha-init">
+      mocha.setup('bdd')
+      mocha.checkLeaks()
+    </script>
+
+    <!-- Loading specs -->
+    <script type="module" src="/specs/foo.spec.js"></script>
+
+    <script class="mocha-exec">
+      window.onload = () => {
+         console.info('Tests start!')
+         mocha.run();
+       };
+    </script>
+  </body>
+</html>

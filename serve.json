@@ -1,0 +1,6 @@
+{
+  "public": "test/browser",
+  "cleanUrls": true,
+  "directoryListing": true,
+  "trailingSlash": false
+}

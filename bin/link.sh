@@ -23,20 +23,26 @@ if [[ "$1" =~ ^-?d$ ]]; then
 
 elif [[ "$1" =~ ^-?c$ ]]; then
   if [[ -d "$customdir" ]]; then
-    ln -s "$DIR" "$customdir/$addon_name"
+    declare target="$customdir/$addon_name"
 
   elif [[ -d "$HOME/.local/share/AnkiDev/addons21" ]]; then
-    ln -s "$DIR" "$HOME/.local/share/AnkiDev/addons21/$addon_name"
+    declare target="$HOME/.local/share/AnkiDev/addons21/$addon_name"
 
   elif [[ $(uname) = 'Darwin' ]]; then
-    ln -s "$DIR" "$HOME/Library/Application\ Support/Anki2/addons21/$addon_name"
+    declare target="$HOME/Library/Application\ Support/Anki2/addons21/$addon_name"
 
   elif [[ $(uname) = 'Linux' ]]; then
-    ln -s "$DIR" "$HOME/.local/share/Anki2/addons21/$addon_name"
+    declare target="$HOME/.local/share/Anki2/addons21/$addon_name"
 
   else
     echo 'Unknown platform'
     exit -1
+  fi
+
+  if [[ ! -h "$target" ]]; then
+    ln -s "$DIR" "$target"
+  else
+    echo 'Directory was already linked.'
   fi
 
 else

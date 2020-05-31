@@ -19,10 +19,17 @@ _site/
 .bundle/
 vendor/
 
-# compiled closet
+# compiled closet for docs
 docs/assets/js/*.js
 docs/assets/js/*.js.map
 
-# for anki-addon
+# compiled closet for anki-addon
 *.ankiaddon
 anki/src/web/closet.js
+
+# compiled closet for test
+dist/**/*
+
+# test suite compile
+test/browser/dist/**/*
+!test/browser/dist/README.md

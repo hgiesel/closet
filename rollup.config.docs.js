@@ -1,3 +1,8 @@
+/**
+ * This is used for compiling closet down to a file in /docs/assets/js/{main,dev}.js
+ * `dev.js` will be used locally for testing the website
+ * `main.js` will ultimately be used on the website, once pushed to GitHub-Pages
+ */
 import {
     terser,
 } from 'rollup-plugin-terser'

@@ -1,3 +1,7 @@
+/**
+ * This is used for compiling closet down to a file in /anki/src/web/closet.js
+ * This file will be included in Card templates
+ */
 import {
     terser,
 } from 'rollup-plugin-terser'

@@ -90,8 +90,8 @@ export class ChildNodeSpan {
     private childNodes: ChildNode[]
     private max: number
 
-    private fromIndex: number 
-    private toIndex: number 
+    private _fromIndex: number 
+    private _toIndex: number 
 
     constructor(parent: Element, fromValue: ChildNodePosition, toValue: ChildNodePosition) {
         this.parent = parent
@@ -99,76 +99,103 @@ export class ChildNodeSpan {
 
         this.max = parent.childNodes.length - 1
 
-        this.fromIndex = fromValue.type === 'index'
-            ? this.from(fromValue.value, fromValue.exclusive ?? false)
-            : fromValue.type === 'node'
-            ? this.fromNode(fromValue.value, fromValue.exclusive ?? false)
-            : this.fromPredicate(fromValue.value, fromValue.exclusive ?? false)
+        const fromFunc = this.getFromMethod(fromValue.type)
+        const toFunc = this.getToMethod(toValue.type)
 
-        this.toIndex = toValue.type === 'index'
-            ? this.to(toValue.value, toValue.exclusive ?? false)
-            : toValue.type === 'node'
-            ? this.toNode(toValue.value, toValue.exclusive ?? false)
-            : this.toPredicate(toValue.value, toValue.exclusive ?? false)
+        this._fromIndex = fromFunc(
+            (fromValue.value as any),
+            fromValue.startAtIndex ?? 0,
+            fromValue.exclusive ?? false,
+        )
+
+        this._toIndex = toFunc(
+            (toValue.value as any),
+            toValue.startAtIndex ?? 0,
+            toValue.exclusive ?? false,
+        )
     }
 
-    private fromSafe(i: number): number {
-        return i < 0 || i > this.max
+    get fromIndex() {
+        return this._fromIndex
+    }
+
+    get toIndex() {
+        return this.toIndex
+    }
+
+    private getFromMethod(name: string) {
+        return name === 'index'
+            ? this.from
+            : name === 'node'
+            ? this.fromNode
+            : this.fromPredicate
+    }
+
+    private getToMethod(name: string) {
+        return name === 'index'
+            ? this.to
+            : name === 'node'
+            ? this.toNode
+            : this.toPredicate
+    }
+
+    private fromSafe(i: number, min: number): number {
+        return i < min || i > this.max
             ? this.max
             : i
     }
 
-    private from(i: number, exclusive: boolean): number {
+    private from(i: number, min: number, exclusive: boolean): number {
         const parsed = parseNegativeIndex(i, this.max) + (exclusive ? 1 : 0)
-        return this.fromSafe(parsed)
+        return this.fromSafe(parsed, min)
     }
 
-    private fromPredicate(pred: (v: Node) => boolean, exclusive: boolean): number {
-        const found = this.childNodes.findIndex(pred) + (exclusive ? 1 : 0)
-        return this.fromSafe(found)
+    private fromPredicate(pred: (v: Node) => boolean, min: number, exclusive: boolean): number {
+        const found = this.childNodes.slice(min).findIndex(pred) + (exclusive ? 1 : 0)
+        return this.fromSafe(found, min)
     }
 
-    private fromNode(node: Node, exclusive: boolean): number {
-        const found = this.childNodes.findIndex(
+    private fromNode(node: Node, min: number, exclusive: boolean): number {
+        const found = this.childNodes.slice(min).findIndex(
             (v: ChildNode): boolean => v === node,
         ) + (exclusive ? 1 : 0)
-        return this.fromSafe(found)
+        return this.fromSafe(found, min)
     }
 
-    private toSafe(i: number): number {
-        return i < 0 || i > this.max
+    private toSafe(i: number, min: number): number {
+        return i < min || i > this.max
             ? 0
             : i
     }
 
-    private to(i: number, exclusive: boolean): number {
+    private to(i: number, min: number, exclusive: boolean): number {
         const parsed = parseNegativeIndex(i, this.max) - (exclusive ? 1 : 0)
-        return this.toSafe(parsed)
+        return this.toSafe(parsed, min)
     }
 
-    private toPredicate(pred: (v: Node) => boolean, exclusive: boolean): number {
+    private toPredicate(pred: (v: Node) => boolean, min: number, exclusive: boolean): number {
         const found = this.childNodes.findIndex(pred) - (exclusive ? 1 : 0)
-        return this.toSafe(found)
+        return this.toSafe(found, min)
     }
 
-    private toNode(node: Node, exclusive: boolean): number {
-        const found = this.childNodes.findIndex(
+    private toNode(node: Node, min: number, exclusive: boolean): number {
+        const found = this.childNodes.slice(min).findIndex(
             (v: ChildNode): boolean => v === node,
         ) - (exclusive ? 1 : 0)
-        return this.toSafe(found)
+        return this.toSafe(found, min)
     }
 
     private isValid(): boolean {
-        return this.fromIndex <= this.toIndex
+        return this._fromIndex <= this._toIndex
     }
 
     length(): number {
-        return Math.min(0, this.toIndex - this.fromIndex)
+        return Math.max(0, this._toIndex - this._fromIndex + 1)
     }
 
     span(): ChildNode[] {
         return this.isValid()
-            ? this.childNodes.slice(this.fromIndex, this.toIndex)
+            ? this.childNodes.slice(this._fromIndex, this._toIndex)
             : []
     }
 
@@ -184,7 +211,7 @@ export class ChildNodeSpan {
         const placeholderNode = document.createElement('div')
         const oldLength = this.parent.childNodes.length
 
-        this.parent.insertBefore(placeholderNode, this.parent.childNodes[this.fromIndex])
+        this.parent.insertBefore(placeholderNode, this.parent.childNodes[this._fromIndex])
         for (const node of this.span()) {
             this.parent.removeChild(node)
         }
@@ -196,8 +223,25 @@ export class ChildNodeSpan {
         this.childNodes = Array.from(this.parent.childNodes)
         this.max = this.childNodes.length
 
-        this.toIndex = this.toIndex + (this.max - oldLength)
+        this._toIndex = this._toIndex + (this.max - oldLength)
     }
+}
+
+export const interspliceChildren = (parent: Element, skip: ChildNodePosition): ChildNodeSpan[] => {
+    const first = new ChildNodeSpan(parent, skip, skip)
+
+    const to = first.toIndex
+
+    while (true) {
+        const newSkip = skip
+        newSkip.startAtIndex = first.toIndex
+
+        const next = new ChildNodeSpan(parent, newSkip, newSkip)
+        to.startAtIndex
+    }
+
+    // this needs testing
+    return []
 }
 
 export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | string, filterManager: FilterManager): void => {

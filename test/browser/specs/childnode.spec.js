@@ -3,9 +3,15 @@ import { ChildNodeSpan } from '../dist/src/browserUtils.js'
 const assert = chai.assert
 
 describe('ChildNodeSpan', () => {
-    it('returns 0', () => {
+    before(() => {
         const parent = document.querySelector('#childnodetest > .first')
-        const test = ChildNodeSpan(parent, {
+        assert.equal(parent.childNodes.length, 9, 'parent has wrong childNodes')
+    })
+
+    it('can be set via index arg', () => {
+        const parent = document.querySelector('#childnodetest > .first')
+        console.log(parent)
+        const test = new ChildNodeSpan(parent, {
             type: 'index',
             value: 0,
         }, {
@@ -13,6 +19,7 @@ describe('ChildNodeSpan', () => {
             value: 3,
         })
 
-        console.log(test)
+        assert.equal(test.from, 0, 'to is not set correctly')
+        assert.equal(test.to, 3, 'from is not set correctly')
     })
 })

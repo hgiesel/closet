@@ -86,18 +86,18 @@ export class ChildNodeSpan {
     static readonly CHILD_NODE_SPAN = 3353
     readonly nodeType = ChildNodeSpan.CHILD_NODE_SPAN
 
-    private readonly parent: Element
+    private readonly parentElement: Element
     private childNodes: ChildNode[]
     private max: number
 
     private _fromIndex: number 
     private _toIndex: number 
 
-    constructor(parent: Element, fromValue: ChildNodePosition, toValue: ChildNodePosition) {
-        this.parent = parent
-        this.childNodes = Array.from(this.parent.childNodes)
+    constructor(parentElement: Element, fromValue: ChildNodePosition, toValue: ChildNodePosition) {
+        this.parentElement = parentElement
+        this.childNodes = Array.from(this.parentElement.childNodes)
 
-        this.max = parent.childNodes.length - 1
+        this.max = parentElement.childNodes.length - 1
 
         const fromFunc = this.getFromMethod(fromValue.type)
         const toFunc = this.getToMethod(toValue.type)
@@ -209,18 +209,18 @@ export class ChildNodeSpan {
         }
 
         const placeholderNode = document.createElement('div')
-        const oldLength = this.parent.childNodes.length
+        const oldLength = this.parentElement.childNodes.length
 
-        this.parent.insertBefore(placeholderNode, this.parent.childNodes[this._fromIndex])
+        this.parentElement.insertBefore(placeholderNode, this.parentElement.childNodes[this._fromIndex])
         for (const node of this.span()) {
-            this.parent.removeChild(node)
+            this.parentElement.removeChild(node)
         }
 
         // might turn the original div into multiple nodes including text nodes
         placeholderNode.outerHTML = newText
 
         // reset childNode information
-        this.childNodes = Array.from(this.parent.childNodes)
+        this.childNodes = Array.from(this.parentElement.childNodes)
         this.max = this.childNodes.length
 
         this._toIndex = this._toIndex + (this.max - oldLength)

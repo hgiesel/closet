@@ -1,6 +1,5 @@
 import { ChildNodeSpan } from '../dist/src/browserUtils.js'
 
-console.log('hi')
 const assert = chai.assert
 
 describe('ChildNodeSpan', () => {
@@ -15,6 +14,5 @@ describe('ChildNodeSpan', () => {
         })
 
         console.log(test)
-        assert.equal(0, 1)
     })
 })

@@ -9,6 +9,7 @@
      <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
   </head>
   <body>
+    <em>You need to run `npm run serve-test` and open the served link!</em>
     <div id="mocha"></div>
 
     <script src="https://unpkg.com/mocha/mocha.js"></script>
@@ -20,7 +21,7 @@
     </script>
 
     <!-- Loading specs -->
-    <script type="module" src="/specs/foo.spec.js"></script>
+    <script type="module" src="/specs/childnode.spec.js"></script>
 
     <script class="mocha-exec">
       window.onload = () => {
@@ -28,5 +29,23 @@
          mocha.run();
        };
     </script>
+
+    <div id="experimental-area">
+      <div id="childnodetest">
+
+        <div class="first">
+          <div class="foo"></div>
+          <div class="foo"></div>
+          <div>get me</div>
+          <div class="foo"></div>
+        </div>
+
+        <div class="second">
+        </div>
+        <div class="third">
+        </div>
+      </div>
+
+    </div>
   </body>
 </html>

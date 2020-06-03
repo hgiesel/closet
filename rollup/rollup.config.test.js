@@ -34,7 +34,4 @@ export default {
         resolve(),
         commonjs(),
     ],
-    external: [
-        'tslib',
-    ],
 }

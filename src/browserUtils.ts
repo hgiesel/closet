@@ -83,7 +83,7 @@ interface ChildNodePredicate {
 type ChildNodePosition = ChildNodeIndex | ChildNodeNode | ChildNodePredicate
 
 export class ChildNodeSpan {
-    static readonly CHILD_NODE_SPAN = 3353
+    static readonly CHILD_NODE_SPAN = 3353 /* this number is arbitrary */
     readonly nodeType = ChildNodeSpan.CHILD_NODE_SPAN
 
     private readonly parentElement: Element
@@ -102,30 +102,32 @@ export class ChildNodeSpan {
         const fromFunc = this.getFromMethod(fromValue.type)
         const toFunc = this.getToMethod(toValue.type)
 
-        this._fromIndex = fromFunc(
+        this._fromIndex = fromFunc.call(
+            this,
             (fromValue.value as any),
             fromValue.startAtIndex ?? 0,
             fromValue.exclusive ?? false,
         )
 
-        this._toIndex = toFunc(
+        this._toIndex = toFunc.call(
+            this,
             (toValue.value as any),
             toValue.startAtIndex ?? 0,
             toValue.exclusive ?? false,
         )
     }
 
-    get fromIndex() {
+    get from(): number {
         return this._fromIndex
     }
 
-    get toIndex() {
-        return this.toIndex
+    get to(): number {
+        return this._toIndex
     }
 
     private getFromMethod(name: string) {
         return name === 'index'
-            ? this.from
+            ? this.fromIndex
             : name === 'node'
             ? this.fromNode
             : this.fromPredicate
@@ -133,7 +135,7 @@ export class ChildNodeSpan {
 
     private getToMethod(name: string) {
         return name === 'index'
-            ? this.to
+            ? this.toIndex
             : name === 'node'
             ? this.toNode
             : this.toPredicate
@@ -145,7 +147,7 @@ export class ChildNodeSpan {
             : i
     }
 
-    private from(i: number, min: number, exclusive: boolean): number {
+    private fromIndex(i: number, min: number, exclusive: boolean): number {
         const parsed = parseNegativeIndex(i, this.max) + (exclusive ? 1 : 0)
         return this.fromSafe(parsed, min)
     }
@@ -168,7 +170,7 @@ export class ChildNodeSpan {
             : i
     }
 
-    private to(i: number, min: number, exclusive: boolean): number {
+    private toIndex(i: number, min: number, exclusive: boolean): number {
         const parsed = parseNegativeIndex(i, this.max) - (exclusive ? 1 : 0)
         return this.toSafe(parsed, min)
     }
@@ -230,14 +232,13 @@ export class ChildNodeSpan {
 export const interspliceChildren = (parent: Element, skip: ChildNodePosition): ChildNodeSpan[] => {
     const first = new ChildNodeSpan(parent, skip, skip)
 
-    const to = first.toIndex
+    const to = first.to
 
     while (true) {
         const newSkip = skip
-        newSkip.startAtIndex = first.toIndex
+        newSkip.startAtIndex = first.to
 
         const next = new ChildNodeSpan(parent, newSkip, newSkip)
-        to.startAtIndex
     }
 
     // this needs testing

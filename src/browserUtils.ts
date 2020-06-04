@@ -243,18 +243,34 @@ export class ChildNodeSpan {
     }
 }
 
-export const interspliceChildNodes = (parent: Element, skip: ChildNodePosition): ChildNodeSpan[] => {
-    const first = new ChildNodeSpan(parent, skip, skip)
-
-    const to = first.to
-
-    while (true) {
-        const newSkip = skip
-        const next = new ChildNodeSpan(parent, newSkip, newSkip)
+const makePositions = (template: ChildNodePredicate, currentIndex: number = 0): [ChildNodePredicate, ChildNodePredicate] => {
+    const fromSkip: ChildNodePredicate = {
+        type: 'predicate',
+        value: template.value,
+        startAtIndex: currentIndex,
+        exclusive: false,
+    }
+    const toSkip: ChildNodePredicate = {
+        type: 'predicate',
+        value: (v) => !template.value(v),
+        startAtIndex: currentIndex,
+        exclusive: true,
     }
 
-    // this needs testing
-    return []
+    return [fromSkip, toSkip]
+}
+
+export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate): ChildNodeSpan[] => {
+    const result = []
+    let currentSpan = new ChildNodeSpan(parent, ...makePositions(skip))
+
+    while (currentSpan.valid) {
+        result.push(currentSpan)
+
+        currentSpan = new ChildNodeSpan(parent, ...makePositions(skip, currentSpan.to + 1))
+    }
+
+    return result
 }
 
 export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | string, filterManager: FilterManager): void => {

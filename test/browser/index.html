@@ -22,6 +22,7 @@
 
     <!-- Loading specs -->
     <script type="module" src="/specs/childnode.spec.js"></script>
+    <script type="module" src="/specs/intersplice.spec.js"></script>
 
     <script class="mocha-exec">
       window.onload = () => {
@@ -32,21 +33,29 @@
 
     <div id="experimental-area">
       <div id="childnodetest">
-
         <div class="first">
           <div class="foo" id="first-start-here"></div>
           <div class="foo" id="first-very-close"></div>
           <div id="first-end-here">get me</div>
           <div class="foo"></div>
         </div>
-
-        <div class="second">
-        </div>
-
-        <div class="third">
-        </div>
-
       </div>
+
+      <div class="second">
+        <div id="intersplicetest">
+          <div class="bar"></div>
+          <div class="foo"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="foo"></div>
+          <div class="bar"></div>
+          <div class="foo"></div>
+        </div>
+      </div>
+
+      <div class="third">
+      </div>
+
 
     </div>
   </body>

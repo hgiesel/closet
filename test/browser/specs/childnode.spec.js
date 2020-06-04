@@ -123,4 +123,35 @@ describe('ChildNodeSpan', () => {
         assert.strictEqual(test.from, 0, 'from is not set correctly')
         assert.strictEqual(test.to, 3, 'to is not set correctly')
     })
+
+    it('respects startAtIndex with predicate argument', () => {
+        const parent = document.querySelector('#childnodetest > .first')
+        const test = new ChildNodeSpan(parent, {
+            type: 'predicate',
+            value: (v) => v.className === 'foo',
+            startAtIndex: 2,
+        }, {
+            type: 'predicate',
+            value: (v) => v.className === 'foo',
+            startAtIndex: 4,
+        })
+
+        assert.strictEqual(test.from, 3, 'from is not set correctly')
+        assert.strictEqual(test.to, 7, 'to is not set correctly')
+    })
+
+    it('respects automatic startAtIndex at to argument', () => {
+        const parent = document.querySelector('#childnodetest > .first')
+        const test = new ChildNodeSpan(parent, {
+            type: 'predicate',
+            value: (v) => v.className === 'foo',
+            startAtIndex: 2,
+        }, {
+            type: 'predicate',
+            value: (v) => v.className === 'foo',
+        })
+
+        assert.strictEqual(test.from, 3, 'from is not set correctly')
+        assert.strictEqual(test.to, 3, 'to is not set correctly')
+    })
 })

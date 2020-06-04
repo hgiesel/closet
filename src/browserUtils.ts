@@ -126,7 +126,7 @@ export class ChildNodeSpan {
         this._toIndex = toFunc.call(
             this,
             (toValue.value as any),
-            toValue.startAtIndex ?? 0,
+            Math.max(toValue.startAtIndex ?? 0, this.from),
             toValue.exclusive ?? false,
         )
     }
@@ -167,14 +167,14 @@ export class ChildNodeSpan {
     }
 
     private fromPredicate(pred: (v: Node) => boolean, min: number, exclusive: boolean): number {
-        const found = this.childNodes.slice(min).findIndex(pred) + (exclusive ? 1 : 0)
+        const found = this.childNodes.slice(min).findIndex(pred) + min + (exclusive ? 1 : 0)
         return this.fromSafe(found, min)
     }
 
     private fromNode(node: Node, min: number, exclusive: boolean): number {
         const found = this.childNodes.slice(min).findIndex(
             (v: ChildNode): boolean => v === node,
-        ) + (exclusive ? 1 : 0)
+        ) + min + (exclusive ? 1 : 0)
         return this.fromSafe(found, min)
     }
 
@@ -190,14 +190,14 @@ export class ChildNodeSpan {
     }
 
     private toPredicate(pred: (v: Node) => boolean, min: number, exclusive: boolean): number {
-        const found = this.childNodes.findIndex(pred) - (exclusive ? 1 : 0)
+        const found = this.childNodes.slice(min).findIndex(pred) + min - (exclusive ? 1 : 0)
         return this.toSafe(found, min)
     }
 
     private toNode(node: Node, min: number, exclusive: boolean): number {
         const found = this.childNodes.slice(min).findIndex(
             (v: ChildNode): boolean => v === node,
-        ) - (exclusive ? 1 : 0)
+        ) + min - (exclusive ? 1 : 0)
         return this.toSafe(found, min)
     }
 

@@ -4,7 +4,7 @@ import { FilterManager } from './filterManager'
 // negative result implies invalid idx
 const parseNegativeIndex = (idx: number, max: number): number => {
   return idx < 0
-    ? max + idx 
+    ? max + idx + 1
     : idx
 }
 
@@ -62,25 +62,32 @@ const setText = (input: Element | Text | ChildNodeSpan | string, newText: string
 interface ChildNodeIndex {
     type: 'index'
     value: number
-    startAtIndex?: number,
     exclusive?: boolean
 }
 
 interface ChildNodeNode {
     type: 'node'
     value: Element | Text | ChildNode
-    startAtIndex?: number,
     exclusive?: boolean
 }
 
 interface ChildNodePredicate {
     type: 'predicate'
     value: (v: Element | Text | ChildNode) => boolean
-    startAtIndex?: number,
     exclusive?: boolean
 }
 
 type ChildNodePosition = ChildNodeIndex | ChildNodeNode | ChildNodePredicate
+
+const defaultFromValue: ChildNodeIndex = {
+    type: 'index',
+    value: 0,
+}
+
+const defaultToValue: ChildNodeIndex = {
+    type: 'index',
+    value: -1,
+}
 
 export class ChildNodeSpan {
     static readonly CHILD_NODE_SPAN = 3353 /* this number is arbitrary */
@@ -93,7 +100,11 @@ export class ChildNodeSpan {
     private _fromIndex: number 
     private _toIndex: number 
 
-    constructor(parentElement: Element, fromValue: ChildNodePosition, toValue: ChildNodePosition) {
+    constructor(
+        parentElement: Element,
+        fromValue: ChildNodePosition = defaultFromValue,
+        toValue: ChildNodePosition = defaultToValue,
+    ) {
         this.parentElement = parentElement
         this.childNodes = Array.from(this.parentElement.childNodes)
 
@@ -105,14 +116,13 @@ export class ChildNodeSpan {
         this._fromIndex = fromFunc.call(
             this,
             (fromValue.value as any),
-            fromValue.startAtIndex ?? 0,
             fromValue.exclusive ?? false,
         )
 
         this._toIndex = toFunc.call(
             this,
             (toValue.value as any),
-            toValue.startAtIndex ?? 0,
+            0,
             toValue.exclusive ?? false,
         )
     }
@@ -187,16 +197,16 @@ export class ChildNodeSpan {
         return this.toSafe(found, min)
     }
 
-    private isValid(): boolean {
+    get valid(): boolean {
         return this._fromIndex <= this._toIndex
     }
 
-    length(): number {
+    get length(): number {
         return Math.max(0, this._toIndex - this._fromIndex + 1)
     }
 
     span(): ChildNode[] {
-        return this.isValid()
+        return this.valid
             ? this.childNodes.slice(this._fromIndex, this._toIndex)
             : []
     }
@@ -206,7 +216,7 @@ export class ChildNodeSpan {
     }
 
     replaceSpan(newText: string): void {
-        if (!this.isValid()) {
+        if (!this.valid) {
             return
         }
 
@@ -236,8 +246,6 @@ export const interspliceChildren = (parent: Element, skip: ChildNodePosition): C
 
     while (true) {
         const newSkip = skip
-        newSkip.startAtIndex = first.to
-
         const next = new ChildNodeSpan(parent, newSkip, newSkip)
     }
 

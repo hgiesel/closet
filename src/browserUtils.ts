@@ -2,10 +2,10 @@ import { renderTemplate, renderDisjointTemplate } from './render'
 import { FilterManager } from './filterManager'
 
 // negative result implies invalid idx
-const parseNegativeIndex = (idx: number, max: number): number => {
+const parseIndexArgument = (idx: number, min: number, max: number): number => {
   return idx < 0
     ? max + idx + 1
-    : idx
+    : min + idx
 }
 
 const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): string => {
@@ -63,18 +63,21 @@ interface ChildNodeIndex {
     type: 'index'
     value: number
     exclusive?: boolean
+    startAtIndex?: number
 }
 
 interface ChildNodeNode {
     type: 'node'
     value: Element | Text | ChildNode
     exclusive?: boolean
+    startAtIndex?: number
 }
 
 interface ChildNodePredicate {
     type: 'predicate'
     value: (v: Element | Text | ChildNode) => boolean
     exclusive?: boolean
+    startAtIndex?: number
 }
 
 type ChildNodePosition = ChildNodeIndex | ChildNodeNode | ChildNodePredicate
@@ -116,13 +119,14 @@ export class ChildNodeSpan {
         this._fromIndex = fromFunc.call(
             this,
             (fromValue.value as any),
+            fromValue.startAtIndex ?? 0,
             fromValue.exclusive ?? false,
         )
 
         this._toIndex = toFunc.call(
             this,
             (toValue.value as any),
-            0,
+            toValue.startAtIndex ?? 0,
             toValue.exclusive ?? false,
         )
     }
@@ -158,7 +162,7 @@ export class ChildNodeSpan {
     }
 
     private fromIndex(i: number, min: number, exclusive: boolean): number {
-        const parsed = parseNegativeIndex(i, this.max) + (exclusive ? 1 : 0)
+        const parsed = parseIndexArgument(i, min, this.max) + (exclusive ? 1 : 0)
         return this.fromSafe(parsed, min)
     }
 
@@ -181,7 +185,7 @@ export class ChildNodeSpan {
     }
 
     private toIndex(i: number, min: number, exclusive: boolean): number {
-        const parsed = parseNegativeIndex(i, this.max) - (exclusive ? 1 : 0)
+        const parsed = parseIndexArgument(i, min, this.max) - (exclusive ? 1 : 0)
         return this.toSafe(parsed, min)
     }
 
@@ -239,7 +243,7 @@ export class ChildNodeSpan {
     }
 }
 
-export const interspliceChildren = (parent: Element, skip: ChildNodePosition): ChildNodeSpan[] => {
+export const interspliceChildNodes = (parent: Element, skip: ChildNodePosition): ChildNodeSpan[] => {
     const first = new ChildNodeSpan(parent, skip, skip)
 
     const to = first.to

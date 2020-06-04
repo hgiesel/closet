@@ -108,18 +108,19 @@ describe('ChildNodeSpan', () => {
         assert.isFalse(test.valid, 'should be invalid')
     })
 
-    it('respects startAt argument', () => {
+    it('respects startAtIndex with index argument', () => {
         const parent = document.querySelector('#childnodetest > .first')
         const test = new ChildNodeSpan(parent, {
-            type: 'predicate',
-            value: (v) => v.id === 'first-start-here',
-            startAt: 0,
+            type: 'index',
+            value: 0,
+            startAtIndex: 0,
         }, {
-            type: 'predicate',
-            value: (v) => v.previousSibling && v.previousSibling.id === 'first-start-here',
-            startAt: 1,
+            type: 'index',
+            value: 0,
+            startAtIndex: 3,
         })
 
-        assert.isFalse(test.valid, 'should be invalid')
+        assert.strictEqual(test.from, 0, 'from is not set correctly')
+        assert.strictEqual(test.to, 3, 'to is not set correctly')
     })
 })

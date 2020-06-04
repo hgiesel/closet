@@ -1,11 +1,6 @@
-var persistenceSwitch = Closet.anki.memorySwitch(globalThis.Persistence)
 var inherit_id = 1
-
-var qaChildren = new Closet.browser.ChildNodeSpan(
-    document.getElementById('qa'),
-    { type: 'index', value: 1 },
-    { type: 'predicate', value: v => v.id === 'anki-am' || v.tagName === 'SCRIPT', exclusive: true },
-)
+var persistenceSwitch = Closet.anki.memorySwitch(globalThis.Persistence)
+var qaChildren = Closet.anki.getQaChildNodes()
 
 function userLogic() {
     var elements = []

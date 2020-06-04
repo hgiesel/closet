@@ -1,4 +1,5 @@
 import { StorageType } from './filterManager/storage'
+import { interspliceChildNodes, ChildNodeSpan } from './browserUtils'
 
 const tagsFull = '{{Tags}}'
 const cardType = '{{Card}}'
@@ -48,4 +49,24 @@ export const memorySwitch = (p: AnkiPersistence): MemorySwitcher => {
         delete: (k: string): void => path.delete(k),
         clear: (): void => path.clear(),
     }
+}
+
+export const getQaChildNodes = (): ChildNodeSpan[] | null => {
+    if (!globalThis.document) {
+        return null
+    }
+
+    const qa = globalThis.document.getElementById('qa')
+
+    if (!qa) {
+        return null
+    }
+
+
+    return interspliceChildNodes(qa, {
+        type: 'predicate',
+        value: (v: any) => (
+            v.tagName !== 'STYLE' && v.tagName !== 'SCRIPT' && v.id !== 'anki-am'
+        )
+    })
 }

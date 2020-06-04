@@ -2,15 +2,21 @@
 {% assign theCode = include.content.code | replace: "'", "\\'" | newline_to_br | strip_newlines %}
 {% assign fm = include.filterManager %}
 
+
+{% for button in theButtons %}
+{% assign theButton = button | split: ", " %}
 readyRenderButton(
-    '#{{ theId }} .btn-rerender',
+    '#{{ theId }} .btn-{{ theButton[1] }}',
     '#{{ theId }} > .display',
     '{{ theCode }}',
+    {{ theButton[2] }} /* the preset */,
+    {{ theButton[3] }} /* keep memory or not */,
     {% if fm %}
     // inject filterManager
-    (() => { {{ fm }} })(),
+    ((preset) => { {{ fm }} })({{ theButton[2] }}),
     {% endif %}
 )
+{% endfor %}
 
 readyTryButton(
     '#{{ theId }} .btn-edit',

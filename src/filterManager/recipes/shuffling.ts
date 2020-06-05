@@ -16,7 +16,7 @@ export const shufflingRecipe = (
 ) => (filterApi: FilterApi) => {
     const mixFilter = (
         { fullKey, fullOccur, num, values }: Tag,
-        { cache, memory, deferred, ready }: Internals,
+        { cache, memory, deferred, round }: Internals,
     ) => {
         const id = `${fullKey}:${fullOccur}`
         const waitingSetKey = `${fullKey}:waitingSet`
@@ -38,7 +38,7 @@ export const shufflingRecipe = (
             return stylizer.stylizeInner(popped)
         }
 
-        if (!ready) {
+        if (!round.ready) {
             cache.over(waitingSetKey, (s: Set<string>) => s.add(id), new Set())
             return
         }
@@ -49,7 +49,7 @@ export const shufflingRecipe = (
 
         cache.fold(fullKey, (v: unknown[]) => v.concat(values[0]), [])
 
-        // mix with num is ready for shuffling
+        // mix with num is round.ready for shuffling
         deferred.registerIfNotExists(applyKey, () => {
             cache.set(applyKey, true)
             cache.over(waitingSetKey, (set: Set<string>) => set.delete(id), new Set())

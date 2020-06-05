@@ -9,7 +9,6 @@ const makeTrivialBaseTagInfo = (text: string): TagInfo => tagInfoFactory.build(
     text.length,
     tagFactory.build('base', text),
     [],
-    true,
 )
 
 const parse = (text: string): TagInfo => {
@@ -59,7 +58,6 @@ export const parseDisjointTemplate = (textFragments: string[]): TagInfo => {
         lastOffset,
         tagFactory.build('base', textFragments.join('')),
         parsedFragments,
-        true,
     )
 
     tagFactory.reset()

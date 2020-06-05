@@ -7,21 +7,16 @@ class TagInfo {
     readonly data: Tag
     readonly innerTags: TagInfo[]
 
-    readonly naked: boolean
-
     constructor(
         start: number,
         end: number,
         data: Tag,
         innerTags: TagInfo[],
-        // TODO remove naked
-        naked: boolean = false,
     ) {
         this.start = start
         this.end = end
         this.data = data
         this.innerTags = innerTags
-        this.naked = naked
     }
 }
 

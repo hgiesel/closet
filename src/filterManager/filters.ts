@@ -48,9 +48,9 @@ const standardizeFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: I
 export type WeakFilter = (t: Filterable, i: Internals) => FilterResult | string | void
 export type Filter = (t: Filterable, i: Internals) => FilterResult
 
-const baseFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getRawRepresentation(), i.ready)
+const baseFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getRawRepresentation(), i.round.ready)
 const rawFilter: Filter = (t: Filterable) => wrapWithReady(t.getRawRepresentation())
-const defaultFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getDefaultRepresentation(), i.ready)
+const defaultFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getDefaultRepresentation(), i.round.ready)
 
 export class FilterApi {
     private filters: Map<string, WeakFilter>

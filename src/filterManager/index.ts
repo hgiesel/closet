@@ -20,17 +20,18 @@ export interface Internals {
     memory: Storage,
     filters: FilterApi
     deferred: DeferredApi
-    iteration: {index: number }
-    ready: boolean
+    preset: object,
+    iteration: IterationInfo,
+    round: RoundInfo,
 }
 
-export interface IterationInternals {
+export interface IterationInfo {
     template: TemplateApi,
     iteration: { index: number }
     baseDepth: number,
 }
 
-export interface RoundInternals {
+export interface RoundInfo {
     ready: boolean
     depth: number,
 }
@@ -55,14 +56,17 @@ export class FilterManager {
         this.memory = new Storage(memory)
     }
 
-    filterProcessor(iteration: IterationInternals): FilterProcessor {
-        return (data: Filterable, round: RoundInternals): FilterResult => {
-            const internals: Internals = Object.assign(this.preset, iteration, round, {
+    filterProcessor(iteration: IterationInfo): FilterProcessor {
+        return (data: Filterable, round: RoundInfo): FilterResult => {
+            const internals: Internals = {
+                preset: this.preset,
+                iteration: iteration,
+                round: round,
                 cache: this.cache,
                 memory: this.memory,
                 filters: this.filters,
                 deferred: this.deferred,
-            })
+            }
 
             const result = this.filters.execute(data, internals)
             return result

@@ -79,13 +79,12 @@ export class TagInfoFactory {
         return saveForResult
     }
 
-    build(start: number, end: number, data: Tag, innerTags: TagInfo[], naked: boolean = false): TagInfo {
+    build(start: number, end: number, data: Tag, innerTags: TagInfo[]): TagInfo {
         return new TagInfo(
             start + this.fixedLeftOffset,
             end + this.fixedLeftOffset,
             data,
             innerTags,
-            naked,
         )
     }
 }

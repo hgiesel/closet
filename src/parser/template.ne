@@ -23,7 +23,6 @@ start -> content %EOF {% ([[valuesRawRoot,firstLevelTags],eof]) => tagInfoFactor
     eof.offset,
     tagFactory.build('base', valuesRawRoot),
     firstLevelTags,
-    true,
 )
 %}
 

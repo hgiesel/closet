@@ -1,0 +1,4 @@
+name: "First example of clozes"
+code: |
+  The capital of Botswana is [[c::Gaborone]].
+  The capital of Argentina is [[c::Buenos Aires]].

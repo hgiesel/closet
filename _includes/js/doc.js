@@ -1,12 +1,24 @@
-const readyRenderButton = (buttonQuery, displayQuery, code, filterManager = new FilterManager()) => {
+const readyRenderButton = (
+    buttonQuery,
+    displayQuery,
+    code,
+    preset,
+    keepMemory,
+    filterManager,
+) => {
     const theDisplay = document.querySelector(displayQuery)
     const btnRerender = document.querySelector(buttonQuery)
+
+    if (!filterManager) {
+        filterManager = new Closet.FilterManager(preset)
+    }
 
     btnRerender.addEventListener('click', () => {
         theDisplay.innerHTML = Closet.renderTemplate(code, filterManager)
 
-        // TODO configurable
-        filterManager.clearMemory()
+        if (!keepMemory) {
+            filterManager.clearMemory()
+        }
     })
 
     btnRerender.dispatchEvent(new Event('click'))

@@ -6,4 +6,6 @@ permalink: /clozes
 has_children: true
 ---
 
-# Creating clozes
+# Shuffling
+
+* foobar

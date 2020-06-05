@@ -2,19 +2,21 @@ import {
     id,
 } from './utils'
 
+type StringFunction = (v: string) => string
+
 export class Stylizer {
     private readonly separator: string
     private readonly separatorOuter: string
-    private readonly mapper: (v: string) => string
-    private readonly mapperOuter: (v: string) => string
-    private readonly postprocess: (v: string) => string
+    private readonly mapper: StringFunction
+    private readonly mapperOuter: StringFunction
+    private readonly postprocess: StringFunction
 
     constructor({
         separator = ', ',
         separatorOuter = '; ',
-        mapper = id,
-        mapperOuter = id,
-        postprocess = id,
+        mapper = id as StringFunction,
+        mapperOuter = id as StringFunction,
+        postprocess = id as StringFunction,
     } = {}) {
         this.separator = separator
         this.separatorOuter = separatorOuter
@@ -32,7 +34,43 @@ export class Stylizer {
     }
 
     stylizeInner(input: string[]): string {
-        return this.mapperOuter(input
+        return this.postprocess(input
+            .map(this.mapper)
+            .join(this.separator)
+        )
+    }
+}
+
+export class InnerStylizer {
+    private readonly separator: string
+    private readonly mapper: StringFunction
+    private readonly postprocess: StringFunction
+
+    constructor({
+        separator = ', ',
+        mapper = id as StringFunction,
+        postprocess = id as StringFunction,
+    } = {}) {
+        this.separator = separator
+        this.mapper = mapper
+        this.postprocess = postprocess
+    }
+
+    toStylizer({
+        separatorOuter = '; ',
+        mapperOuter = id,
+    } = {}): Stylizer {
+        return new Stylizer({
+            separator: this.separator,
+            mapper: this.mapper,
+            separatorOuter: separatorOuter,
+            mapperOuter: mapperOuter,
+            postprocess: this.postprocess,
+        })
+    }
+
+    stylizeInner(input: string[]): string {
+        return this.postprocess(input
             .map(this.mapper)
             .join(this.separator)
         )

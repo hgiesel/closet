@@ -6,8 +6,9 @@ permalink: /shuffling/shuffling
 parent: Shuffling
 ---
 
-{% include toc-doc.md %}
 {% assign b = "Render, render, {}, false" %}
+
+{% include toc-doc.md %}
 
 ---
 
@@ -72,7 +73,7 @@ After a few rounds, this operation will time out, and the remaining tags will st
 ## Advanced
 
 {% capture asianFm %}
-const fm = new Closet.FilterManager()
+const fm = new Closet.FilterManager(preset)
 
 const colorWheel = function*() {
   while (true) {
@@ -99,7 +100,7 @@ You can stylize the appearance of shuffled items however you like.
 {% include codeDisplay.html content=site.data.snippets.shuffling.japanese filterManager=asianFm buttons=b %}
 
 {% capture mixedFm %}
-const fm = new Closet.FilterManager()
+const fm = new Closet.FilterManager(preset)
 
 fm.addRecipe(Closet.recipes.shuffling('amix', new Closet.Stylizer({
   separator: '・',

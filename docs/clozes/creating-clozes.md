@@ -20,8 +20,17 @@ Depending on where the cloze is rendered, it needs to be rendered differently:
 1. as a _test_, it needs to be rendered as an [ellipsis](https://en.wikipedia.org/wiki/Ellipsis), or a hint, if one is available
 1. as an _answer_, or a _reveal_, it needs to show what was originally hidden
 
+In the context of flashcards, _test_ will be synonmymous with the front of the flashcard, the _answer_ with the back.
+
 ## Creating Clozes
 
 The cloze text is surrounded by a `c` tag.
 
+{% capture firstCloze %}
+const fm = new Closet.FilterManager(preset)
+fm.addRecipe(Closet.recipes.cloze('c'))
 
+return fm
+{% endcapture %}
+
+{% include codeDisplay.html content=site.data.snippets.cloze.first_example filterManager=defaultFm buttons='Frontside, q, {"side": "front"}, true; Backside, a, {"side": "back"}, true'%}

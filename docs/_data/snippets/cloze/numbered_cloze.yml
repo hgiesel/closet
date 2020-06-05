@@ -1,0 +1,4 @@
+name: "Numbered clozes"
+code: |
+  The capital of Botswana is [[c1::Gaborone]].
+  The capital of Argentina is [[c2::Buenos Aires]].

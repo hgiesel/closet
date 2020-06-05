@@ -6,6 +6,9 @@ permalink: /clozes/creating-clozes
 parent: Clozes
 ---
 
+{% assign b='Frontside, q, {"side": "front"}, true; Backside, a, {"side": "back"}, true' %}
+{% assign bOneTwo='Frontside 1, q1, {side: "front",card: "c1"}, true; Backside 1, a1, {side: "back",card: "c1"}, true; Frontside 2, q2, {side: "front",card: "c2"}, true; Backside 2, a2, {side: "back",card: "c2"}, true' %}
+
 {% include toc-doc.md %}
 
 ## What are Clozes?
@@ -26,11 +29,28 @@ In the context of flashcards, _test_ will be synonmymous with the front of the f
 
 The cloze text is surrounded by a `c` tag.
 
-{% capture firstCloze %}
+{% capture defaultCloze %}
 const fm = new Closet.FilterManager(preset)
-fm.addRecipe(Closet.recipes.cloze('c'))
+fm.addRecipe(Closet.recipes.clozeShow('c'))
 
 return fm
 {% endcapture %}
 
-{% include codeDisplay.html content=site.data.snippets.cloze.first_example filterManager=defaultFm buttons='Frontside, q, {"side": "front"}, true; Backside, a, {"side": "back"}, true'%}
+{% include codeDisplay.html content=site.data.snippets.cloze.first_example filterManager=defaultCloze buttons=b %}
+
+## Numbered Clozes
+
+In a flashcard, you would usually want to test each piece of knowledge individually.
+Which is is why rather than removing both passages, you'd want to create two flashcards, each removing a single passage, and highlighting it.
+
+For these cards, there is the notion of a _current cloze_.
+
+{% capture numberedCloze %}
+const fm = new Closet.FilterManager(preset)
+fm.addRecipe(Closet.recipes.clozeShow('c'))
+
+return fm
+{% endcapture %}
+
+{% include codeDisplay.html content=site.data.snippets.cloze.numbered_cloze filterManager=numberedCloze buttons=bOneTwo %}
+

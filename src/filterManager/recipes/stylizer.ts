@@ -5,11 +5,11 @@ import {
 type StringFunction = (v: string) => string
 
 export class Stylizer {
-    private readonly separator: string
-    private readonly separatorOuter: string
-    private readonly mapper: StringFunction
-    private readonly mapperOuter: StringFunction
-    private readonly postprocess: StringFunction
+    readonly separator: string
+    readonly separatorOuter: string
+    readonly mapper: StringFunction
+    readonly mapperOuter: StringFunction
+    readonly postprocess: StringFunction
 
     constructor({
         separator = ', ',
@@ -42,9 +42,9 @@ export class Stylizer {
 }
 
 export class InnerStylizer {
-    private readonly separator: string
-    private readonly mapper: StringFunction
-    private readonly postprocess: StringFunction
+    readonly separator: string
+    readonly mapper: StringFunction
+    readonly postprocess: StringFunction
 
     constructor({
         separator = ', ',

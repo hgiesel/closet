@@ -25,11 +25,11 @@ const defaultStylizer = new InnerStylizer({
     postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-
 const defaultEllipsisMaker = ({ values }: Tag, _inter: Internals, _isCurrent: boolean): string => {
-    return values[1] ? values[1].join('||') : '[...]'
+    return '[' + (
+        values[1] ? values[1].join('||') : '...'
+    ) + ']'
 }
-
 
 export const clozeHideRecipe = (
     keyword: string,

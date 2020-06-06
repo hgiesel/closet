@@ -18,8 +18,8 @@ Prism.languages.plaintext = {
 {% for button in theButtons %}
 {% assign theButton = button | split: ", " %}
 readyRenderButton(
-    '#{{ theId }} .btn-{{ theButton[1] }}',
-    '#{{ theId }} > .display',
+    '#{{ theId }}',
+    '{{ theButton[1] }}',
     '{{ theCode }}',
     {{ theButton[2] }} /* the preset */,
     {{ theButton[3] }} /* keep memory or not */,
@@ -41,6 +41,6 @@ readyFmButton(
 )
 
 readyTryButton(
-    '#{{ theId }} .btn-edit',
+    '#{{ theId }}',
     '{{ theCode }}',
 )

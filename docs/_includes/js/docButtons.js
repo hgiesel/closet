@@ -24,6 +24,18 @@ const readyRenderButton = (
     btnRerender.dispatchEvent(new Event('click'))
 }
 
+const readyFmButton = (buttonQuery, code) => {
+    const fmButton = document.querySelector(buttonQuery)
+
+    fmButton.addEventListener('mouseenter', () => {
+        console.log('hi')
+    })
+
+    fmButton.addEventListener('mouseleave', () => {
+        console.log('bye')
+    })
+}
+
 const readyTryButton = (buttonQuery, code, preset) => {
     const btnEdit = document.querySelector(buttonQuery)
 

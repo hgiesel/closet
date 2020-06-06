@@ -1,7 +1,23 @@
 ---
 ---
 
-.display {
-  padding: 5px;
-  font-family: Verdana, Geneva, sans-serif;
+.code-example {
+    position: relative;
+
+    .display {
+      padding: 5px;
+      font-family: Verdana, Geneva, sans-serif;
+    }
+
+    .btn-fm {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+
+        border-radius: 100%;
+
+        $btn-size: 37px;
+        width: $btn-size;
+        height: $btn-size;
+    }
 }

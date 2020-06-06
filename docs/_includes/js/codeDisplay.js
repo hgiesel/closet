@@ -2,6 +2,18 @@
 {% assign theCode = include.content.code | replace: "'", "\\'" | newline_to_br | strip_newlines %}
 {% assign fm = include.filterManager %}
 
+Prism.languages.plaintext = {
+    tagstart: {
+        pattern: /\[\[[a-zA-Z]+\d*/u,
+        inside: {
+            tagstart: /\[\[/u,
+            tagname: /[a-zA-Z]+\d*/u,
+        },
+    },
+    tagend: /\]\]/,
+    altsep: /\|\|/,
+    argsep: /::/,
+}
 
 {% for button in theButtons %}
 {% assign theButton = button | split: ", " %}
@@ -18,20 +30,13 @@ readyRenderButton(
 )
 {% endfor %}
 
+readyFmButton(
+    '#{{ theId }} .btn-fm',
+    '{{ theCode }}',
+)
+
 readyTryButton(
     '#{{ theId }} .btn-edit',
     '{{ theCode }}',
 )
 
-Prism.languages.plaintext = {
-    tagstart: {
-        pattern: /\[\[[a-zA-Z]+\d*/u,
-        inside: {
-            tagstart: /\[\[/u,
-            tagname: /[a-zA-Z]+\d*/u,
-        },
-    },
-    tagend: /\]\]/,
-    altsep: /\|\|/,
-    argsep: /::/,
-}

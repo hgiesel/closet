@@ -1,7 +1,7 @@
 ---
 layout: doc
 title: Activating Clozes
-nav_order: 2
+nav_order: 3
 permalink: /clozes/activating
 parent: Clozes
 ---
@@ -12,7 +12,7 @@ parent: Clozes
 
 {% include toc-doc.md %}
 
-## Why send messages?
+## Selectively activating tags
 
 A message will change the behavior of the cloze dynamically.
 
@@ -27,3 +27,10 @@ return fm
 {% endcapture %}
 
 {% include codeDisplay.html content=site.data.snippets.cloze.activate_cloze filterManager=defaultCloze buttons=bOneTwoThree %}
+
+## Evaluation order
+
+However keep in mind that tags are evaluated in a certain order.
+You need to use the activation tag, before you 
+
+{% include codeDisplay.html content=site.data.snippets.cloze.activate_cloze_with_occur filterManager=defaultCloze buttons=bOneTwoThree %}

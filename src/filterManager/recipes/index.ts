@@ -1,7 +1,7 @@
 import { shufflingRecipe } from './shuffling'
 import { orderingRecipe } from './ordering'
 import { clozeShowRecipe, clozeHideRecipe } from './clozes'
-import { mcRecipe } from './multipleChoice'
+import { multipleChoiceShowRecipe, multipleChoiceHideRecipe } from './multipleChoice'
 import { randRecipe } from './rand'
 import { styleRecipe } from './stylizing'
 
@@ -11,10 +11,11 @@ import { metaRecipe } from './meta'
 export const recipes = {
     shuffling: shufflingRecipe,
     ordering: orderingRecipe,
-    clozeHide: clozeHideRecipe,
     clozeShow: clozeShowRecipe,
+    clozeHide: clozeHideRecipe,
     random: randRecipe,
-    multipleChoice: mcRecipe,
+    multipleChoiceShow: multipleChoiceShowRecipe,
+    multipleChoiceHide: multipleChoiceHideRecipe,
     debug: debugRecipe,
     meta: metaRecipe,
     stylizing: styleRecipe,

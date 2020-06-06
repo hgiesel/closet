@@ -98,7 +98,7 @@ export class FilterApi {
     }
 
     execute(data: Filterable, internals: Internals): FilterResult {
-        return standardizeFilterResult(this.getOrDefault(data.getFilterKey()))(data, internals)
+        return withStandardizedFilterResult(this.getOrDefault(data.getFilterKey()))(data, internals)
     }
 }
 

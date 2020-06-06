@@ -1,13 +1,24 @@
 ---
 ---
 
-.code-example {
-    min-height: 4rem;
+.code-container {
     position: relative;
 }
 
+.code-example {
+    min-height: 7rem;
+}
+
+.output-display {
+    padding: 0.5rem;
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+$display-distance: 1rem;
+
 .btn-group-tester {
     float: right;
+
     display: flex;
     justify-content: flex-end;
     align-content: center;
@@ -27,13 +38,6 @@
         }
     }
 }
-
-.display {
-    padding: 0.5rem;
-    font-family: Verdana, Geneva, sans-serif;
-}
-
-$display-distance: 1rem;
 
 .btn-fm {
     position: absolute;
@@ -57,15 +61,18 @@ $display-distance: 1rem;
     display: none;
 
     // make content escape
-    overflow: visible;
-
-    font-size: 80%;
-    background-color: white !important;
-    // padding: 0.1rem 0.35rem;
-
-    // border: 0.1rem solid white;
-    border-color: red;
+    background-color: white;
     border-radius: 0.5rem;
+
+    code[class*="language-"], pre[class*="language-"] {
+        position: relative;
+        z-index: 9;
+
+        font-size: 90%;
+        border-radius: 0.2rem;
+
+        background: #4d4d4d;
+    }
 }
 
 .fm-popup {
@@ -82,7 +89,7 @@ $display-distance: 1rem;
 
     // is turned on by eventListener
     display: none;
-    z-index: 99;
+    z-index: 9;
 
     @keyframes fadeOut {
         0% {

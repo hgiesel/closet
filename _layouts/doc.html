@@ -13,12 +13,11 @@ layout: default
   {% assign codefilename = "main" %}
 {% endif %}
 
-<link rel="stylesheet" href="/closet/assets/css/codeBlocks.css"/>
-<link rel="stylesheet" href="/closet/assets/css/display.css"/>
+<link rel="stylesheet" href="/closet/assets/css/codeDisplay.css"/>
 
 <script src="/closet/assets/js/{{ codefilename }}.js"></script>
 <script>
-  {% include js/doc.js %}
+  {% include js/docButtons.js %}
 </script>
 
 {{ content }}

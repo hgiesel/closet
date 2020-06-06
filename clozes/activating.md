@@ -1,7 +1,7 @@
 ---
 layout: doc
 title: Activating Clozes
-nav_order: 2
+nav_order: 3
 permalink: /clozes/activating
 parent: Clozes
 ---
@@ -12,18 +12,22 @@ parent: Clozes
 
 {% include toc-doc.md %}
 
-## Why send messages?
+## Selectively activating tags
 
 A message will change the behavior of the cloze dynamically.
 
 {% capture defaultCloze %}
-const fm = new Closet.FilterManager(preset)
-fm.addRecipe(Closet.recipes.clozeShow())
-fm.addRecipe(Closet.recipes.activate())
-fm.addRecipe(Closet.recipes.deactivate())
-fm.addRecipe(Closet.recipes.toggle())
-
-return fm
+filterManager.addRecipe(Closet.recipes.clozeShow())
+filterManager.addRecipe(Closet.recipes.activate())
+filterManager.addRecipe(Closet.recipes.deactivate())
+filterManager.addRecipe(Closet.recipes.toggle())
 {% endcapture %}
 
-{% include codeDisplay.html content=site.data.snippets.cloze.activate_cloze filterManager=defaultCloze buttons=bOneTwoThree %}
+{% include codeDisplay.md content=site.data.snippets.cloze.activate_cloze filterManager=defaultCloze buttons=bOneTwoThree %}
+
+## Evaluation order
+
+However keep in mind that tags are evaluated in a certain order.
+You need to use the activation tag, before you 
+
+{% include codeDisplay.md content=site.data.snippets.cloze.activate_cloze_with_occur filterManager=defaultCloze buttons=bOneTwoThree %}

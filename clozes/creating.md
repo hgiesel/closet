@@ -17,13 +17,10 @@ parent: Clozes
 The cloze text is surrounded by a `c` tag.
 
 {% capture defaultCloze %}
-const fm = new Closet.FilterManager(preset)
-fm.addRecipe(Closet.recipes.clozeShow())
-
-return fm
+filterManager.addRecipe(Closet.recipes.clozeShow())
 {% endcapture %}
 
-{% include codeDisplay.html content=site.data.snippets.cloze.first_example filterManager=defaultCloze buttons=b %}
+{% include codeDisplay.md content=site.data.snippets.cloze.first_example filterManager=defaultCloze buttons=b %}
 
 ## Numbered Clozes
 
@@ -33,13 +30,10 @@ Which is is why rather than removing both passages, you'd want to create two fla
 For these cards, there is the notion of a _current cloze_.
 
 {% capture numberedCloze %}
-const fm = new Closet.FilterManager(preset)
-fm.addRecipe(Closet.recipes.clozeShow())
-
-return fm
+filterManager.addRecipe(Closet.recipes.clozeShow())
 {% endcapture %}
 
-{% include codeDisplay.html content=site.data.snippets.cloze.numbered_cloze filterManager=numberedCloze buttons=bOneTwo %}
+{% include codeDisplay.md content=site.data.snippets.cloze.numbered_cloze filterManager=numberedCloze buttons=bOneTwo %}
 
 ## Showing and Hiding Clozes
 
@@ -49,14 +43,11 @@ You might also instead want to simply hide the content.
 This might create less interference for recalling the current cloze.
 
 {% capture hideCloze %}
-const fm = new Closet.FilterManager(preset)
-fm.addRecipe(Closet.recipes.clozeHide())
-fm.addRecipe(Closet.recipes.clozeShow())
-
-return fm
+filterManager.addRecipe(Closet.recipes.clozeHide())
+filterManager.addRecipe(Closet.recipes.clozeShow())
 {% endcapture %}
 
-{% include codeDisplay.html content=site.data.snippets.cloze.hiding_cloze filterManager=hideCloze buttons=bOneTwoThree %}
+{% include codeDisplay.md content=site.data.snippets.cloze.hiding_cloze filterManager=hideCloze buttons=bOneTwoThree %}
 
 You can see here, how clozes under the `c` hide their content to avoid context information for the other clozes.
 
@@ -65,5 +56,4 @@ You can see here, how clozes under the `c` hide their content to avoid context i
 Rather than showing the ellipsis symbol, you can also provide a hint instead.
 This hint is provided as the second parameter in the tag.
 
-{% include codeDisplay.html content=site.data.snippets.cloze.hints filterManager=hideCloze buttons=bOneTwoThree %}
-
+{% include codeDisplay.md content=site.data.snippets.cloze.hints filterManager=hideCloze buttons=bOneTwoThree %}

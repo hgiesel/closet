@@ -1,0 +1,120 @@
+---
+---
+
+.code-container {
+    position: relative;
+}
+
+.code-example {
+    min-height: 7rem;
+}
+
+.output-display {
+    padding: 0.5rem;
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+$display-distance: 1rem;
+
+.btn-group-tester {
+    float: right;
+
+    display: flex;
+    justify-content: flex-end;
+    align-content: center;
+    flex-wrap: wrap;
+
+    & > button {
+        margin-left: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    & > button.active {
+        // creates a white area around it
+        box-shadow: inset 0 0 0 3px coral;
+
+        &:hover {
+            box-shadow: inset 0 0 0 3px #e6e1e8;
+        }
+    }
+}
+
+.btn-fm {
+    position: absolute;
+    top: $display-distance;
+    right: $display-distance;
+
+    border-radius: 100%;
+
+    $btn-size: 2.5rem;
+    width: $btn-size;
+    height: $btn-size;
+}
+
+.fm-display {
+    position: absolute;
+    top: $display-distance;
+    right: $display-distance * 4.5;
+    left: $display-distance;
+
+    // is turned on by eventListener
+    display: none;
+
+    // make content escape
+    background-color: white;
+    border-radius: 0.5rem;
+
+    code[class*="language-"], pre[class*="language-"] {
+        position: relative;
+        z-index: 9;
+
+        font-size: 90%;
+        border-radius: 0.2rem;
+
+        background: #4d4d4d;
+    }
+}
+
+.fm-popup {
+    position: absolute;
+    top: $display-distance;
+    right: $display-distance * 4.5;
+    left: $display-distance;
+
+    background-color: green;
+    padding: 0.25rem 0.75rem;
+
+    border: 0.1rem solid white;
+    border-radius: 0.5rem;
+
+    // is turned on by eventListener
+    display: none;
+    z-index: 9;
+
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    animation: fadeOut ease-in 2s;
+    animation-fill-mode: both;
+}
+
+pre.highlight {
+    margin: auto;
+}
+
+// Prism.js
+span.token {
+    &.tagstart, &.altsep, &.argsep, &.tagend {
+        color: #268bd2;
+    }
+
+    &.tagname {
+        color: #cb4b16;
+    }
+}

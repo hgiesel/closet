@@ -10,7 +10,7 @@ const readyRenderButton = (
     filterManager,
 ) => {
     const buttonQuery = `${id} .btn-${btnId}`
-    const displayQuery = `${id} > .display`
+    const displayQuery = `${id} > .output-display`
 
     const theDisplay = document.querySelector(displayQuery)
     const btnRerender = document.querySelector(buttonQuery)

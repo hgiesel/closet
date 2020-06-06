@@ -18,10 +18,7 @@ Items can easily be shuffled using the `mix` tag.
 Items to be shuffled must be separated by `||`.
 
 {% capture defaultFm %}
-const fm = new Closet.FilterManager(preset)
-fm.addRecipe(Closet.recipes.shuffling('mix'))
-
-return fm
+filterManager.addRecipe(Closet.recipes.shuffling('mix'))
 {% endcapture %}
 
 {% include codeDisplay.html content=site.data.snippets.shuffling.first_example filterManager=defaultFm buttons=b %}
@@ -73,8 +70,6 @@ After a few rounds, this operation will time out, and the remaining tags will st
 ## Advanced
 
 {% capture asianFm %}
-const fm = new Closet.FilterManager(preset)
-
 const colorWheel = function*() {
   while (true) {
     yield 'pink'
@@ -86,13 +81,17 @@ const colorWheel = function*() {
 const cw = colorWheel()
 cw.next()
 
-fm.addRecipe(Closet.recipes.shuffling('mix', new Closet.Stylizer({
+const asianStylizer = new Closet.Stylizer({
   separator: '・',
-  mapper: v => `<span style="color: ${cw.next().value};">${v}</span>`,
-  mapperOuter: v => `〈${v}〉`,
-})))
+  mapper: v => (
+    '<span style="color: ' + cw.next().value + ';">' +
+    v +
+    '</span>'
+  ),
+  mapperOuter: v => '〈' + v + '〉',
+})
 
-return fm
+filterManager.addRecipe(Closet.recipes.shuffling('mix', asianStylizer))
 {% endcapture %}
 
 You can stylize the appearance of shuffled items however you like.
@@ -100,17 +99,16 @@ You can stylize the appearance of shuffled items however you like.
 {% include codeDisplay.html content=site.data.snippets.shuffling.japanese filterManager=asianFm buttons=b %}
 
 {% capture mixedFm %}
-const fm = new Closet.FilterManager(preset)
-
-fm.addRecipe(Closet.recipes.shuffling('amix', new Closet.Stylizer({
+const middlePoint = new Closet.Stylizer({
   separator: '・',
-})))
+})
 
-fm.addRecipe(Closet.recipes.shuffling('mix', new Closet.Stylizer({
+const slash = new Closet.Stylizer({
   separator: ' / ',
-})))
+})
 
-return fm
+filterManager.addRecipe(Closet.recipes.shuffling('amix', middlePoint))
+filterManager.addRecipe(Closet.recipes.shuffling('mix', slash))
 {% endcapture %}
 
 In the case that you want multiple shuffling styles at the same time, you can put each filter on different _keywords_.

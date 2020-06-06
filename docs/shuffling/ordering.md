@@ -17,11 +17,8 @@ In these cases, the `ord` tag can come in handy.
 Let's look at a first example:
 
 {% capture orderFm %}
-const fm = new Closet.FilterManager(preset)
-fm.addRecipe(Closet.recipes.shuffling('mix'))
-fm.addRecipe(Closet.recipes.ordering('ord', 'mix'))
-
-return fm
+filterManager.addRecipe(Closet.recipes.shuffling('mix'))
+filterManager.addRecipe(Closet.recipes.ordering('ord', 'mix'))
 {% endcapture %}
 
 {% include codeDisplay.html content=site.data.snippets.ordering.first_example filterManager=orderFm buttons=b %}
@@ -39,15 +36,10 @@ You can use the `ord` tag in two ways:
 When shuffling sentences, the `ord` tag is especially handy, because you can focus on the important parts.
 
 {% capture vsFm %}
-const fm = new Closet.FilterManager(preset)
-
-fm.addRecipe(Closet.recipes.shuffling('mix', new Closet.Stylizer({
+filterManager.addRecipe(Closet.recipes.shuffling('mix', new Closet.Stylizer({
   separator: ' vs ',
 })))
-
-fm.addRecipe(Closet.recipes.ordering('ord', 'mix'))
-
-return fm
+filterManager.addRecipe(Closet.recipes.ordering('ord', 'mix'))
 {% endcapture %}
 
 ---

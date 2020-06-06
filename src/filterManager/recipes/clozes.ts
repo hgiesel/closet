@@ -4,6 +4,7 @@ import type { Internals } from '..'
 import { InnerStylizer } from './stylizer'
 import { fourWayRecipe } from './nway'
 import { isBack, isCurrent } from './deciders'
+import { id } from './utils'
 
 const defaultStylizer = new InnerStylizer({
     postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,
@@ -22,9 +23,10 @@ export const clozeHideRecipe = (
     ellipsisMaker = defaultEllipsisMaker,
 ) => (filterApi: FilterApi) => {
     const makeEllipsis = (tag: Tag, inter: Internals) => ellipsisMaker(tag, inter, false)
+    const internalFilter = `${keyword}:internal`
 
     const clozeRecipe = fourWayRecipe(
-        keyword,
+        internalFilter,
         isBack,
         isCurrent,
         /* back */
@@ -36,8 +38,15 @@ export const clozeHideRecipe = (
         ]),
         makeEllipsis,
     )
-
     clozeRecipe(filterApi)
+
+    const clozeFilter = (tag: Tag, inter: Internals) => {
+        const theFilter = inter.cache.get(`${keyword}:switcher`, (_k: string, _n: number | null) => internalFilter)(tag.key, tag.num)
+
+        return  inter.filters.get(theFilter)(tag, inter)
+    }
+
+    filterApi.register(keyword, clozeFilter)
 }
 
 export const clozeShowRecipe = (
@@ -47,9 +56,10 @@ export const clozeShowRecipe = (
     ellipsisMaker = defaultEllipsisMaker,
 ) => (filterApi: FilterApi) => {
     const valueJoiner = ({ values }: Tag) => values[0].join('||')
+    const internalFilter = `${keyword}:internal`
 
     const clozeRecipe = fourWayRecipe(
-        keyword,
+        internalFilter,
         isBack,
         isCurrent,
         /* back */
@@ -61,6 +71,13 @@ export const clozeShowRecipe = (
         ]),
         valueJoiner,
     )
-
     clozeRecipe(filterApi)
+
+    const clozeFilter = (tag: Tag, inter: Internals) => {
+        const theFilter = inter.cache.get(`${keyword}:switcher`, (_k: string, _n: number | null) => internalFilter)(tag.key, tag.num)
+
+        return  inter.filters.get(theFilter)(tag, inter)
+    }
+
+    filterApi.register(keyword, clozeFilter)
 }

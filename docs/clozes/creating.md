@@ -20,7 +20,7 @@ The cloze text is surrounded by a `c` tag.
 filterManager.addRecipe(Closet.recipes.clozeShow())
 {% endcapture %}
 
-{% include codeDisplay.html content=site.data.snippets.cloze.first_example filterManager=defaultCloze buttons=b %}
+{% include codeDisplay.md content=site.data.snippets.cloze.first_example filterManager=defaultCloze buttons=b %}
 
 ## Numbered Clozes
 
@@ -33,7 +33,7 @@ For these cards, there is the notion of a _current cloze_.
 filterManager.addRecipe(Closet.recipes.clozeShow())
 {% endcapture %}
 
-{% include codeDisplay.html content=site.data.snippets.cloze.numbered_cloze filterManager=numberedCloze buttons=bOneTwo %}
+{% include codeDisplay.md content=site.data.snippets.cloze.numbered_cloze filterManager=numberedCloze buttons=bOneTwo %}
 
 ## Showing and Hiding Clozes
 
@@ -47,7 +47,7 @@ filterManager.addRecipe(Closet.recipes.clozeHide())
 filterManager.addRecipe(Closet.recipes.clozeShow())
 {% endcapture %}
 
-{% include codeDisplay.html content=site.data.snippets.cloze.hiding_cloze filterManager=hideCloze buttons=bOneTwoThree %}
+{% include codeDisplay.md content=site.data.snippets.cloze.hiding_cloze filterManager=hideCloze buttons=bOneTwoThree %}
 
 You can see here, how clozes under the `c` hide their content to avoid context information for the other clozes.
 
@@ -56,4 +56,4 @@ You can see here, how clozes under the `c` hide their content to avoid context i
 Rather than showing the ellipsis symbol, you can also provide a hint instead.
 This hint is provided as the second parameter in the tag.
 
-{% include codeDisplay.html content=site.data.snippets.cloze.hints filterManager=hideCloze buttons=bOneTwoThree %}
+{% include codeDisplay.md content=site.data.snippets.cloze.hints filterManager=hideCloze buttons=bOneTwoThree %}

@@ -1,6 +1,6 @@
 {% assign theId = include.content.name | slugify %}
 {% assign theCode = include.content.code | replace: "'", "\\'" | newline_to_br | strip_newlines %}
-{% assign fm = include.filterManager %}
+{% assign fm = include.filterManager | strip %}
 
 Prism.languages.plaintext = {
     tagstart: {
@@ -25,18 +25,22 @@ readyRenderButton(
     {{ theButton[3] }} /* keep memory or not */,
     {% if fm %}
     // inject filterManager
-    ((preset) => { {{ fm }} })({{ theButton[2] }}),
+    ((preset) => {
+        const filterManager = new Closet.FilterManager(preset)
+        {{ fm }}
+        return filterManager
+    })({{ theButton[2] }}),
     {% endif %}
 )
 {% endfor %}
 
 readyFmButton(
     '#{{ theId }} .btn-fm',
-    '{{ theCode }}',
+    '#{{ theId }} .fm-display',
+    `{{ fm }}`.trim(),
 )
 
 readyTryButton(
     '#{{ theId }} .btn-edit',
     '{{ theCode }}',
 )
-

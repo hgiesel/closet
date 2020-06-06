@@ -1,0 +1,70 @@
+---
+---
+
+.code-example {
+    min-height: 4rem;
+    position: relative;
+
+    .btn-group-tester {
+        float: right;
+        display: flex;
+        justify-content: flex-end;
+        align-content: center;
+        flex-wrap: wrap;
+
+        & > button {
+            margin-left: 0.5rem;
+            margin-top: 0.5rem;
+        }
+    }
+
+    .display {
+      padding: 0.5rem;
+      font-family: Verdana, Geneva, sans-serif;
+    }
+
+    $display-distance: 1rem;
+
+    .btn-fm {
+        position: absolute;
+        top: $display-distance;
+        right: $display-distance;
+
+        border-radius: 100%;
+
+        $btn-size: 2.5rem;
+        width: $btn-size;
+        height: $btn-size;
+    }
+
+    .fm-display {
+        position: absolute;
+        top: $display-distance;
+        right: $display-distance * 4.5;
+        left: $display-distance;
+
+        display: none;
+        // is turned on by eventListener
+
+        background-color: grey;
+        padding: 0.25rem 0.75rem;
+
+        border: 0.1rem solid white;
+        border-radius: 0.5rem;
+    }
+}
+
+pre.highlight {
+    margin: auto;
+}
+
+// Prism.js
+span.token {
+    &.tagstart, &.altsep, &.argsep, &.tagend {
+        color: #268bd2;
+    }
+
+    &.tagname {
+        color: #cb4b16;
+    }
+}

@@ -17,13 +17,10 @@ parent: Clozes
 A message will change the behavior of the cloze dynamically.
 
 {% capture defaultCloze %}
-const fm = new Closet.FilterManager(preset)
-fm.addRecipe(Closet.recipes.clozeShow())
-fm.addRecipe(Closet.recipes.activate())
-fm.addRecipe(Closet.recipes.deactivate())
-fm.addRecipe(Closet.recipes.toggle())
-
-return fm
+filterManager.addRecipe(Closet.recipes.clozeShow())
+filterManager.addRecipe(Closet.recipes.activate())
+filterManager.addRecipe(Closet.recipes.deactivate())
+filterManager.addRecipe(Closet.recipes.toggle())
 {% endcapture %}
 
 {% include codeDisplay.html content=site.data.snippets.cloze.activate_cloze filterManager=defaultCloze buttons=bOneTwoThree %}

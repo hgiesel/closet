@@ -24,15 +24,20 @@ const readyRenderButton = (
     btnRerender.dispatchEvent(new Event('click'))
 }
 
-const readyFmButton = (buttonQuery, code) => {
+const readyFmButton = (buttonQuery, displayQuery, fmCode) => {
     const fmButton = document.querySelector(buttonQuery)
+    const fmDisplay = document.querySelector(displayQuery)
 
     fmButton.addEventListener('mouseenter', () => {
-        console.log('hi')
+        fmDisplay.style.display = 'block'
     })
 
     fmButton.addEventListener('mouseleave', () => {
-        console.log('bye')
+        fmDisplay.style.display = 'none'
+    })
+
+    fmButton.addEventListener('click', () => {
+        navigator.clipboard.writeText(fmCode)
     })
 }
 

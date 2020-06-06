@@ -1,4 +1,5 @@
 {% assign theButtons = include.buttons | split: "; " %}
+{% assign fm = include.filterManager | strip %}
 
 <div class="code-example" id="{{ include.content.name | slugify }}">
   <div class="display"></div>
@@ -13,6 +14,11 @@
 
   <div class="show-fm-setup">
     <button class="btn-fm btn-purple btn-outline">fm</button>
+    <div class="fm-display">
+      <pre>{{ fm }}</pre>
+    </div>
+    <div class="fm-popup">
+    </div>
   </div>
 
   <script>

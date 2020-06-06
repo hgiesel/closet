@@ -21,7 +21,7 @@ const wrapWithReadyBubbled = (result: string, ready: boolean): FilterResult => (
     ready: ready,
 })
 
-const standardizeFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: Internals): FilterResult => {
+const withStandardizedFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: Internals): FilterResult => {
     const input = wf(t, i)
 
     switch (typeof input) {
@@ -75,7 +75,7 @@ export class FilterApi {
             : name === 'raw'
             ? rawFilter
             : this.filters.has(name)
-            ? standardizeFilterResult(this.filters.get(name))
+            ? withStandardizedFilterResult(this.filters.get(name))
             : null
     }
 

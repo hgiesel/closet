@@ -1,6 +1,4 @@
-import {
-    id,
-} from './utils'
+import { id } from './utils'
 
 type StringFunction = (v: string) => string
 
@@ -23,6 +21,14 @@ export class Stylizer {
         this.mapper = mapper
         this.mapperOuter = mapperOuter
         this.postprocess = postprocess
+    }
+
+    toInnerStylizer(): InnerStylizer {
+        return new InnerStylizer({
+            separator: this.separator,
+            mapper: this.mapper,
+            postprocess: this.postprocess,
+        })
     }
 
     stylize(input: string[][]): string {

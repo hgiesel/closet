@@ -3,23 +3,7 @@ import type { FilterApi } from '../filters'
 import type { Internals } from '..'
 import { InnerStylizer } from './stylizer'
 import { fourWayRecipe } from './nway'
-
-const isBack = (_t: Tag, { preset }: Internals) => {
-    return preset['side'] === 'back'
-}
-
-const isCurrent = ({ num }: Tag, { preset }: Internals) => {
-    if (num === null) {
-        return true
-    }
-
-    else if (!preset['card']) {
-        return false
-    }
-
-    const cardNumber = preset['card'].match(/[0-9]*$/)
-    return Number(cardNumber) === num
-}
+import { isBack, isCurrent } from './deciders'
 
 const defaultStylizer = new InnerStylizer({
     postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,

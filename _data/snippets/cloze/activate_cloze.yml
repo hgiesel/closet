@@ -1,0 +1,9 @@
+name: "Activate clozes"
+code: |
+  The four major dopaminergic pathways:
+  * [[c1::Mesolimbic pathway::starts with M[[on::c4,c5,c6]]]]
+  * [[c2::Mesocortical pathway]]
+  * [[c3::Nigostriatal pathway::starts with N]]
+  * [[c4::Tuberoinfundibular pathway]]
+  * [[c5::Hypothalamospinal projection]]
+  * [[c6::Incertohypothalamic pathway]]

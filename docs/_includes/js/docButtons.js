@@ -43,9 +43,14 @@ const readyRenderButton = (
     btnRerender.dispatchEvent(new Event('click'))
 }
 
-const readyFmButton = (buttonQuery, displayQuery, fmCode) => {
+const readyFmButton = (id, fmCode) => {
+    const buttonQuery = `${id} .btn-fm`
+    const displayQuery = `${id} .fm-display`
+    const popupQuery = `${id} .fm-popup`
+
     const fmButton = document.querySelector(buttonQuery)
     const fmDisplay = document.querySelector(displayQuery)
+    const fmPopup = document.querySelector(popupQuery)
 
     fmButton.addEventListener('mouseenter', () => {
         fmDisplay.style.display = 'block'
@@ -57,6 +62,11 @@ const readyFmButton = (buttonQuery, displayQuery, fmCode) => {
 
     fmButton.addEventListener('click', () => {
         navigator.clipboard.writeText(fmCode)
+
+        fmPopup.style.display = 'block'
+        fmPopup.style.animation = 'none';
+        fmPopup.offsetHeight; /* trigger reflow */
+        fmPopup.style.animation = null;
     })
 }
 

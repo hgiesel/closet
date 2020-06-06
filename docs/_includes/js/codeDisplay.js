@@ -35,9 +35,8 @@ readyRenderButton(
 {% endfor %}
 
 readyFmButton(
-    '#{{ theId }} .btn-fm',
-    '#{{ theId }} .fm-display',
-    `{{ fm }}`.trim(),
+    '#{{ theId }}',
+    `{{ fm }}`,
 )
 
 readyTryButton(

@@ -1,4 +1,5 @@
 export const id = <T>(v: T): T => v
+export const keyPattern = /^([a-zA-Z]+)([0-9]*)$/
 
 export const shuffle = <T>(array: T[]): T[] => {
     const result = array.slice(0)

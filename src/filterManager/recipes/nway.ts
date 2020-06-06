@@ -50,19 +50,15 @@ export const fourWayRecipe = (
         let result = null
 
         if (propertyOne && propertyTwo) {
-            console.log('hit1')
             result = processorOneTwo(tag, inter)
         }
         else if (propertyOne) {
-            console.log('hit2')
             result = processorOne(tag, inter)
         }
         else if (propertyTwo) {
-            console.log('hit3')
             result = processorTwo(tag, inter)
         }
         else {
-            console.log('hit4')
             result = processorNone(tag, inter)
         }
 

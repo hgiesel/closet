@@ -2,7 +2,7 @@
 layout: doc
 title: Creating clozes
 nav_order: 1
-permalink: /clozes/creating-clozes
+permalink: /clozes/creating
 parent: Clozes
 ---
 
@@ -12,27 +12,13 @@ parent: Clozes
 
 {% include toc-doc.md %}
 
-## What are Clozes?
-
-According to [Wikipedia](https://en.wikipedia.org/wiki/Cloze_test):
-
-> A cloze test (also cloze deletion test) is an exercise, test, or assessment consisting of a portion of language with certain items, words, or signs removed (cloze text), where the participant is asked to replace the missing language item.
-
-The rendering of the cloze needs to _context-sensitive_.
-Depending on where the cloze is rendered, it needs to be rendered differently:
-
-1. as a _test_, it needs to be rendered as an [ellipsis](https://en.wikipedia.org/wiki/Ellipsis), or a hint, if one is available
-1. as an _answer_, or a _reveal_, it needs to show what was originally hidden
-
-In the context of flashcards, _test_ will be synonmymous with the front of the flashcard, the _answer_ with the back.
-
-## Creating Clozes
+## Unnumbered Clozes
 
 The cloze text is surrounded by a `c` tag.
 
 {% capture defaultCloze %}
 const fm = new Closet.FilterManager(preset)
-fm.addRecipe(Closet.recipes.clozeShow('c'))
+fm.addRecipe(Closet.recipes.clozeShow())
 
 return fm
 {% endcapture %}
@@ -48,14 +34,14 @@ For these cards, there is the notion of a _current cloze_.
 
 {% capture numberedCloze %}
 const fm = new Closet.FilterManager(preset)
-fm.addRecipe(Closet.recipes.clozeShow('c'))
+fm.addRecipe(Closet.recipes.clozeShow())
 
 return fm
 {% endcapture %}
 
 {% include codeDisplay.html content=site.data.snippets.cloze.numbered_cloze filterManager=numberedCloze buttons=bOneTwo %}
 
-## Showing Clozes and Hiding Clozes
+## Showing and Hiding Clozes
 
 In the above examples non-current clozes simply displayed their content.
 These are called _showing clozes_.
@@ -64,8 +50,8 @@ This might create less interference for recalling the current cloze.
 
 {% capture hideCloze %}
 const fm = new Closet.FilterManager(preset)
-fm.addRecipe(Closet.recipes.clozeHide('ch'))
-fm.addRecipe(Closet.recipes.clozeShow('c'))
+fm.addRecipe(Closet.recipes.clozeHide())
+fm.addRecipe(Closet.recipes.clozeShow())
 
 return fm
 {% endcapture %}

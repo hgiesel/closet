@@ -7,6 +7,7 @@ import { styleRecipe } from './stylizing'
 
 import { debugRecipe } from './debug'
 import { metaRecipe } from './meta'
+import { activateRecipe, deactivateRecipe, toggleRecipe } from './activate'
 
 export const recipes = {
     shuffling: shufflingRecipe,
@@ -16,7 +17,13 @@ export const recipes = {
     random: randRecipe,
     multipleChoiceShow: multipleChoiceShowRecipe,
     multipleChoiceHide: multipleChoiceHideRecipe,
+
+    stylizing: styleRecipe,
+
+    activate: activateRecipe,
+    deactivate: deactivateRecipe,
+    toggle: toggleRecipe,
+
     debug: debugRecipe,
     meta: metaRecipe,
-    stylizing: styleRecipe,
 }

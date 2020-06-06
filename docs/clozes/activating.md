@@ -1,8 +1,8 @@
 ---
 layout: doc
-title: Sending messages
+title: Activating Clozes
 nav_order: 2
-permalink: /clozes/sending-messages
+permalink: /clozes/activating
 parent: Clozes
 ---
 
@@ -15,3 +15,15 @@ parent: Clozes
 ## Why send messages?
 
 A message will change the behavior of the cloze dynamically.
+
+{% capture defaultCloze %}
+const fm = new Closet.FilterManager(preset)
+fm.addRecipe(Closet.recipes.clozeShow())
+fm.addRecipe(Closet.recipes.activate())
+fm.addRecipe(Closet.recipes.deactivate())
+fm.addRecipe(Closet.recipes.toggle())
+
+return fm
+{% endcapture %}
+
+{% include codeDisplay.html content=site.data.snippets.cloze.activate_cloze filterManager=defaultCloze buttons=bOneTwoThree %}

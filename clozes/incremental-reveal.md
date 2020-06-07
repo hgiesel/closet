@@ -2,7 +2,7 @@
 layout: doc
 title: Incremental Reveal
 nav_order: 3
-permalink: /clozes/incremental-reveal
+permalink: clozes/incremental-reveal
 parent: Clozes
 ---
 

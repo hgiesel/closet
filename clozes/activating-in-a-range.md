@@ -2,7 +2,7 @@
 layout: doc
 title: Activating Clozes in a range
 nav_order: 5
-permalink: /clozes/activating-in-a-range
+permalink: clozes/activating-in-a-range
 parent: Clozes
 ---
 

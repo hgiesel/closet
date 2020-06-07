@@ -2,7 +2,7 @@
 layout: doc
 title: Switching between Cloze subtypes
 nav_order: 6
-permalink: /clozes/switching
+permalink: clozes/switching
 parent: Clozes
 ---
 

@@ -67,19 +67,27 @@ export const baseRender = (text: string[], filterManager: FilterManager, baseDep
     return text
 }
 
-export const renderTemplate = (text: string, filterManager: FilterManager): string => {
+export const renderTemplate = (text: string, filterManager: FilterManager, cb: (output: string) => void = null): string => {
     const baseDepth = 1
-    const result = baseRender([text], filterManager, baseDepth)
+    const result = baseRender([text], filterManager, baseDepth)[0]
+
+    if (cb) {
+        cb(result)
+    }
 
     filterManager.executeAftermath()
     filterManager.reset()
 
-    return result[0]
+    return result
 }
 
-export const renderDisjointTemplate = (textFragments: string[], filterManager: FilterManager): string[] => {
+export const renderDisjointTemplate = (textFragments: string[], filterManager: FilterManager, cb: (output: string[]) => void): string[] => {
     const baseDepth = 2
     const result = baseRender(textFragments, filterManager, baseDepth)
+
+    if (cb) {
+        cb(result)
+    }
 
     filterManager.executeAftermath()
     filterManager.reset()

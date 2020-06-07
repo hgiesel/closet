@@ -90,7 +90,7 @@ const wrappedClozeShow = Closet.wrappers.aftermath('clickToReveal', () => {
 
 filterManager.addRecipe(wrappedClozeShow('c', {
   currentStylizer: new Closet.InnerStylizer({
-    postprocess: v => `<span class="sr--obscure sr--obscure-hint sr--obscure-clickable">${v}</span>`,
+    postprocess: v => `<span class="sr--obscure sr--obscure-hint sr--obscure-clickable sr--obscure-kd-5 sr--obscure-kd-6">${v}</span>`,
   })
   
 }))

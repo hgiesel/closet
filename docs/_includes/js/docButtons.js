@@ -27,7 +27,7 @@ const readyRenderButton = (
     }
 
     btnRerender.addEventListener('click', () => {
-        theDisplay.innerHTML = Closet.renderTemplate(code, filterManager)
+        Closet.renderTemplate(code, filterManager, output => theDisplay.innerHTML = output)
         if (!keepMemory) {
             filterManager.clearMemory()
         }

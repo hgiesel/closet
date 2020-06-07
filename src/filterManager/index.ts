@@ -16,31 +16,37 @@ import {
 } from './deferred'
 
 export interface Internals {
-    cache: Storage,
-    memory: Storage,
     filters: FilterApi
+
+    preset: object
+    iteration: IterationInfo
+    round: RoundInfo
+
+    cache: Storage
+    memory: Storage
+
     deferred: DeferredApi
-    preset: object,
-    iteration: IterationInfo,
-    round: RoundInfo,
+    aftermath: DeferredApi
 }
 
 export interface IterationInfo {
-    template: TemplateApi,
+    template: TemplateApi
     iteration: { index: number }
-    baseDepth: number,
+    baseDepth: number
 }
 
 export interface RoundInfo {
     ready: boolean
-    depth: number,
+    depth: number
 }
 
 export type FilterProcessor = (data: Filterable, custom?: object) => FilterResult
 
 export class FilterManager {
     readonly filters: FilterApi
+
     private readonly deferred: DeferredApi
+    private readonly aftermath: DeferredApi
 
     private readonly cache: Storage
     private readonly memory: Storage
@@ -59,13 +65,17 @@ export class FilterManager {
     filterProcessor(iteration: IterationInfo): FilterProcessor {
         return (data: Filterable, round: RoundInfo): FilterResult => {
             const internals: Internals = {
+                filters: this.filters,
+
                 preset: this.preset,
                 iteration: iteration,
                 round: round,
+
                 cache: this.cache,
                 memory: this.memory,
-                filters: this.filters,
+
                 deferred: this.deferred,
+                aftermath: this.aftermath,
             }
 
             const result = this.filters.execute(data, internals)
@@ -77,8 +87,13 @@ export class FilterManager {
         this.deferred.executeEach()
     }
 
+    executeAftermath() {
+        this.aftermath.executeEach()
+    }
+
     clearMemory() {
         this.memory.clear()
+        this.aftermath.clear()
     }
 
     reset() {

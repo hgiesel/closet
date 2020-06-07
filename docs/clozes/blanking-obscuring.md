@@ -12,9 +12,12 @@ parent: Clozes
 
 {% include toc-doc.md %}
 
-## Selectively activating tags
+---
+## Blanking
 
-A message will change the behavior of the cloze dynamically.
+By default, the cloze filter will use the second provided value as a hint.
+However this behavior is easily modifiable by overwriting the _ellipsisMaker_.
+This value is used to create the content yielded by the cloze filter whenever you're.
 
 {% capture blankingFm %}
 const ellipsisMaker = function({ values }, _i, isCurrent) {
@@ -28,11 +31,34 @@ filterManager.addRecipe(Closet.recipes.clozeShow({
 }))
 {% endcapture %}
 
-{% include codeDisplay.md content=site.data.snippets.cloze.activate_cloze filterManager=blankingFm buttons=bOneTwoThree %}
 
-## Evaluation order
+{% capture obscuringFm %}
+const ellipsisMaker = function({ values }, _i, isCurrent) {
+  return isCurrent
+    ? '<span style="filter: blur(0.2rem);">' + values[0].join('||') + '</span>'
+    : '[...]'
+}
+
+filterManager.addRecipe(Closet.recipes.clozeShow({
+  ellipsisMaker: ellipsisMaker,
+}))
+{% endcapture %}
+
+{% include codeDisplay.md content=site.data.snippets.cloze.activate_cloze filterManager=obscuringFm buttons=bOneTwoThree %}
+
+### Blanking non-latin characters
 
 However keep in mind that tags are evaluated in a certain order.
 You need to use the activation tag, before you 
 
-{% include codeDisplay.md content=site.data.snippets.cloze.activate_cloze_with_occur filterManager=defaultCloze buttons=bOneTwoThree %}
+{% include codeDisplay.md content=site.data.snippets.cloze.activate_cloze_with_occur filterManager=blankingFm buttons=bOneTwoThree %}
+
+---
+## Obscuring
+
+
+---
+## Reveal hidden clozes on click
+
+
+test

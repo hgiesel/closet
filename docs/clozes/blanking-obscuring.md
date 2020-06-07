@@ -2,7 +2,7 @@
 layout: doc
 title: Blanking and Obscuring
 nav_order: 2
-permalink: /clozes/blanking-obscuring
+permalink: clozes/blanking-obscuring
 parent: Clozes
 ---
 

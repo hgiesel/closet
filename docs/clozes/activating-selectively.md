@@ -2,7 +2,7 @@
 layout: doc
 title: Activating Clozes selectively
 nav_order: 4
-permalink: /clozes/activating-selectively
+permalink: clozes/activating-selectively
 parent: Clozes
 ---
 

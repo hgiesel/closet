@@ -2,7 +2,7 @@
 layout: doc
 title: Creating clozes
 nav_order: 1
-permalink: /clozes/creating
+permalink: clozes/creating
 parent: Clozes
 ---
 

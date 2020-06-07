@@ -19,6 +19,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+    - name: GitHub Action for Homebrew
+      uses: artemnovichkov/action-homebrew@0.1.0
+
+    - name: Install dependencies
+      run: npm run-script install-dependencies
+
     - name: Checkout 🛎️
       uses: actions/checkout@v2
 

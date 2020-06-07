@@ -14,6 +14,7 @@
   "scripts": {
     "compile-parser": "bin/compile-parser.sh",
     "create-favicon": "bin/create-favicon.sh",
+    "install-dependencies": "bin/install-dependencies.sh",
     "build": "run-p build-docs build-main build-anki build-test",
     "build-docs": "run-s compile-parser create-favicon rollup-docs",
     "build-main": "run-s compile-parser rollup-main",

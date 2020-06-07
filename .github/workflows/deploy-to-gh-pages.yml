@@ -16,9 +16,12 @@ jobs:
         with:
           persist-credentials: false 
 
+      - name: Install Dependencies 🔧
+        run: |
+          npm run-script install-dependencies
+
       - name: Install and Build 🔧
         run: |
-          sudo apt install imagemagick -y
           npm install
           npm run-script build-docs
 

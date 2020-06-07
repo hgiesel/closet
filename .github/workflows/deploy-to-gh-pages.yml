@@ -18,8 +18,9 @@ jobs:
 
       - name: Install and Build 🔧
         run: |
+          sudo apt install imagemagick -y
           npm install
-          npm run-script build
+          npm run-script build-docs
 
       - name: Deploy to GitHub Pages 🚀
         uses: peaceiris/actions-gh-pages@v3.6.1

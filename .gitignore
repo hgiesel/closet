@@ -19,7 +19,8 @@ _site/
 .bundle/
 vendor/
 
-# compiled closet for docs
+# compiled favicon + closet for docs
+docs/favicon.ico
 docs/assets/js/*.js
 docs/assets/js/*.js.map
 

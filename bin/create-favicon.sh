@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-declare DIR="$(cd "$(dirname "$0")/" && pwd -P)"
+declare DIR="$(cd "$(dirname "$0")/.." && pwd -P)"
 
 convert "$DIR/images/logo.png"  -background white \
   \( -clone 0 -resize 16x16 -extent 16x16 \) \

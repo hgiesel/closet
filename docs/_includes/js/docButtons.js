@@ -46,27 +46,16 @@ const readyRenderButton = (
 const readyFmButton = (id, fmCode) => {
     const buttonQuery = `${id} .btn-fm`
     const displayQuery = `${id} .fm-display`
-    const popupQuery = `${id} .fm-popup`
 
     const fmButton = document.querySelector(buttonQuery)
     const fmDisplay = document.querySelector(displayQuery)
-    const fmPopup = document.querySelector(popupQuery)
-
-    fmButton.addEventListener('mouseenter', () => {
-        fmDisplay.style.display = 'block'
-    })
-
-    fmButton.addEventListener('mouseleave', () => {
-        fmDisplay.style.display = 'none'
-    })
 
     fmButton.addEventListener('click', () => {
-        navigator.clipboard.writeText(fmCode)
+        fmDisplay.style.display = 'block'
 
-        fmPopup.style.display = 'block'
-        fmPopup.style.animation = 'none';
-        fmPopup.offsetHeight; /* trigger reflow */
-        fmPopup.style.animation = null;
+        fmDisplay.addEventListener('mouseleave', () => {
+            fmDisplay.style.display ='none'
+        })
     })
 }
 

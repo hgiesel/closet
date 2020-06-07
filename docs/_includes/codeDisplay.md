@@ -19,10 +19,6 @@
       <pre><code class="language-js">{{ fm | escape_once }}</code></pre>
     </div>
 
-    <div class="fm-popup">
-      Copied to the clipboard!
-    </div>
-
     <script>
       {% include js/codeDisplay.js %}
     </script>

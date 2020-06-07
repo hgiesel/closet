@@ -53,7 +53,7 @@ $display-distance: 1rem;
 .fm-display {
     position: absolute;
     top: $display-distance;
-    right: $display-distance * 4.5;
+    right: $display-distance; // * 4.5;
     left: $display-distance;
 
     // is turned on by eventListener

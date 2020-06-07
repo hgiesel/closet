@@ -43,7 +43,7 @@ const readyRenderButton = (
     btnRerender.dispatchEvent(new Event('click'))
 }
 
-const readyFmButton = (id, fmCode) => {
+const readyFmButton = (id, _fmCode) => {
     const buttonQuery = `${id} .btn-fm`
     const displayQuery = `${id} .fm-display`
 
@@ -53,10 +53,18 @@ const readyFmButton = (id, fmCode) => {
     fmButton.addEventListener('click', () => {
         fmDisplay.style.display = 'block'
 
-        fmDisplay.addEventListener('mouseleave', () => {
-            fmDisplay.style.display ='none'
-        })
+        document.addEventListener('mousedown', (event) => {
+            const isClickInside = fmDisplay.contains(event.target);
+            if (!isClickInside) {
+                fmDisplay.style.display = 'none'
+            }
+        }, { once: true })
     })
+
+    fmDisplay.addEventListener('mouseleave', () => {
+        fmDisplay.style.display ='none'
+    })
+
 }
 
 const readyTryButton = (id, code) => {

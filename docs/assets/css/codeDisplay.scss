@@ -40,13 +40,9 @@ $display-distance: 1rem;
 }
 
 .btn-fm {
-    position: absolute;
-
-    top: $display-distance;
-    right: $display-distance;
+    float: right;
     border-radius: 10%;
 
-    display: inline-block;
     text-align: center;
 }
 

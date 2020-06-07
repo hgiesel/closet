@@ -3,6 +3,8 @@
 
 <div class="code-container" markdown="1">
   <div class="code-example" id="{{ include.content.name | slugify }}">
+    <button class="btn-fm btn-purple btn-outline">fm</button>
+
     <div class="output-display"></div>
 
     <div class="btn-group-tester">
@@ -12,8 +14,6 @@
       {% endfor %}
       <button type="button" name="button" class="btn btn-outline btn-blue btn-edit">Try it yourself</button>
     </div>
-
-    <button class="btn-fm btn-purple btn-outline">fm</button>
 
     <div class="fm-display">
       <pre><code class="language-js">{{ fm | escape_once }}</code></pre>

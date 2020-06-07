@@ -41,14 +41,13 @@ $display-distance: 1rem;
 
 .btn-fm {
     position: absolute;
+
     top: $display-distance;
     right: $display-distance;
+    border-radius: 10%;
 
-    border-radius: 100%;
-
-    $btn-size: 2.5rem;
-    width: $btn-size;
-    height: $btn-size;
+    display: inline-block;
+    text-align: center;
 }
 
 .fm-display {

@@ -21,7 +21,7 @@ description: >-
   Template Engine for Text and Image Manipulation
 
 url: https://closetengine.com
-baseurl: /closet
+baseurl: /
 github_username: hgiesel
 
 # Docs: https://pmarsceill.github.io/just-the-docs/

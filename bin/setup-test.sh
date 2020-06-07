@@ -6,17 +6,17 @@ if [[ -f "$DIR/_virtual/_tslib" ]]; then
 fi
 
 for file in "$DIR/"*'.js'; do
-  sed -i 's@tslib@tslib.js@g' "$file"
+  sed -i.bak -e 's@tslib@tslib.js@g' -- "$file" && rm -- "$file.bak"
 done
 
 for file in "$DIR/"*/*'.js'; do
-  sed -i 's@tslib@tslib.js@g' "$file"
+  sed -i.bak -e 's@tslib@tslib.js@g' -- "$file" && rm -- "$file.bak"
 done
 
 for file in "$DIR/"*/*/*'.js'; do
-  sed -i 's@tslib@tslib.js@g' "$file"
+  sed -i.bak -e 's@tslib@tslib.js@g' -- "$file" && rm -- "$file.bak"
 done
 
 for file in "$DIR/"*/*/*/*'.js'; do
-  sed -i 's@tslib@tslib.js@g' "$file"
+  sed -i.bak -e 's@tslib@tslib.js@g' -- "$file" && rm -- "$file.bak"
 done

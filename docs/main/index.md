@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: doc
 title: About
 nav_order: 1
 permalink: /

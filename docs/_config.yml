@@ -31,8 +31,7 @@ aux_links:
   Closet on GitHub:
     - //github.com/hgiesel/closet/
 
-# TODO create a logo
-# logo: "/assets/images/just-the-docs.png"
+logo: "/assets/images/weblogo.png"
 
 search_enabled: true
 heading_anchors: true

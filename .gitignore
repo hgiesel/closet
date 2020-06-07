@@ -23,6 +23,7 @@ vendor/
 docs/favicon.ico
 docs/assets/js/*.js
 docs/assets/js/*.js.map
+docs/assets/images/*.png
 
 # compiled closet for anki-addon
 *.ankiaddon

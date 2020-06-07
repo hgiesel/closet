@@ -11,7 +11,7 @@ const makeTrivialBaseTagInfo = (text: string): TagInfo => tagInfoFactory.build(
     [],
 )
 
-const parse = (text: string): TagInfo => {
+const mainParse = (text: string): TagInfo => {
     const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
     let parsed: TagInfo[] = null
 
@@ -32,13 +32,20 @@ const parse = (text: string): TagInfo => {
     return parsed[0]
 }
 
-export const parseTemplate = (textFragments: string[]): TagInfo => {
+const parseTemplate = (text: string): TagInfo => {
+    const result = mainParse(text)
+
+    tagFactory.reset()
+    return result
+}
+
+const parseTemplateFragments = (textFragments: string[]): TagInfo => {
     const parsedFragments: TagInfo[] = []
 
     for (const fragment of textFragments) {
         tagFactory.signalTagOpen()
 
-        const parsed = parse(fragment)
+        const parsed = mainParse(fragment)
         parsedFragments.push(parsed)
 
         tagInfoFactory.addToLeftOffset(fragment.length)
@@ -54,4 +61,15 @@ export const parseTemplate = (textFragments: string[]): TagInfo => {
 
     tagFactory.reset()
     return result
+}
+
+export const parse = (texts: string[], baseDepth: number): TagInfo => {
+    switch (baseDepth) {
+        case 1:
+            return parseTemplate(texts[0])
+        case 2:
+            return parseTemplateFragments(texts)
+        case 3:
+            throw new Error(`baseDepth with value ${baseDepth} is not supported.`)
+    }
 }

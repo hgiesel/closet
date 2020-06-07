@@ -13,7 +13,7 @@ import {
 } from './utils'
 
 import TemplateApi from './template'
-import { parseTemplate } from './parser'
+import { parse } from './parser'
 
 import {
     TAG_OPEN,
@@ -37,7 +37,7 @@ export const baseRender = (text: string[], filterManager: FilterManager, baseDep
     let ready = false
 
     for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
-        const rootTag = parseTemplate(text)
+        const rootTag = parse(text, baseDepth)
         const templateApi = new TemplateApi(rootTag)
 
         const [

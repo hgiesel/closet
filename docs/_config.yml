@@ -14,14 +14,14 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: The Closet Language
+title: The Closet Engine
 email: hengiesel@example.com
 
 description: >-
-    Closet is a technology to manipulate text and graphics for the use in flashcards.
+  Template Engine for Text and Image Manipulation
 
-url: https://hgiesel.github.io
-baseurl: /closet
+url: https://closetengine.com
+baseurl: /
 github_username: hgiesel
 
 # Docs: https://pmarsceill.github.io/just-the-docs/

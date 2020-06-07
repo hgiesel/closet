@@ -1,8 +1,8 @@
 ---
 layout: doc
-title: Activating Clozes
+title: Activating Clozes selectively
 nav_order: 4
-permalink: /clozes/activating
+permalink: /clozes/activating-selectively
 parent: Clozes
 ---
 

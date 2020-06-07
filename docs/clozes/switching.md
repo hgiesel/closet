@@ -1,7 +1,7 @@
 ---
 layout: doc
 title: Switching between Cloze subtypes
-nav_order: 5
+nav_order: 6
 permalink: /clozes/switching
 parent: Clozes
 ---

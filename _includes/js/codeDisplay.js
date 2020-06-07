@@ -36,7 +36,7 @@ readyRenderButton(
 
 readyFmButton(
     '#{{ theId }}',
-    `{{ fm }}`,
+    `{{ fm | replace: "`", "\\`" | replace: "$", "\\$" }}`,
 )
 
 readyTryButton(

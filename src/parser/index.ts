@@ -32,14 +32,7 @@ const parse = (text: string): TagInfo => {
     return parsed[0]
 }
 
-export const parseTemplate = (text: string): TagInfo => {
-    const result = parse(text)
-
-    tagFactory.reset()
-    return result
-}
-
-export const parseDisjointTemplate = (textFragments: string[]): TagInfo => {
+export const parseTemplate = (textFragments: string[]): TagInfo => {
     const parsedFragments: TagInfo[] = []
 
     for (const fragment of textFragments) {
@@ -52,7 +45,6 @@ export const parseDisjointTemplate = (textFragments: string[]): TagInfo => {
     }
 
     const lastOffset = tagInfoFactory.resetLeftOffset()
-
     const result = tagInfoFactory.build(
         0,
         lastOffset,

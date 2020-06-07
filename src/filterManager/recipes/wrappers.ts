@@ -1,17 +1,28 @@
-import type { Tag } from '../../tags'
-import type { FilterApi } from '../filters'
-import type { Internals } from '..'
+import type { Tag, FilterApi, Internals, Deferred, Recipe } from './types'
+import type { DeferredApi } from '../deferred'
 
-export const withDeferredRecipe = (
-    action,
-    getRecipe,
+const wrapWithDeferredTypeTemplate = (
+    getApi: (inter: Internals) => DeferredApi,
+) => (
+    wrapId: string,
+    action: Deferred,
+    mainRecipe: Recipe,
+): Recipe => (
+    keyword: string,
+    options = {},
 ) => (filterApi: FilterApi) => {
+    const internalKeyword = `${keyword}:${wrapId}:internal`
+    mainRecipe(internalKeyword, options)(filterApi)
 
-    const clozeFilter = (tag: Tag, inter: Internals) => {
-        inter.
+    const wrapFilter = (tag: Tag, inter: Internals) => {
+        getApi(inter).registerIfNotExists(`${wrapId}:${keyword}`, action)
 
-        return  inter.filters.get(theFilter)(tag, inter)
+        console.log(inter, inter.filters.get(internalKeyword))
+        return inter.filters.get(internalKeyword)(tag, inter)
     }
 
-    filterApi.register(keyword, clozeFilter)
+    filterApi.register(keyword, wrapFilter)
 }
+
+export const wrapWithDeferred = wrapWithDeferredTypeTemplate(inter => inter.deferred)
+export const wrapWithAftermath = wrapWithDeferredTypeTemplate(inter => inter.aftermath)

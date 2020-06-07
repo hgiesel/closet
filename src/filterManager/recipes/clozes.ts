@@ -15,8 +15,8 @@ const defaultEllipsisMaker = ({ values }: Tag, _inter: Internals, _isCurrent: bo
     ) + ']'
 }
 
-export const clozeShowRecipe = ({
-    keyword = 'c',
+export const clozeShowRecipe = (
+    keyword = 'c', {
     switcherKeyword = 'switch',
     activateKeyword = 'activate',
 
@@ -54,11 +54,12 @@ export const clozeShowRecipe = ({
         return  inter.filters.get(theFilter)(tag, inter)
     }
 
+    console.log('hi')
     filterApi.register(keyword, clozeFilter)
 }
 
-export const clozeHideRecipe = ({
-    keyword = 'ch',
+export const clozeHideRecipe = (
+    keyword = 'ch', {
     switcherKeyword = 'switch',
     activateKeyword = 'activate',
 
@@ -98,4 +99,3 @@ export const clozeHideRecipe = ({
 
     filterApi.register(keyword, clozeFilter)
 }
-

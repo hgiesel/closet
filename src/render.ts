@@ -13,7 +13,7 @@ import {
 } from './utils'
 
 import TemplateApi from './template'
-import { parseTemplate, parseDisjointTemplate } from './parser'
+import { parseTemplate } from './parser'
 
 import {
     TAG_OPEN,
@@ -22,51 +22,6 @@ import {
 } from './utils'
 
 const MAX_ITERATIONS = 50
-
-export const renderTemplate = (text: string, filterManager: FilterManager): string => {
-    const baseDepth = 1
-    let result = text
-    let ready = false
-
-    for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
-        const rootTag = parseTemplate(result)
-        const templateApi = new TemplateApi(rootTag)
-
-        const [
-            newText,
-            /* finalOffset */,
-            innerReady,
-            /* baseStack: not important here: [0, newText.length] */,
-        ] = postfixTraverse(
-            result,
-            rootTag,
-            baseDepth,
-            filterManager.filterProcessor({
-                iteration: {
-                    index: i,
-                },
-                template: templateApi,
-                baseDepth: baseDepth,
-            })
-        )
-
-        console.info(
-            `ITERATION ${i}: `,
-            `"${result}"`,
-            `"${newText}"`,
-        )
-
-        result = newText
-        ready = innerReady
-
-        filterManager.executeDeferred()
-    }
-
-    filterManager.executeAftermath()
-    filterManager.reset()
-
-    return result
-}
 
 const splitTextFromIntervals = (text: string, intervals: [number, number][]): string[] => {
     const result = []
@@ -78,13 +33,11 @@ const splitTextFromIntervals = (text: string, intervals: [number, number][]): st
     return result
 }
 
-export const renderDisjointTemplate = (textFragments: string[], filterManager: FilterManager): string[] => {
-    const baseDepth = 2
-    let result = textFragments
+export const baseRender = (text: string[], filterManager: FilterManager, baseDepth: number) => {
     let ready = false
 
     for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
-        const rootTag = parseDisjointTemplate(result)
+        const rootTag = parseTemplate(text)
         const templateApi = new TemplateApi(rootTag)
 
         const [
@@ -93,7 +46,7 @@ export const renderDisjointTemplate = (textFragments: string[], filterManager: F
             innerReady,
             baseStack,
         ] = postfixTraverse(
-            result.join(''),
+            text.join(''),
             rootTag,
             baseDepth,
             filterManager.filterProcessor({
@@ -105,11 +58,28 @@ export const renderDisjointTemplate = (textFragments: string[], filterManager: F
             })
         )
 
-        result = splitTextFromIntervals(newText, baseStack)
+        text = splitTextFromIntervals(newText, baseStack)
         ready = innerReady
 
         filterManager.executeDeferred()
     }
+
+    return text
+}
+
+export const renderTemplate = (text: string, filterManager: FilterManager): string => {
+    const baseDepth = 1
+    const result = baseRender([text], filterManager, baseDepth)
+
+    filterManager.executeAftermath()
+    filterManager.reset()
+
+    return result[0]
+}
+
+export const renderDisjointTemplate = (textFragments: string[], filterManager: FilterManager): string[] => {
+    const baseDepth = 2
+    const result = baseRender(textFragments, filterManager, baseDepth)
 
     filterManager.executeAftermath()
     filterManager.reset()

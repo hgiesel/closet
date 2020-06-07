@@ -20,7 +20,7 @@ interface DeferredOptions {
     persistent: boolean
 }
 
-const defaultDeferredOptions = {
+const defaultDeferredOptions: DeferredOptions = {
     priority: 50,
     persistent: false,
 }
@@ -36,7 +36,7 @@ export class DeferredApi {
         this._blocked = new Set()
     }
 
-    register(keyword: string, procedure: Deferred, options=defaultDeferredOptions): void {
+    register(keyword: string, procedure: Deferred, options = defaultDeferredOptions): void {
         this._deferred.set(keyword, {
             keyword: keyword,
             procedure: procedure,
@@ -45,7 +45,7 @@ export class DeferredApi {
         })
     }
 
-    registerIfNotExists(keyword: string, procedure: Deferred, options=defaultDeferredOptions): void {
+    registerIfNotExists(keyword: string, procedure: Deferred, options = defaultDeferredOptions): void {
         if (!this.isRegistered(keyword)) {
             this.register(keyword, procedure, options)
         }

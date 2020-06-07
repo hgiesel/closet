@@ -1,4 +1,4 @@
-import { renderTemplate, renderDisjointTemplate } from './render'
+import { baseRender } from './render'
 import { FilterManager } from './filterManager'
 
 // negative result implies invalid idx
@@ -273,12 +273,37 @@ export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate)
     return result
 }
 
-export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | string, filterManager: FilterManager): void => {
-    const result = renderTemplate(getText(input), filterManager)
-    setText(input, result)
+export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | string, filterManager: FilterManager, cb: (output: string) => void = null): void => {
+    const baseDepth = 1
+    const result = baseRender([getText(input)], filterManager, baseDepth)
+
+    if (cb) {
+        cb(result[0])
+    }
+    else {
+        setText(input, result[0])
+    }
+
+    filterManager.executeAftermath()
 }
 
-export const renderTemplateFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>, filterManager: FilterManager): void => {
-    const results = renderDisjointTemplate(inputs.map(getText), filterManager)
-    inputs.forEach((input, index: number) => setText(input, results[index]))
+export const renderTemplateFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>, filterManager: FilterManager, cb: (output: string[]) => void = null): void => {
+    const baseDepth = 2
+    const results = baseRender(inputs.map(getText), filterManager, baseDepth)
+
+    if (cb) {
+        cb(results)
+    }
+    else {
+        inputs.forEach((input, index: number) => setText(input, results[index]))
+    }
+
+    filterManager.executeAftermath()
+}
+
+export const appendStyleScript = (input: string): void => {
+    var styleSheet = document.createElement("style")
+    styleSheet.type = "text/css"
+    styleSheet.innerText = input
+    globalThis.document.head.appendChild(styleSheet)
 }

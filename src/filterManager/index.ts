@@ -54,10 +54,13 @@ export class FilterManager {
     private readonly preset: object
 
     constructor(preset = {}, memory: StorageType = new Map()) {
-        this.filters = new FilterApi()
-        this.deferred = new DeferredApi()
-
         this.preset = preset
+
+        this.filters = new FilterApi()
+
+        this.deferred = new DeferredApi()
+        this.aftermath = new DeferredApi()
+
         this.cache = new Storage(new Map())
         this.memory = new Storage(memory)
     }

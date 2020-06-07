@@ -26,7 +26,7 @@ const ellipsisMaker = function({ values }, _i, isCurrent) {
     : '[...]'
 }
 
-filterManager.addRecipe(Closet.recipes.clozeShow({
+filterManager.addRecipe(Closet.recipes.clozeShow('c', {
   ellipsisMaker: ellipsisMaker,
 }))
 {% endcapture %}
@@ -56,9 +56,3 @@ You need to use the activation tag, before you
 ---
 ## Obscuring
 
-
----
-## Reveal hidden clozes on click
-
-
-test

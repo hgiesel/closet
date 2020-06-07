@@ -4,4 +4,4 @@ image:https://github.com/hgiesel/closet/workflows/Deploy%20to%20GitHub%20Pages/b
 
 = Closet
 
-image::https://github.com/hgiesel/closet/blob/master/images/logo.png[ClosetLogo,width=50%,align="center"]
+image::https://github.com/hgiesel/closet/blob/master/images/logo.png[ClosetLogo,link="https://hgiesel.github.io/closet"]

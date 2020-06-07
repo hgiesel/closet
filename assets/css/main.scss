@@ -1,0 +1,25 @@
+---
+---
+
+.d-inline-block {
+    position: relative;
+}
+
+a[href="//github.com/hgiesel/closet/"] {
+    padding-right: 30px;
+
+    &:before {
+        content: url(https://github.githubassets.com/images/modules/logos_page/Octocat.png);
+
+        position: absolute;
+        transform: scale(.05);
+
+        z-index: 99;
+        right: 2rem;
+        top: -0.5rem;
+
+        width: 1%;
+        height: 1%;
+
+    }
+}

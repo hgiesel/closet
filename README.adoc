@@ -2,6 +2,4 @@ image:https://github.com/hgiesel/closet/workflows/Zip%20Anki%20add-ons/badge.svg
 image:https://github.com/hgiesel/closet/workflows/Build%20Closet/badge.svg[link="https://github.com/hgiesel/closet/actions?query=workflow%3A%22Build+Closet%22"]
 image:https://github.com/hgiesel/closet/workflows/Deploy%20to%20GitHub%20Pages/badge.svg[link="https://github.com/hgiesel/closet/actions?query=workflow%3A%22Deploy+to+GitHub+Pages%22"]
 
-= Closet
-
-image::https://github.com/hgiesel/closet/blob/master/images/logo.png[ClosetLogo,width=50%,align="center"]
+image::https://github.com/hgiesel/closet/blob/master/images/textlogo.png[ClosetLogo,width=100%,align="center"]

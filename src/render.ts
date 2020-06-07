@@ -33,7 +33,7 @@ const splitTextFromIntervals = (text: string, intervals: [number, number][]): st
     return result
 }
 
-export const baseRender = (text: string[], filterManager: FilterManager, baseDepth: number) => {
+export const baseRender = (text: string[], filterManager: FilterManager, baseDepth: number): string[] => {
     let ready = false
 
     for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {

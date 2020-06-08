@@ -68,6 +68,9 @@ const processTemplateText = () => {
     filterManager.addRecipe(Closet.recipes.meta)
     filterManager.addRecipe(Closet.recipes.debug)
 
+    filterManager.addRecipe(Closet.recipes.clozeShow())
+    filterManager.addRecipe(Closet.recipes.clozeHide())
+
     /////////////////////////////
 
     const text = codeCM.getValue().replace(/\n/g, '<br />')

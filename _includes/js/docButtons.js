@@ -58,13 +58,10 @@ const readyFmButton = (id, _fmCode) => {
             if (!isClickInside) {
                 fmDisplay.style.display = 'none'
             }
-        }, { once: true })
+        }, {
+            once: true,
+        })
     })
-
-    fmDisplay.addEventListener('mouseleave', () => {
-        fmDisplay.style.display ='none'
-    })
-
 }
 
 const readyTryButton = (id, code) => {

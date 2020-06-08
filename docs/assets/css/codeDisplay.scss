@@ -14,7 +14,7 @@
     font-family: Verdana, Geneva, sans-serif;
 }
 
-$display-distance: 1rem;
+$display-distance: 0.8rem;
 
 .btn-group-tester {
     float: right;
@@ -68,35 +68,6 @@ $display-distance: 1rem;
 
         background: #4d4d4d;
     }
-}
-
-.fm-popup {
-    position: absolute;
-    top: $display-distance;
-    right: $display-distance * 4.5;
-    left: $display-distance;
-
-    background-color: green;
-    padding: 0.25rem 0.75rem;
-
-    border: 0.1rem solid white;
-    border-radius: 4px;
-
-    // is turned on by eventListener
-    display: none;
-    z-index: 9;
-
-    @keyframes fadeOut {
-        0% {
-            opacity: 1;
-        }
-        100% {
-            opacity: 0;
-        }
-    }
-
-    animation: fadeOut ease-in 2s;
-    animation-fill-mode: both;
 }
 
 pre.highlight {

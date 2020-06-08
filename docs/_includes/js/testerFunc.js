@@ -219,7 +219,10 @@ const displayInfoTimeout = setTimeout(() => {
 const previewFmOnClick = (event) => {
     const fmInfo = event.target
     const fmDisplay = fmInfo.nextElementSibling
-    fmDisplay.style.display = 'block'
+    // toggle
+    fmDisplay.style.display = fmDisplay.style.display === 'block'
+        ? 'none'
+        : 'block'
 
     document.addEventListener('mousedown', (event) => {
         const isMouseInside = fmInfo.contains(event.target) || fmDisplay.contains(event.target);

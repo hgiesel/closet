@@ -120,7 +120,10 @@ const copyTemplateTextAsLink = () => {
         ? 'memory=t'
         : ''
 
-    const joinedQueries = [queryText, queryPreset, queryMemory]
+    const currentSetup = document.querySelector('input[name="fm-list"]:checked')
+    const queryFm = `fm=${currentSetup.value}`
+
+    const joinedQueries = [queryText, queryPreset, queryFm, queryMemory]
         .filter(v => v.length > 0)
         .join('&')
 
@@ -200,8 +203,14 @@ fmOptionsLi.forEach(v => v.addEventListener('click', relayClickToInput))
 const fmInfos = document.querySelectorAll('#ul-fm span.li-fm-info')
 
 const previewFmOnHover = (event) => {
+    const fmInfo = event.target
+    const fmDisplay = fmInfo.nextElementSibling
+    const savedDisplayState = fmDisplay.style.display
+
     const displayInfoTimeout = setTimeout(() => {
-        previewFmOnClick(event)
+        if (fmDisplay.style.display === savedDisplayState) {
+            previewFmOnClick(event)
+        }
     }, 500)
 
     event.target.addEventListener('mouseleave', () => {

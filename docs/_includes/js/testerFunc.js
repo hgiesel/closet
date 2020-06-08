@@ -200,16 +200,12 @@ fmOptionsLi.forEach(v => v.addEventListener('click', relayClickToInput))
 const fmInfos = document.querySelectorAll('#ul-fm span.li-fm-info')
 
 const previewFmOnHover = (event) => {
-    const fmDisplay = event.target.nextElementSibling
-
-
-const displayInfoTimeout = setTimeout(() => {
-        fmDisplay.style.display = 'block'
-    }, 100)
+    const displayInfoTimeout = setTimeout(() => {
+        previewFmOnClick(event)
+    }, 500)
 
     event.target.addEventListener('mouseleave', () => {
         clearTimeout(displayInfoTimeout)
-        fmDisplay.style.display = 'none'
     }, {
         once: true,
     })
@@ -234,6 +230,5 @@ const previewFmOnClick = (event) => {
     })
 }
 
-console.log('fminfos', fmInfos)
-// fmInfos.forEach(v => v.addEventListener('mouseenter', previewFmOnHover))
+fmInfos.forEach(v => v.addEventListener('mouseenter', previewFmOnHover))
 fmInfos.forEach(v => v.addEventListener('click', previewFmOnClick))

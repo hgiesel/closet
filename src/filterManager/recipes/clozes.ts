@@ -4,15 +4,16 @@ import type { Internals } from '..'
 import { InnerStylizer } from './stylizer'
 import { fourWayRecipe } from './nway'
 import { isBack, isCurrent } from './deciders'
+import { emptyCharacter } from './utils'
 
 const defaultStylizer = new InnerStylizer({
     postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
 const defaultEllipsisMaker = ({ values }: Tag, _inter: Internals, _isCurrent: boolean): string => {
-    return '[' + (
+    return emptyCharacter + '[' + (
         values[1] ? values[1].join('||') : '...'
-    ) + ']'
+    ) + ']' + emptyCharacter
 }
 
 export const clozeShowRecipe = (

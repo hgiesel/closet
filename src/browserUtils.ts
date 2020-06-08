@@ -8,6 +8,7 @@ const parseIndexArgument = (idx: number, min: number, max: number): number => {
     : min + idx
 }
 
+
 const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): string => {
     if (typeof(input) === 'string') {
         return input

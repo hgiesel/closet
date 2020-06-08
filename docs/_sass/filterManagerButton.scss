@@ -1,0 +1,44 @@
+#btn-group-fm {
+    position: relative;
+}
+
+#btn-fm {
+    &.show:after {
+        content: " ▽";
+    }
+
+    &:after {
+        content: " △";
+    }
+}
+
+input[name="fm-list"] {
+    // display: none;
+}
+
+#ul-fm {
+    position: absolute;
+    display: none;
+
+    &.show {
+        display: block;
+    }
+
+    & > li {
+        position: relative;
+        z-index: 99;
+        border-radius: 4px;
+        padding: 2px 10px;
+        background-color: grey;
+
+        &:hover {
+            background-color: white;
+            color: black;
+        }
+
+        &::before {
+            // overwrite default
+            content: "";
+        }
+    }
+}

@@ -58,7 +58,6 @@ strict_front_matter: true
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
-#
 
 compress_html:
   blanklines: true

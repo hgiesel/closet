@@ -31,7 +31,7 @@ const presetMustBeObjectMessage = '<i>Error with preset JSON: preset must be an 
 // registerSetup and setupMap is declared in tester.html
 const getCurrentSetup = (preset, memory) => {
     const currentSetup = document.querySelector('input[name="fm-list"]:checked')
-    console.log('in gcs', currentSetup, setups)
+
     return currentSetup && setups.has(currentSetup.value)
         ? setups.get(currentSetup.value)(preset, memory)
         : ''
@@ -177,12 +177,60 @@ btnFm.addEventListener('click', listFilterManagers)
 
 const fmOptionsLi = document.querySelectorAll('#ul-fm > li')
 
-const relayClickToLabel = function(event) {
-    const containedInput = event.target.querySelector('input')
+const relayClickToInput = (event) => {
+    let containedLabel = null
 
-    if (containedInput) {
-        containedInput.checked = true
+    if (event.target.tagName === 'LI') {
+        containedLabel = event.target.querySelector('label')
     }
+    else /* otherwise user clicked on label directly: no redirect necessary*/ {
+        return
+    }
+
+    const forAttribute = containedLabel.attributes.for
+
+    const theInput = document.getElementById(forAttribute.nodeValue)
+    theInput.checked = true
 }
 
-fmOptionsLi.forEach(v => v.addEventListener('click', relayClickToLabel))
+fmOptionsLi.forEach(v => v.addEventListener('click', relayClickToInput))
+
+/////////////////// fm info popup
+
+const fmInfos = document.querySelectorAll('#ul-fm span.li-fm-info')
+
+const previewFmOnHover = (event) => {
+    const fmDisplay = event.target.nextElementSibling
+
+
+const displayInfoTimeout = setTimeout(() => {
+        fmDisplay.style.display = 'block'
+    }, 100)
+
+    event.target.addEventListener('mouseleave', () => {
+        clearTimeout(displayInfoTimeout)
+        fmDisplay.style.display = 'none'
+    }, {
+        once: true,
+    })
+
+}
+
+const previewFmOnClick = (event) => {
+    const fmInfo = event.target
+    const fmDisplay = fmInfo.nextElementSibling
+    fmDisplay.style.display = 'block'
+
+    document.addEventListener('mousedown', (event) => {
+        const isMouseInside = fmInfo.contains(event.target) || fmDisplay.contains(event.target);
+        if (!isMouseInside) {
+            fmDisplay.style.display = 'none'
+        }
+    }, {
+        once: true,
+    })
+}
+
+console.log('fminfos', fmInfos)
+// fmInfos.forEach(v => v.addEventListener('mouseenter', previewFmOnHover))
+fmInfos.forEach(v => v.addEventListener('click', previewFmOnClick))

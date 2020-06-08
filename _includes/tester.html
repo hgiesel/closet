@@ -7,7 +7,39 @@
 
     <input type="checkbox" name="memoize-checkbox" id="memoize-checkbox"/>
     <label for="memoize-checkbox" class="memoize-label btn btn-purple btn-outline">Reuse Memory</label>
-    <button id="btn-fm" class="btn btn-purple btn-outline" type="button">Filter Manager ▽</button>
+
+    <div id="btn-group-fm">
+      <button id="btn-fm" class="btn btn-purple btn-outline" type="button">Filter Manager</button>
+
+      <form>
+        <ul id="ul-fm">
+          {% for setup in site.data.setups %}
+          <li>
+            <input type="radio" id="input-{{ setup[0] }}" name="fm-list" value="{{ setup[0] }}" />
+            <label class="li-fm" id="label-{{ setup[0] }}" for="input-{{ setup[0] }}">{{ setup[1].name }}</label>
+          </li>
+          {% endfor %}
+        </ul>
+      </form>
+
+      <script>
+        const setups = new Map()
+        const registerSetup = (name, code) => {
+          setups.set(name, code)
+        }
+
+        {% for setup in site.data.setups %}
+        registerSetup(
+          `{{ setup[0] }}`,
+          (preset, memory) => {
+            const filterManager = new Closet.FilterManager(preset, memory)
+            {{ setup[1].code }}
+            return filterManager
+          },
+        )
+        {% endfor %}
+      </script>
+    </div>
 
     <button id="btn-copy-text" class="btn btn-outline btn-blue" type="button">Copy text</button>
     <button id="btn-copy-link" class="btn btn-outline btn-blue" type="button">Copy as link</button>

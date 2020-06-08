@@ -26,6 +26,18 @@ const templateErrorMessage = '<i>Run failed: There is a syntax error in the temp
 const presetErrorMessage = '<i>Error parsing preset JSON: Please fix syntax error or remove entirely</i>'
 const presetMustBeObjectMessage = '<i>Error with preset JSON: preset must be an object</i>'
 
+
+///////////////////////////// setups
+// registerSetup and setupMap is declared in tester.html
+const getCurrentSetup = (preset, memory) => {
+    const currentSetup = document.querySelector('input[name="fm-list"]:checked')
+    console.log('in gcs', currentSetup, setups)
+    return currentSetup && setups.has(currentSetup.value)
+        ? setups.get(currentSetup.value)(preset, memory)
+        : ''
+}
+
+///////////////////////////// render button
 const processTemplateText = () => {
     presetCM.getWrapperElement().classList.remove('failed')
     codeCM.getWrapperElement().classList.remove('failed')
@@ -61,18 +73,7 @@ const processTemplateText = () => {
 
     /////////////////////////////
 
-    const filterManager = new Closet.FilterManager(preset, memory)
-    filterManager.addRecipe(Closet.recipes.shuffling('mix'))
-    filterManager.addRecipe(Closet.recipes.ordering('ord', 'mix'))
-    filterManager.addRecipe(Closet.recipes.random('rand'))
-    filterManager.addRecipe(Closet.recipes.meta)
-    filterManager.addRecipe(Closet.recipes.debug)
-
-    filterManager.addRecipe(Closet.recipes.clozeShow())
-    filterManager.addRecipe(Closet.recipes.clozeHide())
-
-    /////////////////////////////
-
+    const filterManager = getCurrentSetup(preset, memory)
     const text = codeCM.getValue().replace(/\n/g, '<br />')
 
     console.groupCollapsed(`Run ${run}`)
@@ -99,7 +100,7 @@ const processTemplateText = () => {
 
 btnExecute.addEventListener('click', processTemplateText)
 
-///////////////////
+/////////////////// copy as link
 
 const btnCopyLink = document.getElementById('btn-copy-link')
 const copyTemplateTextAsLink = () => {
@@ -136,7 +137,7 @@ const copyTemplateTextAsLink = () => {
 
 btnCopyLink.addEventListener('click', copyTemplateTextAsLink)
 
-///////////////////
+/////////////////// copy text
 
 const btnCopyText = document.getElementById('btn-copy-text')
 const copyTemplateTextAsText = () => {
@@ -145,3 +146,43 @@ const copyTemplateTextAsText = () => {
 }
 
 btnCopyText.addEventListener('click', copyTemplateTextAsText)
+
+/////////////////// fm list button
+
+const btnGroupFm = document.getElementById('btn-group-fm')
+const btnFm = document.getElementById('btn-fm')
+const ulFm = document.getElementById('ul-fm')
+
+const closeFmOnDocumentClick = (event) => {
+    const isClickInside = btnGroupFm.contains(event.target)
+    if (!isClickInside) {
+        ulFm.classList.remove('show')
+        btnFm.classList.remove('show')
+    }
+}
+
+const listFilterManagers = () => {
+    ulFm.classList.toggle('show')
+    btnFm.classList.toggle('show')
+}
+
+document.addEventListener(
+    'mousedown',
+    closeFmOnDocumentClick,
+)
+
+btnFm.addEventListener('click', listFilterManagers)
+
+/////////////////// fm list items
+
+const fmOptionsLi = document.querySelectorAll('#ul-fm > li')
+
+const relayClickToLabel = function(event) {
+    const containedInput = event.target.querySelector('input')
+
+    if (containedInput) {
+        containedInput.checked = true
+    }
+}
+
+fmOptionsLi.forEach(v => v.addEventListener('click', relayClickToLabel))

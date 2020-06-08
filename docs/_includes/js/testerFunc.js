@@ -205,10 +205,10 @@ const fmInfos = document.querySelectorAll('#ul-fm span.li-fm-info')
 const previewFmOnHover = (event) => {
     const fmInfo = event.target
     const fmDisplay = fmInfo.nextElementSibling
-    const savedDisplayState = fmDisplay.style.display
+    const savedShowState = fmDisplay.classList.contains('show')
 
     const displayInfoTimeout = setTimeout(() => {
-        if (fmDisplay.style.display === savedDisplayState) {
+        if (fmDisplay.classList.contains('show') === savedShowState) {
             previewFmOnClick(event)
         }
     }, 500)
@@ -221,22 +221,28 @@ const previewFmOnHover = (event) => {
 
 }
 
+let openedFmDisplay = null
 const previewFmOnClick = (event) => {
     const fmInfo = event.target
     const fmDisplay = fmInfo.nextElementSibling
-    // toggle
-    fmDisplay.style.display = fmDisplay.style.display === 'block'
-        ? 'none'
-        : 'block'
+
+    // remove first if there's already another fm info open
+    if (openedFmDisplay && openedFmDisplay !== fmDisplay && openedFmDisplay.classList.contains('show')) {
+        openedFmDisplay.classList.remove('show')
+    }
+
+    fmDisplay.classList.toggle('show')
 
     document.addEventListener('mousedown', (event) => {
         const isMouseInside = fmInfo.contains(event.target) || fmDisplay.contains(event.target);
         if (!isMouseInside) {
-            fmDisplay.style.display = 'none'
+            fmDisplay.classList.remove('show')
         }
     }, {
         once: true,
     })
+
+    openedFmDisplay = fmDisplay
 }
 
 fmInfos.forEach(v => v.addEventListener('mouseenter', previewFmOnHover))

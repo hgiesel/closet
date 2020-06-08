@@ -120,7 +120,10 @@ const copyTemplateTextAsLink = () => {
         ? 'memory=t'
         : ''
 
-    const joinedQueries = [queryText, queryPreset, queryMemory]
+    const currentSetup = document.querySelector('input[name="fm-list"]:checked')
+    const queryFm = `fm=${currentSetup.value}`
+
+    const joinedQueries = [queryText, queryPreset, queryFm, queryMemory]
         .filter(v => v.length > 0)
         .join('&')
 

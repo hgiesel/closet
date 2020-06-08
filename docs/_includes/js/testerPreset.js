@@ -65,10 +65,32 @@ if (sparams.has('preset')) {
     presetCM.setValue(sparams.get('preset'))
 }
 
-//////////////////// usememory
+//////////////////// reuse memory
 
 const checkboxMemoization = document.getElementById('memoize-checkbox')
 
 if (sparams.has('memory')) {
     checkboxMemoization.checked = sparams.get('memory').startsWith('t')
+}
+
+//////////////////// fitlerManager preset
+const setDefaultFm = () => {
+    const defaultFm = 'omnipotent'
+    const omnipotentInput = document.querySelector(`input#input-${defaultFm}`)
+    omnipotentInput.checked = true
+}
+
+if (!sparams.has('fm')) {
+    setDefaultFm()
+}
+else {
+    const fmId = sparams.get('fm')
+    const currentInput = document.querySelector(`input#input-${fmId}`)
+
+    if (currentInput) {
+        currentInput.checked = true
+    }
+    else {
+        setDefaultFm
+    }
 }

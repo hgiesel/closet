@@ -52,12 +52,15 @@ $display-distance: 0.8rem;
     right: $display-distance; // * 4.5;
     left: $display-distance;
 
-    // is turned on by eventListener
-    display: none;
-
     // make content escape
     background-color: white;
     border-radius: 4px;
+
+    // is turned on by eventListener
+    display: none;
+    &.show {
+        display: block;
+    }
 
     code[class*="language-"], pre[class*="language-"] {
         position: relative;

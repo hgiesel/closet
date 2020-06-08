@@ -12,13 +12,20 @@
     }
 }
 
-input[name="fm-list"] {
-    // display: none;
-}
 
 #ul-fm {
     position: absolute;
     display: none;
+    width: 150%;
+
+    input[name="fm-list"] {
+        display: none;
+
+        &:checked + li {
+            background-color: yellow;
+            color: black;
+        }
+    }
 
     &.show {
         display: block;
@@ -26,7 +33,6 @@ input[name="fm-list"] {
 
     & > li {
         position: relative;
-        z-index: 99;
         border-radius: 4px;
         padding: 2px 10px;
         background-color: grey;
@@ -39,6 +45,14 @@ input[name="fm-list"] {
         &::before {
             // overwrite default
             content: "";
+        }
+
+        & > .fm-display {
+            top: 2rem;
+            left: -17.5rem;
+            right: 0rem;
+
+            z-index: 1;
         }
     }
 }

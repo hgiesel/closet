@@ -14,10 +14,16 @@
       <form>
         <ul id="ul-fm">
           {% for setup in site.data.setups %}
+          <input type="radio" id="input-{{ setup[0] }}" name="fm-list" value="{{ setup[0] }}" />
+
           <li>
-            <input type="radio" id="input-{{ setup[0] }}" name="fm-list" value="{{ setup[0] }}" />
             <label class="li-fm" id="label-{{ setup[0] }}" for="input-{{ setup[0] }}">{{ setup[1].name }}</label>
+            <span class="li-fm-info" id="info-{{ setup[0] }}" for="input-{{ setup[0] }}">ℹ</span>
+            <div class="fm-display">
+              <pre><code class="language-js">{{ setup[1].code | escape_once }}</code></pre>
+            </div>
           </li>
+
           {% endfor %}
         </ul>
       </form>

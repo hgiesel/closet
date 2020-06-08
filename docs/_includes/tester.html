@@ -1,13 +1,16 @@
-<div id="mybody">
+<div id="tester-container">
   <textarea id="preset"></textarea>
   <textarea id="code" class="codearea" cols="30" rows="10"></textarea>
 
-  <div id="btn-group">
+  <div class="btn-group">
     <button id="btn-execute" class="btn btn-outline btn-green" type="button">Render</button>
-    <button id="btn-copy-text" class="btn btn-outline btn-blue" type="button">Copy text</button>
-    <button id="btn-copy-link" class="btn btn-outline btn-purple" type="button">Copy as link</button>
+
     <input type="checkbox" name="memoize-checkbox" id="memoize-checkbox"/>
-    <label for="memoize-checkbox" class="memoize-label btn btn-green btn-outline">Reuse Memory</label>
+    <label for="memoize-checkbox" class="memoize-label btn btn-purple btn-outline">Reuse Memory</label>
+    <button id="btn-fm" class="btn btn-purple btn-outline" type="button">Filter Manager ▽</button>
+
+    <button id="btn-copy-text" class="btn btn-outline btn-blue" type="button">Copy text</button>
+    <button id="btn-copy-link" class="btn btn-outline btn-blue" type="button">Copy as link</button>
   </div>
 
   <div id="template-applied" class="bordered">

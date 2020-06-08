@@ -1,0 +1,4 @@
+name: "Default cloze"
+code: |
+  filterManager.addRecipe(Closet.recipes.clozeShow())
+  filterManager.addRecipe(Closet.recipes.clozeHide())

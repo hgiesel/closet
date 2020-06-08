@@ -72,7 +72,7 @@ const readyTryButton = (id, code) => {
     const btnEdit = document.querySelector(buttonQuery)
 
     btnEdit.addEventListener('click', () => {
-        const link = `/closet/tester?text=${encodeURIComponent(code.replace(/<br \/>/g, '\n'))}&preset=${encodeURIComponent(JSON.stringify(currentPreset.get(id), null, 2))}`
+        const link = `/tester?text=${encodeURIComponent(code.replace(/<br \/>/g, '\n'))}&preset=${encodeURIComponent(JSON.stringify(currentPreset.get(id), null, 2))}`
 
         window.location = link
     })

@@ -1,10 +1,22 @@
 ---
 ---
 
-#mybody {
+#tester-container {
     display: flex;
     flex-direction: column;
     grid-row-gap: 10px;
+
+    .btn-group {
+        display: flex;
+        justify-content: flex-start;
+        align-content: center;
+        flex-wrap: wrap;
+
+        & > button, & > label {
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+    }
 }
 
 textarea {
@@ -49,13 +61,20 @@ input[type="checkbox"] {
 }
 
 .memoize-label {
+    position: relative;
+    padding-right: 2rem;
+
     &::after {
-        content: " ❌";
+        display: inline;
+
+        transform: scale(.7);
+        transform-origin: center;
+
+        position: absolute;
+        content: url("/assets/icons/x-mark.svg");
+
+        #memoize-checkbox:checked ~ & {
+            content: url("/assets/icons/check-mark.svg");
+        }
     }
-
-    margin-top: 0.5rem;
-}
-
-#memoize-checkbox:checked ~ .memoize-label::after {
-    content: " ✔️";
 }

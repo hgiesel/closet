@@ -41,7 +41,7 @@ $display-distance: 1rem;
 
 .btn-fm {
     float: right;
-    border-radius: 10%;
+    border-radius: 4px
 
     text-align: center;
 }
@@ -57,14 +57,14 @@ $display-distance: 1rem;
 
     // make content escape
     background-color: white;
-    border-radius: 0.5rem;
+    border-radius: 4px;
 
     code[class*="language-"], pre[class*="language-"] {
         position: relative;
         z-index: 9;
 
         font-size: 90%;
-        border-radius: 0.2rem;
+        border-radius: 4px;
 
         background: #4d4d4d;
     }
@@ -80,7 +80,7 @@ $display-distance: 1rem;
     padding: 0.25rem 0.75rem;
 
     border: 0.1rem solid white;
-    border-radius: 0.5rem;
+    border-radius: 4px;
 
     // is turned on by eventListener
     display: none;

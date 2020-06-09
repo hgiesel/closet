@@ -211,7 +211,7 @@ const previewFmOnHover = (event) => {
         if (fmDisplay.classList.contains('show') === savedShowState) {
             previewFmOnClick(event)
         }
-    }, 500)
+    }, 800)
 
     event.target.addEventListener('mouseleave', () => {
         clearTimeout(displayInfoTimeout)
@@ -225,11 +225,22 @@ let openedFmDisplay = null
 const previewFmOnClick = (event) => {
     const fmInfo = event.target
     const fmDisplay = fmInfo.nextElementSibling
+    console.log('fooya', fmInfo, fmDisplay)
 
     // remove first if there's already another fm info open
     if (openedFmDisplay && openedFmDisplay !== fmDisplay && openedFmDisplay.classList.contains('show')) {
         openedFmDisplay.classList.remove('show')
     }
+
+    // adjust size
+    const testerContainer = document.getElementById('tester-container')
+    const ulFmLi = document.querySelector('#ul-fm > li')
+
+    const testerContainerRect = testerContainer.getBoundingClientRect()
+    const liRect = ulFmLi.getBoundingClientRect()
+
+    fmDisplay.style.width = `${testerContainerRect.width}px`
+    fmDisplay.style.left = `${testerContainerRect.x - liRect.x}px`
 
     fmDisplay.classList.toggle('show')
 

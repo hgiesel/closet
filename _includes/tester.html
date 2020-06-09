@@ -18,7 +18,9 @@
 
           <li>
             <label class="li-fm" id="label-{{ setup[0] }}" for="input-{{ setup[0] }}">{{ setup[1].name }}</label>
-            <span class="li-fm-info" id="info-{{ setup[0] }}" for="input-{{ setup[0] }}">ℹ</span>
+
+            <span class="li-fm-info" id="info-{{ setup[0] }}" for="input-{{ setup[0] }}">{% include info.svg %}</span>
+
             <div class="fm-display">
               <pre><code class="language-js">{{ setup[1].code | escape_once }}</code></pre>
             </div>

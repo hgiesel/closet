@@ -14,7 +14,7 @@ const wrapWithDeferredTypeTemplate = (
         getTagnames = defaultTagnameGetter,
         setTagnames = defaultTagnameSetter,
         getApiKeyword = id as (v: string) => string,
-    },
+    } = {},
 ): Recipe => (
     options = {},
 ) => (filterApi: FilterApi) => {
@@ -39,7 +39,7 @@ const wrapWithDeferredTypeTemplate = (
         return inter.filters.get(internalKeyword)(tag, inter)
     }
 
-    for (const keyword in tagnames) {
+    for (const keyword of tagnames) {
         filterApi.register(keyword, wrapFilter)
     }
 }

@@ -1,0 +1,57 @@
+name: Click to reveal cloze
+code: |
+  Closet.browser.appendStyleScript(`
+  .cl--obscure-hint {
+    filter: blur(0.25em);
+  }
+
+  .cl--obscure-fix::after {
+    content: 'XXXXXXXXXX';
+    filter: blur(0.25em);
+  }
+
+  .cl--obscure-fix > span {
+    display: none;
+  }`)
+
+  const removeObscure = function(event) {
+    if (event.currentTarget.classList.contains('cl--obscure-clickable')) {
+      event.currentTarget.classList.remove('cl--obscure')
+      event.currentTarget.classList.remove('cl--obscure-hint')
+      event.currentTarget.classList.remove('cl--obscure-fix')
+    }
+  }
+
+  const wrappedClozeShow = Closet.wrappers.aftermath(
+    () => {
+      document.querySelectorAll('.cl--obscure')
+        .forEach(tag => {
+          tag.addEventListener('click', removeObscure, {
+            once: true,
+          })
+        })
+    },
+    Closet.recipes.clozeShow,
+  )
+
+  const obscureAndClick = (t, _i, isActive) => {
+    return isActive
+      ? `<span class="cl--obscure cl--obscure-hint cl--obscure-clickable">${t.values[0].join('||')}</span>`
+      : '[...]'
+  }
+
+  const obscureAndClickFix = (t, _i, isActive) => {
+    return isActive
+      ? `<span class="cl--obscure cl--obscure-fix cl--obscure-clickable"><span>${t.values[0].join('||')}</span></span>`
+      : '[...]'
+  }
+
+  filterManager.addRecipe(wrappedClozeShow({
+    tagname: 'c',
+    ellipsisMaker: obscureAndClick,
+  }))
+
+  filterManager.addRecipe(wrappedClozeShow({
+    tagname: 'cx',
+    ellipsisMaker: obscureAndClickFix,
+  }))

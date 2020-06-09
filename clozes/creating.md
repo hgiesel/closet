@@ -26,7 +26,7 @@ By default, an unnumbered cloze will always be considered [inactive](/clozes#act
 Wow. As you can see, absolutely nothing happens.
 This is the specified behavior: the tag is inactive, and the default behavior for inactive clozes of this kind is to show their content.
 
-You can make this more interesting by either using [numbered clozes](#numbered-clozes), or by using [hiding clozes](#showing-and-hiding-clozes).
+You can make this more interesting by either using [numbered clozes](#numbered-clozes), or by using [hiding or revealing clozes](#showing-hiding-and-revealing-clozes).
 
 ---
 ## Numbered Clozes
@@ -60,12 +60,19 @@ For the first case, you'd use _hiding clozes_, for the second case you'd use _re
 
 {% include codeDisplay.md content=cloze.hiding_cloze filterManager=setups.default_cloze buttons=bOneTwoThree %}
 
-In this example you can see how they different cloze types act differently.
+In this example you can see how each cloze type acts differently.
+
+You can also this cloze subtypes to generally hide undesirable context on flash cards.
+
+{% include codeDisplay.md content=cloze.hide_context filterManager=setups.default_cloze buttons=b %}
 
 ---
 ## Hints
 
-Rather than showing the ellipsis symbol, you can also provide a hint instead.
+Rather than showing the ellipsis symbol, you can also provide a _hint_ instead.
 This hint is provided as the second parameter in the tag.
 
 {% include codeDisplay.md content=cloze.hints filterManager=setups.default_cloze buttons=bOneTwoThree %}
+
+This is only one of the possible behaviors of how cards can act in the _test context_.
+For more examples, see the [next chapter](/clozes/blanking-obscuring).

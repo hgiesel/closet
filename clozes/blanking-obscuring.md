@@ -10,49 +10,51 @@ parent: Clozes
 {% assign bOneTwo='Frontside 1, q1, {side: "front",card: "c1"}, true; Backside 1, a1, {side: "back",card: "c1"}, true; Frontside 2, q2, {side: "front",card: "c2"}, true; Backside 2, a2, {side: "back",card: "c2"}, true' %}
 {% assign bOneTwoThree='F1, q1, {side: "front",card: "c1"}, true; B1, a1, {side: "back",card: "c1"}, true; F2, q2, {side: "front",card: "c2"}, true; B2, a2, {side: "back",card: "c2"}, true; F3, q3, {side: "front",card: "c3"}, true; B3, a3, {side: "back",card: "c3"}, true' %}
 
+{% assign cloze = site.data.snippets.cloze %}
+{% assign setups = site.data.setups %}
+
 {% include toc-doc.md %}
+
+---
+## The Ellipsis Maker
+
+By default, the cloze filter will use the second provided value as a hint.
+However this behavior is easily modifiable by overwriting the `ellipsisMaker`.
+
+This function is used in different situations, depending on the cloze subtype:
+* _showing clozes_ use it for _active front_
+* _hiding clozes_ use it for _active front_ and any _inactive_
+* _revealing clozes_ use it for any _front_
+
+If any of the terms _active_, _inactive_, _front_, _back_ confuse, see [here](/clozes#test-and-answer-context).
+
+In the following, we outline two possible ways to adapt the ellipsis maker.
 
 ---
 ## Blanking
 
-By default, the cloze filter will use the second provided value as a hint.
-However this behavior is easily modifiable by overwriting the _ellipsisMaker_.
-This value is used to create the content yielded by the cloze filter whenever you're.
+One possible way would be to show the answer all blanked out by underscore symbols `_`.
 
-{% capture blankingFm %}
-const ellipsisMaker = function({ values }, _i, isCurrent) {
-  return isCurrent
-    ? values[0].join('||').replace(Closet.unicodeLetterPattern, '_')
-    : '[...]'
-}
+{% include codeDisplay.md content=cloze.hiding_cloze filterManager=setups.blanking_cloze buttons=bOneTwoThree %}
 
-filterManager.addRecipe(Closet.recipes.clozeShow('c', {
-  ellipsisMaker: ellipsisMaker,
-}))
-{% endcapture %}
+Notice how the commas are left out.
+Together with the blanks, this lets us know that the flash card wants us to name _three_ catecholamines.
+This might have otherwise been done with a hint.
 
+### International support
 
-{% capture obscuringFm %}
-const ellipsisMaker = function({ values }, _i, isCurrent) {
-  return isCurrent
-    ? '<span style="filter: blur(0.2rem);">' + values[0].join('||') + '</span>'
-    : '[...]'
-}
+Closet has a built-in [regular expression](https://en.wikipedia.org/wiki/Regular_expression), which specifically targets _alphanumeric characters_, no matter the language.
 
-filterManager.addRecipe(Closet.recipes.clozeShow({
-  ellipsisMaker: ellipsisMaker,
-}))
-{% endcapture %}
+{% include codeDisplay.md content=cloze.hiding_cloze_symbols filterManager=setups.blanking_cloze buttons=bOneTwoThree %}
 
-{% include codeDisplay.md content=site.data.snippets.cloze.activate_cloze filterManager=obscuringFm buttons=bOneTwoThree %}
-
-### Blanking non-latin characters
-
-However keep in mind that tags are evaluated in a certain order.
-You need to use the activation tag, before you 
-
-{% include codeDisplay.md content=site.data.snippets.cloze.activate_cloze_with_occur filterManager=blankingFm buttons=bOneTwoThree %}
+Depending on the context you might want to hide symbols as well.
+In this case, you have to change the used regular expression.
 
 ---
 ## Obscuring
 
+Another option is to obscure the solution by bluring the answer text.
+
+{% include codeDisplay.md content=cloze.hiding_cloze filterManager=setups.obscuring_cloze buttons=bOneTwoThree %}
+
+Note how we changed the highlight color: Seeing blurred blue on a black background would be hard to see.

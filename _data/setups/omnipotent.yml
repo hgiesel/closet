@@ -4,4 +4,5 @@ code: |
   filterManager.addRecipe(Closet.recipes.ordering('ord', 'mix'))
 
   filterManager.addRecipe(Closet.recipes.clozeShow())
-  filterManager.addRecipe(Closet.recipes.clozeHide())
+  filterManager.addRecipe(Closet.recipes.clozeHide({ tagname: 'ch' }))
+  filterManager.addRecipe(Closet.recipes.clozeReveal({ tagname: 'cr' }))

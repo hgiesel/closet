@@ -1,0 +1,28 @@
+name: Obscuring clozes
+code: |
+  const obscure = function({ values }, _i, isCurrent) {
+    return isCurrent
+      ? '<span style="filter: blur(0.2rem);">' + values[0].join('||') + '</span>'
+      : '[...]'
+  }
+
+  const useYellow = new Closet.InnerStylizer({
+    postprocess: v => `<span style="color: yellow;">${v}</span>`,
+  })
+
+  filterManager.addRecipe(Closet.recipes.clozeShow({
+    ellipsisMaker: obscure,
+    activeStylizer: useYellow,
+  }))
+
+  filterManager.addRecipe(Closet.recipes.clozeHide({
+    tagname: 'ch',
+    ellipsisMaker: obscure,
+    activeStylizer: useYellow,
+  }))
+
+  filterManager.addRecipe(Closet.recipes.clozeReveal({
+    tagname: 'cr',
+    ellipsisMaker: obscure,
+    activeStylizer: useYellow,
+  }))

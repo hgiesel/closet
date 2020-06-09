@@ -14,7 +14,6 @@ parent: Shuffling
 {% include toc-doc.md %}
 
 ---
-
 ## Inline Shuffling
 
 Items can easily be shuffled using the `mix` tag.
@@ -23,7 +22,6 @@ Items to be shuffled must be separated by `||`.
 {% include codeDisplay.md content=shuffling.first_example filterManager=setups.shuffle_order buttons=b %}
 
 ---
-
 ## Shuffling non-contiguous areas
 
 If you want to shuffle non-contiguous areas, you need to use _numbered_ tags.
@@ -36,7 +34,6 @@ When using numbered `mix` tags, they will preserve their original amount of item
 {% include codeDisplay.md content=shuffling.preserve_item_count filterManager=setups.shuffle_order buttons=b %}
 
 ---
-
 ## Nested shuffling
 
 You can also shuffle in a nested style.
@@ -65,7 +62,6 @@ However after that, `mix2` in the first row will wait for `mix3` to finish; and 
 After a few rounds, this operation will time out, and the remaining tags will stay unresolved.
 
 ---
-
 ## Advanced
 
 {% capture asianFm %}

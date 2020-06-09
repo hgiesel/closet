@@ -3,13 +3,13 @@ import type { FilterApi } from '../filters'
 import type { Internals } from '..'
 import { InnerStylizer } from './stylizer'
 import { fourWayRecipe } from './nway'
-import { isBack, isCurrent } from './deciders'
+import { isBack, isActive } from './deciders'
 
 const defaultStylizer = new InnerStylizer({
     postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-const defaultEllipsisMaker = ({ values }: Tag, _inter: Internals, _isCurrent: boolean): string => {
+const defaultEllipsisMaker = ({ values }: Tag, _inter: Internals, _isActive: boolean): string => {
     return '[' + (
         values[1] ? values[1].join('||') : '...'
     ) + ']'
@@ -26,7 +26,7 @@ export const multipleChoiceHideRecipe = (
     const multipleChoiceRecipe = fourWayRecipe(
         keyword,
         isBack,
-        isCurrent,
+        isActive,
         /* back */
         (tag) => currentStylizer.stylizeInner(tag.values[0]),
         makeEllipsis,
@@ -51,7 +51,7 @@ export const multipleChoiceShowRecipe = (
     const multipleChoiceRecipe = fourWayRecipe(
         keyword,
         isBack,
-        isCurrent,
+        isActive,
         /* back */
         (tag) => currentStylizer.stylizeInner(tag.values[0]),
         valueJoiner,

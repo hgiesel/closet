@@ -1,0 +1,21 @@
+name: Blanking Clozes
+code: |
+  const blank = function({ values }, _i, isCurrent) {
+    return isCurrent
+      ? values[0].join('||').replace(Closet.unicodeAlphanumericPattern, '_')
+      : '[...]'
+  }
+
+  filterManager.addRecipe(Closet.recipes.clozeShow({
+    ellipsisMaker: blank,
+  }))
+
+  filterManager.addRecipe(Closet.recipes.clozeHide({
+    tagname: 'ch',
+    ellipsisMaker: blank,
+  }))
+
+  filterManager.addRecipe(Closet.recipes.clozeReveal({
+    tagname: 'cr',
+    ellipsisMaker: blank,
+  }))

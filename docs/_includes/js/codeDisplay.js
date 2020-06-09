@@ -6,19 +6,6 @@
 
 {% assign theId = contentId | append: "-with-" | append: fmId %}
 
-Prism.languages.plaintext = {
-    tagstart: {
-        pattern: /\[\[[a-zA-Z]+\d*/u,
-        inside: {
-            tagstart: /\[\[/u,
-            tagname: /[a-zA-Z]+\d*/u,
-        },
-    },
-    tagend: /\]\]/,
-    altsep: /\|\|/,
-    argsep: /::/,
-}
-
 {% for button in theButtons %}
 {% assign theButton = button | split: ", " %}
 readyRenderButton(

@@ -33,7 +33,7 @@ For flashcards, _test_ will be synonmymous with the _front_, _answer_ with the _
 We will often have multiple clozes on the same card testing different pieces of knowledge.
 In Anki, this is facilitated in the form of cards.
 
-```
+```closet
 The capital of Portugal is [[c1::Lisbon]]. Its area is [[c2::92km²]].
 ```
 
@@ -41,7 +41,7 @@ Using the above template, we could create two different cards, both testing one 
 This introduces the notion of _active_ clozes, compared to _inactive_ ones.
 
 In Anki, on a card `Cloze 1`, the active cloze would be `c1`, whereas `c2` is inactive, and vice versa.
-With Closet, we have more power to influence this, but for the beginning we will adhere to this convention.
+Within Closet we can be more flexibile, but generally we will adhere to this convention.
 
 ---
 ## Summary

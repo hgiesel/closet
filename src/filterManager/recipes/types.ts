@@ -5,4 +5,4 @@ export type { FilterApi, WeakFilter } from '../filters'
 export type { Internals } from '..'
 export type { Deferred } from '../deferred'
 
-export type Recipe = (tagname: string, options: object) => (filterApi: FilterApi) => void
+export type Recipe = (options: object) => (filterApi: FilterApi) => void

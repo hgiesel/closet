@@ -6,14 +6,17 @@ export const isBack = (_t: Tag, { preset }: Internals) => {
 }
 
 export const isCurrent = ({ num }: Tag, { preset }: Internals) => {
-    if (num === null) {
-        return true
-    }
+    switch (num) {
+        case null:
+            return false
+        case 0:
+            return true
+        default:
+            if (!preset['card']) {
+                return false
+            }
 
-    else if (!preset['card']) {
-        return false
+            const cardNumber = preset['card'].match(/[0-9]*$/)
+            return Number(cardNumber) === num
     }
-
-    const cardNumber = preset['card'].match(/[0-9]*$/)
-    return Number(cardNumber) === num
 }

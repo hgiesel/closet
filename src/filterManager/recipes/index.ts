@@ -1,6 +1,6 @@
 import { shufflingRecipe } from './shuffling'
 import { orderingRecipe } from './ordering'
-import { clozeShowRecipe, clozeHideRecipe } from './clozes'
+import { clozeShowRecipe, clozeHideRecipe, clozeRevealRecipe } from './clozes'
 import { multipleChoiceShowRecipe, multipleChoiceHideRecipe } from './multipleChoice'
 import { randRecipe } from './rand'
 import { styleRecipe } from './stylizing'
@@ -14,8 +14,11 @@ import { wrapWithDeferred, wrapWithAftermath } from './wrappers'
 export const recipes = {
     shuffling: shufflingRecipe,
     ordering: orderingRecipe,
+
     clozeShow: clozeShowRecipe,
     clozeHide: clozeHideRecipe,
+    clozeReveal: clozeRevealRecipe,
+
     random: randRecipe,
     multipleChoiceShow: multipleChoiceShowRecipe,
     multipleChoiceHide: multipleChoiceHideRecipe,
@@ -25,7 +28,6 @@ export const recipes = {
     activate: activateRecipe,
     deactivate: deactivateRecipe,
     toggle: toggleRecipe,
-
 
     debug: debugRecipe,
     meta: metaRecipe,

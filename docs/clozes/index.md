@@ -16,7 +16,7 @@ According to [Wikipedia](https://en.wikipedia.org/wiki/Cloze_test):
 > A cloze test (also cloze deletion test) is an exercise, test, or assessment consisting of a portion of language with certain items, words, or signs removed (cloze text), where the participant is asked to replace the missing language item.
 
 ---
-## Test and answer
+## Test and answer context
 
 The rendering of the cloze needs to _context-sensitive_.
 Depending on the context cloze is rendered, it needs to be rendered differently:
@@ -30,8 +30,10 @@ For flashcards, _test_ will be synonmymous with the _front_, _answer_ with the _
 ---
 ## Active and inactive clozes
 
-We will often have multiple clozes on the same card testing different pieces of knowledge.
+In a flashcard, you usually want to test each piece of knowledge individually.
+This is also called the [minimum information principle](https://www.supermemo.com/de/archives1990-2015/articles/20rules#minimum%20information%20principle).
 In Anki, this is facilitated in the form of cards.
+
 
 ```closet
 The capital of Portugal is [[c1::Lisbon]]. Its area is [[c2::92km²]].
@@ -47,7 +49,7 @@ Within Closet we can be more flexibile, but generally we will adhere to this con
 ## Summary
 
 Altogether, we can think of a cloze as text which can be rendered in 4 different ways:
-* test and active
-* test and inactive
-* answer and active
-* answer and inactive
+* _test_ and _active_
+* _test_ and _inactive_
+* _answer_ and _active_
+* _answer_ and _inactive_

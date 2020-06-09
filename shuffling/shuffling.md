@@ -40,7 +40,7 @@ You can also shuffle in a nested style.
 This is useful if you have multiple levels of logical units, that you want to shuffle around.
 Think of shuffling paragraphs, and the sentences within; or sentences, and the words within.
 
-{% include codeDisplay.md content=site.data.snippets.shuffling.nesting filterManager=defaultFm buttons=b %}
+{% include codeDisplay.md content=shuffling.nesting filterManager=setups.shuffle_order buttons=b %}
 
 ### Resolution of nested tags
 
@@ -48,14 +48,14 @@ You can shuffle as one-sided as you want to.
 Closet will try to _resolve_ the shuffling in the most logical way possible.
 Take a look at the following example:
 
-{% include codeDisplay.md content=site.data.snippets.shuffling.onesided_nesting filterManager=defaultFm buttons=b %}
+{% include codeDisplay.md content=shuffling.onesided_nesting filterManager=setups.shuffle_order buttons=b %}
 
 Closet will start with `mix3` and work its way outside, until it will finally shuffle the `mix1` tags.
 If there is no logical way to shuffle the elements, it will cause something called a [deadlock](https://en.wikipedia.org/wiki/Deadlock).
 
 ### Deadlocks
 
-{% include codeDisplay.md content=site.data.snippets.shuffling.deadlock filterManager=defaultFm buttons=b %}
+{% include codeDisplay.md content=shuffling.deadlock filterManager=setups.shuffle_order buttons=b %}
 
 In the example above, initially `mix1` will be shuffled.
 However after that, `mix2` in the first row will wait for `mix3` to finish; and `mix3` in the second row will wait for `mix2` to finish.
@@ -64,51 +64,13 @@ After a few rounds, this operation will time out, and the remaining tags will st
 ---
 ## Advanced
 
-{% capture asianFm %}
-const colorWheel = function*() {
-  while (true) {
-    yield 'pink'
-    yield 'lime'
-    yield 'yellow'
-  }
-}
-
-const cw = colorWheel()
-cw.next()
-
-const asianStylizer = new Closet.Stylizer({
-  separator: '・',
-  mapper: v => (
-    '<span style="color: ' + cw.next().value + ';">' +
-    v +
-    '</span>'
-  ),
-  postprocess: v => '〈' + v + '〉',
-})
-
-filterManager.addRecipe(Closet.recipes.shuffling('mix', asianStylizer))
-{% endcapture %}
-
 You can stylize the appearance of shuffled items however you like.
 
-{% include codeDisplay.md content=site.data.snippets.shuffling.japanese filterManager=asianFm buttons=b %}
-
-{% capture mixedFm %}
-const middlePoint = new Closet.Stylizer({
-  separator: '・',
-})
-
-const slash = new Closet.Stylizer({
-  separator: ' / ',
-})
-
-filterManager.addRecipe(Closet.recipes.shuffling('amix', middlePoint))
-filterManager.addRecipe(Closet.recipes.shuffling('mix', slash))
-{% endcapture %}
+{% include codeDisplay.md content=shuffling.japanese filterManager=setups.middle_dot buttons=b %}
 
 In the case that you want multiple shuffling styles at the same time, you can put each filter on different _keywords_.
 
-{% include codeDisplay.md content=site.data.snippets.shuffling.mixed_styles filterManager=mixedFm buttons=b %}
+{% include codeDisplay.md content=shuffling.mixed_styles filterManager=setups.middle_dot buttons=b %}
 
 Note how they items from tags with different keywords don't mix.
 

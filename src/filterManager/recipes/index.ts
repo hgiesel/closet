@@ -1,3 +1,9 @@
+import type { Recipe } from './types'
+
+interface Recipes {
+    [propName: string]: Recipe;
+}
+
 import { shufflingRecipe } from './shuffling'
 import { orderingRecipe } from './ordering'
 import { clozeShowRecipe, clozeHideRecipe, clozeRevealRecipe } from './clozes'
@@ -11,7 +17,7 @@ import { activateRecipe, deactivateRecipe, toggleRecipe } from './activate'
 
 import { wrapWithDeferred, wrapWithAftermath } from './wrappers'
 
-export const recipes = {
+export const recipes /* TODO : Recipes */ = {
     shuffling: shufflingRecipe,
     ordering: orderingRecipe,
 

@@ -5,7 +5,7 @@ export const isBack = (_t: Tag, { preset }: Internals) => {
     return preset['side'] === 'back'
 }
 
-export const isCurrent = ({ num }: Tag, { preset }: Internals) => {
+export const isActive = ({ num }: Tag, { preset }: Internals) => {
     switch (num) {
         case null:
             return false

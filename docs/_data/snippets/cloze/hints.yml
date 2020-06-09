@@ -1,9 +1,5 @@
 name: Using hints
 code: |
-  The four major dopaminergic pathways:
-  * [[c1::Mesolimbic pathway::starts with M]]
-  * [[c2::Mesocortical pathway]]
-  * [[c3::Nigostriatal pathway::starts with N]]
-  * [[c4::Tuberoinfundibular pathway]]
-  * [[c5::Hypothalamospinal projection]]
-  * [[c6::Incertohypothalamic pathway]]
+  Katecholamine: [[c1::Dopamin, Noradrenalin, Adrenalin::three of them]]
+  Indolamine: [[ch2::Serotonin::starts with S]]
+  Imidazole: [[cr3::Histamin::H...]]

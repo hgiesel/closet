@@ -1,5 +1,7 @@
 {% assign theButtons = include.buttons | split: "; " %}
-{% assign fm = include.filterManager | strip %}
+
+{% assign fmId = include.filterManager.name | slugify %}
+{% assign fmCode = include.filterManager.code | strip %}
 
 <div class="code-container" markdown="1">
   <div class="code-example" id="{{ include.content.name | slugify }}">
@@ -16,7 +18,7 @@
     </div>
 
     <div class="fm-display">
-      <pre><code class="language-js">{{ fm | escape_once }}</code></pre>
+      <pre><code class="language-js">{{ fmCode | escape_once }}</code></pre>
     </div>
 
     <script>

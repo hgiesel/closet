@@ -10,6 +10,9 @@ parent: Clozes
 {% assign bOneTwo='Frontside 1, q1, {side: "front",card: "c1"}, true; Backside 1, a1, {side: "back",card: "c1"}, true; Frontside 2, q2, {side: "front",card: "c2"}, true; Backside 2, a2, {side: "back",card: "c2"}, true' %}
 {% assign bOneTwoThree='F1, q1, {side: "front",card: "c1"}, true; B1, a1, {side: "back",card: "c1"}, true; F2, q2, {side: "front",card: "c2"}, true; B2, a2, {side: "back",card: "c2"}, true; F3, q3, {side: "front",card: "c3"}, true; B3, a3, {side: "back",card: "c3"}, true' %}
 
+{% assign cloze = site.data.snippets.cloze %}
+{% assign setups = site.data.setups %}
+
 {% include toc-doc.md %}
 
 ---
@@ -18,7 +21,7 @@ parent: Clozes
 The cloze text is surrounded by a `c` tag.
 By default, an unnumbered cloze will always be considered [active](/clozes#active-and-inactive-clozes).
 
-{% include codeDisplay.md content=site.data.snippets.cloze.first_example filterManager=site.data.setups.default_cloze.code buttons=b %}
+{% include codeDisplay.md content=cloze.first_example filterManager=setups.default_cloze buttons=b %}
 
 ---
 ## Numbered Clozes
@@ -28,7 +31,7 @@ Which is is why rather than removing both passages, you'd want to create two fla
 
 For these cards, there is the notion of a _current cloze_.
 
-{% include codeDisplay.md content=site.data.snippets.cloze.numbered_cloze filterManager=site.data.setups.default_cloze.code buttons=bOneTwo %}
+{% include codeDisplay.md content=cloze.numbered_cloze filterManager=setups.default_cloze buttons=bOneTwo %}
 
 ---
 ## Showing and Hiding Clozes
@@ -38,7 +41,7 @@ These are called _showing clozes_.
 You might also instead want to simply hide the content.
 This might create less interference for recalling the current cloze.
 
-{% include codeDisplay.md content=site.data.snippets.cloze.hiding_cloze filterManager=site.data.setups.default_cloze.code buttons=bOneTwoThree %}
+{% include codeDisplay.md content=cloze.hiding_cloze filterManager=setups.default_cloze buttons=bOneTwoThree %}
 
 You can see here, how clozes under the `c` hide their content to avoid context information for the other clozes.
 
@@ -48,4 +51,4 @@ You can see here, how clozes under the `c` hide their content to avoid context i
 Rather than showing the ellipsis symbol, you can also provide a hint instead.
 This hint is provided as the second parameter in the tag.
 
-{% include codeDisplay.md content=site.data.snippets.cloze.hints filterManager=site.data.setups.default_cloze.code buttons=bOneTwoThree %}
+{% include codeDisplay.md content=cloze.hints filterManager=setups.default_cloze buttons=bOneTwoThree %}

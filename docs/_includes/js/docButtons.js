@@ -1,23 +1,21 @@
 const allButtons = new Map()
 const currentPreset = new Map()
 
+let currentKeepMemories = {}
+
 const readyRenderButton = (
     id,
     btnId,
     code,
     preset,
     keepMemory,
-    filterManager,
+    filterManager = new Closet.FilterManager(preset),
 ) => {
     const buttonQuery = `${id} .btn-${btnId}`
     const displayQuery = `${id} > .output-display`
 
     const theDisplay = document.querySelector(displayQuery)
     const btnRerender = document.querySelector(buttonQuery)
-
-    if (!filterManager) {
-        filterManager = new Closet.FilterManager(preset)
-    }
 
     if (allButtons.has(id)) {
         allButtons.get(id).push(btnRerender)
@@ -28,6 +26,9 @@ const readyRenderButton = (
 
     btnRerender.addEventListener('click', () => {
         Closet.renderTemplate(code, filterManager, output => theDisplay.innerHTML = output)
+
+        currentKeepMemories[id] = keepMemory
+
         if (!keepMemory) {
             filterManager.clearMemory()
         }
@@ -64,13 +65,27 @@ const readyFmButton = (id, _fmCode) => {
     })
 }
 
-const readyTryButton = (id, code) => {
+const readyTryButton = (
+    id,
+    code,
+    filterManagerId,
+) => {
     const buttonQuery = `${id} .btn-edit`
     const btnEdit = document.querySelector(buttonQuery)
 
     btnEdit.addEventListener('click', () => {
-        const link = `/tester?text=${encodeURIComponent(code.replace(/<br \/>/g, '\n'))}&preset=${encodeURIComponent(JSON.stringify(currentPreset.get(id), null, 2))}`
+        const linkBase = '/tester'
+        const textComp = `?text=${encodeURIComponent(code.replace(/<br \/>/g, '\n'))}`
+        const presetComp = `&preset=${encodeURIComponent(JSON.stringify(currentPreset.get(id)))}`
+        const fmComp = `&fm=${filterManagerId}`
+        const memoryComp = `&memory=${String(currentKeepMemories[id])[0]}`
 
-        window.location = link
-    })
-}
+        window.location = (
+            linkBase +
+            textComp +
+            presetComp +
+            fmComp +
+            memoryComp
+        )
+        })
+    }

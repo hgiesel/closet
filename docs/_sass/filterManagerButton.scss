@@ -63,8 +63,13 @@
 
         // info button
         & > .li-fm-info {
-            float: right;
+            position: absolute;
+
             transform: scale(.7);
+
+            right: 5px;
+            top: 1px;
+            bottom: 1px;
 
             & > svg {
                 pointer-events: none;

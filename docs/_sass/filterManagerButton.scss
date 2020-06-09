@@ -3,12 +3,29 @@
 }
 
 #btn-fm {
-    &.show:after {
-        content: " ▽";
+    position: relative;
+    padding-right: 2rem;
+
+    &.show::after {
+        display: inline;
+
+        transform: scale(.65);
+        transform-origin: center;
+
+        position: absolute;
+
+        content: url("/assets/icons/down.svg");
     }
 
-    &:after {
-        content: " △";
+    &::after {
+        display: inline;
+
+        transform: scale(.65);
+        transform-origin: center;
+
+        position: absolute;
+
+        content: url("/assets/icons/up.svg");
     }
 }
 
@@ -47,7 +64,7 @@
         // info button
         & > .li-fm-info {
             float: right;
-            transform: scale(.8);
+            transform: scale(.7);
 
             & > svg {
                 pointer-events: none;

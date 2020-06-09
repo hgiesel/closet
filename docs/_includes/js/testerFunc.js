@@ -225,7 +225,6 @@ let openedFmDisplay = null
 const previewFmOnClick = (event) => {
     const fmInfo = event.target
     const fmDisplay = fmInfo.nextElementSibling
-    console.log('fooya', fmInfo, fmDisplay)
 
     // remove first if there's already another fm info open
     if (openedFmDisplay && openedFmDisplay !== fmDisplay && openedFmDisplay.classList.contains('show')) {

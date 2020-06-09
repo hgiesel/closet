@@ -3,7 +3,6 @@
 
 #tester-container {
     display: grid;
-    flex-direction: column;
     grid-row-gap: 0.5rem;
 
     .btn-group {
@@ -29,7 +28,6 @@ textarea {
     border-radius: 4px;
 
     position: relative;
-    z-index: -1;
 }
 
 .desc {

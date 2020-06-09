@@ -79,9 +79,8 @@ const processTemplateText = () => {
     console.groupCollapsed(`Run ${run}`)
     console.time('Render template')
 
-    let result = null
     try {
-        result = Closet.renderTemplate(text, filterManager)
+        Closet.renderTemplate(text, filterManager, result => display(templateRendered, result, false))
     }
     catch (e) {
         console.error(templateErrorMessage, e)
@@ -94,8 +93,6 @@ const processTemplateText = () => {
         console.groupEnd(`Run ${run}`)
         run++
     }
-
-    display(templateRendered, result, escape=false)
 }
 
 btnExecute.addEventListener('click', processTemplateText)

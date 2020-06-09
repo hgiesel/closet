@@ -140,16 +140,6 @@ const copyTemplateTextAsLink = () => {
 
 btnCopyLink.addEventListener('click', copyTemplateTextAsLink)
 
-/////////////////// copy text
-
-const btnCopyText = document.getElementById('btn-copy-text')
-const copyTemplateTextAsText = () => {
-    const allText = codeCM.getValue()
-    navigator.clipboard.writeText(allText)
-}
-
-btnCopyText.addEventListener('click', copyTemplateTextAsText)
-
 /////////////////// fm list button
 
 const btnGroupFm = document.getElementById('btn-group-fm')

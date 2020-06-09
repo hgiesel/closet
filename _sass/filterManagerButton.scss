@@ -9,7 +9,7 @@
     &.show::after {
         display: inline;
 
-        transform: scale(.65);
+        transform: scale(.55);
         transform-origin: center;
 
         position: absolute;
@@ -20,7 +20,7 @@
     &::after {
         display: inline;
 
-        transform: scale(.65);
+        transform: scale(.55);
         transform-origin: center;
 
         position: absolute;

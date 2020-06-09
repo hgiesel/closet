@@ -1,5 +1,5 @@
-name: Hiding clozes
+name: Hiding and Revealing clozes
 code: |
-  Katecholamine: [[ch1::Dopamin, Noradrenalin, Adrenalin]]
+  Katecholamine: [[c1::Dopamin, Noradrenalin, Adrenalin]]
   Indolamine: [[ch2::Serotonin]]
-  Imidazole: [[c3::Histamin]]
+  Imidazole: [[cr3::Histamin]]

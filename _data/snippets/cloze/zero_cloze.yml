@@ -1,0 +1,5 @@
+name: "Zero clozes"
+code: |
+  The capital of Botswana is [[c0::Gaborone]].
+  # contrast this with the behavior of unnumbered clozes:
+  The capital of Argentina is [[c::Buenos Aires]].

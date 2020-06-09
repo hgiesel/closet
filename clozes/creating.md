@@ -18,32 +18,49 @@ parent: Clozes
 ---
 ## Unnumbered Clozes
 
-The cloze text is surrounded by a `c` tag.
-By default, an unnumbered cloze will always be considered [active](/clozes#active-and-inactive-clozes).
+Clozes are surrounded by `c` tags.
+By default, an unnumbered cloze will always be considered [inactive](/clozes#active-and-inactive-clozes).
 
 {% include codeDisplay.md content=cloze.first_example filterManager=setups.default_cloze buttons=b %}
+
+Wow. As you can see, absolutely nothing happens.
+This is the specified behavior: the tag is inactive, and the default behavior for inactive clozes of this kind is to show their content.
+
+You can make this more interesting by either using [numbered clozes](#numbered-clozes), or by using [hiding clozes](#showing-and-hiding-clozes).
 
 ---
 ## Numbered Clozes
 
-In a flashcard, you would usually want to test each piece of knowledge individually.
-Which is is why rather than removing both passages, you'd want to create two flashcards, each removing a single passage, and highlighting it.
+Numbered clozes are go along with the notion of [active clozes](/clozes#active-and-inactive-clozes).
+Depending on the _context_, the card will be displayed differently.
 
-For these cards, there is the notion of a _current cloze_.
+In Anki, this context is provided for us in the form of card types.
+Closet will use this information and render the card accordingly.
 
 {% include codeDisplay.md content=cloze.numbered_cloze filterManager=setups.default_cloze buttons=bOneTwo %}
 
+### Zero Clozes
+
+Another way to have active clozes is by using _zero clozes_.
+The counting for tag indices starts at __1__.
+If you provide a __0__ instead, it signals that this cloze is always supposed to be active.
+
+This way you can use clozes even outside of Note Types which are specifically set up to work with clozes.
+
+{% include codeDisplay.md content=cloze.zero_cloze filterManager=setups.default_cloze buttons=b %}
+
 ---
-## Showing and Hiding Clozes
+## Showing, Hiding, and Revealing Clozes
 
 In the above examples non-current clozes simply displayed their content.
 These are called _showing clozes_.
-You might also instead want to simply hide the content.
-This might create less interference for recalling the current cloze.
+
+To avoid interference, you might want to hide the content, or only hide the content on the front and show on the back.
+For the first case, you'd use _hiding clozes_, for the second case you'd use _revealing clozes_.
 
 {% include codeDisplay.md content=cloze.hiding_cloze filterManager=setups.default_cloze buttons=bOneTwoThree %}
 
-You can see here, how clozes under the `c` hide their content to avoid context information for the other clozes.
+In this example you can see how they different cloze types act differently.
 
 ---
 ## Hints

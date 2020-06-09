@@ -1,4 +1,5 @@
 name: "Default cloze"
 code: |
   filterManager.addRecipe(Closet.recipes.clozeShow())
-  filterManager.addRecipe(Closet.recipes.clozeHide())
+  filterManager.addRecipe(Closet.recipes.clozeHide('ch'))
+  filterManager.addRecipe(Closet.recipes.clozeReveal('cr'))

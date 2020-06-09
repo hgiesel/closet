@@ -1,2 +1,3 @@
+```closet
+{{ include.content.code | strip }}
 ```
-{{ include.content.code }}```

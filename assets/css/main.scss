@@ -23,3 +23,8 @@ a[href="//github.com/hgiesel/closet/"] {
 
     }
 }
+
+code {
+    // overwrite just-the-docs in favor of prismjs
+    border-style: none;
+}

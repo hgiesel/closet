@@ -1,10 +1,14 @@
 {% assign theButtons = include.buttons | split: "; " %}
 
+{% assign contentId = include.content.name | slugify %}
+
 {% assign fmId = include.filterManager.name | slugify %}
 {% assign fmCode = include.filterManager.code | strip %}
 
+{% assign theId = contentId | append: "-with-" | append: fmId %}
+
 <div class="code-container" markdown="1">
-  <div class="code-example" id="{{ include.content.name | slugify }}">
+  <div class="code-example" id="{{ theId }}">
     <button class="btn-fm btn-purple btn-outline">fm</button>
 
     <div class="output-display"></div>

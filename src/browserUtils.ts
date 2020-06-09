@@ -308,3 +308,6 @@ export const appendStyleScript = (input: string): void => {
     styleSheet.innerText = input
     globalThis.document.head.appendChild(styleSheet)
 }
+
+export const zeroWidthSpaceEntity = "&#8203;"
+export const wordBreakTag = "<wbr />"

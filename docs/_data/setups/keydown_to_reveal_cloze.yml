@@ -1,0 +1,41 @@
+name: Keydown to reveal clozes
+code: |
+  const createRemoveObscureKd = function(keycode, uid) {
+    return function(event) {
+      if (event.keyCode === keycode) {
+        const nextTarget = document.querySelector(`.sr--obscure.sr--obscure-kd-${uid}`)
+        console.log(nextTarget)
+
+        if (nextTarget) {
+          nextTarget.classList.remove('sr--obscure')
+          nextTarget.classList.remove('sr--obscure-hint')
+          nextTarget.classList.remove('sr--obscure-fix')
+        }
+        else {
+          event.currentTarget.removeEventListener('keydown', removeObscureKd)
+        }
+      }
+    }
+  }
+
+  const createRemoveObscureKdAll = function(keycode, uid) {
+    return function(event) {
+      if (event.keyCode === keycode) {
+        const nextTargets = document.querySelectorAll(`.sr--obscure.sr--obscure-kd-${uid}`)
+        console.log(nextTargets)
+
+        for (const nt of nextTargets) {
+          nt.classList.remove('sr--obscure')
+          nt.classList.remove('sr--obscure-hint')
+          nt.classList.remove('sr--obscure-fix')
+        }
+
+        if (nextTargets.length === 0) {
+          event.currentTarget.removeEventListener('keydown', removeObscureKdAll)
+        }
+      }
+    }
+  }
+
+  document.addEventListener('keydown', createRemoveObscureKd(KeyEvent.DOM_VK_A, '6'))
+  document.addEventListener('keydown', createRemoveObscureKdAll(KeyEvent.DOM_VK_S, '5'))

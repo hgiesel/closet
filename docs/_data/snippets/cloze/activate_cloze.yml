@@ -1,4 +1,4 @@
-name: "Activate clozes"
+name: Activate clozes
 code: |
   The four major dopaminergic pathways:
   * [[c1::Mesolimbic pathway::starts with M[[on::c4,c5,c6]]]]

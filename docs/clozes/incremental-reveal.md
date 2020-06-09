@@ -20,6 +20,6 @@ parent: Clozes
 
 this is a test
 
-{% include codeDisplay.md content=cloze.activate_cloze_with_occur filterManager=setups.click_to_reveal_cloze buttons=bOneTwoThree %}
+{% include codeDisplay.md content=cloze.click_to_reveal filterManager=setups.click_to_reveal_cloze buttons=bOneTwoThree %}
 
 foobar meh

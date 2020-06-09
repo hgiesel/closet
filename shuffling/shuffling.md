@@ -8,6 +8,9 @@ parent: Shuffling
 
 {% assign b = "Render, render, {}, false" %}
 
+{% assign shuffling = site.data.snippets.shuffling %}
+{% assign setups = site.data.setups %}
+
 {% include toc-doc.md %}
 
 ---
@@ -17,11 +20,7 @@ parent: Shuffling
 Items can easily be shuffled using the `mix` tag.
 Items to be shuffled must be separated by `||`.
 
-{% capture defaultFm %}
-filterManager.addRecipe(Closet.recipes.shuffling('mix'))
-{% endcapture %}
-
-{% include codeDisplay.md content=site.data.snippets.shuffling.first_example filterManager=defaultFm buttons=b %}
+{% include codeDisplay.md content=shuffling.first_example filterManager=setups.shuffle_order buttons=b %}
 
 ---
 
@@ -30,11 +29,11 @@ filterManager.addRecipe(Closet.recipes.shuffling('mix'))
 If you want to shuffle non-contiguous areas, you need to use _numbered_ tags.
 Instead of using `mix`, you should use `mix1`, `mix2`, etc.
 
-{% include codeDisplay.md content=site.data.snippets.shuffling.non_contiguous filterManager=defaultFm buttons=b %}
+{% include codeDisplay.md content=shuffling.non_contiguous filterManager=setups.shuffle_order buttons=b %}
 
 When using numbered `mix` tags, they will preserve their original amount of items.
 
-{% include codeDisplay.md content=site.data.snippets.shuffling.preserve_item_count filterManager=defaultFm buttons=b %}
+{% include codeDisplay.md content=shuffling.preserve_item_count filterManager=setups.shuffle_order buttons=b %}
 
 ---
 

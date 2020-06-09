@@ -48,7 +48,7 @@ const codeCM = CodeMirror.fromTextArea(codeTA, {
 const sparams = new URLSearchParams(location.search)
 
 if (sparams.has('text')) {
-    codeCM.setValue(sparams.get('text'))
+    codeCM.setValue(sparams.get('text').trim())
 }
 
 //////////////////// presetCM
@@ -62,7 +62,17 @@ const presetCM = CodeMirror.fromTextArea(presetTA, {
 })
 
 if (sparams.has('preset')) {
-    presetCM.setValue(sparams.get('preset'))
+    let presetValue = null
+
+    try {
+        const tryParse = JSON.parse(sparams.get('preset'))
+        presetValue = JSON.stringify(tryParse, null, 2)
+    }
+    catch {
+        presetValue = '{}'
+    }
+
+    presetCM.setValue(presetValue)
 }
 
 //////////////////// reuse memory

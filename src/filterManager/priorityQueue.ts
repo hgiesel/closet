@@ -9,7 +9,7 @@ export class PriorityQueue<T> {
     private readonly _heap: T[]
     private readonly _comparator: Comparator
 
-    constructor(comparator: Comparator = (a, b) => a > b) {
+    constructor(comparator: Comparator) {
         this._heap = []
         this._comparator = comparator
     }

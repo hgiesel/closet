@@ -13,8 +13,8 @@ interface DeferredEntry {
 }
 
 interface DeferredOptions {
-    priority: number
-    persistent: boolean
+    priority?: number
+    persistent?: boolean
 }
 
 const defaultDeferredOptions: DeferredOptions = {
@@ -22,7 +22,8 @@ const defaultDeferredOptions: DeferredOptions = {
     persistent: false,
 }
 
-const deferredComparator: Comparator = (x: DeferredEntry, y: DeferredEntry) => x.priority < y.priority
+// bigger number means higher priority, and higher priority means executed first
+const deferredComparator: Comparator = (x: DeferredEntry, y: DeferredEntry): boolean => x.priority > y.priority
 
 export class DeferredApi {
     private readonly _deferred: Map<string, DeferredEntry>
@@ -33,12 +34,16 @@ export class DeferredApi {
         this._blocked = new Set()
     }
 
-    register(keyword: string, procedure: Deferred, options = defaultDeferredOptions): void {
+    register(keyword: string, procedure: Deferred, {
+        priority = 0,
+        persistent = false,
+    }: DeferredOptions,
+    ): void {
         this._deferred.set(keyword, {
             keyword: keyword,
             procedure: procedure,
-            priority: options.priority,
-            persistent: options.persistent,
+            priority: priority,
+            persistent: persistent,
         })
     }
 

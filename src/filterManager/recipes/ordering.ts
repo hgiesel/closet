@@ -65,7 +65,7 @@ export const orderingRecipe = ({
                 deferred.unregister(ordKey)
             }
         }, {
-            priority: -35,
+            priority: 35,
             persistent: true
         })
 

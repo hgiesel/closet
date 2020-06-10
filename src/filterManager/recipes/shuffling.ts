@@ -68,11 +68,15 @@ export const shufflingRecipe = ({
         /////////// TRY TO SHUFFLE FROM DEFERRED LOGIC
         // shuffle with num is round.ready for shuffling
         deferred.registerIfNotExists(applyKey, () => {
+            console.log('bye')
             cache.set(applyKey, true)
             cache.over(waitingSetKey, (set: Set<string>) => set.delete(tagIdentifier), new Set())
+        }, {
+            priority: 10,
         })
 
         deferred.registerIfNotExists(shuffleKey, () => {
+            console.log('hi')
             if (cache.get(waitingSetKey, new Set()).size > 0) {
                 return
             }

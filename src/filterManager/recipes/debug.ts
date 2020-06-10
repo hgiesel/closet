@@ -1,5 +1,4 @@
-import type { FilterApi } from '../filters'
-import type { Tag } from '../../tags'
+import type { FilterApi, Tag } from './types'
 
 export const debugRecipe = (filterApi: FilterApi) => {
     const pathFilter = ({path}: Tag) => path.join(':')

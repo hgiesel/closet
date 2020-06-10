@@ -33,7 +33,7 @@ export const shufflingRecipe = ({
                 popped.push(possibleValues.shift() /* pop off start, so it looks comprehensible in simple cases */)
             }
 
-            return stylizer.stylizeInner(popped)
+            return stylizer.stylize(popped)
         }
 
         if (!round.ready) {
@@ -42,7 +42,7 @@ export const shufflingRecipe = ({
         }
 
         if (!num) {
-            return stylizer.stylizeInner(shuffle(values[0]) as string[])
+            return stylizer.stylize(shuffle(values[0]) as string[])
         }
 
         cache.fold(fullKey, (v: unknown[]) => v.concat(values[0]), [])

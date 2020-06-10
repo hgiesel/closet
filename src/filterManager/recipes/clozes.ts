@@ -1,16 +1,13 @@
-import type { Tag } from '../../tags'
-import type { FilterApi } from '../filters'
-import type { Internals } from '..'
-import { InnerStylizer } from './stylizer'
+import type { Tag, FilterApi, Internals, EllipsisMaker } from './types'
+
+import { Stylizer } from './stylizer'
 import { fourWayRecipe } from './nway'
 import { isBack, isActive } from './deciders'
 import { zeroWidthSpace } from './utils'
 
-const defaultStylizer = new InnerStylizer({
+const defaultStylizer = new Stylizer({
     postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
-
-type EllipsisMaker = (t: Tag, i: Internals, isActive: boolean) => string
 
 const defaultEllipsisMaker = ({ values }: Tag, _inter: Internals, isActive: boolean): string => {
     return zeroWidthSpace + '[' + (
@@ -40,10 +37,10 @@ const clozeTemplateRecipe = (
         isBack,
         (t, inter) => isActive(t, inter) || activeOverwrite,
         /* back */
-        (tag) => activeStylizer.stylizeInner(tag.values[0]),
+        (tag) => activeStylizer.stylize(tag.values[0]),
         backBehavior(ellipsisMaker),
         /* front */
-        (tag, inter) => activeStylizer.stylizeInner([
+        (tag, inter) => activeStylizer.stylize([
             ellipsisMaker(tag, inter, true)
         ]),
         frontBehavior(ellipsisMaker),

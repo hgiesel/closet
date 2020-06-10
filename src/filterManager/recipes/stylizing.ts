@@ -1,16 +1,16 @@
 import type { Tag } from '../../tags'
 import type { FilterApi } from '../filters'
-import { Stylizer } from './stylizer'
+import { FullStylizer } from './stylizer'
 
-export const styleRecipe = (
-    keyword: string,
-    stylizer = new Stylizer(),
-) => (filterApi: FilterApi) => {
+export const styleRecipe = ({
+    tagname,
+    stylizer = new FullStylizer(),
+}) => (filterApi: FilterApi) => {
     const styleFilter = (
         { values }: Tag,
     ) => {
-        return stylizer.stylize(values)
+        return stylizer.stylizeFull(values)
     }
 
-    filterApi.register(keyword, styleFilter as any)
+    filterApi.register(tagname, styleFilter as any)
 }

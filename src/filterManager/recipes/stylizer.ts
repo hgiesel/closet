@@ -1,84 +1,96 @@
 import { id } from './utils'
 
 type StringFunction = (v: string) => string
+type StringPlusFunction = (v: string, i: number) => string
 
 export class Stylizer {
     readonly separator: string
-    readonly separatorOuter: string
-    readonly mapper: StringFunction
-    readonly mapperOuter: StringFunction
+    readonly mapper: StringPlusFunction
     readonly postprocess: StringFunction
 
     constructor({
         separator = ', ',
-        separatorOuter = '; ',
-        mapper = id as StringFunction,
-        mapperOuter = id as StringFunction,
+        mapper = id as StringPlusFunction,
         postprocess = id as StringFunction,
     } = {}) {
         this.separator = separator
-        this.separatorOuter = separatorOuter
         this.mapper = mapper
-        this.mapperOuter = mapperOuter
         this.postprocess = postprocess
     }
 
-    toInnerStylizer(): InnerStylizer {
-        return new InnerStylizer({
-            separator: this.separator,
-            mapper: this.mapper,
-            postprocess: this.postprocess,
+    toFullStylizer({
+        separator = this.separator,
+        separatorOuter = '; ',
+        mapper = this.mapper,
+        mapperOuter = id,
+        postprocess = this.postprocess,
+    } = {}): FullStylizer {
+        return new FullStylizer({
+            separator: separator,
+            mapper: mapper,
+            separatorOuter: separatorOuter,
+            mapperOuter: mapperOuter,
+            postprocess: postprocess,
         })
     }
 
-    stylize(input: string[][]): string {
+    stylize(input: string[], args?: number[]): string {
         return this.postprocess(input
-            .map(vs => vs.map(this.mapper).join(this.separator))
-            .map(this.mapperOuter)
-            .join(this.separatorOuter)
-        )
-    }
-
-    stylizeInner(input: string[]): string {
-        return this.postprocess(input
-            .map(this.mapper)
+            .map(args
+                ? (v, i) => this.mapper(v, args[i])
+                : (v, i) => this.mapper(v, i)
+            )
             .join(this.separator)
         )
     }
 }
 
-export class InnerStylizer {
-    readonly separator: string
-    readonly mapper: StringFunction
-    readonly postprocess: StringFunction
+export class FullStylizer extends Stylizer {
+    readonly separatorOuter: string
+    readonly mapperOuter: StringPlusFunction
+    readonly postprocessOuter: StringFunction
 
     constructor({
         separator = ', ',
-        mapper = id as StringFunction,
+        mapper = id as StringPlusFunction,
         postprocess = id as StringFunction,
+
+        separatorOuter = '; ',
+        mapperOuter = id as StringPlusFunction,
+        postprocessOuter = id as StringFunction,
     } = {}) {
-        this.separator = separator
-        this.mapper = mapper
-        this.postprocess = postprocess
+        super({
+            separator: separator,
+            mapper: mapper,
+            postprocess,
+        })
+
+        this.separatorOuter = separatorOuter
+        this.mapperOuter = mapperOuter
+        this.postprocessOuter = postprocessOuter
     }
 
     toStylizer({
-        separatorOuter = '; ',
-        mapperOuter = id,
+        separator = this.separator,
+        mapper = this.mapper,
+        postprocess = this.postprocess,
     } = {}): Stylizer {
         return new Stylizer({
-            separator: this.separator,
-            mapper: this.mapper,
-            separatorOuter: separatorOuter,
-            mapperOuter: mapperOuter,
-            postprocess: this.postprocess,
+            separator: separator,
+            mapper: mapper,
+            postprocess: postprocess,
         })
     }
 
-    stylizeInner(input: string[]): string {
-        return this.postprocess(input
-            .map(this.mapper)
-            .join(this.separator)
+    stylizeFull(input: string[][], args?: number[], innerArgs?: number[][]): string {
+        const innerResults = input.map((vs, i) => this.stylize(vs, innerArgs[i]))
+
+        return this.postprocessOuter(innerResults
+            .map(args
+                ? (v, i) => this.mapperOuter(v, args[i])
+                : (v, i) => this.mapperOuter(v, i)
+            )
+            .join(this.separatorOuter)
         )
     }
 }

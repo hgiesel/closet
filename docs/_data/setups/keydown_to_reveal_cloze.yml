@@ -46,14 +46,14 @@ code: |
     (e, inter) => {
       const keyword = 'keydownToRevealObscure'
 
-      if (!inter.global.has(keyword)) {
+      if (!inter.environment.has(keyword)) {
         const revealOnQ = makeObscureOnKd(KeyEvent.DOM_VK_Q, '6')
         const revealAllOnW = makeObscureOnKdAll(KeyEvent.DOM_VK_W, '5')
 
         document.addEventListener('keydown', revealOnQ)
         document.addEventListener('keydown', revealAllOnW)
 
-        inter.global.set(keyword, true)
+        inter.environment.set(keyword, true)
       }
     },
     Closet.recipes.clozeShow,

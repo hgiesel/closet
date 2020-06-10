@@ -24,7 +24,7 @@ export interface Internals {
 
     cache: Storage
     memory: Storage
-    global: Storage
+    environment: Storage
 
     deferred: DeferredApi
     aftermath: DeferredApi
@@ -51,7 +51,7 @@ export class FilterManager {
 
     private readonly cache: Storage
     private readonly memory: Storage
-    private readonly global: Storage
+    private readonly environment: Storage
 
     private readonly preset: object
 
@@ -66,11 +66,11 @@ export class FilterManager {
         this.cache = new Storage(new Map())
         this.memory = new Storage(memory)
 
-        if (!globalThis.closetGlobal) {
-            globalThis.closetGlobal = new Storage(new Map())
+        if (!globalThis.closetEnvironment) {
+            globalThis.closetEnvironment = new Storage(new Map())
         }
 
-        this.global = globalThis.closetGlobal
+        this.environment = globalThis.closetEnvironment
     }
 
     private getInternals(iteration: IterationInfo = null, round: RoundInfo = null): Internals {
@@ -83,7 +83,7 @@ export class FilterManager {
 
             cache: this.cache,
             memory: this.memory,
-            global: this.global,
+            environment: this.environment,
 
             deferred: this.deferred,
             aftermath: this.aftermath,

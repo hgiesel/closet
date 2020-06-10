@@ -94,3 +94,8 @@ export class FullStylizer extends Stylizer {
         )
     }
 }
+
+export const rawStylizer = new FullStylizer({
+    separator: '||',
+    separatorOuter: '::',
+})

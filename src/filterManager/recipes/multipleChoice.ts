@@ -4,6 +4,7 @@ import type { Internals } from '..'
 import { Stylizer } from './stylizer'
 import { fourWayRecipe } from './nway'
 import { isBack, isActive } from './deciders'
+import { sequencer } from './sequencer'
 
 const multipleChoiceDefaultStylizer = new Stylizer({
     mapper: (v: string, t: number) => {
@@ -17,7 +18,7 @@ const defaultEllipsisMaker = ({ values }: Tag, _inter: Internals, _isActive: boo
     ) + ']'
 }
 
-const valueJoiner = () => ({ values }: Tag): string => values[0].join('||')
+const defaultContextMaker = () => ({ values }: Tag): string => values[0].join('||')
 
 // const multipleChoiceTemplateRecipe = (
 //     backBehavior: (e: EllipsisMaker) => (t: Tag, i: Internals) => string,
@@ -29,7 +30,7 @@ const valueJoiner = () => ({ values }: Tag): string => values[0].join('||')
 
 //     categoryStylizer = multipleChoiceDefaultStylizer,
 //     ellipsisMaker = defaultEllipsisMaker,
-//     defaultMaker = defaultDefaultMaker,
+//     contextMaker = defaultContextMaker,
 // } = {}) => (filterApi: FilterApi) => {
 //     const internalFilter = `${tagname}:internal`
 //     let activeOverwrite = false

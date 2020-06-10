@@ -18,7 +18,7 @@ interface DeferredOptions {
 }
 
 const defaultDeferredOptions: DeferredOptions = {
-    priority: 50,
+    priority: 0,
     persistent: false,
 }
 

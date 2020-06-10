@@ -1,0 +1,9 @@
+name: "Activate clozes with conflict"
+code: |
+  The four major dopaminergic pathways:
+  * [[c1::Mesolimbic pathway::starts with M[[on::c1:0,c2:0,c3:0]]]]
+  * [[c1::Mesocortical pathway[[off::c1:0,c2:0]]]]
+  * [[c2::Nigostriatal pathway::starts with N]]
+  * [[c2::Tuberoinfundibular pathway]]
+  * [[c3::Hypothalamospinal projection]]
+  * [[c3::Incertohypothalamic pathway]]

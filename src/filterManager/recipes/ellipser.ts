@@ -6,14 +6,20 @@ const zeroWrap = (v: string) => zeroWidthSpace + v + zeroWidthSpace
 
 export const stylizeFullEllipser = (
     fullStylizer: FullStylizer,
-) => ({ values }: Tag, _inter: Internals): string => {
+): Ellipser => (
+    { values }: Tag,
+    _inter: Internals,
+): string => {
     return zeroWrap(fullStylizer.stylizeFull(values))
 }
 
 export const stylizeEllipser = (
     stylizer: Stylizer,
     getValues: (vs: string[][]) => string[],
-) => ({ values }: Tag, _inter: Internals): string => {
+): Ellipser => (
+    { values }: Tag,
+    _inter: Internals,
+): string => {
     return zeroWrap(stylizer.stylize(getValues(values)))
 }
 

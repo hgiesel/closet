@@ -4,8 +4,7 @@ import { Stylizer } from './stylizer'
 import { fourWayRecipe } from './nway'
 import { isBack, isActive } from './deciders'
 import { sequencer } from './sequencer'
-import { FullStylizer } from './stylizer'
-import { noneEllipser, stylizeFullEllipser  } from './ellipser'
+import { noneEllipser, stylizeEllipser  } from './ellipser'
 
 const mcDefaultFrontStylizer = new Stylizer({
     separator: ', ',
@@ -20,6 +19,20 @@ const mcDefaultBackStylizer = mcDefaultFrontStylizer.toStylizer({
         return `<span style="color: ${t === 0 ? 'lime' : 'red'};">${v}</span>`
     },
 })
+
+const defaultContexter = (tag: Tag, internals: Internals) => {
+    const maybeValues = sequencer(
+        `${tag.fullKey}:${tag.fullOccur}`,
+        `${tag.fullKey}:${tag.fullOccur}`,
+        tag.values[0],
+        internals,
+    )
+
+    if (maybeValues) {
+        const stylizer = new Stylizer()
+        return stylizer.stylize(maybeValues)
+    }
+}
 
 const activeBehavior = (
     stylizer: Stylizer,
@@ -52,11 +65,11 @@ const multipleChoiceTemplateRecipe = (
     switcherKeyword = 'switch',
     activateKeyword = 'activate',
 
-    frontStylizer = mcDefaultFrontStylizer,
     backStylizer = mcDefaultBackStylizer,
+    frontStylizer = mcDefaultFrontStylizer,
 
     ellipser = noneEllipser,
-    contexter = stylizeFullEllipser(new FullStylizer()),
+    contexter = defaultContexter,
 }) => (filterApi: FilterApi) => {
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
@@ -94,4 +107,4 @@ const useContexter = (_e: Ellipser, c: Ellipser) => c
 
 export const multipleChoiceShowRecipe = multipleChoiceTemplateRecipe(useContexter, useContexter)
 export const multipleChoiceHideRecipe = multipleChoiceTemplateRecipe(useEllipser, useEllipser)
-export const multipleChoiceRevealRecipe = multipleChoiceTemplateRecipe(useEllipser, useContexter)
+export const multipleChoiceRevealRecipe = multipleChoiceTemplateRecipe(useContexter, useEllipser)

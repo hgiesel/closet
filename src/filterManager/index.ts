@@ -19,11 +19,12 @@ export interface Internals {
     filters: FilterApi
 
     preset: object
-    iteration: IterationInfo
-    round: RoundInfo
+    iteration: IterationInfo | null
+    round: RoundInfo | null
 
     cache: Storage
     memory: Storage
+    global: Storage
 
     deferred: DeferredApi
     aftermath: DeferredApi
@@ -50,6 +51,7 @@ export class FilterManager {
 
     private readonly cache: Storage
     private readonly memory: Storage
+    private readonly global: Storage
 
     private readonly preset: object
 
@@ -63,35 +65,44 @@ export class FilterManager {
 
         this.cache = new Storage(new Map())
         this.memory = new Storage(memory)
+
+        if (!globalThis.closetGlobal) {
+            globalThis.closetGlobal = new Storage(new Map())
+        }
+
+        this.global = globalThis.closetGlobal
+    }
+
+    private getInternals(iteration: IterationInfo = null, round: RoundInfo = null): Internals {
+        return {
+            filters: this.filters,
+
+            preset: this.preset,
+            iteration: iteration,
+            round: round,
+
+            cache: this.cache,
+            memory: this.memory,
+            global: this.global,
+
+            deferred: this.deferred,
+            aftermath: this.aftermath,
+        }
     }
 
     filterProcessor(iteration: IterationInfo): FilterProcessor {
         return (data: Filterable, round: RoundInfo): FilterResult => {
-            const internals: Internals = {
-                filters: this.filters,
-
-                preset: this.preset,
-                iteration: iteration,
-                round: round,
-
-                cache: this.cache,
-                memory: this.memory,
-
-                deferred: this.deferred,
-                aftermath: this.aftermath,
-            }
-
-            const result = this.filters.execute(data, internals)
+            const result = this.filters.execute(data, this.getInternals(iteration, round))
             return result
         }
     }
 
-    executeDeferred() {
-        this.deferred.executeEach()
+    executeDeferred(iteration: IterationInfo) {
+        this.deferred.executeEach(this.getInternals(iteration))
     }
 
     executeAftermath() {
-        this.aftermath.executeEach()
+        this.aftermath.executeEach(this.getInternals())
     }
 
     clearMemory() {

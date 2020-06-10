@@ -1,12 +1,9 @@
-import type {
-    Comparator,
-} from './priorityQueue'
+import type { Comparator } from './priorityQueue'
+import type { Internals } from '.'
 
-import {
-    PriorityQueue,
-} from './priorityQueue'
+import { PriorityQueue } from './priorityQueue'
 
-export type Deferred = (keyword: string, ...rest: any[]) => void
+export type Deferred = (entry: DeferredEntry, internals: Internals) => void
 
 interface DeferredEntry {
     keyword: string,
@@ -76,13 +73,13 @@ export class DeferredApi {
         this._blocked.clear()
     }
 
-    executeEach(...args: any[]): void {
+    executeEach(internals: Internals): void {
         const prioQueue = new PriorityQueue<DeferredEntry>(deferredComparator)
         prioQueue.push(...this._deferred.values())
 
         for (const def of prioQueue.generate()) {
             if (!this.isBlocked(def.keyword)) {
-                def.procedure(def.keyword, ...args)
+                def.procedure(def, internals)
             }
 
             if (!def.persistent) {

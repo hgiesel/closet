@@ -40,6 +40,14 @@ export const baseRender = (text: string[], filterManager: FilterManager, baseDep
         const rootTag = parse(text, baseDepth)
         const templateApi = new TemplateApi(rootTag)
 
+        const iterationInfo = {
+            iteration: {
+                index: i,
+            },
+            template: templateApi,
+            baseDepth: baseDepth,
+        }
+
         const [
             newText,
             /* finalOffset */,
@@ -49,19 +57,13 @@ export const baseRender = (text: string[], filterManager: FilterManager, baseDep
             text.join(''),
             rootTag,
             baseDepth,
-            filterManager.filterProcessor({
-                iteration: {
-                    index: i,
-                },
-                template: templateApi,
-                baseDepth: baseDepth,
-            })
+            filterManager.filterProcessor(iterationInfo),
         )
 
         text = splitTextFromIntervals(newText, baseStack)
         ready = innerReady
 
-        filterManager.executeDeferred()
+        filterManager.executeDeferred(iterationInfo)
     }
 
     return text

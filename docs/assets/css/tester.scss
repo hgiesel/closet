@@ -11,6 +11,9 @@
         align-content: center;
         flex-wrap: wrap;
 
+        // paints button content always over #template-applied
+        z-index: 3;
+
         & > * {
             margin-right: 0.5rem;
             margin-top: 0.5rem;

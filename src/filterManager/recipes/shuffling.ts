@@ -1,6 +1,4 @@
-import type { Tag } from '../../tags'
-import type { FilterApi } from '../filters'
-import type { Internals } from '..'
+import type { Tag, FilterApi, Internals } from './types'
 
 import { Stylizer } from './stylizer'
 
@@ -10,10 +8,10 @@ import {
     topUpSortingIndices,
 } from './utils'
 
-export const shufflingRecipe = (
-    keyword: string,
+export const shufflingRecipe = ({
+    tagname,
     stylizer = new Stylizer(),
-) => (filterApi: FilterApi) => {
+}) => (filterApi: FilterApi) => {
     const mixFilter = (
         { fullKey, fullOccur, num, values }: Tag,
         { cache, memory, deferred, round }: Internals,
@@ -71,5 +69,5 @@ export const shufflingRecipe = (
         })
     }
 
-    filterApi.register(keyword, mixFilter as any)
+    filterApi.register(tagname, mixFilter as any)
 }

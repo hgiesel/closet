@@ -1,14 +1,4 @@
-import type {
-    Tag
-} from '../../tags'
-
-import type {
-    FilterApi
-} from '../filters'
-
-import type {
-    Internals,
-} from '..'
+import type { Tag, FilterApi, Internals } from './types'
 
 import {
     allowCommaStyle,
@@ -17,7 +7,10 @@ import {
     topUpSortingIndices,
 } from './utils'
 
-export const orderingRecipe = (keyword: string, mixKeyword: string) => (filterApi: FilterApi) => {
+export const orderingRecipe = ({
+    tagname,
+    mixTagname,
+}) => (filterApi: FilterApi) => {
     const ordFilter = (
         { key, fullOccur, values, valuesRaw }: Tag,
         { deferred, cache }: Internals,
@@ -31,7 +24,7 @@ export const orderingRecipe = (keyword: string, mixKeyword: string) => (filterAp
         cache.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])
 
         const mixKeys = new Set(
-            toBeOrdered.map((v: number) => `${mixKeyword}${v}`)
+            toBeOrdered.map((v: number) => `${mixTagname}${v}`)
         )
 
         const ordKey = `${key}:${fullOccur}:ord`
@@ -79,5 +72,5 @@ export const orderingRecipe = (keyword: string, mixKeyword: string) => (filterAp
         return ''
     }
 
-    filterApi.register(keyword, ordFilter as any)
+    filterApi.register(tagname, ordFilter as any)
 }

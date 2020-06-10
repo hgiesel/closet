@@ -17,7 +17,7 @@ import { activateRecipe, deactivateRecipe, toggleRecipe } from './activate'
 
 import { wrapWithDeferred, wrapWithAftermath } from './wrappers'
 
-export const recipes /* TODO : Recipes */ = {
+export const recipes/*: Recipes TODO*/ = {
     shuffling: shufflingRecipe,
     ordering: orderingRecipe,
 

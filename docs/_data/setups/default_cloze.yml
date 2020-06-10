@@ -1,5 +1,14 @@
 name: "Default cloze"
 code: |
-  filterManager.addRecipe(Closet.recipes.clozeShow())
-  filterManager.addRecipe(Closet.recipes.clozeHide({ tagname: 'ch' }))
-  filterManager.addRecipe(Closet.recipes.clozeReveal({ tagname: 'cr' }))
+  const recipes = [
+    Closet.recipes.clozeShow({ tagname: 'c' }),
+    Closet.recipes.clozeHide({ tagname: 'ch' }),
+    Closet.recipes.clozeReveal({ tagname: 'cr' }),
+    Closet.recipes.activate({ tagname: 'on' }),
+    Closet.recipes.deactivate({ tagname: 'off' }),
+    Closet.recipes.toggle({ tagname: 'toggle' }),
+  ]
+
+  for (const recipe of recipes) {
+    filterManager.addRecipe(recipe)
+  }

@@ -1,6 +1,4 @@
-import type { Tag } from '../../tags'
-import type { FilterApi } from '../filters'
-import type { Internals } from '..'
+import type { Tag, FilterApi, Internals } from './types'
 import { allowCommaStyle, keyPattern } from './utils'
 
 class ActivateMap {
@@ -69,7 +67,7 @@ class ActivateMap {
 }
 
 const activateFilterTemplate = (
-    activateKeyword: string,
+    activateId: string,
     operation: (key: string, occur: number | null, num: number | null) => (a: ActivateMap) => void,
 ) => ({ values, valuesRaw }: Tag, { cache }: Internals) => {
     const commands = allowCommaStyle(values, valuesRaw)
@@ -86,18 +84,18 @@ const activateFilterTemplate = (
             ? null
             : Number(num)
 
-        cache.over(`${key}:${activateKeyword}`, operation(key, theNum, theOccur), new ActivateMap())
+        cache.over(`${key}:${activateId}`, operation(key, theNum, theOccur), new ActivateMap())
     })
 
     return ''
 }
 
 export const activateRecipe = ({
-    keyword = 'on',
-    activateKeyword = 'activate'
-} = {}) => (filterApi: FilterApi) => {
-    filterApi.register(keyword, activateFilterTemplate(
-        activateKeyword,
+    tagname,
+    activateId = 'activate',
+}) => (filterApi: FilterApi) => {
+    filterApi.register(tagname, activateFilterTemplate(
+        activateId,
         (key, num, occur) => (activateMap) => {
             activateMap.on(key, num, occur)
         }
@@ -105,11 +103,11 @@ export const activateRecipe = ({
 }
 
 export const deactivateRecipe = ({
-    keyword = 'off',
-    activateKeyword = 'activate'
-} = {}) => (filterApi: FilterApi) => {
-    filterApi.register(keyword, activateFilterTemplate(
-        activateKeyword,
+    tagname,
+    activateId = 'activate',
+}) => (filterApi: FilterApi) => {
+    filterApi.register(tagname, activateFilterTemplate(
+        activateId,
         (key, num, occur) => (activateMap) => {
             activateMap.off(key, num, occur)
         }
@@ -117,11 +115,11 @@ export const deactivateRecipe = ({
 }
 
 export const toggleRecipe = ({
-    keyword = 'toggle',
-    activateKeyword = 'activate'
-} = {}) => (filterApi: FilterApi) => {
-    filterApi.register(keyword, activateFilterTemplate(
-        activateKeyword,
+    tagname,
+    activateId = 'activate',
+}) => (filterApi: FilterApi) => {
+    filterApi.register(tagname, activateFilterTemplate(
+        activateId,
         (key, num, occur) => (activateMap) => {
             activateMap.toggle(key, num, occur)
         }

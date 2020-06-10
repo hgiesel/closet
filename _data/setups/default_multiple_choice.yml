@@ -10,6 +10,10 @@ code: |
     Closet.recipes.multipleChoiceReveal({
       tagname: 'mcr',
     }),
+
+    Closet.recipes.activate({ tagname: 'on' }),
+    Closet.recipes.deactivate({ tagname: 'off' }),
+    Closet.recipes.toggle({ tagname: 'toggle' }),
   ]
 
   for (const recipe of recipes) {

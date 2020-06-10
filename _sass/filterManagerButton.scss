@@ -44,7 +44,10 @@
     }
 
     &.show {
-        display: block;
+        display: grid;
+
+        margin-top: 0.3rem;
+        grid-gap: 0.3rem;
     }
 
     & > li {
@@ -57,6 +60,9 @@
         // green
         background-color: #0fa276;
         background-image: linear-gradient(#12be8b, #0fa276);
+
+        // overwrite just-the-docs
+        margin: 0;
 
         &:hover {
             box-shadow: inset 0 0 0 3px white !important;

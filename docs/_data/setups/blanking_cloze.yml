@@ -1,12 +1,13 @@
 name: Blanking Clozes
 code: |
-  const blank = function({ values }, _i, isCurrent) {
-    return isCurrent
+  const blank = function({ values }, _i, isActive) {
+    return isActive
       ? values[0].join('||').replace(Closet.unicodeAlphanumericPattern, '_')
       : '[...]'
   }
 
   filterManager.addRecipe(Closet.recipes.clozeShow({
+    tagname: 'c',
     ellipsisMaker: blank,
   }))
 

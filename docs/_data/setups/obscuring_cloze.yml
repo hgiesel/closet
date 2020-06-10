@@ -1,7 +1,7 @@
 name: Obscuring clozes
 code: |
-  const obscure = function({ values }, _i, isCurrent) {
-    return isCurrent
+  const obscure = function({ values }, _i, isActive) {
+    return isActive
       ? '<span style="filter: blur(0.2rem);">' + values[0].join('||') + '</span>'
       : '[...]'
   }
@@ -11,6 +11,7 @@ code: |
   })
 
   filterManager.addRecipe(Closet.recipes.clozeShow({
+    tagname: 'c',
     ellipsisMaker: obscure,
     activeStylizer: useYellow,
   }))

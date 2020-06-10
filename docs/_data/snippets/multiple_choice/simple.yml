@@ -1,0 +1,3 @@
+name: Simple Multiple Choice example
+code: |
+  The capital of Italy: [[mc0::Rome::Berlin||Paris]].

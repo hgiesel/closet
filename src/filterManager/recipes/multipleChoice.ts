@@ -16,7 +16,7 @@ const mcDefaultFrontStylizer = new Stylizer({
 })
 
 const mcDefaultBackStylizer = mcDefaultFrontStylizer.toStylizer({
-    mapper: (v: string, t: number) => {
+    mapper: (v: string, _i, t: number) => {
         return `<span style="color: ${t === 0 ? 'lime' : 'red'};">${v}</span>`
     },
 })

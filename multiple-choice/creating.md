@@ -14,3 +14,8 @@ parent: Multiple Choice
 {% assign setups = site.data.setups %}
 
 {% include toc-doc.md %}
+
+
+## Creating multiple choice
+
+{% include codeDisplay.md content=mc.simple filterManager=setups.default_multiple_choice buttons=b %}

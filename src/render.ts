@@ -40,6 +40,7 @@ export const baseRender = (text: string[], filterManager: FilterManager, baseDep
         const rootTag = parse(text, baseDepth)
         const templateApi = new TemplateApi(rootTag)
 
+        console.info(`Iteration ${i}`)
         const iterationInfo = {
             iteration: {
                 index: i,

@@ -6,7 +6,7 @@ code: |
       : '[...]'
   }
 
-  const useYellow = new Closet.InnerStylizer({
+  const useYellow = new Closet.Stylizer({
     postprocess: v => `<span style="color: yellow;">${v}</span>`,
   })
 

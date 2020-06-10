@@ -34,6 +34,18 @@ export class Stylizer {
         })
     }
 
+    toStylizer({
+        separator = this.separator,
+        mapper = this.mapper,
+        postprocess = this.postprocess,
+    } = {}): Stylizer {
+        return new Stylizer({
+            separator: separator,
+            mapper: mapper,
+            postprocess: postprocess,
+        })
+    }
+
     stylize(input: string[], args?: number[]): string {
         return this.postprocess(input
             .map(args
@@ -68,18 +80,6 @@ export class FullStylizer extends Stylizer {
         this.separatorOuter = separatorOuter
         this.mapperOuter = mapperOuter
         this.postprocessOuter = postprocessOuter
-    }
-
-    toStylizer({
-        separator = this.separator,
-        mapper = this.mapper,
-        postprocess = this.postprocess,
-    } = {}): Stylizer {
-        return new Stylizer({
-            separator: separator,
-            mapper: mapper,
-            postprocess: postprocess,
-        })
     }
 
     stylizeFull(input: string[][], args?: number[], innerArgs?: number[][]): string {

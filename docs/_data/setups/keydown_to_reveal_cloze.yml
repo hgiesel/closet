@@ -59,24 +59,20 @@ code: |
     Closet.recipes.clozeShow,
   )
 
-  const obscureAndKeydown = (t, _i, isActive) => {
-    return isActive
-      ? `<span class="cl--obscure cl--obscure-hint cl--obscure-kd-5 cl--obscure-kd-6">${t.values[0].join('||')}</span>`
-      : '[...]'
+  const obscureAndKeydown = (t) => {
+    return `<span class="cl--obscure cl--obscure-hint cl--obscure-kd-5 cl--obscure-kd-6">${t.values[0].join('||')}</span>`
   }
 
-  const obscureAndKeydownFix = (t, _i, isActive) => {
-    return isActive
-      ? `<span class="cl--obscure cl--obscure-fix cl--obscure-kd-5 cl--obscure-kd-6"><span>${t.values[0].join('||')}</span></span>`
-      : '[...]'
+  const obscureAndKeydownFix = (t) => {
+    return `<span class="cl--obscure cl--obscure-fix cl--obscure-kd-5 cl--obscure-kd-6"><span>${t.values[0].join('||')}</span></span>`
   }
 
   filterManager.addRecipe(wrappedClozeShow({
     tagname: 'c',
-    ellipsisMaker: obscureAndKeydown,
+    activeEllipser: obscureAndKeydown,
   }))
 
   filterManager.addRecipe(wrappedClozeShow({
     tagname: 'cx',
-    ellipsisMaker: obscureAndKeydownFix,
+    activeEllipser: obscureAndKeydownFix,
   }))

@@ -34,24 +34,20 @@ code: |
     Closet.recipes.clozeShow,
   )
 
-  const obscureAndClick = (t, _i, isActive) => {
-    return isActive
-      ? `<span class="cl--obscure cl--obscure-hint cl--obscure-clickable">${t.values[0].join('||')}</span>`
-      : '[...]'
+  const obscureAndClick = (t) => {
+    return `<span class="cl--obscure cl--obscure-hint cl--obscure-clickable">${t.values[0].join('||')}</span>`
   }
 
-  const obscureAndClickFix = (t, _i, isActive) => {
-    return isActive
-      ? `<span class="cl--obscure cl--obscure-fix cl--obscure-clickable"><span>${t.values[0].join('||')}</span></span>`
-      : '[...]'
+  const obscureAndClickFix = (t) => {
+    return `<span class="cl--obscure cl--obscure-fix cl--obscure-clickable"><span>${t.values[0].join('||')}</span></span>`
   }
 
   filterManager.addRecipe(wrappedClozeShow({
     tagname: 'c',
-    ellipsisMaker: obscureAndClick,
+    activeEllipser: obscureAndClick,
   }))
 
   filterManager.addRecipe(wrappedClozeShow({
     tagname: 'cx',
-    ellipsisMaker: obscureAndClickFix,
+    activeEllipser: obscureAndClickFix,
   }))

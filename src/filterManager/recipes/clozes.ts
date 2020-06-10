@@ -1,33 +1,28 @@
-import type { Tag, FilterApi, Internals, EllipsisMaker } from './types'
+import type { Tag, FilterApi, Internals, Ellipser } from './types'
 
-import { Stylizer } from './stylizer'
+import { Stylizer, rawStylizer } from './stylizer'
 import { fourWayRecipe } from './nway'
 import { isBack, isActive } from './deciders'
-import { zeroWidthSpace } from './utils'
+import { hintEllipser, noneEllipser } from './ellipser'
+import { id } from './utils'
 
 const defaultStylizer = new Stylizer({
     postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-const defaultEllipsisMaker = ({ values }: Tag, _inter: Internals, isActive: boolean): string => {
-    return zeroWidthSpace + '[' + (
-        isActive && values[1] ? values[1].join('||') : '...'
-    ) + ']' + zeroWidthSpace
-}
-
-const valueJoiner = () => ({ values }: Tag): string => values[0].join('||')
-const makeEllipsis = (ellipsisMaker: EllipsisMaker) => (tag: Tag, inter: Internals) => ellipsisMaker(tag, inter, false)
+const joinValues = () => ({ values }: Tag): string => rawStylizer.stylize(values[0])
 
 const clozeTemplateRecipe = (
-    backBehavior: (e: EllipsisMaker) => (t: Tag, i: Internals) => string,
-    frontBehavior: (e: EllipsisMaker) => (t: Tag, i: Internals) => string,
+    backBehavior: (e: Ellipser) => (t: Tag, i: Internals) => string,
+    frontBehavior: (e: Ellipser) => (t: Tag, i: Internals) => string,
 ) => ({
     tagname = 'c',
     switcherKeyword = 'switch',
     activateKeyword = 'activate',
 
     activeStylizer = defaultStylizer,
-    ellipsisMaker = defaultEllipsisMaker,
+    activeEllipser = hintEllipser,
+    inactiveEllipser = noneEllipser,
 } = {}) => (filterApi: FilterApi) => {
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
@@ -38,12 +33,12 @@ const clozeTemplateRecipe = (
         (t, inter) => isActive(t, inter) || activeOverwrite,
         /* back */
         (tag) => activeStylizer.stylize(tag.values[0]),
-        backBehavior(ellipsisMaker),
+        backBehavior(inactiveEllipser),
         /* front */
         (tag, inter) => activeStylizer.stylize([
-            ellipsisMaker(tag, inter, true)
+            activeEllipser(tag, inter)
         ]),
-        frontBehavior(ellipsisMaker),
+        frontBehavior(inactiveEllipser),
     )
     clozeRecipe(filterApi)
 
@@ -62,6 +57,6 @@ const clozeTemplateRecipe = (
     filterApi.register(tagname, clozeFilter)
 }
 
-export const clozeShowRecipe = clozeTemplateRecipe(valueJoiner, valueJoiner)
-export const clozeHideRecipe = clozeTemplateRecipe(makeEllipsis, makeEllipsis)
-export const clozeRevealRecipe = clozeTemplateRecipe(valueJoiner, makeEllipsis)
+export const clozeShowRecipe = clozeTemplateRecipe(joinValues, joinValues)
+export const clozeHideRecipe = clozeTemplateRecipe(id, id)
+export const clozeRevealRecipe = clozeTemplateRecipe(id, joinValues)

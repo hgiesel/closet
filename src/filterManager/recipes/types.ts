@@ -8,4 +8,4 @@ export type { Internals } from '..'
 export type { Deferred } from '../deferred'
 
 export type Recipe = (options: object) => (filterApi: FilterApi) => void
-export type EllipsisMaker = (t: Tag, i: Internals, isActive: boolean) => string
+export type Ellipser = (t: Tag, i: Internals) => string

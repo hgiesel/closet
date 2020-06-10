@@ -54,14 +54,15 @@ const readyFmButton = (id, _fmCode) => {
     fmButton.addEventListener('click', () => {
         fmDisplay.style.display = 'block'
 
-        document.addEventListener('mousedown', (event) => {
-            const isClickInside = fmDisplay.contains(event.target);
+        const closePane = (event) => {
+            const isClickInside = fmDisplay.contains(event.target)
             if (!isClickInside) {
                 fmDisplay.style.display = 'none'
+                event.currentTarget.removeEventListener(event.type, closePane)
             }
-        }, {
-            once: true,
-        })
+        }
+
+        document.addEventListener('mousedown', closePane)
     })
 }
 

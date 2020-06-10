@@ -1,0 +1,58 @@
+name: Fancy shuffle
+code: |
+  const colorWheel = function*() {
+    while (true) {
+      yield 'pink'
+      yield 'lime'
+      yield 'yellow'
+    }
+  }
+
+  const cw = colorWheel()
+  cw.next()
+
+  const colorfulWithMiddleDot = new Closet.Stylizer({
+    separator: '・',
+    mapper: v => (
+      `<span style="color: ${cw.next().value};">${v}</span>`
+    ),
+    postprocess: v => `〈${v}〉`,
+  })
+
+  const withMiddleDot = new Closet.Stylizer({
+    separator: '・',
+  })
+
+  const withSlash = new Closet.Stylizer({
+    separator: ' / ',
+  })
+
+  const withVs = new Closet.Stylizer({
+    separator: ' vs ',
+    mapper: (v, i) => `${i}: ${v}`
+  })
+
+  filterManager.addRecipe(Closet.recipes.shuffling({
+    tagname: 'cmix',
+    stylizer: colorfulWithMiddleDot,
+  }))
+
+  filterManager.addRecipe(Closet.recipes.shuffling({
+    tagname: 'amix',
+    stylizer: withMiddleDot,
+  }))
+
+  filterManager.addRecipe(Closet.recipes.shuffling({
+    tagname: 'vmix',
+    stylizer: withVs,
+  }))
+
+  filterManager.addRecipe(Closet.recipes.shuffling({
+    tagname: 'mix',
+    stylizer: withSlash
+  }))
+
+  filterManager.addRecipe(Closet.recipes.ordering({
+    tagname: 'ord',
+    shuffleTagname: 'mix'
+  }))

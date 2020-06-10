@@ -9,7 +9,7 @@ import {
 
 export const orderingRecipe = ({
     tagname,
-    mixTagname,
+    shuffleTagname,
 }) => (filterApi: FilterApi) => {
     const ordFilter = (
         { key, fullOccur, values, valuesRaw }: Tag,
@@ -24,7 +24,7 @@ export const orderingRecipe = ({
         cache.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])
 
         const mixKeys = new Set(
-            toBeOrdered.map((v: number) => `${mixTagname}${v}`)
+            toBeOrdered.map((v: number) => `${shuffleTagname}${v}`)
         )
 
         const ordKey = `${key}:${fullOccur}:ord`

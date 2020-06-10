@@ -12,13 +12,21 @@ export const shufflingRecipe = ({
     tagname,
     stylizer = new Stylizer(),
 }) => (filterApi: FilterApi) => {
-    const mixFilter = (
+    const shuffleFilter = (
         { fullKey, fullOccur, num, values }: Tag,
         { cache, memory, deferred, round }: Internals,
     ) => {
         const id = `${fullKey}:${fullOccur}`
+        // identifies each set tag in waitingSet
+
         const waitingSetKey = `${fullKey}:waitingSet`
+        // per fullKey
+        // in cache: Set with all filters who wait for the inner sets to be ready
+
         const applyKey = `${id}:apply`
+        // per fullKey + fullOccur
+        // in cache: boolean whether ready for application
+        // in deferred: sets apply key true, clear id of ready set from waitingSet
 
         if (cache.get(applyKey, false)) {
             const waitingSet = cache.get(waitingSetKey, new Set()) as Set<string>
@@ -47,14 +55,14 @@ export const shufflingRecipe = ({
 
         cache.fold(fullKey, (v: unknown[]) => v.concat(values[0]), [])
 
-        // mix with num is round.ready for shuffling
+        // shuffle with num is round.ready for shuffling
         deferred.registerIfNotExists(applyKey, () => {
             cache.set(applyKey, true)
             cache.over(waitingSetKey, (set: Set<string>) => set.delete(id), new Set())
         })
 
-        const mixKey = `${fullKey}:mix`
-        deferred.registerIfNotExists(mixKey, () => {
+        const shuffleKey = `${fullKey}:shuffle`
+        deferred.registerIfNotExists(shuffleKey, () => {
             if (cache.get(waitingSetKey, new Set()).size > 0) {
                 return
             }
@@ -69,5 +77,5 @@ export const shufflingRecipe = ({
         })
     }
 
-    filterApi.register(tagname, mixFilter as any)
+    filterApi.register(tagname, shuffleFilter as any)
 }

@@ -66,11 +66,11 @@ After a few rounds, this operation will time out, and the remaining tags will st
 
 You can stylize the appearance of shuffled items however you like.
 
-{% include codeDisplay.md content=shuffling.japanese filterManager=setups.middle_dot buttons=b %}
+{% include codeDisplay.md content=shuffling.japanese filterManager=setups.fancy_shuffle buttons=b %}
 
 In the case that you want multiple shuffling styles at the same time, you can put each filter on different _keywords_.
 
-{% include codeDisplay.md content=shuffling.mixed_styles filterManager=setups.middle_dot buttons=b %}
+{% include codeDisplay.md content=shuffling.mixed_styles filterManager=setups.fancy_shuffle buttons=b %}
 
 Note how they items from tags with different keywords don't mix.
 

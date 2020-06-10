@@ -1,11 +1,20 @@
 import { Tag, Internals, Ellipser } from './types'
 import { zeroWidthSpace } from './utils'
-import { rawStylizer } from './stylizer'
+import { Stylizer, FullStylizer } from './stylizer'
 
-export const hintEllipser: Ellipser = ({ values }: Tag, _inter: Internals): string => {
-    return zeroWidthSpace + '[' + (
-        values[1] ? rawStylizer.stylize(values[1]) : '...'
-    ) + ']' + zeroWidthSpace
+const zeroWrap = (v: string) => zeroWidthSpace + v + zeroWidthSpace
+
+export const stylizeFullEllipser = (
+    fullStylizer: FullStylizer,
+) => ({ values }: Tag, _inter: Internals): string => {
+    return zeroWrap(fullStylizer.stylizeFull(values))
+}
+
+export const stylizeEllipser = (
+    stylizer: Stylizer,
+    getValues: (vs: string[][]) => string[],
+) => ({ values }: Tag, _inter: Internals): string => {
+    return zeroWrap(stylizer.stylize(getValues(values)))
 }
 
 export const noneEllipser: Ellipser = (): string => {

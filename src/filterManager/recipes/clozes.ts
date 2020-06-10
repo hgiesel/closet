@@ -1,10 +1,13 @@
 import type { Tag, FilterApi, Internals, Ellipser } from './types'
 
-import { Stylizer, rawStylizer } from './stylizer'
-import { fourWayRecipe } from './nway'
-import { isBack, isActive } from './deciders'
-import { hintEllipser, noneEllipser } from './ellipser'
 import { id } from './utils'
+import { fourWayRecipe } from './nway'
+
+import { Stylizer, rawStylizer } from './stylizer'
+import { isBack, isActive } from './deciders'
+import { noneEllipser, stylizeEllipser } from './ellipser'
+
+const hintEllipser = stylizeEllipser(rawStylizer, (v: string[][]) => v[1])
 
 const defaultStylizer = new Stylizer({
     postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,

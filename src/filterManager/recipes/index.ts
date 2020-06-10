@@ -7,8 +7,8 @@ interface Recipes {
 import { shufflingRecipe } from './shuffling'
 import { orderingRecipe } from './ordering'
 import { clozeShowRecipe, clozeHideRecipe, clozeRevealRecipe } from './clozes'
-// import { multipleChoiceShowRecipe, multipleChoiceHideRecipe } from './multipleChoice'
-import { randRecipe } from './rand'
+import { multipleChoiceShowRecipe, multipleChoiceHideRecipe, multipleChoiceRevealRecipe } from './multipleChoice'
+// import { randRecipe } from './rand'
 import { styleRecipe } from './stylizing'
 
 import { debugRecipe } from './debug'
@@ -17,7 +17,7 @@ import { activateRecipe, deactivateRecipe, toggleRecipe } from './activate'
 
 import { wrapWithDeferred, wrapWithAftermath } from './wrappers'
 
-export const recipes/*: Recipes TODO*/ = {
+export const recipes: Recipes = {
     shuffling: shufflingRecipe,
     ordering: orderingRecipe,
 
@@ -25,9 +25,9 @@ export const recipes/*: Recipes TODO*/ = {
     clozeHide: clozeHideRecipe,
     clozeReveal: clozeRevealRecipe,
 
-    random: randRecipe,
-    // multipleChoiceShow: multipleChoiceShowRecipe,
-    // multipleChoiceHide: multipleChoiceHideRecipe,
+    multipleChoiceShow: multipleChoiceShowRecipe,
+    multipleChoiceHide: multipleChoiceHideRecipe,
+    multipleChoiceReveal: multipleChoiceRevealRecipe,
 
     stylizing: styleRecipe,
 

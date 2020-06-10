@@ -3,8 +3,7 @@ import type { Tag } from '../../tags'
 
 const paramPattern = /%(\d*)/u
 
-export const metaRecipe = (filterApi: FilterApi) => {
-
+export const metaRecipe = () => (filterApi: FilterApi) => {
     filterApi.register('def', ({ values }: Tag, { filters }): FilterResult => {
         const outerValues = values
 

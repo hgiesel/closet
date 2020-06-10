@@ -1,7 +1,7 @@
 import { id } from './utils'
 
 type StringFunction = (v: string) => string
-type StringPlusFunction = (v: string, i: number) => string
+type StringPlusFunction = (v: string, i: number, ...a: any[]) => string
 
 export class Stylizer {
     readonly separator: string
@@ -46,12 +46,9 @@ export class Stylizer {
         })
     }
 
-    stylize(input: string[], args?: number[]): string {
+    stylize(input: string[], args?: unknown[][]): string {
         return this.postprocess(input
-            .map(args
-                ? (v, i) => this.mapper(v, args[i])
-                : (v, i) => this.mapper(v, i)
-            )
+            .map((v, i) => this.mapper(v, i, ...args.map(arg => arg[i])))
             .join(this.separator)
         )
     }
@@ -82,14 +79,11 @@ export class FullStylizer extends Stylizer {
         this.postprocessOuter = postprocessOuter
     }
 
-    stylizeFull(input: string[][], args?: number[], innerArgs?: number[][]): string {
-        const innerResults = input.map((vs, i) => this.stylize(vs, innerArgs[i]))
+    stylizeFull(input: string[][], args?: unknown[][][], argsOuter?: unknown[][]): string {
+        const innerResults = input.map((vs, i) => this.stylize(vs, args[i]))
 
         return this.postprocessOuter(innerResults
-            .map(args
-                ? (v, i) => this.mapperOuter(v, args[i])
-                : (v, i) => this.mapperOuter(v, i)
-            )
+            .map((v, i) => this.mapperOuter(v, i, argsOuter.map(arg => arg[i])))
             .join(this.separatorOuter)
         )
     }

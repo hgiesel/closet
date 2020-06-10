@@ -1,6 +1,6 @@
 import type { FilterApi, Tag } from './types'
 
-export const debugRecipe = (filterApi: FilterApi) => {
+export const debugRecipe = () => (filterApi: FilterApi) => {
     const pathFilter = ({path}: Tag) => path.join(':')
 
     filterApi.register('tagpath', pathFilter)

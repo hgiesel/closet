@@ -1,10 +1,11 @@
-
-import type { Tag, FilterApi, Internals } from './types'
+import type { Tag, FilterApi, Internals, Ellipser } from './types'
 
 import { Stylizer } from './stylizer'
 import { fourWayRecipe } from './nway'
 import { isBack, isActive } from './deciders'
 import { sequencer } from './sequencer'
+import { FullStylizer } from './stylizer'
+import { noneEllipser, stylizeFullEllipser  } from './ellipser'
 
 const mcDefaultFrontStylizer = new Stylizer({
     separator: ', ',
@@ -20,45 +21,60 @@ const mcDefaultBackStylizer = mcDefaultFrontStylizer.toStylizer({
     },
 })
 
-const defaultEllipsisMaker = ({ values }: Tag, _inter: Internals, _isActive: boolean): string => {
-    return '[...]'
+const activeBehavior = (
+    stylizer: Stylizer,
+) => (
+    { values, fullKey, fullOccur }: Tag,
+    internals: Internals,
+) => {
+    const flattedValuesWithIndex = (values as any).flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
+
+    const maybeValues = sequencer(
+        `${fullKey}:${fullOccur}`,
+        `${fullKey}:${fullOccur}`,
+        flattedValuesWithIndex,
+        internals,
+    )
+
+    if (maybeValues) {
+        return stylizer.stylize(
+            maybeValues.map(v => v[0]),
+            [maybeValues.map(v => v[1])],
+        )
+    }
 }
 
-const defaultContextMaker = () => ({ values }: Tag): string => values[0].join('||')
-
 const multipleChoiceTemplateRecipe = (
-    backBehavior: (e: EllipsisMaker, c: ContentMaker) => (t: Tag, i: Internals) => string,
-    frontBehavior: (e: EllipsisMaker) => (t: Tag, i: Internals) => string,
+    backBehavior: (e: Ellipser, c: Ellipser) => (t: Tag, i: Internals) => string,
+    frontBehavior: (e: Ellipser, c: Ellipser) => (t: Tag, i: Internals) => string,
 ) => ({
-    tagname = 'c',
+    tagname,
     switcherKeyword = 'switch',
     activateKeyword = 'activate',
 
     frontStylizer = mcDefaultFrontStylizer,
     backStylizer = mcDefaultBackStylizer,
 
-    ellipsisMaker = defaultEllipsisMaker,
-    contextMaker = defaultContextMaker,
-} = {}) => (filterApi: FilterApi) => {
+    ellipser = noneEllipser,
+    contexter = stylizeFullEllipser(new FullStylizer()),
+}) => (filterApi: FilterApi) => {
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
 
-    const clozeRecipe = fourWayRecipe(
+    const multipleChoiceRecipe = fourWayRecipe(
         internalFilter,
         isBack,
         (t, inter) => isActive(t, inter) || activeOverwrite,
         /* back */
-        (tag) => activeStylizer.stylize(tag.values[0]),
-        backBehavior(ellipsisMaker),
+        activeBehavior(backStylizer),
+        backBehavior(ellipser, contexter),
         /* front */
-        (tag, inter) => activeStylizer.stylize([
-            ellipsisMaker(tag, inter, true)
-        ]),
-        frontBehavior(ellipsisMaker),
+        activeBehavior(frontStylizer),
+        frontBehavior(ellipser, contexter),
     )
-    clozeRecipe(filterApi)
+    multipleChoiceRecipe(filterApi)
 
-    const clozeFilter = (tag: Tag, inter: Internals) => {
+    const multipleChoiceFilter = (tag: Tag, inter: Internals) => {
         const theFilter = inter.cache.get(`${tagname}:${switcherKeyword}`, {
             get: (_k: string, _n: number | null, _o: number) => internalFilter,
         }).get(tag.key, tag.num, tag.fullOccur)
@@ -70,5 +86,12 @@ const multipleChoiceTemplateRecipe = (
         return  inter.filters.get(theFilter)(tag, inter)
     }
 
-    filterApi.register(tagname, clozeFilter)
+    filterApi.register(tagname, multipleChoiceFilter)
 }
+
+const useEllipser = (e: Ellipser) => e
+const useContexter = (_e: Ellipser, c: Ellipser) => c
+
+export const multipleChoiceShowRecipe = multipleChoiceTemplateRecipe(useContexter, useContexter)
+export const multipleChoiceHideRecipe = multipleChoiceTemplateRecipe(useEllipser, useEllipser)
+export const multipleChoiceRevealRecipe = multipleChoiceTemplateRecipe(useEllipser, useContexter)

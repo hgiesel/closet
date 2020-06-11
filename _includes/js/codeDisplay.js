@@ -1,5 +1,5 @@
 {% assign contentId = include.content.name | slugify %}
-{% assign contentCode = include.content.code | replace: "'", "\\'" | newline_to_br | strip_newlines %}
+{% assign contentCode = include.content.code | replace: "'", "\\'" | strip | newline_to_br | strip_newlines %}
 
 {% assign fmId = include.filterManager.name | slugify %}
 {% assign fmCode = include.filterManager.code | strip %}

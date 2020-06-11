@@ -1,23 +1,31 @@
 import type { Tag, FilterApi, Internals, Deferred, Recipe } from './types'
 import type { DeferredApi } from '../deferred'
-import { id } from './utils'
+
+interface WrapOptions {
+    wrapId?: string
+    getTagnames?: (o: object) => string[]
+    setTagnames?: (o: object, newNames: string[]) => void
+}
+
+interface WithInternalKeyword {
+    keyInternal: string,
+}
 
 const defaultTagnameGetter = (o: object) => [o['tagname']]
 const defaultTagnameSetter = (o: object, newNames: string[]) => o['tagname'] = newNames[0]
+const defaultWrapId = 'wrapped'
 
-const wrapWithDeferredTypeTemplate = (
-    getApi: (inter: Internals) => DeferredApi,
+export const wrap = (
+    wrapped: (tag: Tag & WithInternalKeyword, internals: Internals) => void,
 ) => (
-    action: Deferred,
     mainRecipe: Recipe, {
-        wrapId = 'wrapped',
+        wrapId = defaultWrapId,
         getTagnames = defaultTagnameGetter,
         setTagnames = defaultTagnameSetter,
-        getApiKeyword = id as (v: string) => string,
-    } = {},
+    }: WrapOptions = {},
 ): Recipe => (
     options = {},
-) => (filterApi: FilterApi) => {
+) => (filterApi: FilterApi): void => {
     const tagnames = getTagnames(options)
 
     const keywordMap = new Map()
@@ -32,9 +40,8 @@ const wrapWithDeferredTypeTemplate = (
 
     const wrapFilter = (tag: Tag, inter: Internals) => {
         const internalKeyword = keywordMap.get(tag.key)
-        const apiKeyword = getApiKeyword(internalKeyword)
 
-        getApi(inter).registerIfNotExists(apiKeyword, action)
+        wrapped(Object.assign({}, tag, { keyInternal: internalKeyword }), inter)
 
         return inter.filters.get(internalKeyword)(tag, inter)
     }
@@ -44,5 +51,17 @@ const wrapWithDeferredTypeTemplate = (
     }
 }
 
-export const wrapWithDeferred = wrapWithDeferredTypeTemplate(inter => inter.deferred)
-export const wrapWithAftermath = wrapWithDeferredTypeTemplate(inter => inter.aftermath)
+const wrapWithDeferredTemplate = (
+    getDeferredApi: (i: Internals) => DeferredApi,
+) => (
+    action: Deferred,
+    mainRecipe: Recipe,
+    wrapOptions: WrapOptions = {},
+): Recipe => {
+    return wrap((t, internals) => {
+        getDeferredApi(internals).registerIfNotExists(t.keyInternal, action)
+    })(mainRecipe, wrapOptions)
+}
+
+export const wrapWithDeferred = wrapWithDeferredTemplate(inter => inter.deferred)
+export const wrapWithAftermath = wrapWithDeferredTemplate(inter => inter.aftermath)

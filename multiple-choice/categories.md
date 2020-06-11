@@ -14,3 +14,8 @@ parent: Multiple Choice
 {% assign setups = site.data.setups %}
 
 {% include toc-doc.md %}
+
+
+
+
+{% include codeDisplay.md content=mc.animals filterManager=setups.assign_categories buttons=bOneTwoThree %}

@@ -1,33 +1,27 @@
-import type { Tag, FilterApi, Internals, Recipe } from './types'
+import type { Tag, FilterApi, FilterPredicate, Internals, Recipe, WrapOptions } from './types'
 
-export const twoWayRecipe: Recipe = ({
+export const twoWayWrap = (
+    predicate: FilterPredicate,
+    recipeFalse: Recipe,
+    recipeTrue: Recipe, {
+        setTagnames = (options, newNames) => options['tagname'] = newNames[0],
+    }: WrapOptions = {},
+): Recipe => ({
     tagname,
-    predicate,
 
-    recipeTrue,
-    recipeFalse,
-
-    optionsTrue,
     optionsFalse,
-
-    setTagname = (options, newName) => options['tagname'] = newName,
+    optionsTrue,
 }: {
     tagname: string,
-    predicate: (t: Tag, inter: Internals) => boolean,
-
-    recipeTrue: Recipe,
-    recipeFalse: Recipe,
 
     optionsTrue: object,
     optionsFalse: object,
-
-    setTagname: (options: object, newName: string) => void,
 }) => (filterApi: FilterApi) => {
     const tagnameTrue = `${tagname}:twoWay:true`
     const tagnameFalse = `${tagname}:twoWay:false`
 
-    setTagname(optionsTrue, tagnameTrue)
-    setTagname(optionsFalse, tagnameFalse)
+    setTagnames(optionsTrue, [tagnameTrue])
+    setTagnames(optionsFalse, [tagnameFalse])
 
     recipeTrue(optionsTrue)(filterApi)
     recipeFalse(optionsFalse)(filterApi)
@@ -44,31 +38,27 @@ export const twoWayRecipe: Recipe = ({
     filterApi.register(tagname, twoWayFilter)
 }
 
-export const fourWayRecipe: Recipe = ({
+export const fourWayWrap = (
+    predicateOne: FilterPredicate,
+    predicateTwo: FilterPredicate,
+    recipeZero: Recipe,
+    recipeOne: Recipe,
+    recipeTwo: Recipe,
+    recipeThree: Recipe, {
+        setTagnames = (options, newNames) => options['tagname'] = newNames[0],
+    }: WrapOptions = {},
+): Recipe => ({
     tagname,
-    predicateTwo,
-    predicateOne,
 
-    recipeThree,
-    recipeTwo,
-    recipeOne,
-    recipeZero,
-
-    optionsThree,
-    optionsTwo,
-    optionsOne,
     optionsZero,
+    optionsOne,
+    optionsTwo,
+    optionsThree,
 
-    setTagname = (options, newName) => options['tagname'] = newName,
 }: {
     tagname: string,
     predicateOne: (t: Tag, inter: Internals) => boolean,
     predicateTwo: (t: Tag, inter: Internals) => boolean,
-
-    recipeThree: Recipe,
-    recipeTwo: Recipe,
-    recipeOne: Recipe,
-    recipeZero: Recipe,
 
     optionsThree: object,
     optionsTwo: object,
@@ -80,32 +70,24 @@ export const fourWayRecipe: Recipe = ({
     const tagnameZero = `${tagname}:fourWay:zero`
     const tagnameTwo = `${tagname}:fourWay:two`
 
-    setTagname(optionsZero, tagnameZero)
-    setTagname(optionsOne, tagnameZero)
+    setTagnames(optionsZero, [tagnameZero])
+    setTagnames(optionsOne, [tagnameZero])
 
-    twoWayRecipe({
+    twoWayWrap(predicateOne, recipeZero, recipeOne)({
         tagname: tagnameZero,
-        predicate: predicateOne,
 
-        recipeTrue: recipeOne,
-        recipeFalse: recipeZero,
-
-        optionsTrue: optionsOne,
         optionsFalse: optionsZero,
+        optionsTrue: optionsOne,
     })(filterApi)
 
-    setTagname(optionsTwo, tagnameTwo)
-    setTagname(optionsThree, tagnameTwo)
+    setTagnames(optionsTwo, [tagnameTwo])
+    setTagnames(optionsThree, [tagnameTwo])
 
-    twoWayRecipe({
+    twoWayWrap(predicateOne, recipeTwo, recipeThree)({
         tagname: tagnameTwo,
-        predicate: predicateOne,
 
-        recipeTrue: recipeThree,
-        recipeFalse: recipeTwo,
-
-        optionsTrue: optionsThree,
         optionsFalse: optionsTwo,
+        optionsTrue: optionsThree,
     })(filterApi)
 
     const fourWayFilter = (

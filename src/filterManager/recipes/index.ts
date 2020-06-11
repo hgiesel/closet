@@ -16,6 +16,7 @@ import { metaRecipe } from './meta'
 import { activateRecipe, deactivateRecipe, toggleRecipe } from './activate'
 
 import { wrap, wrapWithDeferred, wrapWithAftermath } from './wrappers'
+import { twoWayWrap, fourWayWrap } from './nway'
 
 export const recipes: Recipes = {
     shuffling: shufflingRecipe,
@@ -44,4 +45,7 @@ export const wrappers = {
 
     deferred: wrapWithDeferred,
     aftermath: wrapWithAftermath,
+
+    twoWay: twoWayWrap,
+    fourWay: fourWayWrap,
 }

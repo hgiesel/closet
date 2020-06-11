@@ -1,7 +1,7 @@
 import type { Tag, FilterApi, Internals, Ellipser } from './types'
 
 import { id } from './utils'
-import { fourWayRecipe } from './nway'
+import { fourWayWrap } from './nway'
 
 import { Stylizer, rawStylizer } from './stylizer'
 import { isBack, isActive } from './deciders'
@@ -42,30 +42,29 @@ const clozeTemplateRecipe = (
 
     const isActiveWithOverwrite = (t: Tag, inter: Internals) => isActive(t, inter) || activeOverwrite
 
-    const clozeRecipe = fourWayRecipe({
-        tagname: internalFilter,
-
-        predicateOne: isActiveWithOverwrite,
-        predicateTwo: isBack,
-
-        /* front */
-        recipeZero: toSimpleRecipe(frontBehavior(inactiveEllipser)),
-        recipeOne: toSimpleRecipe((tag: Tag, inter: Internals) => activeStylizer.stylize([
+    const clozeRecipe = fourWayWrap(
+        isActiveWithOverwrite,
+        isBack,
+        /* front inactive */
+        toSimpleRecipe(frontBehavior(inactiveEllipser)),
+        /* front active */
+        toSimpleRecipe((tag: Tag, inter: Internals) => activeStylizer.stylize([
             activeEllipser(tag, inter)
         ])),
+        /* back inactive */
+        toSimpleRecipe(backBehavior(inactiveEllipser)),
+        /* back active */
+        toSimpleRecipe((tag: Tag) => activeStylizer.stylize(tag.values[0])),
+    )
+
+    clozeRecipe({
+        tagname: internalFilter,
 
         optionsZero: { tagname: tagnameFrontInactive },
         optionsOne: { tagname: tagnameFrontActive },
-
-        /* back */
-        recipeTwo: toSimpleRecipe(backBehavior(inactiveEllipser)),
-        recipeThree: toSimpleRecipe((tag: Tag) => activeStylizer.stylize(tag.values[0])),
-
         optionsTwo: { tagname: tagnameBackInactive },
         optionsThree: { tagname: tagnameBackActive },
-    })
-
-    clozeRecipe(filterApi)
+    })(filterApi)
 
     const clozeFilter = (tag: Tag, inter: Internals) => {
         const theFilter = inter.cache.get(`${tagname}:${switcherKeyword}`, {

@@ -1,7 +1,7 @@
 import type { Tag, FilterApi, Internals, Ellipser } from './types'
 
 import { Stylizer } from './stylizer'
-import { fourWayRecipe } from './nway'
+import { fourWayWrap } from './nway'
 import { isBack, isActive } from './deciders'
 import { sequencer } from './sequencer'
 import { noneEllipser, stylizeEllipser, toSimpleRecipe } from './ellipser'
@@ -81,27 +81,27 @@ const multipleChoiceTemplateRecipe = (
 
     const isActiveWithOverwrite = (t: Tag, inter: Internals) => isActive(t, inter) || activeOverwrite
 
-    const multipleChoiceRecipe = fourWayRecipe({
-        tagname: internalFilter,
-        predicateOne: isActiveWithOverwrite,
-        predicateTwo: isBack,
+    const multipleChoiceRecipe = fourWayWrap(
+        isActiveWithOverwrite,
+        isBack,
+        /* front inactive */
+        toSimpleRecipe(frontBehavior(ellipser, contexter)),
+        /* front active */
+        toSimpleRecipe(activeBehavior(frontStylizer)),
+        /* back inactive */
+        toSimpleRecipe(backBehavior(ellipser, contexter)),
+        /* back active */
+        toSimpleRecipe(activeBehavior(backStylizer)),
+    )
 
-        /* front */
-        recipeZero: toSimpleRecipe(frontBehavior(ellipser, contexter)),
-        recipeOne: toSimpleRecipe(activeBehavior(frontStylizer)),
+    multipleChoiceRecipe({
+        tagname: internalFilter,
 
         optionsZero: { tagname: tagnameFrontInactive },
         optionsOne: { tagname: tagnameFrontActive },
-
-        /* back */
-        recipeTwo: toSimpleRecipe(backBehavior(ellipser, contexter)),
-        recipeThree: toSimpleRecipe(activeBehavior(backStylizer)),
-
         optionsTwo: { tagname: tagnameBackInactive },
         optionsThree: { tagname: tagnameBackActive },
-    })
-
-    multipleChoiceRecipe(filterApi)
+    })(filterApi)
 
     const multipleChoiceFilter = (tag: Tag, inter: Internals) => {
         const theFilter = inter.cache.get(`${tagname}:${switcherKeyword}`, {

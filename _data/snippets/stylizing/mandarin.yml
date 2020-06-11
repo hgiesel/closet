@@ -1,0 +1,9 @@
+name: Mandarin with tones
+code: |
+  动物; 警察; 文化; 鲸鱼; 姐姐
+
+  [[tf::<span class="zh--tone-4">dongwu</span>]] [[tf::<span class="zh--tone-3">jing</span><span class="zh--tone-2">cha</span>]] [[tf::<span class="zh--tone-2">wen</span><span class="zh--tone-4">hua</span>]] [[tf::<span class="zh--tone-1">jing</span><span class="zh--tone-2">yu</span>]] [[tf::<span class="zh--tone-1">jing</span><span class="zh--tone-2">yu</span>]] [[tf::<span class="zh--tone-3">jie</span><span class="zh--tone-5">jie</span>]]
+
+  [[ts::dong4wu4]] [[ts::jing3cha2]] [[ts::wen2hua4]] [[ts::jing1yu2]] [[ts::jie3jie5]]
+
+  [[bpmf::dong4wu4]] [[bpmf::jing3cha2]] [[bpmf::wen2hua4]] [[bpmf::jing1yu2]] [[bpmf::jie3jie5]]

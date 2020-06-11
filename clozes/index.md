@@ -1,7 +1,7 @@
 ---
 layout: doc
 title: Clozes
-nav_order: 4
+nav_order: 5
 permalink: clozes
 has_children: true
 ---

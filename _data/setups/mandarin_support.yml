@@ -1,0 +1,295 @@
+name: Mandarin support
+code: |
+  /*
+  MIT License
+  Copyright (c) 2018 Pepe Becker
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+
+  With changes by Henrik Giesel, 2020
+  */
+
+  const syllables = [
+    "a", "ai", "an", "ang", "ao",
+    "ba", "bai", "ban", "bang", "bao", "bei", "ben", "beng", "bi", "bian", "biao", "bie", "bin", "bing", "bo", "bu",
+    "ca", "cai", "can", "cang", "cao", "ce", "cei", "cen", "ceng", "cha", "chai", "chan", "chang", "chao", "che", "chen", "cheng", "chi", "chong", "chou", "chu", "chua", "chuai", "chuan", "chuang", "chui", "chun", "chuo", "ci", "cong", "cou", "cu", "cuan", "cui", "cun", "cuo",
+    "da", "dai", "dan", "dang", "dao", "de", "dei", "den", "deng", "di", "dian", "diao", "die", "ding", "diu", "dong", "dou", "du", "duan", "dui", "dun", "duo",
+    "e", "ei", "en", "er",
+    "fa", "fan", "fang", "fei", "fen", "feng", "fo", "fou", "fu",
+    "ga", "gai", "gan", "gang", "gao", "ge", "gei", "gen", "geng", "gong", "gou", "gu", "gua", "guai", "guan", "guang", "gui", "gun", "guo",
+    "ha", "hai", "han", "hang", "hao", "he", "hei", "hen", "heng", "hm", "hng", "hong", "hou", "hu", "hua", "huai", "huan", "huang", "hui", "hun", "huo",
+    "ji", "jia", "jian", "jiang", "jiao", "jie", "jin", "jing", "jiong", "jiu", "ju", "juan", "jue", "jun",
+    "ka", "kai", "kan", "kang", "kao", "ke", "kei", "ken", "keng", "kong", "kou", "ku", "kua", "kuai", "kuan", "kuang", "kui", "kun", "kuo",
+    "lü", "la", "lai", "lan", "lang", "lao", "le", "lüe", "lei", "leng", "li", "lia", "lian", "liang", "liao", "lie", "lin", "ling", "liu", "long", "lou", "lu", "luan", "lun", "luo",
+    "m", "ma", "mai", "man", "mang", "mao", "me", "mei", "men", "meng", "mi", "mian", "miao", "mie", "min", "ming", "miu", "mo", "mou", "mu",
+    "n", "nü", "na", "nai", "nan", "nang", "nao", "ne", "nüe", "nei", "nen", "neng", "ng", "ni", "nian", "niang", "niao", "nie", "nin", "ning", "niu", "nong", "nou", "nu", "nuan", "nuo",
+    "o", "ou",
+    "pa", "pai", "pan", "pang", "pao", "pei", "pen", "peng", "pi", "pian", "piao", "pie", "pin", "ping", "po", "pou", "pu",
+    "qi", "qia", "qian", "qiang", "qiao", "qie", "qin", "qing", "qiong", "qiu", "qu", "quan", "que", "qun",
+    "ran", "rang", "rao", "re", "ren", "reng", "ri", "rong", "rou", "ru", "rua", "ruan", "rui", "run", "ruo",
+    "sa", "sai", "san", "sang", "sao", "se", "sei", "sen", "seng", "sha", "shai", "shan", "shang", "shao", "she", "shei", "shen", "sheng", "shi", "shou", "shu", "shua", "shuai", "shuan", "shuang", "shui", "shun", "shuo", "si", "song", "sou", "su", "suan", "sui", "sun", "suo",
+    "ta", "tai", "tan", "tang", "tao", "te", "teng", "ti", "tian", "tiao", "tie", "ting", "tong", "tou", "tu", "tuan", "tui", "tun", "tuo",
+    "wa", "wai", "wan", "wang", "wei", "wen", "weng", "wo", "wu",
+    "xi", "xia", "xian", "xiang", "xiao", "xie", "xin", "xing", "xiong", "xiu", "xu", "xuan", "xue", "xun",
+    "ya", "yan", "yang", "yao", "ye", "yi", "yin", "ying", "yong", "you", "yu", "yuan", "yue", "yun",
+    "za", "zai", "zan", "zang", "zao", "ze", "zei", "zen", "zeng", "zha", "zhai", "zhan", "zhang", "zhao", "zhe", "zhei", "zhen", "zheng", "zhi", "zhong", "zhou", "zhu", "zhua", "zhuai", "zhuan", "zhuang", "zhui", "zhun", "zhuo", "zi", "zong", "zou", "zuan", "zui", "zun", "zuo", "zu",
+  ]
+
+  const bopomofoTable = {
+    "a": "ㄚ", "ai": "ㄞ", "an": "ㄢ", "ang": "ㄤ", "ao": "ㄠ",
+    "ba": "ㄅㄚ", "bai": "ㄅㄞ", "ban": "ㄅㄢ", "bang": "ㄅㄤ", "bao": "ㄅㄠ", "bei": "ㄅㄟ", "ben": "ㄅㄣ", "beng": "ㄅㄥ", "bi": "ㄅㄧ", "bian": "ㄅㄧㄢ", "biao": "ㄅㄧㄠ", "bie": "ㄅㄧㄝ", "bin": "ㄅㄧㄣ", "bing": "ㄅㄧㄥ", "bo": "ㄅㄛ", "bu": "ㄅㄨ",
+    "ca": "ㄘㄚ", "cai": "ㄘㄞ", "can": "ㄘㄢ", "cang": "ㄘㄤ", "cao": "ㄘㄠ", "ce": "ㄘㄜ", "cei": "ㄘㄟ", "cen": "ㄘㄣ", "ceng": "ㄘㄥ", "cha": "ㄔㄚ", "chai": "ㄔㄞ", "chan": "ㄔㄢ", "chang": "ㄔㄤ", "chao": "ㄔㄠ", "che": "ㄔㄜ", "chen": "ㄔㄣ", "cheng": "ㄔㄥ", "chi": "ㄔ", "chong": "ㄔㄨㄥ", "chou": "ㄔㄡ", "chu": "ㄔㄨ", "chua": "ㄔㄨㄚ", "chuai": "ㄔㄨㄞ", "chuan": "ㄔㄨㄢ", "chuang": "ㄔㄨㄤ", "chui": "ㄔㄨㄟ", "chun": "ㄔㄨㄣ", "chuo": "ㄔㄨㄛ", "ci": "ㄘ", "cong": "ㄘㄨㄥ", "cou": "ㄘㄡ", "cu": "ㄘㄨ", "cuan": "ㄘㄨㄢ", "cui": "ㄘㄨㄟ", "cun": "ㄘㄨㄣ", "cuo": "ㄘㄨㄛ",
+    "da": "ㄉㄚ", "dai": "ㄉㄞ", "dan": "ㄉㄢ", "dang": "ㄉㄤ", "dao": "ㄉㄠ", "de": "ㄉㄜ", "dei": "ㄉㄟ", "den": "ㄉㄣ", "deng": "ㄉㄥ", "di": "ㄉㄧ", "dia": "ㄉㄧㄚ", "dian": "ㄉㄧㄢ", "diao": "ㄉㄧㄠ", "die": "ㄉㄧㄝ", "ding": "ㄉㄧㄥ", "diu": "ㄉㄧㄡ", "dong": "ㄉㄨㄥ", "dou": "ㄉㄡ", "du": "ㄉㄨ", "duan": "ㄉㄨㄢ", "dui": "ㄉㄨㄟ", "dun": "ㄉㄨㄣ", "duo": "ㄉㄨㄛ",
+    "e": "ㄜ", "ei": "ㄟ", "en": "ㄣ", "eng": "ㄥ", "er": "ㄦ",
+    "fa": "ㄈㄚ", "fan": "ㄈㄢ", "fang": "ㄈㄤ", "fei": "ㄈㄟ", "fen": "ㄈㄣ", "feng": "ㄈㄥ", "fo": "ㄈㄛ", "fou": "ㄈㄡ", "fu": "ㄈㄨ",
+    "ga": "ㄍㄚ", "gai": "ㄍㄞ", "gan": "ㄍㄢ", "gang": "ㄍㄤ", "gao": "ㄍㄠ", "ge": "ㄍㄜ", "gei": "ㄍㄟ", "gen": "ㄍㄣ", "geng": "ㄍㄥ", "gong": "ㄍㄨㄥ", "gou": "ㄍㄡ", "gu": "ㄍㄨ", "gua": "ㄍㄨㄚ", "guai": "ㄍㄨㄞ", "guan": "ㄍㄨㄢ", "guang": "ㄍㄨㄤ", "gui": "ㄍㄨㄟ", "gun": "ㄍㄨㄣ", "guo": "ㄍㄨㄛ",
+    "ha": "ㄏㄚ", "hai": "ㄏㄞ", "han": "ㄏㄢ", "hang": "ㄏㄤ", "hao": "ㄏㄠ", "he": "ㄏㄜ", "hei": "ㄏㄟ", "hen": "ㄏㄣ", "heng": "ㄏㄥ", "hm": "ㄏㄇ", "hng": "ㄏㄫ", "hong": "ㄏㄨㄥ", "hou": "ㄏㄡ", "hu": "ㄏㄨ", "hua": "ㄏㄨㄚ", "huai": "ㄏㄨㄞ", "huan": "ㄏㄨㄢ", "huang": "ㄏㄨㄤ", "hui": "ㄏㄨㄟ", "hun": "ㄏㄨㄣ", "huo": "ㄏㄨㄛ",
+    "ji": "ㄐㄧ", "jia": "ㄐㄧㄚ", "jian": "ㄐㄧㄢ", "jiang": "ㄐㄧㄤ", "jiao": "ㄐㄧㄠ", "jie": "ㄐㄧㄝ", "jin": "ㄐㄧㄣ", "jing": "ㄐㄧㄥ", "jiong": "ㄐㄩㄥ", "jiu": "ㄐㄧㄡ", "ju": "ㄐㄩ", "juan": "ㄐㄩㄢ", "jue": "ㄐㄩㄝ", "jun": "ㄐㄩㄣ",
+    "ka": "ㄎㄚ", "kai": "ㄎㄞ", "kan": "ㄎㄢ", "kang": "ㄎㄤ", "kao": "ㄎㄠ", "ke": "ㄎㄜ", "kei": "ㄎㄟ", "ken": "ㄎㄣ", "keng": "ㄎㄥ", "kong": "ㄎㄨㄥ", "kou": "ㄎㄡ", "ku": "ㄎㄨ", "kua": "ㄎㄨㄚ", "kuai": "ㄎㄨㄞ", "kuan": "ㄎㄨㄢ", "kuang": "ㄎㄨㄤ", "kui": "ㄎㄨㄟ", "kun": "ㄎㄨㄣ", "kuo": "ㄎㄨㄛ",
+    "la": "ㄌㄚ", "lai": "ㄌㄞ", "lan": "ㄌㄢ", "lang": "ㄌㄤ", "lao": "ㄌㄠ", "le": "ㄌㄜ", "lei": "ㄌㄟ", "leng": "ㄌㄥ", "li": "ㄌㄧ", "lia": "ㄌㄧㄚ", "lian": "ㄌㄧㄢ", "liang": "ㄌㄧㄤ", "liao": "ㄌㄧㄠ", "lie": "ㄌㄧㄝ", "lin": "ㄌㄧㄣ", "ling": "ㄌㄧㄥ", "liu": "ㄌㄧㄡ", "lo": "ㄌㄛ", "long": "ㄌㄨㄥ", "lou": "ㄌㄡ", "lu": "ㄌㄨ", "lv": "ㄌㄩ", "luan": "ㄌㄨㄢ", "lve": "ㄌㄩㄝ", "lun": "ㄌㄨㄣ", "luo": "ㄌㄨㄛ",
+    "m": "ㄇ", "ma": "ㄇㄚ", "mai": "ㄇㄞ", "man": "ㄇㄢ", "mang": "ㄇㄤ", "mao": "ㄇㄠ", "me": "ㄇㄜ", "mei": "ㄇㄟ", "men": "ㄇㄣ", "meng": "ㄇㄥ", "mi": "ㄇㄧ", "mian": "ㄇㄧㄢ", "miao": "ㄇㄧㄠ", "mie": "ㄇㄧㄝ", "min": "ㄇㄧㄣ", "ming": "ㄇㄧㄥ", "miu": "ㄇㄧㄡ", "mo": "ㄇㄛ", "mou": "ㄇㄡ", "mu": "ㄇㄨ",
+    "n": "ㄋ", "na": "ㄋㄚ", "nai": "ㄋㄞ", "nan": "ㄋㄢ", "nang": "ㄋㄤ", "nao": "ㄋㄠ", "ne": "ㄋㄜ", "nei": "ㄋㄟ", "nen": "ㄋㄣ", "neng": "ㄋㄥ", "ng": "ㄫ", "ni": "ㄋㄧ", "nia": "ㄋㄧㄚ", "nian": "ㄋㄧㄢ", "niang": "ㄋㄧㄤ", "niao": "ㄋㄧㄠ", "nie": "ㄋㄧㄝ", "nin": "ㄋㄧㄣ", "ning": "ㄋㄧㄥ", "niu": "ㄋㄧㄡ", "nong": "ㄋㄨㄥ", "nou": "ㄋㄡ", "nu": "ㄋㄨ", "nv": "ㄋㄩ", "nuan": "ㄋㄨㄢ", "nve": "ㄋㄩㄝ", "nuo": "ㄋㄨㄛ",
+    "o": "ㄛ", "ou": "ㄡ",
+    "pa": "ㄆㄚ", "pai": "ㄆㄞ", "pan": "ㄆㄢ", "pang": "ㄆㄤ", "pao": "ㄆㄠ", "pei": "ㄆㄟ", "pen": "ㄆㄣ", "peng": "ㄆㄥ", "pi": "ㄆㄧ", "pian": "ㄆㄧㄢ", "piao": "ㄆㄧㄠ", "pie": "ㄆㄧㄝ", "pin": "ㄆㄧㄣ", "ping": "ㄆㄧㄥ", "po": "ㄆㄛ", "pou": "ㄆㄡ", "pu": "ㄆㄨ",
+    "qi": "ㄑㄧ", "qia": "ㄑㄧㄚ", "qian": "ㄑㄧㄢ", "qiang": "ㄑㄧㄤ", "qiao": "ㄑㄧㄠ", "qie": "ㄑㄧㄝ", "qin": "ㄑㄧㄣ", "qing": "ㄑㄧㄥ", "qiong": "ㄑㄩㄥ", "qiu": "ㄑㄧㄡ", "qu": "ㄑㄩ", "quan": "ㄑㄩㄢ", "que": "ㄑㄩㄝ", "qun": "ㄑㄩㄣ",
+    "r": "ㄦ", "ran": "ㄖㄢ", "rang": "ㄖㄤ", "rao": "ㄖㄠ", "re": "ㄖㄜ", "ren": "ㄖㄣ", "reng": "ㄖㄥ", "ri": "ㄖ", "rong": "ㄖㄨㄥ", "rou": "ㄖㄡ", "ru": "ㄖㄨ", "rua": "ㄖㄨㄚ", "ruan": "ㄖㄨㄢ", "rui": "ㄖㄨㄟ", "run": "ㄖㄨㄣ", "ruo": "ㄖㄨㄛ",
+    "sa": "ㄙㄚ", "sai": "ㄙㄞ", "san": "ㄙㄢ", "sang": "ㄙㄤ", "sao": "ㄙㄠ", "se": "ㄙㄜ", "sen": "ㄙㄣ", "seng": "ㄙㄥ",
+    "sha": "ㄕㄚ", "shai": "ㄕㄞ", "shan": "ㄕㄢ", "shang": "ㄕㄤ", "shao": "ㄕㄠ", "she": "ㄕㄜ", "shei": "ㄕㄟ", "shen": "ㄕㄣ", "sheng": "ㄕㄥ", "shi": "ㄕ", "shou": "ㄕㄡ", "shu": "ㄕㄨ", "shua": "ㄕㄨㄚ", "shuai": "ㄕㄨㄞ", "shuan": "ㄕㄨㄢ", "shuang": "ㄕㄨㄤ", "shui": "ㄕㄨㄟ", "shun": "ㄕㄨㄣ", "shuo": "ㄕㄨㄛ",
+    "si": "ㄙ", "song": "ㄙㄨㄥ", "sou": "ㄙㄡ", "su": "ㄙㄨ", "suan": "ㄙㄨㄢ", "sui": "ㄙㄨㄟ", "sun": "ㄙㄨㄣ", "suo": "ㄙㄨㄛ",
+    "ta": "ㄊㄚ", "tai": "ㄊㄞ", "tan": "ㄊㄢ", "tang": "ㄊㄤ", "tao": "ㄊㄠ", "te": "ㄊㄜ", "tei": "ㄊㄟ", "teng": "ㄊㄥ", "ti": "ㄊㄧ", "tian": "ㄊㄧㄢ", "tiao": "ㄊㄧㄠ", "tie": "ㄊㄧㄝ", "ting": "ㄊㄧㄥ", "tong": "ㄊㄨㄥ", "tou": "ㄊㄡ", "tu": "ㄊㄨ", "tuan": "ㄊㄨㄢ", "tui": "ㄊㄨㄟ", "tun": "ㄊㄨㄣ", "tuo": "ㄊㄨㄛ",
+    "wa": "ㄨㄚ", "wai": "ㄨㄞ", "wan": "ㄨㄢ", "wang": "ㄨㄤ", "wei": "ㄨㄟ", "wen": "ㄨㄣ", "weng": "ㄨㄥ", "wo": "ㄨㄛ", "wu": "ㄨ",
+    "xi": "ㄒㄧ", "xia": "ㄒㄧㄚ", "xian": "ㄒㄧㄢ", "xiang": "ㄒㄧㄤ", "xiao": "ㄒㄧㄠ", "xie": "ㄒㄧㄝ", "xin": "ㄒㄧㄣ", "xing": "ㄒㄧㄥ", "xiong": "ㄒㄩㄥ", "xiu": "ㄒㄧㄡ", "xu": "ㄒㄩ", "xuan": "ㄒㄩㄢ", "xue": "ㄒㄩㄝ", "xun": "ㄒㄩㄣ",
+    "ya": "ㄧㄚ", "yan": "ㄧㄢ", "yang": "ㄧㄤ", "yao": "ㄧㄠ", "ye": "ㄧㄝ", "yi": "ㄧ", "yin": "ㄧㄣ", "ying": "ㄧㄥ", "yo": "ㄧㄛ", "yong": "ㄩㄥ", "you": "ㄧㄡ",
+    "yu": "ㄩ", "yuan": "ㄩㄢ", "yue": "ㄩㄝ", "yun": "ㄩㄣ",
+    "za": "ㄗㄚ", "zai": "ㄗㄞ", "zan": "ㄗㄢ", "zang": "ㄗㄤ", "zao": "ㄗㄠ", "ze": "ㄗㄜ", "zei": "ㄗㄟ", "zen": "ㄗㄣ", "zeng": "ㄗㄥ",
+    "zha": "ㄓㄚ", "zhai": "ㄓㄞ", "zhan": "ㄓㄢ", "zhang": "ㄓㄤ", "zhao": "ㄓㄠ", "zhe": "ㄓㄜ", "zhei": "ㄓㄟ", "zhen": "ㄓㄣ", "zheng": "ㄓㄥ", "zhi": "ㄓ", "zhong": "ㄓㄨㄥ", "zhou": "ㄓㄡ", "zhu": "ㄓㄨ", "zhua": "ㄓㄨㄚ", "zhuai": "ㄓㄨㄞ", "zhuan": "ㄓㄨㄢ", "zhuang": "ㄓㄨㄤ", "zhui": "ㄓㄨㄟ", "zhun": "ㄓㄨㄣ", "zhuo": "ㄓㄨㄛ",
+    "zi": "ㄗ", "zong": "ㄗㄨㄥ", "zou": "ㄗㄡ", "zu": "ㄗㄨ", "zuan": "ㄗㄨㄢ", "zui": "ㄗㄨㄟ", "zun": "ㄗㄨㄣ", "zuo": "ㄗㄨㄛ"
+  }
+
+  const zhuyinTones = ["", "ˉ", "ˊ", "ˇ", "`", "˙"]
+  const tones = ['', '\u0304', '\u0301', '\u030c' /* combining caron */, '\u0300', '\u0307']
+
+  const normalizePinyin = pinyin => {
+    pinyin = pinyin.normalize('NFD').replace(/\u0304|\u0301|\u030c|\u0300/g, '')
+    return pinyin.normalize('NFC').replace(/(\w|ü)[1-5]/gi, '$1').toLowerCase()
+  }
+
+  const split = (text, everything=false, wrapInList=false) => {
+    const list = []
+    let prevWordFound = false
+    let wordEnd = text.length
+    while (wordEnd > 0) {
+      let count = wordEnd
+      let wordFound = false
+      while (count > 0) {
+        const word = text.substring(wordEnd - count, wordEnd)
+        if (syllables.includes(normalizePinyin(word))) {
+          wordFound = true
+          list.push(wrapInList ? [word] : word)
+          wordEnd -= (count - 1)
+          break
+        }
+        count--
+      }
+      if (!wordFound && everything) {
+        const prevIndex = list.length - 1
+        const prevEntry = list[prevIndex]
+        if (wordEnd === text.length || typeof prevEntry === 'object' || prevWordFound) {
+          list.push(text[wordEnd - 1])
+        }
+        else if (typeof prevEntry === 'string') {
+          list[prevIndex] = text[wordEnd - 1] + prevEntry
+        }
+      }
+      wordEnd --
+      prevWordFound = wordFound
+    }
+    return list.reverse()
+  }
+
+  const getToneNumber = (str) => {
+    // Check for tone number
+    const matches = str.match(/[a-zü\u3100-\u312F](\d)/ui);
+    if (matches) {
+      return +matches[1];
+    }
+
+    // Check for tone mark
+    for (let i = 1 /* no tone has no character */; i < tones.length; i++) {
+      if (str.normalize('NFD').match(tones[i])) {
+        return i
+      }
+    }
+
+    // Check for tone character
+    const lastCharacter = str[str.length - 1]
+    if (zhuyinTones.includes(lastCharacter)) {
+      return zhuyinTones.findIndex(v => v === lastCharacter)
+    }
+
+    // Return 0 as default: no tone mark
+    return 0
+  }
+
+  const removeTone = (str) => {
+    const normalizedNfd = str.normalize('NFD').replace(/\u0304|\u0301|\u030c|\u0300/g, '')
+    const result = str.normalize('NFC').replace(/(\w|ü)[1-5]/gi, '$1')
+
+    const lastCharacter = str[str.length - 1]
+    return zhuyinTones.includes(lastCharacter)
+      ? result.slice(0, -1)
+      : result
+  }
+
+  const trim = str => str.replace(/^\s*|\s*$/g, '')
+
+  const numberToMark = (syllables) => {
+    const process = (pinyin) => {
+      if (trim(pinyin).length === 0) return pinyin
+
+      const tone = getToneNumber(pinyin)
+
+      pinyin = removeTone(pinyin)
+
+      if (tone !== 5 && tone !== 0) {
+        if (pinyin === 'm' || pinyin === 'n' || pinyin === 'M' || pinyin === 'N') {
+          return (pinyin + tones[tone]).normalize('NFC')
+        }
+        const matchedVovels = pinyin.match(/[aeiouü]/gi);
+        if (matchedVovels) {
+          let vovel = matchedVovels[matchedVovels.length - 1];
+          if (pinyin.match('ou')) vovel = 'o'
+          if (pinyin.match('a')) vovel = 'a'
+          if (pinyin.match('e')) vovel = 'e'
+          return pinyin.replace(vovel, vovel + tones[tone]).normalize('NFC')
+        }
+      }
+      return pinyin
+    }
+
+    if (Array.isArray(syllables)) {
+      return syllables.map(process)
+    } else {
+      return process(syllables)
+    }
+  }
+
+  const toneColors = [null, 'aqua', 'lime', 'orange', 'coral', 'grey']
+  const toColoredSpan = (str, toneNumber) => {
+
+    const theColor = toneColors[toneNumber]
+    return theColor
+      ? `<span style="color: ${theColor}">${str}</span>`
+      : `<span>${str}</span>`
+  }
+
+  const mapPinyin = (vs, f) => {
+    return vs.map((v) => Array.isArray(v)
+      ? v.map(f).join('')
+      : v
+    )
+  }
+
+  const colored = (dropSymbols) => (v) => {
+    const toneNumber = getToneNumber(v)
+    return toColoredSpan(dropSymbols ? removeTone(v) : v, toneNumber)
+  }
+
+  const numberedToSymbols = (v) => {
+    return numberToMark(v)
+  }
+
+  const toBopomofo = (dropSymbols) => (pinyin) => {
+    const result = bopomofoTable[removeTone(pinyin).toLowerCase()]
+    return dropSymbols
+      ? result
+      : result + zhuyinTones[getToneNumber(pinyin)]
+  }
+
+  const splitAndMap = (f) => (str) => mapPinyin(split(str, true, true), f).join('')
+
+  // Filter Manager Setup
+  const sideSensitiveStyler = Closet.wrappers.twoWay(Closet.utils.isBack, Closet.recipes.stylizing, Closet.recipes.stylizing)
+
+  const removeFormatting = new Closet.FullStylizer({
+    postprocess: (v) => v.replace(/<.*?>/g, ''),
+  })
+
+  const wrappedRemoveFormatting = Closet.wrappers.aftermath((_e, internals) => {
+    if (!internals.environment.has('addMandarinToneStyleTag')) {
+      console.log(Closet.browser)
+      Closet.browser.appendStyleScript(`
+      .zh--tone-1 {
+        color: dodgerblue;
+      }
+
+      .zh--tone-2 {
+        color: lime;
+      }
+
+      .zh--tone-3 {
+        color: yellow;
+      }
+
+      .zh--tone-4 {
+        color: red;
+      }
+
+      .zh--tone-5 {
+        color: grey;
+      }`)
+
+      internals.environment.set('addMandarinToneStyleTag', true)
+    }
+  }, sideSensitiveStyler)
+
+  const filterColorRecipe = wrappedRemoveFormatting({ 
+    tagname: 'tf',
+    optionsFalse: { stylizer: removeFormatting },
+  })
+
+  filterManager.addRecipe(filterColorRecipe)
+
+  const coloredSymbolsStylizer = new Closet.FullStylizer({
+    mapper: splitAndMap(v => colored(true)(numberedToSymbols(v)))
+  })
+
+  const dropNumbersStylizer = new Closet.FullStylizer({
+    mapper: removeTone,
+  })
+
+  filterManager.addRecipe(sideSensitiveStyler({ 
+    tagname: 'ts',
+    optionsFalse: { stylizer: coloredSymbolsStylizer },
+    optionsTrue: { stylizer: dropNumbersStylizer },
+  }))
+
+  const simpleBopomofoStylizer = new Closet.FullStylizer({
+    mapper: splitAndMap(toBopomofo(true)),
+  })
+
+  const coloredBopomofoStylizer = new Closet.FullStylizer({
+    mapper: splitAndMap(v => colored(true)(toBopomofo(false)(v))),
+  })
+
+  filterManager.addRecipe(sideSensitiveStyler({ 
+    tagname: 'bpmf',
+    optionsFalse: { stylizer: simpleBopomofoStylizer },
+    optionsTrue: { stylizer: coloredBopomofoStylizer },
+  }))

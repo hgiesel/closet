@@ -3,7 +3,7 @@ code: |
   const fancyMultipleChoiceStyle = `
   .cl--container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 2fr));
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
     grid-gap: 0px 20px;
     margin: 40px auto;
   }
@@ -29,7 +29,6 @@ code: |
     height: 80%;
 
     padding: 8px 16px;
-    box-sizing: border-box;
     background: #fff;
     box-shadow: 0px 4px 8px rgba(128, 128, 128, 0.1), 0px -4px 8px rgba(255, 255, 255, 0.8);
     border-radius: 6px;

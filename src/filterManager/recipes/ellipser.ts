@@ -23,9 +23,7 @@ export const stylizeEllipser = (
     return zeroWrap(stylizer.stylize(getValues(values)))
 }
 
-export const noneEllipser: Ellipser = (): string => {
-    return zeroWidthSpace + '[...]' + zeroWidthSpace
-}
+export const noneEllipser: Ellipser = (): string => zeroWrap('[...]')
 
 export const toSimpleRecipe = (ellipser: Ellipser): Recipe => ({
     tagname,

@@ -1,125 +1,121 @@
-import type { Tag } from '../../tags'
-import type { FilterApi } from '../filters'
-import type { Internals } from '..'
+import type { Tag, FilterApi, Internals, Recipe } from './types'
 
-export const twoWayRecipe = (
-    keyword: string,
-    predicateOne: (t: Tag, inter: Internals) => boolean,
+export const twoWayRecipe: Recipe = ({
+    tagname,
+    predicate,
 
-    processorOne: (t: Tag, inter: Internals) => string,
-    processorNone: (t: Tag, inter: Internals) => string,
-) => (filterApi: FilterApi) => {
-    const clozeFilter = (
+    recipeTrue,
+    recipeFalse,
+
+    optionsTrue,
+    optionsFalse,
+
+    setTagname = (options, newName) => options['tagname'] = newName,
+}: {
+    tagname: string,
+    predicate: (t: Tag, inter: Internals) => boolean,
+
+    recipeTrue: Recipe,
+    recipeFalse: Recipe,
+
+    optionsTrue: object,
+    optionsFalse: object,
+
+    setTagname: (options: object, newName: string) => void,
+}) => (filterApi: FilterApi) => {
+    const tagnameTrue = `${tagname}:twoWay:true`
+    const tagnameFalse = `${tagname}:twoWay:false`
+
+    setTagname(optionsTrue, tagnameTrue)
+    setTagname(optionsFalse, tagnameFalse)
+
+    recipeTrue(optionsTrue)(filterApi)
+    recipeFalse(optionsFalse)(filterApi)
+
+    const twoWayFilter = (
         tag: Tag,
-        inter: Internals,
+        internals: Internals,
     ) => {
-        const propertyOne = predicateOne(tag, inter)
-
-        let result = null
-
-        if (propertyOne) {
-            result = processorOne(tag, inter)
-        }
-        else {
-            result = processorNone(tag, inter)
-        }
-
-        return result
+        return predicate(tag, internals)
+            ? internals.filters.get(tagnameTrue)(tag, internals)
+            : internals.filters.get(tagnameFalse)(tag, internals)
     }
 
-    filterApi.register(keyword, clozeFilter)
+    filterApi.register(tagname, twoWayFilter)
 }
 
-export const fourWayRecipe = (
-    keyword: string,
+export const fourWayRecipe: Recipe = ({
+    tagname,
+    predicateTwo,
+    predicateOne,
+
+    recipeThree,
+    recipeTwo,
+    recipeOne,
+    recipeZero,
+
+    optionsThree,
+    optionsTwo,
+    optionsOne,
+    optionsZero,
+
+    setTagname = (options, newName) => options['tagname'] = newName,
+}: {
+    tagname: string,
     predicateOne: (t: Tag, inter: Internals) => boolean,
     predicateTwo: (t: Tag, inter: Internals) => boolean,
 
-    processorOneTwo: (t: Tag, inter: Internals) => string,
-    processorOne: (t: Tag, inter: Internals) => string,
-    processorTwo: (t: Tag, inter: Internals) => string,
-    processorNone: (t: Tag, inter: Internals) => string,
-) => (filterApi: FilterApi) => {
-    const clozeFilter = (
+    recipeThree: Recipe,
+    recipeTwo: Recipe,
+    recipeOne: Recipe,
+    recipeZero: Recipe,
+
+    optionsThree: object,
+    optionsTwo: object,
+    optionsOne: object,
+    optionsZero: object,
+
+    setTagname: (options: object, newName: string) => void,
+}) => (filterApi: FilterApi) => {
+    const tagnameZero = `${tagname}:fourWay:zero`
+    const tagnameTwo = `${tagname}:fourWay:two`
+
+    setTagname(optionsZero, tagnameZero)
+    setTagname(optionsOne, tagnameZero)
+
+    twoWayRecipe({
+        tagname: tagnameZero,
+        predicate: predicateOne,
+
+        recipeTrue: recipeOne,
+        recipeFalse: recipeZero,
+
+        optionsTrue: optionsOne,
+        optionsFalse: optionsZero,
+    })(filterApi)
+
+    setTagname(optionsTwo, tagnameTwo)
+    setTagname(optionsThree, tagnameTwo)
+
+    twoWayRecipe({
+        tagname: tagnameTwo,
+        predicate: predicateOne,
+
+        recipeTrue: recipeThree,
+        recipeFalse: recipeTwo,
+
+        optionsTrue: optionsThree,
+        optionsFalse: optionsTwo,
+    })(filterApi)
+
+    const fourWayFilter = (
         tag: Tag,
-        inter: Internals,
+        internals: Internals,
     ) => {
-        const propertyOne = predicateOne(tag, inter)
-        const propertyTwo = predicateTwo(tag, inter)
-
-        let result = null
-
-        if (propertyOne && propertyTwo) {
-            result = processorOneTwo(tag, inter)
-        }
-        else if (propertyOne) {
-            result = processorOne(tag, inter)
-        }
-        else if (propertyTwo) {
-            result = processorTwo(tag, inter)
-        }
-        else {
-            result = processorNone(tag, inter)
-        }
-
-        return result
+        return predicateTwo(tag, internals)
+            ? internals.filters.get(tagnameTwo)(tag, internals)
+            : internals.filters.get(tagnameZero)(tag, internals)
     }
 
-    filterApi.register(keyword, clozeFilter)
-}
-
-export const eightWayRecipe = (
-    keyword: string,
-    predicateOne: (t: Tag, inter: Internals) => boolean,
-    predicateTwo: (t: Tag, inter: Internals) => boolean,
-    predicateThree: (t: Tag, inter: Internals) => boolean,
-
-    processorOneTwoThree: (t: Tag, inter: Internals) => string,
-    processorOneTwo: (t: Tag, inter: Internals) => string,
-    processorOneThree: (t: Tag, inter: Internals) => string,
-    processorTwoThree: (t: Tag, inter: Internals) => string,
-    processorOne: (t: Tag, inter: Internals) => string,
-    processorTwo: (t: Tag, inter: Internals) => string,
-    processorThree: (t: Tag, inter: Internals) => string,
-    processorNone: (t: Tag, inter: Internals) => string,
-) => (filterApi: FilterApi) => {
-    const clozeFilter = (
-        tag: Tag,
-        inter: Internals,
-    ) => {
-        const propertyOne = predicateOne(tag, inter)
-        const propertyTwo = predicateTwo(tag, inter)
-        const propertyThree = predicateThree(tag, inter)
-
-        let result = null
-
-        if (propertyOne && propertyTwo && propertyThree) {
-            result = processorOneTwoThree(tag, inter)
-        }
-        else if (propertyOne && propertyTwo) {
-            result = processorOneTwo(tag, inter)
-        }
-        else if (propertyOne && propertyThree) {
-            result = processorOneThree(tag, inter)
-        }
-        else if (propertyTwo && propertyThree) {
-            result = processorTwoThree(tag, inter)
-        }
-        else if (propertyOne) {
-            result = processorOne(tag, inter)
-        }
-        else if (propertyTwo) {
-            result = processorTwo(tag, inter)
-        }
-        else if (propertyThree) {
-            result = processorThree(tag, inter)
-        }
-        else {
-            result = processorNone(tag, inter)
-        }
-
-        return result
-    }
-
-    filterApi.register(keyword, clozeFilter)
+    filterApi.register(tagname, fourWayFilter)
 }

@@ -1,11 +1,5 @@
-import type { Tag, FilterApi, Internals, Deferred, Recipe } from './types'
+import type { Tag, FilterApi, Internals, Deferred, Recipe, WrapOptions } from './types'
 import type { DeferredApi } from '../deferred'
-
-interface WrapOptions {
-    wrapId?: string
-    getTagnames?: (o: object) => string[]
-    setTagnames?: (o: object, newNames: string[]) => void
-}
 
 interface WithInternalKeyword {
     keyInternal: string,

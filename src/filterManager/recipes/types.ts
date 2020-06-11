@@ -9,3 +9,9 @@ export type { Deferred } from '../deferred'
 
 export type Recipe = (options: object) => (filterApi: FilterApi) => void
 export type Ellipser = (t: Tag, i: Internals) => string
+
+export interface WrapOptions {
+    wrapId?: string
+    getTagnames?: (o: object) => string[]
+    setTagnames?: (o: object, newNames: string[]) => void
+}

@@ -4,7 +4,7 @@ import { Stylizer } from './stylizer'
 import { fourWayRecipe } from './nway'
 import { isBack, isActive } from './deciders'
 import { sequencer } from './sequencer'
-import { noneEllipser, stylizeEllipser  } from './ellipser'
+import { noneEllipser, stylizeEllipser, toSimpleRecipe } from './ellipser'
 
 const mcDefaultFrontStylizer = new Stylizer({
     separator: ', ',
@@ -58,8 +58,8 @@ const activeBehavior = (
 }
 
 const multipleChoiceTemplateRecipe = (
-    backBehavior: (e: Ellipser, c: Ellipser) => (t: Tag, i: Internals) => string,
     frontBehavior: (e: Ellipser, c: Ellipser) => (t: Tag, i: Internals) => string,
+    backBehavior: (e: Ellipser, c: Ellipser) => (t: Tag, i: Internals) => string,
 ) => ({
     tagname,
     switcherKeyword = 'switch',
@@ -74,17 +74,33 @@ const multipleChoiceTemplateRecipe = (
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
 
-    const multipleChoiceRecipe = fourWayRecipe(
-        internalFilter,
-        isBack,
-        (t, inter) => isActive(t, inter) || activeOverwrite,
-        /* back */
-        activeBehavior(backStylizer),
-        backBehavior(ellipser, contexter),
+    const tagnameBackActive = `${tagname}:back:active`
+    const tagnameBackInactive = `${tagname}:back:inactive`
+    const tagnameFrontActive = `${tagname}:front:active`
+    const tagnameFrontInactive = `${tagname}:front:inactive`
+
+    const isActiveWithOverwrite = (t: Tag, inter: Internals) => isActive(t, inter) || activeOverwrite
+
+    const multipleChoiceRecipe = fourWayRecipe({
+        tagname: internalFilter,
+        predicateOne: isActiveWithOverwrite,
+        predicateTwo: isBack,
+
         /* front */
-        activeBehavior(frontStylizer),
-        frontBehavior(ellipser, contexter),
-    )
+        recipeZero: toSimpleRecipe(frontBehavior(ellipser, contexter)),
+        recipeOne: toSimpleRecipe(activeBehavior(frontStylizer)),
+
+        optionsZero: { tagname: tagnameFrontInactive },
+        optionsOne: { tagname: tagnameFrontActive },
+
+        /* back */
+        recipeTwo: toSimpleRecipe(backBehavior(ellipser, contexter)),
+        recipeThree: toSimpleRecipe(activeBehavior(backStylizer)),
+
+        optionsTwo: { tagname: tagnameBackInactive },
+        optionsThree: { tagname: tagnameBackActive },
+    })
+
     multipleChoiceRecipe(filterApi)
 
     const multipleChoiceFilter = (tag: Tag, inter: Internals) => {
@@ -107,4 +123,4 @@ const useContexter = (_e: Ellipser, c: Ellipser) => c
 
 export const multipleChoiceShowRecipe = multipleChoiceTemplateRecipe(useContexter, useContexter)
 export const multipleChoiceHideRecipe = multipleChoiceTemplateRecipe(useEllipser, useEllipser)
-export const multipleChoiceRevealRecipe = multipleChoiceTemplateRecipe(useContexter, useEllipser)
+export const multipleChoiceRevealRecipe = multipleChoiceTemplateRecipe(useEllipser, useContexter)

@@ -4,7 +4,7 @@ import { Stylizer } from './stylizer'
 import { fourWayWrap } from './nway'
 import { isBack, isActive } from './deciders'
 import { sequencer } from './sequencer'
-import { noneEllipser, stylizeEllipser, toSimpleRecipe } from './ellipser'
+import { noneEllipser, toSimpleRecipe } from './ellipser'
 
 const mcDefaultFrontStylizer = new Stylizer({
     separator: ', ',
@@ -74,11 +74,6 @@ const multipleChoiceTemplateRecipe = (
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
 
-    const tagnameBackActive = `${tagname}:back:active`
-    const tagnameBackInactive = `${tagname}:back:inactive`
-    const tagnameFrontActive = `${tagname}:front:active`
-    const tagnameFrontInactive = `${tagname}:front:inactive`
-
     const isActiveWithOverwrite = (t: Tag, inter: Internals) => isActive(t, inter) || activeOverwrite
 
     const multipleChoiceRecipe = fourWayWrap(
@@ -94,14 +89,7 @@ const multipleChoiceTemplateRecipe = (
         toSimpleRecipe(activeBehavior(backStylizer)),
     )
 
-    multipleChoiceRecipe({
-        tagname: internalFilter,
-
-        optionsZero: { tagname: tagnameFrontInactive },
-        optionsOne: { tagname: tagnameFrontActive },
-        optionsTwo: { tagname: tagnameBackInactive },
-        optionsThree: { tagname: tagnameBackActive },
-    })(filterApi)
+    multipleChoiceRecipe({ tagname: internalFilter })(filterApi)
 
     const multipleChoiceFilter = (tag: Tag, inter: Internals) => {
         const theFilter = inter.cache.get(`${tagname}:${switcherKeyword}`, {

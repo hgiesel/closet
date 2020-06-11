@@ -230,4 +230,11 @@ code: |
 
   // filter manager setup
 
-  const 
+  const sideSensitiveStyler = twoWayRecipe(Closet.utils.isBack, Closet.recipes.stylizing, Closet.recipes.stylizing)
+
+  Closet.addRecipe(sideSensitiveStyler({
+    tagname: 'tf',
+    optionsFalse: {},
+    optionsTrue: {},
+  })
+

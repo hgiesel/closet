@@ -35,11 +35,6 @@ const clozeTemplateRecipe = (
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
 
-    const tagnameBackActive = `${tagname}:back:active`
-    const tagnameBackInactive = `${tagname}:back:inactive`
-    const tagnameFrontActive = `${tagname}:front:active`
-    const tagnameFrontInactive = `${tagname}:front:inactive`
-
     const isActiveWithOverwrite = (t: Tag, inter: Internals) => isActive(t, inter) || activeOverwrite
 
     const clozeRecipe = fourWayWrap(
@@ -57,14 +52,7 @@ const clozeTemplateRecipe = (
         toSimpleRecipe((tag: Tag) => activeStylizer.stylize(tag.values[0])),
     )
 
-    clozeRecipe({
-        tagname: internalFilter,
-
-        optionsZero: { tagname: tagnameFrontInactive },
-        optionsOne: { tagname: tagnameFrontActive },
-        optionsTwo: { tagname: tagnameBackInactive },
-        optionsThree: { tagname: tagnameBackActive },
-    })(filterApi)
+    clozeRecipe({ tagname: internalFilter })(filterApi)
 
     const clozeFilter = (tag: Tag, inter: Internals) => {
         const theFilter = inter.cache.get(`${tagname}:${switcherKeyword}`, {
@@ -83,4 +71,4 @@ const clozeTemplateRecipe = (
 
 export const clozeShowRecipe = clozeTemplateRecipe(joinValues, joinValues)
 export const clozeHideRecipe = clozeTemplateRecipe(id, id)
-export const clozeRevealRecipe = clozeTemplateRecipe(joinValues, id)
+export const clozeRevealRecipe = clozeTemplateRecipe(id, joinValues)

@@ -9,8 +9,8 @@ export const twoWayWrap = (
 ): Recipe => ({
     tagname,
 
-    optionsFalse,
-    optionsTrue,
+    optionsFalse = {},
+    optionsTrue = {},
 }: {
     tagname: string,
 
@@ -50,10 +50,10 @@ export const fourWayWrap = (
 ): Recipe => ({
     tagname,
 
-    optionsZero,
-    optionsOne,
-    optionsTwo,
-    optionsThree,
+    optionsZero = {},
+    optionsOne = {},
+    optionsTwo = {},
+    optionsThree = {},
 
 }: {
     tagname: string,

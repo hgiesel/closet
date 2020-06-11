@@ -82,7 +82,7 @@ code: |
     "zi": "ㄗ", "zong": "ㄗㄨㄥ", "zou": "ㄗㄡ", "zu": "ㄗㄨ", "zuan": "ㄗㄨㄢ", "zui": "ㄗㄨㄟ", "zun": "ㄗㄨㄣ", "zuo": "ㄗㄨㄛ"
   }
 
-  const zhuyinTones = ["", "ˉ", "ˊ", "ˇ", "`", "˙"]
+  const zhuyinTones = ["", "ˉ", "ˊ", "ˇ", "ˋ", "˙"]
   const tones = ['', '\u0304', '\u0301', '\u030c' /* combining caron */, '\u0300', '\u0307']
 
   const normalizePinyin = pinyin => {
@@ -235,36 +235,21 @@ code: |
     if (!internals.environment.has('addMandarinToneStyleTag')) {
       console.log(Closet.browser)
       Closet.browser.appendStyleScript(`
-      .zh--tone-1 {
-        color: dodgerblue;
-      }
-
-      .zh--tone-2 {
-        color: lime;
-      }
-
-      .zh--tone-3 {
-        color: yellow;
-      }
-
-      .zh--tone-4 {
-        color: red;
-      }
-
-      .zh--tone-5 {
-        color: grey;
-      }`)
+      .zh--tone-1 { color: dodgerblue; }
+      .zh--tone-2 { color: lime; }
+      .zh--tone-3 { color: yellow; }
+      .zh--tone-4 { color: red; }
+      .zh--tone-5 { color: grey; }`)
 
       internals.environment.set('addMandarinToneStyleTag', true)
     }
   }, sideSensitiveStyler)
 
-  const filterColorRecipe = wrappedRemoveFormatting({ 
+  //////////////
+  filterManager.addRecipe(wrappedRemoveFormatting({ 
     tagname: 'tf',
     optionsFalse: { stylizer: removeFormatting },
-  })
-
-  filterManager.addRecipe(filterColorRecipe)
+  }))
 
   const coloredSymbolsStylizer = new Closet.FullStylizer({
     mapper: splitAndMap(v => colored(true)(numberedToSymbols(v)))
@@ -276,10 +261,11 @@ code: |
 
   filterManager.addRecipe(sideSensitiveStyler({ 
     tagname: 'ts',
-    optionsFalse: { stylizer: coloredSymbolsStylizer },
-    optionsTrue: { stylizer: dropNumbersStylizer },
+    optionsFalse: { stylizer: dropNumbersStylizer },
+    optionsTrue: { stylizer: coloredSymbolsStylizer },
   }))
 
+  //////////////
   const simpleBopomofoStylizer = new Closet.FullStylizer({
     mapper: splitAndMap(toBopomofo(true)),
   })

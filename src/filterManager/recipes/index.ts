@@ -15,9 +15,6 @@ import { debugRecipe } from './debug'
 import { metaRecipe } from './meta'
 import { activateRecipe, deactivateRecipe, toggleRecipe } from './activate'
 
-import { wrap, wrapWithDeferred, wrapWithAftermath } from './wrappers'
-import { twoWayWrap, fourWayWrap } from './nway'
-
 export const recipes: Recipes = {
     shuffling: shufflingRecipe,
     ordering: orderingRecipe,
@@ -40,6 +37,9 @@ export const recipes: Recipes = {
     meta: metaRecipe,
 }
 
+import { wrap, wrapWithDeferred, wrapWithAftermath } from './wrappers'
+import { twoWayWrap, fourWayWrap } from './nway'
+
 export const wrappers = {
     wrap: wrap,
 
@@ -48,4 +48,11 @@ export const wrappers = {
 
     twoWay: twoWayWrap,
     fourWay: fourWayWrap,
+}
+
+import { isBack, isActive } from './deciders'
+
+export const utils = {
+    isBack: isBack,
+    isActive: isActive,
 }

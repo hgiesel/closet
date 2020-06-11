@@ -1,5 +1,4 @@
-import type { Tag } from '../../tags'
-import type { Internals } from '..'
+import type { Tag, Internals } from './types'
 
 export const isBack = (_t: Tag, { preset }: Internals) => {
     return preset['side'] === 'back'

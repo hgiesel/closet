@@ -1,6 +1,6 @@
 export { renderTemplate, renderDisjointTemplate } from './src/render'
 export { FilterManager } from './src/filterManager'
-export { recipes, wrappers } from './src/filterManager/recipes'
+export { recipes, wrappers, utils } from './src/filterManager/recipes'
 
 export {
     keyPattern,

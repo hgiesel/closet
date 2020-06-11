@@ -1,0 +1,6 @@
+name: Animals
+code: |
+  Legend: bees (yellow with black); crocodiles (cyan); cats (red).
+  [[mc1::Anthophila::::Panthera]]
+  [[mch2::Colletidae::Mecistops::Catopuma]]
+  [[mcr3::Megachiidae::Osteolaemus::Prionailurus]]

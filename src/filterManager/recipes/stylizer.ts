@@ -48,7 +48,7 @@ export class Stylizer {
 
     stylize(input: string[], args: unknown[][] = []): string {
         return this.postprocess(input
-            .map((v, i) => this.mapper(v, i, ...args.map(arg => arg[i])))
+            .flatMap((v, i) => this.mapper(v, i, ...args.map(arg => arg[i])))
             .join(this.separator)
         )
     }
@@ -83,7 +83,7 @@ export class FullStylizer extends Stylizer {
         const innerResults = input.map((vs, i) => this.stylize(vs, args[i]))
 
         return this.postprocessOuter(innerResults
-            .map((v, i) => this.mapperOuter(v, i, argsOuter.map(arg => arg[i])))
+            .flatMap((v, i) => this.mapperOuter(v, i, argsOuter.map(arg => arg[i])))
             .join(this.separatorOuter)
         )
     }

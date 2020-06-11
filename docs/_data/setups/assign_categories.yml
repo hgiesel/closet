@@ -1,0 +1,56 @@
+name: Assign categories
+code: |
+  const colorMapper = (v, _i, cat) => {
+    if (v === '') {
+      return []
+    }
+
+    const theColor = cat === 0
+      ? 'yellow'
+      : cat === 1
+      ? 'darkseagreen'
+      : 'indianred'
+
+      return `<span style="color: ${theColor};${cat === 0
+        ? '-webkit-text-stroke: 0.8px black; text-stroke: 0.8px black;'
+        : ''}">${v}</span>`
+  }
+
+  const baseStylizer = new Closet.Stylizer({
+    separator: '・',
+    postprocess: (v) => `《${v}》`,
+  })
+
+  const theBackStylizer = baseStylizer.toStylizer({
+    mapper: colorMapper,
+  })
+
+  const theFrontStylizer = baseStylizer.toStylizer({
+    mapper: (v) => v === '' ? [] : `<span style="color: lightgrey">${v}</span>`,
+  })
+
+  const theContexter = (tag) => {
+    const flattedValues = tag.values.flatMap((vs, i) => vs.map(v => [v, i]))
+    const result =  flattedValues.map((v, i) => colorMapper(v[0], i, v[1]))
+    return baseStylizer.stylize(result)
+  }
+
+  filterManager.addRecipe(Closet.recipes.multipleChoiceShow({
+    tagname: 'mc',
+    backStylizer: theBackStylizer,
+    frontStylizer: theFrontStylizer,
+    contexter: theContexter,
+  }))
+
+  filterManager.addRecipe(Closet.recipes.multipleChoiceHide({
+    tagname: 'mch',
+    backStylizer: theBackStylizer,
+    frontStylizer: theFrontStylizer,
+  }))
+
+  filterManager.addRecipe(Closet.recipes.multipleChoiceReveal({
+    tagname: 'mcr',
+    backStylizer: theBackStylizer,
+    frontStylizer: theFrontStylizer,
+    contexter: theContexter,
+  }))

@@ -3,7 +3,7 @@ code: |
   const fancyMultipleChoiceStyle = `
   .cl--container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 2fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     grid-gap: 0px 20px;
     margin: 40px auto;
   }

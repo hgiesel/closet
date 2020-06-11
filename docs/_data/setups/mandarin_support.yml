@@ -206,35 +206,90 @@ code: |
     )
   }
 
-  const colored = (v) => {
+  const colored = (dropSymbols) => (v) => {
     const toneNumber = getToneNumber(v)
-    return toColoredSpan(removeTone(v), toneNumber)
+    return toColoredSpan(dropSymbols ? removeTone(v) : v, toneNumber)
   }
 
-  const coloredKeep = (v) => {
-    const toneNumber = getToneNumber(v)
-
-    return toColoredSpan(v, toneNumber)
-  }
-
-  const withSymbols = (v) => {
+  const numberedToSymbols = (v) => {
     return numberToMark(v)
   }
 
-  const toBopomofo = (pinyin) => {
-    const preresult = bopomofoTable[removeTone(pinyin).toLowerCase()]
-    const result = preresult + zhuyinTones[getToneNumber(pinyin)]
-
-    return result
+  const toBopomofo = (dropSymbols) => (pinyin) => {
+    const result = bopomofoTable[removeTone(pinyin).toLowerCase()]
+    return dropSymbols
+      ? result
+      : result + zhuyinTones[getToneNumber(pinyin)]
   }
 
-  // filter manager setup
+  const splitAndMap = (f) => (str) => mapPinyin(split(str, true, true), f).join('')
 
-  const sideSensitiveStyler = twoWayRecipe(Closet.utils.isBack, Closet.recipes.stylizing, Closet.recipes.stylizing)
+  // Filter Manager Setup
+  const sideSensitiveStyler = Closet.wrappers.twoWay(Closet.utils.isBack, Closet.recipes.stylizing, Closet.recipes.stylizing)
 
-  Closet.addRecipe(sideSensitiveStyler({
-    tagname: 'tf',
-    optionsFalse: {},
-    optionsTrue: {},
+  const removeFormatting = new Closet.FullStylizer({
+    postprocess: (v) => v.replace(/<.*?>/g, ''),
   })
 
+  const wrappedRemoveFormatting = Closet.wrappers.aftermath((_e, internals) => {
+    if (!internals.environment.has('addMandarinToneStyleTag')) {
+      console.log(Closet.browser)
+      Closet.browser.appendStyleScript(`
+      .zh--tone-1 {
+        color: dodgerblue;
+      }
+
+      .zh--tone-2 {
+        color: lime;
+      }
+
+      .zh--tone-3 {
+        color: yellow;
+      }
+
+      .zh--tone-4 {
+        color: red;
+      }
+
+      .zh--tone-5 {
+        color: grey;
+      }`)
+
+      internals.environment.set('addMandarinToneStyleTag', true)
+    }
+  }, sideSensitiveStyler)
+
+  const filterColorRecipe = wrappedRemoveFormatting({ 
+    tagname: 'tf',
+    optionsFalse: { stylizer: removeFormatting },
+  })
+
+  filterManager.addRecipe(filterColorRecipe)
+
+  const coloredSymbolsStylizer = new Closet.FullStylizer({
+    mapper: splitAndMap(v => colored(true)(numberedToSymbols(v)))
+  })
+
+  const dropNumbersStylizer = new Closet.FullStylizer({
+    mapper: removeTone,
+  })
+
+  filterManager.addRecipe(sideSensitiveStyler({ 
+    tagname: 'ts',
+    optionsFalse: { stylizer: coloredSymbolsStylizer },
+    optionsTrue: { stylizer: dropNumbersStylizer },
+  }))
+
+  const simpleBopomofoStylizer = new Closet.FullStylizer({
+    mapper: splitAndMap(toBopomofo(true)),
+  })
+
+  const coloredBopomofoStylizer = new Closet.FullStylizer({
+    mapper: splitAndMap(v => colored(true)(toBopomofo(false)(v))),
+  })
+
+  filterManager.addRecipe(sideSensitiveStyler({ 
+    tagname: 'bpmf',
+    optionsFalse: { stylizer: simpleBopomofoStylizer },
+    optionsTrue: { stylizer: coloredBopomofoStylizer },
+  }))

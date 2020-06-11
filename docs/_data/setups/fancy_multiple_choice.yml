@@ -1,0 +1,85 @@
+name: Fancy multiple choice
+code: |
+  const fancyMultipleChoiceStyle = `
+  .cl--container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 2fr));
+    grid-gap: 0px 20px;
+    margin: 40px auto;
+  }
+
+  .cl--card {
+    cursor: pointer;
+    position: relative;
+    height: 0;
+    padding-bottom: 100%;
+    transition: transform 0.6s ease;
+    --translate: 0;
+    transform: translate(var(--translate), var(--translate));
+  }
+
+  .cl--card:hover {
+    --translate: calc(-5px);
+    transition: transform 0.3s ease;
+  }
+
+  .cl--child {
+    position: absolute;
+    width: 100%;
+    height: 80%;
+
+    padding: 8px 16px;
+    box-sizing: border-box;
+    background: #fff;
+    box-shadow: 0px 4px 8px rgba(128, 128, 128, 0.1), 0px -4px 8px rgba(255, 255, 255, 0.8);
+    border-radius: 6px;
+    transition: inherit;
+    transform: translate(var(--translate), var(--translate));
+    z-index: 5;
+  }
+  
+  .cl--child > h3 {
+    color: black;
+  }
+
+  .cl--reveal .cl--category-0 {
+    background-color: lime;
+  }
+
+  .cl--reveal .cl--category-1 {
+    background-color: coral;
+  }`
+
+  const wrappedMultipleChoiceShow = Closet.wrappers.aftermath((e, inter) => {
+    document.querySelectorAll('.cl--child')
+      .forEach(v => v.addEventListener('click', () => {
+        const container = document.querySelector('.cl--container')
+
+        if (container) {
+          container.classList.add('cl--reveal')
+        }
+      }))
+
+    const keyword = 'fancyMultipleChoice'
+
+    if (!inter.environment.has(keyword)) {
+      Closet.browser.appendStyleScript(fancyMultipleChoiceStyle)
+      inter.environment.set(keyword, true)
+    }
+  }, Closet.recipes.multipleChoiceShow)
+
+  const wrapItem = (v, _i, cat) => `<div class="cl--card"><div class="cl--child cl--category-${cat}"><h3>${v}</h3></div></div>`
+
+  filterManager.addRecipe(wrappedMultipleChoiceShow({
+    tagname: 'mc',
+    frontStylizer: new Closet.Stylizer({
+      mapper: wrapItem,
+      separator: '',
+      postprocess: (v) => `<div class="cl--container">${v}</div>`,
+    }),
+    backStylizer: new Closet.Stylizer({
+      mapper: wrapItem,
+      separator: '',
+      postprocess: (v) => `<div class="cl--container cl--reveal">${v}</div>`,
+    }),
+  }))

@@ -1,19 +1,5 @@
 name: Keydown to reveal clozes
 code: |
-  Closet.browser.appendStyleScript(`
-  .cl--obscure-hint {
-    filter: blur(0.25em);
-  }
-
-  .cl--obscure-fix::after {
-    content: 'XXXXXXXXXX';
-    filter: blur(0.25em);
-  }
-
-  .cl--obscure-fix > span {
-    display: none;
-  }`)
-
   const makeObscureOnKd = (keycode, uid) => {
     return function removeObscureOnKd(event) {
       if (event.keyCode === keycode) {
@@ -42,11 +28,24 @@ code: |
     }
   }
 
-  const wrappedClozeShow = Closet.wrappers.aftermath(
-    (e, inter) => {
+  const wrappedClozeShow = Closet.wrappers.aftermath((e, inter) => {
       const keyword = 'keydownToRevealObscure'
 
       if (!inter.environment.has(keyword)) {
+        Closet.browser.appendStyleScript(`
+        .cl--obscure-hint {
+          filter: blur(0.25em);
+        }
+
+        .cl--obscure-fix::after {
+          content: 'XXXXXXXXXX';
+          filter: blur(0.25em);
+        }
+
+        .cl--obscure-fix > span {
+          display: none;
+        }`)
+
         const revealOnQ = makeObscureOnKd(KeyEvent.DOM_VK_Q, '6')
         const revealAllOnW = makeObscureOnKdAll(KeyEvent.DOM_VK_W, '5')
 

@@ -1,12 +1,12 @@
 ---
 layout: doc
-title: Why the name
+title: Why the name?
 nav_order: 1
 permalink: why-the-name
 parent: Home
 ---
 
-{% include toc-doc.md %}
+# {{ page.title }}
 
 The first time I wrote code in this vein, I called the script __Multiple Choice__.
 

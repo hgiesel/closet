@@ -7,7 +7,12 @@ import { Stylizer, rawStylizer } from './stylizer'
 import { isBack, isActive } from './deciders'
 import { noneEllipser, stylizeEllipser } from './ellipser'
 
-const hintEllipser = stylizeEllipser(rawStylizer, (v: string[][]) => v[1])
+const hintEllipser = stylizeEllipser(
+    rawStylizer.toStylizer({
+        postprocess: v => `[${v}]`,
+    }),
+    (v: string[][]) => v[1] ?? ['...'],
+)
 
 const defaultStylizer = new Stylizer({
     postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,

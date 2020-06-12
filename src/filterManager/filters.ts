@@ -45,7 +45,8 @@ const withStandardizedFilterResult = (wf: WeakFilter): Filter => (t: Filterable,
     }
 }
 
-export type WeakFilter = (t: Filterable, i: Internals) => FilterResult | string | void
+export type WeakFilterResult = FilterResult | string | void
+export type WeakFilter = (t: Filterable, i: Internals) => WeakFilterResult
 export type Filter = (t: Filterable, i: Internals) => FilterResult
 
 const baseFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getRawRepresentation(), i.round.ready)

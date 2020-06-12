@@ -1,8 +1,9 @@
-import type { FilterApi } from '../filters'
+import type { FilterApi, WeakFilterResult } from '../filters'
 import type { Tag } from '../../tags'
 import type { Internals } from '..'
+import type { Stylizer } from './stylizer'
 
-export type { FilterApi, WeakFilter } from '../filters'
+export type { FilterApi, WeakFilter, WeakFilterResult } from '../filters'
 export type { Tag } from '../../tags'
 export type { Internals } from '..'
 export type { Deferred } from '../deferred'
@@ -16,3 +17,6 @@ export interface WrapOptions {
     getTagnames?: (o: object) => string[]
     setTagnames?: (o: object, newNames: string[]) => void
 }
+
+export type ActiveBehavior = (stylizer: Stylizer, ellipser: Ellipser) => (t: Tag, i: Internals) => WeakFilterResult
+export type InactiveBehavior = (contexter: Ellipser, ellipser: Ellipser) => (t: Tag, i: Internals) => WeakFilterResult

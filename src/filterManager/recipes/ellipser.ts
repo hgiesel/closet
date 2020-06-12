@@ -1,4 +1,4 @@
-import { Tag, Internals, Ellipser, FilterApi, Recipe } from './types'
+import { Tag, Internals, Ellipser } from './types'
 import { zeroWidthSpace } from './utils'
 import { Stylizer, FullStylizer } from './stylizer'
 
@@ -24,11 +24,3 @@ export const stylizeEllipser = (
 }
 
 export const noneEllipser: Ellipser = (): string => zeroWrap('[...]')
-
-export const toSimpleRecipe = (ellipser: Ellipser): Recipe => ({
-    tagname,
-}: {
-    tagname: string,
-}) => (filterApi: FilterApi) => {
-    filterApi.register(tagname, ellipser)
-}

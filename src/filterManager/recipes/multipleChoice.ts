@@ -65,11 +65,11 @@ const multipleChoiceTemplateRecipe = (
     switcherKeyword = 'switch',
     activateKeyword = 'activate',
 
-    backStylizer = mcDefaultBackStylizer,
     frontStylizer = mcDefaultFrontStylizer,
+    backStylizer = mcDefaultBackStylizer,
 
-    ellipser = noneEllipser,
     contexter = defaultContexter,
+    ellipser = noneEllipser,
 }) => (filterApi: FilterApi) => {
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false

@@ -29,6 +29,7 @@ const clozeTemplateRecipe = (
     activateKeyword = 'activate',
 
     activeStylizer = defaultStylizer,
+
     activeEllipser = hintEllipser,
     inactiveEllipser = noneEllipser,
 }) => (filterApi: FilterApi) => {

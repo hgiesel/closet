@@ -1,8 +1,8 @@
 name: "Omnipotent"
 code: |
-  filterManager.addRecipe(Closet.recipes.shuffling('mix'))
-  filterManager.addRecipe(Closet.recipes.ordering('ord', 'mix'))
+  filterManager.addRecipe(Closet.recipes.shuffling({ tagname: 'mix' }))
+  filterManager.addRecipe(Closet.recipes.ordering({ tagname: 'ord', shuffleTagname: 'mix' }))
 
-  filterManager.addRecipe(Closet.recipes.clozeShow())
+  filterManager.addRecipe(Closet.recipes.clozeShow({ tagname: 'c' }))
   filterManager.addRecipe(Closet.recipes.clozeHide({ tagname: 'ch' }))
   filterManager.addRecipe(Closet.recipes.clozeReveal({ tagname: 'cr' }))

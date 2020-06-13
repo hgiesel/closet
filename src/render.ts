@@ -113,9 +113,7 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, baseDepth: number, 
         ] = tag.innerTags.reduce(tagReduce, [text, stack, true])
 
         // get offsets
-        modStack.push(modStack.pop() - modStack[modStack.length - 1])
-
-        const innerOffset = modStack.pop()
+        const innerOffset = modStack.pop() - modStack[modStack.length - 1]
         const leftOffset = modStack.pop()
 
         ///////////////////// Updating valuesRaw and values with innerTags

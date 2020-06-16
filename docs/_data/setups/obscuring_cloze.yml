@@ -10,18 +10,21 @@ code: |
 
   filterManager.addRecipe(Closet.recipes.clozeShow({
     tagname: 'c',
-    ellipser: obscure,
+
+    activeEllipser: obscure,
     activeStylizer: useYellow,
   }))
 
   filterManager.addRecipe(Closet.recipes.clozeHide({
     tagname: 'ch',
-    ellipser: obscure,
+
+    activeEllipser: obscure,
     activeStylizer: useYellow,
   }))
 
   filterManager.addRecipe(Closet.recipes.clozeReveal({
     tagname: 'cr',
-    ellipser: obscure,
+
+    activeEllipser: obscure,
     activeStylizer: useYellow,
   }))

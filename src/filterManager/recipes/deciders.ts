@@ -1,10 +1,10 @@
 import type { Tag, Internals } from './types'
 
-export const isBack = (_t: Tag, { preset }: Internals) => {
+export const isBack = (_t: Tag, { preset }: Internals): boolean => {
     return preset['side'] === 'back'
 }
 
-export const isActive = ({ num }: Tag, { preset }: Internals) => {
+export const isActive = ({ num }: Tag, { preset }: Internals): boolean => {
     switch (num) {
         case null:
             return false

@@ -47,7 +47,7 @@ Note how we changed the highlight color: Seeing blurred blue on a black backgrou
 ---
 ## Ellipsers
 
-Each of these behaviors was implemented by providing custom ellipsers.
+Both of these behaviors was implemented by providing custom ellipsers.
 
 An ellipser is a function that outputs a string.
 There are two ellipsers: the _active ellipser_, and the _inactive ellipser_.

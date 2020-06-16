@@ -16,21 +16,6 @@ parent: Clozes
 {% include toc-doc.md %}
 
 ---
-## The Ellipsis Maker
-
-By default, the cloze filter will use the second provided value as a hint.
-However this behavior is easily modifiable by overwriting the `ellipsisMaker`.
-
-This function is used in different situations, depending on the cloze subtype:
-* _showing clozes_ use it for _active front_
-* _hiding clozes_ use it for _active front_ and any _inactive_
-* _revealing clozes_ use it for any _front_
-
-If any of the terms _active_, _inactive_, _front_, _back_ confuse, see [here](/clozes#test-and-answer-context).
-
-In the following, we outline two possible ways to adapt the ellipsis maker.
-
----
 ## Blanking
 
 One possible way would be to show the answer all blanked out by underscore symbols `_`.
@@ -58,3 +43,21 @@ Another option is to obscure the solution by bluring the answer text.
 {% include codeDisplay.md content=cloze.hiding_cloze filterManager=setups.obscuring_cloze buttons=bOneTwoThree %}
 
 Note how we changed the highlight color: Seeing blurred blue on a black background would be hard to see.
+
+---
+## Ellipsers
+
+Each of these behaviors was implemented by providing custom ellipsers.
+
+An ellipser is a function that outputs a string.
+There are two ellipsers: the _active ellipser_, and the _inactive ellipser_.
+
+The *active ellipser* is used by all cloze subtypes to render _active front_ clozes.
+By default is shows you the [hint](creating#hints) (a second provided value), or "[...]", in case you did not provide hint.
+
+The *inactive ellipser* has a default output of "[...]".
+It is used in the following cases:
+* *revealing clozes* use it for _inactive front_ clozes
+* *hiding clozes* use it for any _inactive_ clozes
+
+If any of the terms _active_, _inactive_, _front_, _back_ confuse, see [here](/clozes#test-and-answer-context).

@@ -44,16 +44,14 @@ export class TagData {
 
     readonly valuesText: string
 
-    readonly fullOccur: number
-    readonly occur: number
+    _fullOccur: number
+    _occur: number
 
     readonly path: number[]
 
     constructor(
         fullKey: string,
         valuesText: string | null,
-        fullOccur: number,
-        occur: number,
         path: number[],
     ) {
         this.fullKey = fullKey
@@ -64,18 +62,27 @@ export class TagData {
 
         this.valuesText = valuesText
 
-        this.fullOccur = fullOccur
-        this.occur = occur
 
         this.path = path
+    }
+
+    private set fullOccur(n: number) {
+        this.fullOccur = n
+    }
+
+    private set occur(n: number) {
+        this.occur = n
+    }
+
+    setOccur(fullOccur: number, occur: number) {
+        this.fullOccur = fullOccur
+        this.occur = occur
     }
 
     shadow(newValuesText: string | null): TagData {
         return new TagData(
             this.fullKey,
             newValuesText,
-            this.fullOccur,
-            this.occur,
             this.path,
         )
     }

@@ -1,4 +1,4 @@
-import { TagData, TagInfo } from '../tags'
+import { TagData, TagInfo } from '../tagTypes'
 
 export class TagFactory {
     private readonly tagCounter: Map<string, number>
@@ -26,19 +26,15 @@ export class TagFactory {
         this.tagPathNext = 0
     }
 
-    build(fullKey: string, valuesRaw: string | null): Tag {
+    build(fullKey: string, valuesText: string | null): TagData {
         // you need to signalTagOpen, before you build, otherwise they have all [] path
-        const fullOccur = this.getAndInc(fullKey)
-        const occur = fullKey === key
-            ? fullOccur
-            : this.getAndInc(key)
+        const result = new TagData(fullKey, valuesText, [...this.tagPathStack])
 
-        const result = new Tag(
-            fullKey,
-            valuesRaw,
+        const fullOccur = this.getAndInc(result.fullKey)
+
+        result.setOccur(
             fullOccur,
-            occur,
-            [...this.tagPathStack],
+            result.fullKey === result.key ? fullOccur : this.getAndInc(result.key),
         )
 
         this.tagPathNext = this.tagPathStack.pop() + 1
@@ -70,7 +66,7 @@ export class TagInfoFactory {
         return saveForResult
     }
 
-    build(start: number, end: number, data: Tag, innerTags: TagInfo[]): TagInfo {
+    build(start: number, end: number, data: TagData, innerTags: TagInfo[]): TagInfo {
         return new TagInfo(
             start + this.fixedLeftOffset,
             end + this.fixedLeftOffset,

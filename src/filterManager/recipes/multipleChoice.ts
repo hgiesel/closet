@@ -1,4 +1,4 @@
-import type { Tag, Recipe, Internals, Ellipser, ActiveBehavior } from './types'
+import type { TagData, Recipe, Internals, Ellipser, ActiveBehavior } from './types'
 
 import { id, id2 } from './utils'
 import { Stylizer } from './stylizer'
@@ -9,10 +9,10 @@ import { mcClozeTemplate } from './mcClozeTemplate'
 const activeBehavior: ActiveBehavior = (
     stylizer: Stylizer,
 ) => (
-    { values, fullKey, fullOccur }: Tag,
+    { values, fullKey, fullOccur }: TagData,
     internals: Internals,
 ) => {
-    const flattedValuesWithIndex = (values as any).flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
+    const flattedValuesWithIndex = values('::', '||').flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
 
     const maybeValues = sequencer(
         `${fullKey}:${fullOccur}`,
@@ -45,7 +45,7 @@ const defaultBackStylizer = defaultFrontStylizer.toStylizer({
     },
 })
 
-const defaultContexter = (tag: Tag, internals: Internals) => {
+const defaultContexter = (tag: TagData, internals: Internals) => {
     const maybeValues = sequencer(
         `${tag.fullKey}:${tag.fullOccur}`,
         `${tag.fullKey}:${tag.fullOccur}`,

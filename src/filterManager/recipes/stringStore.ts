@@ -1,5 +1,5 @@
-import type { Tag, FilterApi, Internals } from './types'
-import { allowCommaStyle, keyPattern } from './utils'
+import type { TagData, FilterApi, Internals } from './types'
+import { keyPattern } from './utils'
 
 class StringMap {
     theMap: Map<string, string>
@@ -52,8 +52,8 @@ class StringMap {
 const activateFilterTemplate = (
     stringMapId: string,
     operation: (key: string, occur: number | null, num: number | null) => (a: StringMap) => void,
-) => ({ values, valuesRaw }: Tag, { cache }: Internals) => {
-    const commands = allowCommaStyle(values, valuesRaw)
+) => ({ values }: TagData, { cache }: Internals) => {
+    const commands = values(',')
 
     commands.forEach((val: string) => {
         const [fullKey, occur] = val.split(':')

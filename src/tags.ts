@@ -2,14 +2,20 @@ import {
     TAG_OPEN,
     TAG_CLOSE,
     ARG_SEP,
-} from '../utils'
+} from './utils'
 
-interface SeparatorOption {
+export interface Separator {
     sep: string
     max?: number
 }
 
-const splitValues = (text: string, ...seps: SeparatorOption[]): unknown[] => {
+export type WeakSeparator = Separator | string
+
+const splitValues = (text: string, seps: Separator[]) => {
+    if (seps.length === 0) {
+        return text
+    }
+
     const [{ sep, max=Infinity }, ...nextSeps] = seps
 
     let textSplit = text
@@ -32,7 +38,7 @@ const splitValues = (text: string, ...seps: SeparatorOption[]): unknown[] => {
 
     return nextSeps.length === 0
         ? splits
-        : splits.map(v => splitValues(v, ...nextSeps))
+        : splits.map(v => splitValues(v, nextSeps))
 }
 
 const keyPattern = /^([^0-9]+)([0-9]*)$/u
@@ -42,7 +48,7 @@ export class TagData {
     readonly key: string
     readonly num: number | null
 
-    readonly valuesText: string
+    readonly valuesText: string | null
 
     _fullOccur: number
     _occur: number
@@ -66,17 +72,17 @@ export class TagData {
         this.path = path
     }
 
-    private set fullOccur(n: number) {
-        this.fullOccur = n
+    get fullOccur() {
+        return this.fullOccur
     }
 
-    private set occur(n: number) {
-        this.occur = n
+    get occur() {
+        return this.occur
     }
 
     setOccur(fullOccur: number, occur: number) {
-        this.fullOccur = fullOccur
-        this.occur = occur
+        this._fullOccur = fullOccur
+        this._occur = occur
     }
 
     shadow(newValuesText: string | null): TagData {
@@ -87,8 +93,12 @@ export class TagData {
         )
     }
 
-    values(...seps: SeparatorOption[]): unknown[] {
-        return splitValues(this.valuesText, ...seps.map(v => typeof v === 'string' ? { sep: v } : v))
+    hasValues(): boolean {
+        return this.valuesText === null
+    }
+
+    values(...seps: WeakSeparator[]) {
+        return splitValues(this.valuesText, seps.map(v => typeof v === 'string' ? { sep: v } : v))
     }
 
     getDefaultRepresentation(): string {

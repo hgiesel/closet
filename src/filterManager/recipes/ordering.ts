@@ -1,7 +1,6 @@
-import type { Tag, FilterApi, Internals } from './types'
+import type { TagData, FilterApi, Internals } from './types'
 
 import {
-    allowCommaStyle,
     toNumbers,
     sortWithIndices,
     topUpSortingIndices,
@@ -12,13 +11,13 @@ export const orderingRecipe = ({
     shuffleTagname,
 }) => (filterApi: FilterApi) => {
     const ordFilter = (
-        { key, fullOccur, values, valuesRaw }: Tag,
+        { key, fullOccur, values }: TagData,
         { deferred, cache }: Internals,
     ) => {
         // mixes occupied by other ords
         const ordOccupiedKey = `${key}:ord:occupied`
 
-        const toBeOrdered = toNumbers(allowCommaStyle(values, valuesRaw))
+        const toBeOrdered = toNumbers(values(','))
             .filter((v: number) => !(cache.get(ordOccupiedKey, []) as number[]).includes(v))
 
         cache.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])

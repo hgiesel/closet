@@ -1,12 +1,12 @@
-import type { FilterApi, Tag } from './types'
+import type { FilterApi, TagData } from './types'
 
 export const debugRecipe = () => (filterApi: FilterApi) => {
-    const pathFilter = ({path}: Tag) => path.join(':')
+    const pathFilter = ({ path }: TagData) => path.join(':')
 
     filterApi.register('tagpath', pathFilter)
     filterApi.register('never', (() => {}))
     filterApi.register('empty', (() => ''))
-    filterApi.register('key', (({ key }: Tag) => key))
+    filterApi.register('key', (({ key }: TagData) => key))
 
     filterApi.register('memorytest', (({}, { memory }) => {
         const memoryTestKey = 'base:memorytest'

@@ -1,4 +1,4 @@
-import type { Tag } from '../../tags'
+import type { TagData } from '../../tags'
 import type { FilterApi } from '../filters'
 
 import {
@@ -60,13 +60,13 @@ export const randRecipe = (
     keyword: string,
 ) => (filterApi: FilterApi) => {
     const intFilter = (
-        {num, values, valuesRaw}: Tag,
+        { values }: TagData,
     ) => {
         const [
             min = 1,
             max = null,
             multiple = 1,
-        ] = toNumbers(allowCommaStyle(values, valuesRaw))
+        ] = toNumbers(values(','))
 
 
         return min > max
@@ -75,13 +75,13 @@ export const randRecipe = (
     }
 
     const realFilter = (
-        {num, values, valuesRaw}
+        { values }
     ) => {
         const [
             min = 1,
             max = null,
             multiple = 1,
-        ] = toNumbers(allowCommaStyle(values, valuesRaw))
+        ] = toNumbers(values(','))
     }
 
     filterApi.register(keyword, intFilter)

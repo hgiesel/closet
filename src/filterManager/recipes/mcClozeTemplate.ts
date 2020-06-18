@@ -1,4 +1,4 @@
-import type { Tag, Internals, FilterApi, ActiveBehavior, InactiveBehavior } from './types'
+import type { TagData, Internals, FilterApi, ActiveBehavior, InactiveBehavior } from './types'
 import { fourWayWrap } from './nway'
 import { isBack, isActive } from './deciders'
 import { simpleRecipe } from './simple'
@@ -24,7 +24,7 @@ export const mcClozeTemplate = (
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
 
-    const isActiveWithOverwrite = (t: Tag, inter: Internals) => isActive(t, inter) || activeOverwrite
+    const isActiveWithOverwrite = (t: TagData, inter: Internals) => isActive(t, inter) || activeOverwrite
 
     const clozeRecipe = fourWayWrap(
         isActiveWithOverwrite,
@@ -37,7 +37,7 @@ export const mcClozeTemplate = (
 
     clozeRecipe({ tagname: internalFilter })(filterApi)
 
-    const clozeFilter = (tag: Tag, inter: Internals) => {
+    const clozeFilter = (tag: TagData, inter: Internals) => {
         const theFilter = inter.cache.get(`${tagname}:${switcherKeyword}`, {
             get: (_k: string, _n: number | null, _o: number) => internalFilter,
         }).get(tag.key, tag.num, tag.fullOccur)

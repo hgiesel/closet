@@ -1,4 +1,4 @@
-import type { Tag, FilterApi, Internals } from './types'
+import type { TagData, FilterApi, Internals } from './types'
 import { allowCommaStyle, keyPattern } from './utils'
 
 class ActivateMap {
@@ -69,7 +69,7 @@ class ActivateMap {
 const activateFilterTemplate = (
     activateId: string,
     operation: (key: string, occur: number | null, num: number | null) => (a: ActivateMap) => void,
-) => ({ values, valuesRaw }: Tag, { cache }: Internals) => {
+) => ({ values, valuesRaw }: TagData, { cache }: Internals) => {
     const commands = allowCommaStyle(values, valuesRaw)
 
     commands.forEach((val: string) => {

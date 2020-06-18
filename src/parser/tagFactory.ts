@@ -1,4 +1,4 @@
-import { TagData, TagInfo } from '../tagTypes'
+import { TagData, TagInfo } from '../tags'
 
 export class TagFactory {
     private readonly tagCounter: Map<string, number>

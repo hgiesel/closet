@@ -1,13 +1,13 @@
 import type { FilterApi, FilterResult } from '../filters'
-import type { Tag } from '../../tags'
+import type { TagData } from '../../tags'
 
 const paramPattern = /%(\d*)/u
 
 export const metaRecipe = () => (filterApi: FilterApi) => {
-    filterApi.register('def', ({ values }: Tag, { filters }): FilterResult => {
-        const outerValues = values
+    filterApi.register('def', ({ values }: TagData, { filters }): FilterResult => {
+        const outerValues = values('::', '||')
 
-        filters.register(values[0][0], ({ values }: Tag) => {
+        filters.register(values[0][0], ({ values }: TagData) => {
             return {
                 result: '[[' + outerValues
                     .slice(1)

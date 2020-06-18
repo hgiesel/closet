@@ -1,7 +1,4 @@
-import {
-    TagInfo,
-    Tag,
-} from './tags'
+import { TagInfo, TagData } from './tags'
 
 type TagPath = number[]
 
@@ -42,7 +39,7 @@ class TemplateApi {
         return this.traverse(path)
     }
 
-    getTag(path = this.zoom): Tag | null {
+    getTag(path = this.zoom): TagData | null {
         const maybeTagInfo = this.traverse(path)
 
         if (maybeTagInfo) {

@@ -3,9 +3,7 @@ import type {
     FilterProcessor,
 } from './filterManager'
 
-import type {
-    TagInfo,
-} from './tags'
+import type { TagInfo } from './tags'
 
 import {
     calculateCoordinates,
@@ -135,7 +133,7 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, baseDepth: number, 
             }
         }
         else {
-            newValuesRaw = tag.data.valuesRaw === null
+            newValuesRaw = tag.data.hasValues()
                 ? null
                 : modText.slice(
                     lend + (TAG_OPEN.length + tag.data.fullKey.length + ARG_SEP.length),
@@ -143,7 +141,7 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, baseDepth: number, 
                 )
         }
 
-        const tagData = tag.data.shadowValuesRaw(newValuesRaw)
+        const tagData = tag.data.shadow(newValuesRaw)
 
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tagData, {

@@ -1,6 +1,4 @@
-import { Tag, TagInfo } from '../tags'
-
-const keyPattern = /^([^0-9]+)([0-9]*)$/u
+import { TagData, TagInfo } from '../tags'
 
 export class TagFactory {
     private readonly tagCounter: Map<string, number>
@@ -30,11 +28,6 @@ export class TagFactory {
 
     build(fullKey: string, valuesRaw: string | null): Tag {
         // you need to signalTagOpen, before you build, otherwise they have all [] path
-        const match = fullKey.match(keyPattern)
-
-        const key = match[1]
-        const idx = match[2].length === 0 ? null : Number(match[2])
-
         const fullOccur = this.getAndInc(fullKey)
         const occur = fullKey === key
             ? fullOccur
@@ -42,8 +35,6 @@ export class TagFactory {
 
         const result = new Tag(
             fullKey,
-            key,
-            idx,
             valuesRaw,
             fullOccur,
             occur,

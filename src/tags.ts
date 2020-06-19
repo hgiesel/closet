@@ -85,6 +85,10 @@ export class TagData {
         this._occur = occur
     }
 
+    get depth(): number {
+        return this.path.length
+    }
+
     shadow(newValuesText: string | null): TagData {
         const result = new TagData(
             this.fullKey,
@@ -94,6 +98,20 @@ export class TagData {
 
         result.setOccur(this.fullOccur, this.occur)
         return result
+    }
+
+    shadowFromText(text: string, lend: number, rend: number): TagData {
+        return this.shadow(text.slice(lend, rend))
+    }
+
+    shadowFromTextWithoutDelimiters(text: string, lend: number, rend: number): TagData {
+        return this.hasValues()
+            ? this.shadow(null)
+            : this.shadowFromText(
+                text,
+                lend + (TAG_OPEN.length + this.fullKey.length + ARG_SEP.length),
+                rend - (TAG_CLOSE.length),
+            )
     }
 
     hasValues(): boolean {

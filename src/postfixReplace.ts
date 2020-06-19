@@ -1,10 +1,7 @@
 import type { FilterProcessor } from './filterManager'
 import type { TagInfo } from './tags'
 
-import {
-    calculateCoordinates, replaceAndGetOffset,
-    TAG_OPEN, TAG_CLOSE, ARG_SEP,
-} from './utils'
+import { calculateCoordinates, replaceAndGetOffset } from './utils'
 
 // traverses in postfix order
 export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean, [number, number][]] => {
@@ -31,28 +28,16 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
             rend,
         ] = calculateCoordinates(tag.start, tag.end, leftOffset, innerOffset)
 
-        let newValuesRaw = null
-
         // correctly treat the base levels: they don't have have tags!
-        const depth = tag.data.path.length + 1
+        const depth = tag.data.depth + 1
+        const tagData = depth <= baseDepth
+            ? tag.data.shadowFromText(modText, lend, rend)
+            : tag.data.shadowFromTextWithoutDelimiters(modText, lend, rend)
 
-        if (depth <= baseDepth) {
-            newValuesRaw = modText.slice(lend, rend)
-
-            if (depth === baseDepth) {
-                baseStack.push([lend, rend])
-            }
+        // save base tags
+        if (depth === baseDepth) {
+            baseStack.push([lend, rend])
         }
-        else {
-            newValuesRaw = tag.data.hasValues()
-                ? null
-                : modText.slice(
-                    lend + (TAG_OPEN.length + tag.data.fullKey.length + ARG_SEP.length),
-                    rend - (TAG_CLOSE.length),
-                )
-        }
-
-        const tagData = tag.data.shadow(newValuesRaw)
 
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tagData, {

@@ -114,6 +114,20 @@ export class TagData {
             )
     }
 
+    shadowFromText(text: string, lend: number, rend: number): TagData {
+        return this.shadow(text.slice(lend, rend))
+    }
+
+    shadowFromTextWithoutDelimiters(text: string, lend: number, rend: number): TagData {
+        return this.hasValues()
+            ? this.shadow(null)
+            : this.shadowFromText(
+                text,
+                lend + (TAG_OPEN.length + this.fullKey.length + ARG_SEP.length),
+                rend - (TAG_CLOSE.length),
+            )
+    }
+
     hasValues(): boolean {
         return this.valuesText === null
     }

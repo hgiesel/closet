@@ -1,10 +1,7 @@
 import type { TagData } from '../../tags'
 import type { FilterApi } from '../filters'
 
-import {
-    allowCommaStyle,
-    toNumbers,
-} from './utils'
+import { toNumbers } from './utils'
 
 const intGenerator = function*(
     min: number,
@@ -59,14 +56,12 @@ const realGenerator = function*(
 export const randRecipe = (
     keyword: string,
 ) => (filterApi: FilterApi) => {
-    const intFilter = (
-        { values }: TagData,
-    ) => {
+    const intFilter = (tag: TagData) => {
         const [
             min = 1,
             max = null,
             multiple = 1,
-        ] = toNumbers(values(','))
+        ] = toNumbers(tag.values(','))
 
 
         return min > max
@@ -74,14 +69,12 @@ export const randRecipe = (
             : String((min + Math.floor(Math.random() * max - min)) * multiple)
     }
 
-    const realFilter = (
-        { values }
-    ) => {
+    const realFilter = (tag: TagData) => {
         const [
             min = 1,
             max = null,
             multiple = 1,
-        ] = toNumbers(values(','))
+        ] = toNumbers(tag.values(','))
     }
 
     filterApi.register(keyword, intFilter)

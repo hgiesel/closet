@@ -4,10 +4,12 @@ import type { TagData } from '../../tags'
 const paramPattern = /%(\d*)/u
 
 export const metaRecipe = () => (filterApi: FilterApi) => {
-    filterApi.register('def', ({ values }: TagData, { filters }): FilterResult => {
-        const outerValues = values('::', '||')
+    filterApi.register('def', (tag: TagData, { filters }): FilterResult => {
+        const outerValues = tag.values('::', '||')
 
-        filters.register(values[0][0], ({ values }: TagData) => {
+        filters.register(outerValues[0][0], (tag: TagData) => {
+            const innerValues = tag.values('::', '||')
+
             return {
                 result: '[[' + outerValues
                     .slice(1)
@@ -20,8 +22,8 @@ export const metaRecipe = () => (filterApi: FilterApi) => {
                                     ? 0
                                     : Number(match[1])
 
-                                return values[paramNo]
-                                    ? values[paramNo].join('||')
+                                return innerValues[paramNo]
+                                    ? innerValues[paramNo].join('||')
                                     : ''
                             }
 

@@ -52,8 +52,8 @@ class StringMap {
 const activateFilterTemplate = (
     stringMapId: string,
     operation: (key: string, occur: number | null, num: number | null) => (a: StringMap) => void,
-) => ({ values }: TagData, { cache }: Internals) => {
-    const commands = values(',')
+) => (tag: TagData, { cache }: Internals) => {
+    const commands = tag.values(',')
 
     commands.forEach((val: string) => {
         const [fullKey, occur] = val.split(':')

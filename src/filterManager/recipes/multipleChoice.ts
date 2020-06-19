@@ -8,15 +8,12 @@ import { mcClozeTemplate } from './mcClozeTemplate'
 
 const activeBehavior: ActiveBehavior = (
     stylizer: Stylizer,
-) => (
-    { values, fullKey, fullOccur }: TagData,
-    internals: Internals,
-) => {
-    const flattedValuesWithIndex = values('::', '||').flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
+) => (tag: TagData, internals: Internals) => {
+    const flattedValuesWithIndex = tag.values('::', '||').flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
 
     const maybeValues = sequencer(
-        `${fullKey}:${fullOccur}`,
-        `${fullKey}:${fullOccur}`,
+        `${tag.fullKey}:${tag.fullOccur}`,
+        `${tag.fullKey}:${tag.fullOccur}`,
         flattedValuesWithIndex,
         internals,
     )

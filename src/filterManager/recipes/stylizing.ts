@@ -7,10 +7,8 @@ export const styleRecipe = ({
     stylizer = new Stylizer(),
     separator = '::',
 }) => (filterApi: FilterApi) => {
-    const styleFilter = (
-        { values }: TagData,
-    ) => {
-        return stylizer.stylize(values(separator))
+    const styleFilter = (tag: TagData) => {
+        return stylizer.stylize(tag.values(separator))
     }
 
     filterApi.register(tagname, styleFilter as any)

@@ -11,13 +11,13 @@ export const orderingRecipe = ({
     shuffleTagname,
 }) => (filterApi: FilterApi) => {
     const ordFilter = (
-        { key, fullOccur, values }: TagData,
+        tag: TagData,
         { deferred, cache }: Internals,
     ) => {
         // mixes occupied by other ords
-        const ordOccupiedKey = `${key}:ord:occupied`
+        const ordOccupiedKey = `${tag.key}:ord:occupied`
 
-        const toBeOrdered = toNumbers(values(','))
+        const toBeOrdered = toNumbers(tag.values(','))
             .filter((v: number) => !(cache.get(ordOccupiedKey, []) as number[]).includes(v))
 
         cache.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])
@@ -26,7 +26,7 @@ export const orderingRecipe = ({
             toBeOrdered.map((v: number) => `${shuffleTagname}${v}`)
         )
 
-        const ordKey = `${key}:${fullOccur}:ord`
+        const ordKey = `${tag.key}:${tag.fullOccur}:ord`
 
         deferred.register(ordKey, () => {
             const finishedKeys = []

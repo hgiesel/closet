@@ -12,13 +12,13 @@ const clozeFrontActiveBehavior: ActiveBehavior = (
     return stylizer.stylize([activeEllipser(tag, internals)])
 }
 
+const clozeSeparator: Separator = { sep: '::', max: 2 }
+
 const clozeBackActiveBehavior: ActiveBehavior = (
     stylizer: Stylizer,
 ) => (tag: TagData) => {
-    return stylizer.stylize(tag.values[0])
+    return stylizer.stylize([tag.values(clozeSeparator)[0]])
 }
-
-const clozeSeparator: Separator = { sep: '::', max: 2 }
 
 const clozeRecipe = mcClozeTemplate(clozeFrontActiveBehavior, clozeBackActiveBehavior)
 
@@ -26,14 +26,17 @@ const hintEllipser = stylizeEllipser(
     new Stylizer({
         postprocess: (v: string) => `[${v}]`,
     }),
-    clozeSeparator,
+    (tag: TagData) => {
+        const vs = tag.values(clozeSeparator)
+        return [vs[1]] ?? ['...']
+    },
 )
 
 const defaultStylizer: Stylizer = new Stylizer({
     postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-const joinValues: Ellipser = ({ values }: TagData): string => values(clozeSeparator)[0]
+const joinValues: Ellipser = (tag: TagData): string => tag.values(clozeSeparator)[0]
 
 const clozePublicApi = (
     clozeRecipe: Recipe,

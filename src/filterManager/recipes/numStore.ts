@@ -69,8 +69,8 @@ class ActivateMap {
 const activateFilterTemplate = (
     activateId: string,
     operation: (key: string, occur: number | null, num: number | null) => (a: ActivateMap) => void,
-) => ({ values, valuesRaw }: TagData, { cache }: Internals) => {
-    const commands = allowCommaStyle(values, valuesRaw)
+) => (tag: TagData, { cache }: Internals) => {
+    const commands = tag.values(',')
 
     commands.forEach((val: string) => {
         const [fullKey, occur] = val.split(':')

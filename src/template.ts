@@ -31,14 +31,8 @@ export class Template {
         this.text = text.join('')
         this.baseDepth = baseDepth
 
-        if (!preparsed) {
-            this.rootTag = parse(text, baseDepth)
-        }
-        else {
-            this.rootTag = preparsed
-        }
+        this.rootTag = preparsed ?? parse(text, baseDepth)
 
-        this.rootTag = preparsed
         this.currentZoom = zoom
     }
 
@@ -84,6 +78,7 @@ export class Template {
                 baseDepth: this.baseDepth,
             }
 
+            console.log('hi', this.text, this.rootTag)
             const [
                 newText,
                 /* finalOffset */,

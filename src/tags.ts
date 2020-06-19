@@ -73,11 +73,11 @@ export class TagData {
     }
 
     get fullOccur() {
-        return this.fullOccur
+        return this._fullOccur
     }
 
     get occur() {
-        return this.occur
+        return this._occur
     }
 
     setOccur(fullOccur: number, occur: number) {

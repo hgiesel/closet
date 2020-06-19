@@ -2,7 +2,7 @@ import type { TagInfo, TagData } from './tags'
 import type { FilterManager } from './filterManager'
 
 import { parse } from './parser'
-import { traverse } from './traverse'
+import { postfixReplace } from './postfixReplace'
 
 type TagPath = number[]
 
@@ -86,7 +86,7 @@ export class Template {
                 /* finalOffset */,
                 innerReady,
                 baseStack,
-            ] = traverse(
+            ] = postfixReplace(
                 text.join(''),
                 todoRootTag,
                 this.baseDepth,
@@ -118,11 +118,11 @@ export class Template {
             : false
     }
 
-    getTagInfo(path = this.currentZoom): TagInfo | null {
+    getInfo(path = this.currentZoom): TagInfo | null {
         return this.traverse(path)
     }
 
-    getTag(path = this.currentZoom): TagData | null {
+    getData(path = this.currentZoom): TagData | null {
         const maybeTagInfo = this.traverse(path)
 
         if (maybeTagInfo) {

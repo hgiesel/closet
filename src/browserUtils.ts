@@ -1,4 +1,4 @@
-import { baseRender } from './render'
+import { Template } from './template'
 import { FilterManager } from './filterManager'
 
 // negative result implies invalid idx
@@ -7,7 +7,6 @@ const parseIndexArgument = (idx: number, min: number, max: number): number => {
     ? max + idx + 1
     : min + idx
 }
-
 
 const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): string => {
     if (typeof(input) === 'string') {
@@ -275,8 +274,8 @@ export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate)
 }
 
 export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | string, filterManager: FilterManager, cb: (output: string) => void = null): void => {
-    const baseDepth = 1
-    const result = baseRender([getText(input)], filterManager, baseDepth)
+    const tmpl = Template.make(getText(input))
+    const result = tmpl.render(filterManager)
 
     if (cb) {
         cb(result[0])
@@ -289,8 +288,8 @@ export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | s
 }
 
 export const renderTemplateFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>, filterManager: FilterManager, cb: (output: string[]) => void = null): void => {
-    const baseDepth = 2
-    const results = baseRender(inputs.map(getText), filterManager, baseDepth)
+    const tmpl = Template.makeFromFragments(inputs.map(getText))
+    const results = tmpl.render(filterManager)
 
     if (cb) {
         cb(results)

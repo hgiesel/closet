@@ -1,4 +1,4 @@
-export { renderTemplate, renderDisjointTemplate } from './src/render'
+export { Template } from './src/template'
 export { FilterManager } from './src/filterManager'
 export { recipes, wrappers, utils } from './src/filterManager/recipes'
 

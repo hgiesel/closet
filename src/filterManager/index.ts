@@ -1,4 +1,4 @@
-import type TemplateApi from '../template'
+import type { Template } from '../template'
 
 import {
     Storage,
@@ -31,7 +31,7 @@ export interface Internals {
 }
 
 export interface IterationInfo {
-    template: TemplateApi
+    template: Template
     iteration: { index: number }
     baseDepth: number
 }

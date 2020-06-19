@@ -1,102 +1,13 @@
-import type {
-    FilterManager,
-    FilterProcessor,
-} from './filterManager'
-
+import type { FilterProcessor } from './filterManager'
 import type { TagInfo } from './tags'
 
 import {
-    calculateCoordinates,
-    replaceAndGetOffset,
+    calculateCoordinates, replaceAndGetOffset,
+    TAG_OPEN, TAG_CLOSE, ARG_SEP,
 } from './utils'
 
-import TemplateApi from './template'
-import { parse } from './parser'
-
-import {
-    TAG_OPEN,
-    TAG_CLOSE,
-    ARG_SEP,
-} from './utils'
-
-const MAX_ITERATIONS = 50
-
-const splitTextFromIntervals = (text: string, intervals: [number, number][]): string[] => {
-    const result = []
-
-    for (const [ivlStart, ivlEnd] of intervals) {
-        result.push(text.slice(ivlStart, ivlEnd))
-    }
-
-    return result
-}
-
-export const baseRender = (text: string[], filterManager: FilterManager, baseDepth: number): string[] => {
-    let ready = false
-
-    for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
-        const rootTag = parse(text, baseDepth)
-        const templateApi = new TemplateApi(rootTag)
-
-        console.info(`Iteration ${i}`)
-        const iterationInfo = {
-            iteration: {
-                index: i,
-            },
-            template: templateApi,
-            baseDepth: baseDepth,
-        }
-
-        const [
-            newText,
-            /* finalOffset */,
-            innerReady,
-            baseStack,
-        ] = postfixTraverse(
-            text.join(''),
-            rootTag,
-            baseDepth,
-            filterManager.filterProcessor(iterationInfo),
-        )
-
-        text = splitTextFromIntervals(newText, baseStack)
-        ready = innerReady
-
-        filterManager.executeDeferred(iterationInfo)
-    }
-
-    return text
-}
-
-export const renderTemplate = (text: string, filterManager: FilterManager, cb: (output: string) => void = null): string => {
-    const baseDepth = 1
-    const result = baseRender([text], filterManager, baseDepth)[0]
-
-    if (cb) {
-        cb(result)
-    }
-
-    filterManager.executeAftermath()
-    filterManager.reset()
-
-    return result
-}
-
-export const renderDisjointTemplate = (textFragments: string[], filterManager: FilterManager, cb: (output: string[]) => void): string[] => {
-    const baseDepth = 2
-    const result = baseRender(textFragments, filterManager, baseDepth)
-
-    if (cb) {
-        cb(result)
-    }
-
-    filterManager.executeAftermath()
-    filterManager.reset()
-    return result
-}
-
-// try to make it more PDA
-const postfixTraverse = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean, [number, number][]] => {
+// traverses in postfix order
+export const traverse = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean, [number, number][]] => {
     const baseStack = []
 
     const tagReduce = ([text, stack, ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {
@@ -168,6 +79,7 @@ const postfixTraverse = (baseText: string, rootTag: TagInfo, baseDepth: number, 
         // console.info('lend', lend)
         // console.info('rend', rend)
         // console.groupEnd()
+        console.log('t', tag, lend, rend, leftOffset, innerOffset, newOffset)
 
         return [
             newText,

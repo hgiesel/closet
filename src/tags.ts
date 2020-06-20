@@ -86,11 +86,14 @@ export class TagData {
     }
 
     shadow(newValuesText: string | null): TagData {
-        return new TagData(
+        const result = new TagData(
             this.fullKey,
             newValuesText,
             this.path,
         )
+
+        result.setOccur(this.fullOccur, this.occur)
+        return result
     }
 
     hasValues(): boolean {

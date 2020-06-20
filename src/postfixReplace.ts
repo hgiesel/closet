@@ -10,10 +10,10 @@ enum Status {
 }
 
 // traverses in postfix order
-export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean, [number, number][]] => {
+export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean[], [number, number][]] => {
     const baseStack = []
 
-    const tagReduce = ([text, stack, ready]: [string, number[], boolean], tagInfo: TagInfo): [string, number[], boolean] => {
+    const tagReduce = ([text, stack, readyStack]: [string, number[], boolean[]], tagInfo: TagInfo): [string, number[], boolean[]] => {
 
         // going DOWN
         stack.push(stack[stack.length - 1])
@@ -21,8 +21,8 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         const [
             modText,
             modStack,
-            modReady,
-        ] = tagInfo.innerTags.reduce(tagReduce, [text, stack, true])
+            modReadyStack,
+        ] = tagInfo.innerTags.reduce(tagReduce, [text, stack, []])
 
         // get offsets
         const innerOffset = modStack.pop() - modStack[modStack.length - 1]
@@ -44,6 +44,9 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         if (depth === baseDepth) {
             baseStack.push([lend, rend])
         }
+
+        const modReady = modReadyStack.reduce((accu, v) => accu && v, true)
+        readyStack.push(modReady)
 
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tagData, {
@@ -76,7 +79,7 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
             modStack,
             // ready means everything to the left is ready
             // filterOutput.ready means everything within and themselves are ready
-            ready && filterOutput.ready
+            readyStack,
         ]
     }
 
@@ -86,7 +89,7 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         modifiedText,
         stack,
         ready,
-    ] = tagReduce([baseText, [0,0], true], rootTag)
+    ] = tagReduce([baseText, [0,0], []], rootTag)
 
     console.log('after', rootTag)
 

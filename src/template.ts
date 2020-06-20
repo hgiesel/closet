@@ -98,7 +98,7 @@ export class Template {
             )
 
             text = splitTextFromIntervals(newText, baseStack)
-            ready = innerReady
+            ready = innerReady[0]
 
             filterManager.executeDeferred(iterationInfo)
         }

@@ -45,14 +45,17 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
             baseStack.push([lend, rend])
         }
 
+        // whether all innerTags are ready
         const modReady = modReadyStack.reduce((accu, v) => accu && v, true)
-        readyStack.push(modReady)
 
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tagData, {
             ready: modReady,
             depth: depth - baseDepth,
         })
+
+        // whether this tagInfo itself is ready
+        readyStack.push(modReady && filterOutput.ready)
 
         const [
             newText,
@@ -63,7 +66,7 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         const sum = innerOffset + leftOffset + newOffset
         modStack.push(sum)
 
-        tagInfo.update(lend, rend, null, null)
+//         tagInfo.update(lend, rend, null, null)
 
         // console.info('going up:', tag.data.path, modText, '+++', filterOutput.result, '===', newText)
         // console.groupCollapsed('offsets', tag.data.path)

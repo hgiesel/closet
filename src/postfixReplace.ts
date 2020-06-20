@@ -1,7 +1,7 @@
 import type { FilterProcessor } from './filterManager'
 import type { TagInfo } from './tags'
 
-import { calculateCoordinates, replaceAndGetOffset } from './utils'
+import { calculateCoordinates, replaceAndGetOffset, removeViaBooleanList } from './utils'
 
 enum Status {
     Ready,
@@ -66,7 +66,12 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         const sum = innerOffset + leftOffset + newOffset
         modStack.push(sum)
 
-        tagInfo.update(lend, rend + newOffset, tagData.shadow(newText), tagInfo.innerTags)
+        tagInfo.update(
+            lend,
+            rend + newOffset,
+            filterOutput.ready ? tagData.shadow(filterOutput.result) : tagData,
+            removeViaBooleanList(tagInfo.innerTags, modReadyStack),
+        )
 
         // console.info('going up:', tag.data.path, modText, '+++', filterOutput.result, '===', newText)
         // console.groupCollapsed('offsets', tag.data.path)

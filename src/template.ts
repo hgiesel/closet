@@ -72,13 +72,8 @@ export class Template {
         let ready = false
         let text = this.textFragments
 
-
         for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
-            // TODO
-            this.parser.tagCounter.clear()
-            const todoRootTag = this.parser.parse(text, this.baseDepth)
-
-            console.info(`Iteration ${i}`)
+            console.groupCollapsed(`Iteration ${i}`)
             const iterationInfo = {
                 iteration: {
                     index: i,
@@ -94,7 +89,7 @@ export class Template {
                 baseStack,
             ] = postfixReplace(
                 text.join(''),
-                todoRootTag,
+                this.rootTag,
                 this.baseDepth,
                 filterManager.filterProcessor(iterationInfo),
             )
@@ -103,6 +98,7 @@ export class Template {
             ready = innerReady[0]
 
             filterManager.executeDeferred(iterationInfo)
+            console.groupEnd()
         }
 
         if (cb) {

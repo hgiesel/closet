@@ -38,3 +38,13 @@ export const replaceAndGetOffset = (text: string, repl: string | null, lend: num
         ]
         : [text, 0]
 }
+
+export const removeViaBooleanList = <T>(lst: T[], booleanLst: boolean[]): T[] => {
+    booleanLst.forEach((v, idx) => {
+        if (v) {
+            delete lst[idx]
+        }
+    })
+
+    return lst.filter(Boolean)
+}

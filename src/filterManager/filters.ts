@@ -54,14 +54,14 @@ const rawFilter: Filter = (t: Filterable) => wrapWithReady(t.getRawRepresentatio
 const defaultFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getDefaultRepresentation(), i.round.ready)
 
 export class FilterApi {
-    private filters: Map<string, WeakFilter>
+    private filters: Map<string, Filter>
 
     constructor() {
         this.filters = new Map()
     }
 
     register(name: string, filter: WeakFilter): void {
-        this.filters.set(name, filter)
+        this.filters.set(name, withStandardizedFilterResult(filter))
     }
 
     has(name: string): boolean {
@@ -76,18 +76,12 @@ export class FilterApi {
             : name === 'raw'
             ? rawFilter
             : this.filters.has(name)
-            ? withStandardizedFilterResult(this.filters.get(name))
+            ? this.filters.get(name)
             : null
     }
 
     getOrDefault(name: string): Filter {
-        const maybeResult =  this.get(name)
-
-        if (maybeResult) {
-            return maybeResult
-        }
-
-        return defaultFilter
+        return this.get(name) ?? defaultFilter
     }
 
     unregisterFilter(name: string): void {

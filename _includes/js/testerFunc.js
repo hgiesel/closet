@@ -80,7 +80,8 @@ const processTemplateText = () => {
     console.time('Render template')
 
     try {
-        Closet.renderTemplate(text, filterManager, result => display(templateRendered, result, false))
+        const tmpl = Closet.Template.make(text)
+        tmpl.render(filterManager, result => display(templateRendered, result, false))
     }
     catch (e) {
         console.error(templateErrorMessage, e)

@@ -227,7 +227,7 @@ code: |
   // Filter Manager Setup
   const sideSensitiveStyler = Closet.wrappers.twoWay(Closet.utils.isBack, Closet.recipes.stylizing, Closet.recipes.stylizing)
 
-  const removeFormatting = new Closet.FullStylizer({
+  const removeFormatting = new Closet.Stylizer({
     postprocess: (v) => v.replace(/<.*?>/g, ''),
   })
 
@@ -251,11 +251,11 @@ code: |
     optionsFalse: { stylizer: removeFormatting },
   }))
 
-  const coloredSymbolsStylizer = new Closet.FullStylizer({
+  const coloredSymbolsStylizer = new Closet.Stylizer({
     mapper: splitAndMap(v => colored(true)(numberedToSymbols(v)))
   })
 
-  const dropNumbersStylizer = new Closet.FullStylizer({
+  const dropNumbersStylizer = new Closet.Stylizer({
     mapper: removeTone,
   })
 
@@ -266,11 +266,11 @@ code: |
   }))
 
   //////////////
-  const simpleBopomofoStylizer = new Closet.FullStylizer({
+  const simpleBopomofoStylizer = new Closet.Stylizer({
     mapper: splitAndMap(toBopomofo(true)),
   })
 
-  const coloredBopomofoStylizer = new Closet.FullStylizer({
+  const coloredBopomofoStylizer = new Closet.Stylizer({
     mapper: splitAndMap(v => colored(true)(toBopomofo(false)(v))),
   })
 

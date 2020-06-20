@@ -25,7 +25,8 @@ const readyRenderButton = (
     }
 
     btnRerender.addEventListener('click', () => {
-        Closet.renderTemplate(code, filterManager, output => theDisplay.innerHTML = output)
+        const tmpl = Closet.Template.make(code)
+        tmpl.render(filterManager, output => theDisplay.innerHTML = output)
 
         currentKeepMemories[id] = keepMemory
 

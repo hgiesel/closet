@@ -29,9 +29,12 @@ const getNewOffset = (replacement: string, lend: number, rend: number): number =
     return replacement.length - (rend - lend)
 }
 
-export const replaceAndGetOffset = (text: string, repl: string, lend: number, rend: number): [string, number] => {
-    return [
-        spliceSlice(text, repl, lend, rend),
-        getNewOffset(repl, lend, rend),
-    ]
+export const replaceAndGetOffset = (text: string, repl: string | null, lend: number, rend: number): [string, number] => {
+
+    return repl
+        ? [
+            spliceSlice(text, repl, lend, rend),
+            getNewOffset(repl, lend, rend),
+        ]
+        : [text, 0]
 }

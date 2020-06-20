@@ -48,9 +48,7 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         const [
             newText,
             newOffset,
-        ] = filterOutput.result === null
-            ? [modText, 0]
-            : replaceAndGetOffset(modText, filterOutput.result, lend, rend)
+        ] = replaceAndGetOffset(modText, filterOutput.result, lend, rend)
 
         // going UP
         const sum = innerOffset + leftOffset + newOffset

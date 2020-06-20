@@ -74,7 +74,9 @@ export class Template {
 
 
         for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
-            const todoRootTag = parse(text, this.baseDepth)
+            // TODO
+            this.parser.tagCounter.clear()
+            const todoRootTag = this.parser.parse(text, this.baseDepth)
 
             console.info(`Iteration ${i}`)
             const iterationInfo = {

@@ -11,7 +11,7 @@ export const shufflingRecipe = ({
         const maybeValues = sequencer(
             `${tag.fullKey}:${tag.fullOccur}`,
             tag.num ? tag.fullKey : `${tag.key}:${tag.fullOccur}`,
-            tag.values('::'),
+            tag.values('||'),
             internals,
         )
 

@@ -152,11 +152,11 @@ export class TagData {
 }
 
 export class TagInfo {
-    readonly start: number
-    readonly end: number
+    private _start: number
+    private _end: number
 
-    readonly data: TagData
-    readonly innerTags: TagInfo[]
+    private _data: TagData
+    private _innerTags: TagInfo[]
 
     constructor(
         start: number,
@@ -164,9 +164,37 @@ export class TagInfo {
         data: TagData,
         innerTags: TagInfo[],
     ) {
-        this.start = start
-        this.end = end
-        this.data = data
-        this.innerTags = innerTags
+        this._start = start
+        this._end = end
+        this._data = data
+        this._innerTags = innerTags
+    }
+
+    get start() {
+        return this._start
+    }
+
+    get end() {
+        return this._end
+    }
+
+    get data() {
+        return this._data
+    }
+
+    get innerTags() {
+        return this._innerTags
+    }
+
+    update(
+        start: number,
+        end: number,
+        data: TagData,
+        innerTags: TagInfo[],
+    ) {
+        this._start = start
+        this._end = end
+        this._data = data
+        this._innerTags = innerTags
     }
 }

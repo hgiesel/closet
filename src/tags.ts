@@ -48,6 +48,7 @@ export class TagData {
     readonly key: string
     readonly num: number | null
 
+    seps: Separator[] = []
     readonly valuesText: string | null
 
     _fullOccur: number
@@ -70,6 +71,21 @@ export class TagData {
 
 
         this.path = path
+    }
+
+    setOptions(seps: WeakSeparator[]) {
+        // default options from filter manager is {}
+        if (seps.length > 0) {
+            this.seps = seps.map(v => typeof v === 'string' ? { sep: v } : v)
+        }
+    }
+
+    hasValues(): boolean {
+        return this.valuesText === null
+    }
+
+    get values() {
+        return splitValues(this.valuesText, this.seps)
     }
 
     get fullOccur() {
@@ -112,14 +128,6 @@ export class TagData {
                 lend + (TAG_OPEN.length + this.fullKey.length + ARG_SEP.length),
                 rend - (TAG_CLOSE.length),
             )
-    }
-
-    hasValues(): boolean {
-        return this.valuesText === null
-    }
-
-    values(...seps: WeakSeparator[]) {
-        return splitValues(this.valuesText, seps.map(v => typeof v === 'string' ? { sep: v } : v))
     }
 
     getDefaultRepresentation(): string {

@@ -11,7 +11,7 @@ export const shufflingRecipe = ({
         const maybeValues = sequencer(
             `${tag.fullKey}:${tag.fullOccur}`,
             tag.num ? tag.fullKey : `${tag.key}:${tag.fullOccur}`,
-            tag.values('||'),
+            tag.values,
             internals,
         )
 
@@ -20,5 +20,5 @@ export const shufflingRecipe = ({
         }
     }
 
-    filterApi.register(tagname, shuffleFilter as any)
+    filterApi.register(tagname, shuffleFilter as any, ['::', '||'])
 }

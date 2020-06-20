@@ -9,7 +9,10 @@ export interface Filterable {
     getDefaultRepresentation(): string
     getRawRepresentation(): string
     getFilterKey(): string
+    setOptions(options: DataOptions): void
 }
+
+type DataOptions = object
 
 const wrapWithReady = (result: string): FilterResult => ({
     result: result,
@@ -49,19 +52,21 @@ export type WeakFilterResult = FilterResult | string | void
 export type WeakFilter = (t: Filterable, i: Internals) => WeakFilterResult
 export type Filter = (t: Filterable, i: Internals) => FilterResult
 
+export type FilterWithSeparators = [Filter]
+
 const baseFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getRawRepresentation(), i.round.ready)
 const rawFilter: Filter = (t: Filterable) => wrapWithReady(t.getRawRepresentation())
 const defaultFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getDefaultRepresentation(), i.round.ready)
 
 export class FilterApi {
-    private filters: Map<string, Filter>
+    private filters: Map<string, [Filter, DataOptions]>
 
     constructor() {
         this.filters = new Map()
     }
 
-    register(name: string, filter: WeakFilter): void {
-        this.filters.set(name, withStandardizedFilterResult(filter))
+    register(name: string, filter: WeakFilter, options: DataOptions = {}): void {
+        this.filters.set(name, [withStandardizedFilterResult(filter), options])
     }
 
     has(name: string): boolean {
@@ -70,18 +75,26 @@ export class FilterApi {
             : this.filters.has(name)
     }
 
-    get(name: string): Filter | null {
+    getWithOptions(name: string): [Filter, DataOptions] | null {
         return name === 'base'
-            ? baseFilter
+            ? [baseFilter, {}]
             : name === 'raw'
-            ? rawFilter
+            ? [rawFilter, {}]
             : this.filters.has(name)
             ? this.filters.get(name)
             : null
     }
 
-    getOrDefault(name: string): Filter {
-        return this.get(name) ?? defaultFilter
+    getOrDefaultWithOptions(name: string): [Filter, DataOptions] {
+        return this.getWithOptions(name) ?? [defaultFilter, {}]
+    }
+
+    get(name: string) {
+        return this.getWithOptions(name)[0]
+    }
+
+    getOrDefault(name: string) {
+        return this.getOrDefaultWithOptions(name)[0]
     }
 
     unregisterFilter(name: string): void {
@@ -93,7 +106,10 @@ export class FilterApi {
     }
 
     execute(data: Filterable, internals: Internals): FilterResult {
-        return withStandardizedFilterResult(this.getOrDefault(data.getFilterKey()))(data, internals)
+        const filterKey = data.getFilterKey()
+        const [filter, dataOptions] = this.getOrDefaultWithOptions(filterKey)
+
+        data.setOptions(dataOptions)
+        return filter(data, internals)
     }
 }
-

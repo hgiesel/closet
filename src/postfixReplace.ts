@@ -3,6 +3,12 @@ import type { TagInfo } from './tags'
 
 import { calculateCoordinates, replaceAndGetOffset } from './utils'
 
+enum Status {
+    Ready,
+    NotReady,
+    ContainsTags,
+}
+
 // traverses in postfix order
 export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean, [number, number][]] => {
     const baseStack = []
@@ -74,11 +80,15 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         ]
     }
 
+    console.log('before', rootTag)
+
     const [
         modifiedText,
         stack,
         ready,
     ] = tagReduce([baseText, [0,0], true], rootTag)
+
+    console.log('after', rootTag)
 
     return [modifiedText, stack, ready, baseStack]
 }

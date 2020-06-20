@@ -26,12 +26,14 @@ export class Template {
     private rootTag: TagInfo
     private currentZoom: TagPath
 
+    private tagBuilderSettings
+
     private constructor(text: string[], baseDepth: number, preparsed: TagInfo, zoom: TagPath) {
         this.textFragments = text
         this.text = text.join('')
         this.baseDepth = baseDepth
 
-        this.rootTag = preparsed ?? parse(text, baseDepth)
+        this.rootTag = preparsed ?? parse(text, baseDepth)[0]
 
         this.currentZoom = zoom
     }

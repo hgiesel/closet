@@ -1,16 +1,14 @@
 import { TagData, TagInfo } from '../tags'
 
-export class TagFactory {
-    private readonly tagCounter: Map<string, number>
+export type TagBuilderSettings = [Map<string, number>, number[], number]
 
-    private readonly tagPathStack: number[]
+export const nullTagBuilderSettings: TagBuilderSettings = [new Map(), [], 0]
+
+export class TagBuilder {
+    private tagCounter: Map<string, number>
+
+    private tagPathStack: number[]
     private tagPathNext: number
-
-    constructor() {
-        this.tagCounter = new Map()
-        this.tagPathStack = []
-        this.tagPathNext = 0
-    }
 
     private getAndInc(key: string): number {
         const result = this.tagCounter.has(key)
@@ -37,33 +35,43 @@ export class TagFactory {
             result.fullKey === result.key ? fullOccur : this.getAndInc(result.key),
         )
 
-        this.tagPathNext = this.tagPathStack.pop() + 1
+        this.tagPathNext = this.tagPathStack.length === 0
+            ? 0
+            : this.tagPathStack.pop() + 1
+
         return result
     }
 
-    reset() {
+    pop(): TagBuilderSettings {
+        const saveStats: TagBuilderSettings = [
+            new Map(this.tagCounter),
+            [...this.tagPathStack],
+            this.tagPathNext,
+        ]
+
         this.tagCounter.clear()
         this.tagPathStack.length = 0
         this.tagPathNext = 0
+
+        return saveStats
+    }
+
+    push(tagCounter: Map<string, number>, tagPathStack: number[], tagPathNext: number): void {
+        this.tagCounter = tagCounter
+        this.tagPathStack = tagPathStack
+        this.tagPathNext = tagPathNext
     }
 }
 
-export class TagInfoFactory {
+export class TagInfoBuilder {
     private fixedLeftOffset: number
 
     constructor() {
         this.fixedLeftOffset = 0
     }
 
-    addToLeftOffset(newLeftOffset: number): void {
+    addLeftOffset(newLeftOffset: number): void {
         this.fixedLeftOffset += newLeftOffset
-    }
-
-    resetLeftOffset(): number {
-        const saveForResult = this.fixedLeftOffset
-        this.fixedLeftOffset = 0
-
-        return saveForResult
     }
 
     build(start: number, end: number, data: TagData, innerTags: TagInfo[]): TagInfo {
@@ -73,5 +81,16 @@ export class TagInfoFactory {
             data,
             innerTags,
         )
+    }
+
+    pop(): number {
+        const saveForResult = this.fixedLeftOffset
+        this.fixedLeftOffset = 0
+
+        return saveForResult
+    }
+
+    push(newLeftOffset: number): void {
+        this.fixedLeftOffset = newLeftOffset
     }
 }

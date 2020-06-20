@@ -1,6 +1,6 @@
 @{%
 import { tokenizer } from './tokenizer'
-import { TagFactory, TagInfoFactory } from './tagFactory'
+import { TagBuilder, TagInfoBuilder } from './tagBuilder'
 
 import {
     TAG_OPEN,
@@ -9,8 +9,8 @@ import {
 } from '../utils'
 const joinText = ([vs]) => vs.map(v => v.value).join('')
 
-export const tagFactory = new TagFactory()
-export const tagInfoFactory = new TagInfoFactory()
+export const tagBuilder = new TagBuilder()
+export const tagInfoBuilder = new TagInfoBuilder()
 %}
 
 @preprocessor typescript
@@ -18,10 +18,10 @@ export const tagInfoFactory = new TagInfoFactory()
 
 #################################
 
-start -> content %EOF {% ([[valuesRawRoot,firstLevelTags],eof]) => tagInfoFactory.build(
+start -> content %EOF {% ([[valuesRawRoot,firstLevelTags],eof]) => tagInfoBuilder.build(
     0,
     eof.offset,
-    tagFactory.build('base', valuesRawRoot),
+    tagBuilder.build('base', valuesRawRoot),
     firstLevelTags,
 )
 %}
@@ -51,10 +51,10 @@ tag -> tagopen inner %tagclose {% ([startTokenIdx,[keyname, valuesRaw, innerTags
 
     return [
         valuesRawArray,
-        tagInfoFactory.build(
+        tagInfoBuilder.build(
             startTokenIdx,
             tagclose.offset + TAG_CLOSE.length,
-            tagFactory.build(keyname, hasValuesRaw
+            tagBuilder.build(keyname, hasValuesRaw
                 ? valuesRaw
                 : null),
             innerTags.map(v => v[1]),
@@ -64,7 +64,7 @@ tag -> tagopen inner %tagclose {% ([startTokenIdx,[keyname, valuesRaw, innerTags
 %}
 
 tagopen -> %tagopen {% ([startToken]) => {
-    tagFactory.signalTagOpen()
+    tagBuilder.signalTagOpen()
     return startToken.offset + startToken.value.length - TAG_OPEN.length 
 }
 %}

@@ -2,12 +2,15 @@ import nearley from 'nearley'
 import grammar from './template'
 
 import type { TagInfo } from '../tags'
-import { tagFactory, tagInfoFactory } from './template'
+import type { TagBuilderSettings } from './tagBuilder'
 
-const makeTrivialBaseTagInfo = (text: string): TagInfo => tagInfoFactory.build(
+import { nullTagBuilderSettings } from './tagBuilder'
+import { tagBuilder, tagInfoBuilder } from './template'
+
+const makeTrivialBaseTagInfo = (text: string): TagInfo => tagInfoBuilder.build(
     0,
     text.length,
-    tagFactory.build('base', text),
+    tagBuilder.build('base', text),
     [],
 )
 
@@ -35,7 +38,6 @@ const mainParse = (text: string): TagInfo => {
 const parseTemplate = (text: string): TagInfo => {
     const result = mainParse(text)
 
-    tagFactory.reset()
     return result
 }
 
@@ -43,33 +45,50 @@ const parseTemplateFragments = (textFragments: string[]): TagInfo => {
     const parsedFragments: TagInfo[] = []
 
     for (const fragment of textFragments) {
-        tagFactory.signalTagOpen()
+        tagBuilder.signalTagOpen()
 
         const parsed = mainParse(fragment)
         parsedFragments.push(parsed)
 
-        tagInfoFactory.addToLeftOffset(fragment.length)
+        tagInfoBuilder.addLeftOffset(fragment.length)
     }
 
-    const lastOffset = tagInfoFactory.resetLeftOffset()
-    const result = tagInfoFactory.build(
+    const lastOffset = tagInfoBuilder.pop()
+    const result = tagInfoBuilder.build(
         0,
         lastOffset,
-        tagFactory.build('base', textFragments.join('')),
+        tagBuilder.build('base', textFragments.join('')),
         parsedFragments,
     )
 
-    tagFactory.reset()
     return result
 }
 
-export const parse = (texts: string[], baseDepth: number): TagInfo => {
+export enum BaseDepth {
+    Single = 1,
+    Fragments = 2,
+}
+
+export const parse = (texts: string[], baseDepth: BaseDepth, {
+    tagBuilderSettings = nullTagBuilderSettings,
+    baseLeftOffset = 0,
+} = {}): [TagInfo, TagBuilderSettings] => {
+    let result: TagInfo = null
+
+    tagBuilder.push(...tagBuilderSettings)
+    tagInfoBuilder.push(baseLeftOffset)
+
     switch (baseDepth) {
-        case 1:
-            return parseTemplate(texts[0])
-        case 2:
-            return parseTemplateFragments(texts)
-        case 3:
-            throw new Error(`baseDepth with value ${baseDepth} is not supported.`)
+        case BaseDepth.Single:
+            result = parseTemplate(texts[0])
+            break
+        case BaseDepth.Fragments:
+            result = parseTemplateFragments(texts)
+            break
+        default:
+            throw new Error('should not happen')
     }
+
+    const resultTagBuilderSettings = tagBuilder.pop()
+    return [result, resultTagBuilderSettings]
 }

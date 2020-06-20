@@ -66,7 +66,7 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         const sum = innerOffset + leftOffset + newOffset
         modStack.push(sum)
 
-//         tagInfo.update(lend, rend, null, null)
+        tagInfo.update(lend, rend + newOffset, tagData.shadow(newText), tagInfo.innerTags)
 
         // console.info('going up:', tag.data.path, modText, '+++', filterOutput.result, '===', newText)
         // console.groupCollapsed('offsets', tag.data.path)

@@ -1,7 +1,7 @@
 import type { TagInfo, TagData } from './tags'
 import type { FilterManager } from './filterManager'
 
-import { parse } from './parser'
+import { Parser } from './parser'
 import { postfixReplace } from './postfixReplace'
 
 type TagPath = number[]
@@ -22,6 +22,7 @@ export class Template {
     private textFragments: string[]
     private text: string
     private baseDepth: number
+    private parser: Parser
 
     private rootTag: TagInfo
     private currentZoom: TagPath
@@ -32,8 +33,9 @@ export class Template {
         this.textFragments = text
         this.text = text.join('')
         this.baseDepth = baseDepth
+        this.parser = new Parser()
 
-        this.rootTag = preparsed ?? parse(text, baseDepth)[0]
+        this.rootTag = preparsed ?? this.parser.parse(text, baseDepth)
 
         this.currentZoom = zoom
     }

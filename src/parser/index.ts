@@ -2,9 +2,7 @@ import nearley from 'nearley'
 import grammar from './template'
 
 import type { TagInfo } from '../tags'
-import type { TagBuilderSettings } from './tagBuilder'
 
-import { nullTagBuilderSettings } from './tagBuilder'
 import { tagBuilder, tagInfoBuilder } from './template'
 
 const makeTrivialBaseTagInfo = (text: string): TagInfo => tagInfoBuilder.build(
@@ -69,26 +67,38 @@ export enum BaseDepth {
     Fragments = 2,
 }
 
-export const parse = (texts: string[], baseDepth: BaseDepth, {
-    tagBuilderSettings = nullTagBuilderSettings,
-    baseLeftOffset = 0,
-} = {}): [TagInfo, TagBuilderSettings] => {
-    let result: TagInfo = null
+export class Parser {
+    tagCounter: Map<string, number> = new Map()
+    tagPathStack: number[] = []
+    tagPathNext: number = 0
 
-    tagBuilder.push(...tagBuilderSettings)
-    tagInfoBuilder.push(baseLeftOffset)
+    parse (texts: string[], baseDepth: BaseDepth, baseLeftOffset = 0): TagInfo {
+        let result: TagInfo = null
 
-    switch (baseDepth) {
-        case BaseDepth.Single:
-            result = parseTemplate(texts[0])
-            break
-        case BaseDepth.Fragments:
-            result = parseTemplateFragments(texts)
-            break
-        default:
-            throw new Error('should not happen')
+        tagBuilder.push(this.tagCounter, this.tagPathStack, this.tagPathNext)
+        tagInfoBuilder.push(baseLeftOffset)
+
+        switch (baseDepth) {
+            case BaseDepth.Single:
+                result = parseTemplate(texts[0])
+                break
+            case BaseDepth.Fragments:
+                result = parseTemplateFragments(texts)
+                break
+            default:
+                throw new Error('should not happen')
+        }
+
+        const [
+            tagCounter,
+            tagPathStack,
+            tagPathNext,
+        ] = tagBuilder.pop()
+
+        this.tagCounter = tagCounter
+        this.tagPathStack = tagPathStack
+        this.tagPathNext = tagPathNext
+
+        return result
     }
-
-    const resultTagBuilderSettings = tagBuilder.pop()
-    return [result, resultTagBuilderSettings]
 }

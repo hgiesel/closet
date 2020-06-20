@@ -2,8 +2,6 @@ import { TagData, TagInfo } from '../tags'
 
 export type TagBuilderSettings = [Map<string, number>, number[], number]
 
-export const nullTagBuilderSettings: TagBuilderSettings = [new Map(), [], 0]
-
 export class TagBuilder {
     private tagCounter: Map<string, number>
 

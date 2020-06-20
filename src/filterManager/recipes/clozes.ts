@@ -28,7 +28,7 @@ const hintEllipser = stylizeEllipser(
     }),
     (tag: TagData) => {
         const vs = tag.values(clozeSeparator)
-        return [vs[1]] ?? ['...']
+        return [vs[1] ?? '...']
     },
 )
 

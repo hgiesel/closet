@@ -68,7 +68,10 @@ export class Template {
         let ready = false
         let text = this.textFragments
 
+
         for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
+            const todoRootTag = parse(text, this.baseDepth)
+
             console.info(`Iteration ${i}`)
             const iterationInfo = {
                 iteration: {
@@ -78,7 +81,6 @@ export class Template {
                 baseDepth: this.baseDepth,
             }
 
-            console.log('hi', this.text, this.rootTag)
             const [
                 newText,
                 /* finalOffset */,
@@ -86,7 +88,7 @@ export class Template {
                 baseStack,
             ] = traverse(
                 text.join(''),
-                this.rootTag,
+                todoRootTag,
                 this.baseDepth,
                 filterManager.filterProcessor(iterationInfo),
             )

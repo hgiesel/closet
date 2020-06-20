@@ -7,7 +7,7 @@ import { calculateCoordinates, replaceAndGetOffset } from './utils'
 export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean, [number, number][]] => {
     const baseStack = []
 
-    const tagReduce = ([text, stack, ready]: [string, number[], boolean], tag: TagInfo): [string, number[], boolean] => {
+    const tagReduce = ([text, stack, ready]: [string, number[], boolean], tagInfo: TagInfo): [string, number[], boolean] => {
 
         // going DOWN
         stack.push(stack[stack.length - 1])
@@ -16,7 +16,7 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
             modText,
             modStack,
             modReady,
-        ] = tag.innerTags.reduce(tagReduce, [text, stack, true])
+        ] = tagInfo.innerTags.reduce(tagReduce, [text, stack, true])
 
         // get offsets
         const innerOffset = modStack.pop() - modStack[modStack.length - 1]
@@ -26,13 +26,13 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         const [
             lend,
             rend,
-        ] = calculateCoordinates(tag.start, tag.end, leftOffset, innerOffset)
+        ] = calculateCoordinates(tagInfo.start, tagInfo.end, leftOffset, innerOffset)
 
         // correctly treat the base levels: they don't have have tags!
-        const depth = tag.data.depth + 1
+        const depth = tagInfo.data.depth + 1
         const tagData = depth <= baseDepth
-            ? tag.data.shadowFromText(modText, lend, rend)
-            : tag.data.shadowFromTextWithoutDelimiters(modText, lend, rend)
+            ? tagInfo.data.shadowFromText(modText, lend, rend)
+            : tagInfo.data.shadowFromTextWithoutDelimiters(modText, lend, rend)
 
         // save base tags
         if (depth === baseDepth) {
@@ -54,6 +54,8 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         const sum = innerOffset + leftOffset + newOffset
         modStack.push(sum)
 
+        tagInfo.update(lend, rend, null, null)
+
         // console.info('going up:', tag.data.path, modText, '+++', filterOutput.result, '===', newText)
         // console.groupCollapsed('offsets', tag.data.path)
         // console.log('left', leftOffset)
@@ -62,7 +64,6 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         // console.info('lend', lend)
         // console.info('rend', rend)
         // console.groupEnd()
-        console.log('t', tag, lend, rend, leftOffset, innerOffset, newOffset)
 
         return [
             newText,

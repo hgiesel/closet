@@ -49,7 +49,41 @@ export type Internals = ManagerInfo & TemplateInfo & IterationInfo & RoundInfo
 export type DeferredInternals = ManagerInfo & TemplateInfo & IterationInfo
 export type AftermathInternals = ManagerInfo & TemplateInfo
 
-export type FilterProcessor = (data: Filterable, custom?: object) => FilterResult
+///////////////////////////
+
+export type FilterProcessor = (data: Filterable, custom?: object) => FilterOutput
+
+export enum Status {
+    Ready,
+    NotReady,
+    ContainsTags,
+}
+
+export interface FilterOutput {
+    result: string | null
+    status: Status
+}
+
+const filterResultToFilterOutput = (filterResult: FilterResult): FilterOutput => {
+    if (!filterResult.ready) {
+        return {
+            result: null,
+            status: Status.NotReady,
+        }
+    }
+
+    if (filterResult.containsTags) {
+        return {
+            result: filterResult.result,
+            status: Status.ContainsTags,
+        }
+    }
+
+    return {
+        result: filterResult.result,
+        status: Status.Ready,
+    }
+}
 
 export class FilterManager {
     readonly filters: FilterApi
@@ -110,8 +144,8 @@ export class FilterManager {
     }
 
     filterProcessor(iteration: IterationInfo): FilterProcessor {
-        return (data: Filterable, round: RoundInfo): FilterResult => {
-            const result = this.filters.execute(data, this.getInternals(iteration, round))
+        return (data: Filterable, round: RoundInfo): FilterOutput => {
+            const result = filterResultToFilterOutput(this.filters.execute(data, this.getInternals(iteration, round)))
             return result
         }
     }

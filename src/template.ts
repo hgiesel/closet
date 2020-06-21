@@ -66,7 +66,8 @@ export class Template {
 
     render(filterManager: FilterManager, cb?: (t: string[]) => void) {
         let ready = false
-        let text = this.textFragments
+        let text = this.textFragments.join('')
+        let baseStack = []
 
         filterManager.setTemplateInfo({
             template: this,
@@ -83,31 +84,33 @@ export class Template {
             const [
                 newText,
                 /* finalOffset */,
-                innerReady,
-                baseStack,
+                newReady,
+                newBaseStack,
             ] = postfixReplace(
-                text.join(''),
+                text,
                 this.rootTag,
                 this.baseDepth,
                 filterManager.filterProcessor(iterationInfo),
             )
 
-            text = splitTextFromIntervals(newText, baseStack)
-            ready = innerReady[0]
+            text = newText
+            ready = newReady
+            baseStack = newBaseStack
 
             filterManager.executeDeferred(iterationInfo)
             console.groupEnd()
         }
 
-        if (cb) {
-            cb(text)
-        }
+        const result = splitTextFromIntervals(text, baseStack)
 
+        if (cb) {
+            cb(result)
+        }
 
         filterManager.executeAftermath()
         filterManager.reset()
 
-        return text
+        return result
     }
 
     exists(path = this.currentZoom): boolean {

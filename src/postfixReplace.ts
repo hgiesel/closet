@@ -7,7 +7,7 @@ import { Status } from './filterManager'
 const isReady = (v: Status): boolean => v !== Status.NotReady
 
 // traverses in postfix order
-export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], Status, [number, number][]] => {
+export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean, [number, number][]] => {
     const baseStack = []
 
     const tagReduce = ([text, tagPath, stack, statusStack]: [string, number[], number[], Status[]], tagInfo: TagInfo): [string, number[], number[], Status[]] => {
@@ -51,12 +51,12 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         }
 
         // whether all innerTags are ready
-        const modReady = innerStatusStack.reduce((accu: boolean, v: Status) => accu && isReady(v), true)
+        const allReady = innerStatusStack.reduce((accu: boolean, v: Status) => accu && isReady(v), true)
 
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tagData, {
             path: tagPath,
-            ready: modReady,
+            ready: allReady,
             depth: depth,
         })
 
@@ -100,5 +100,5 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         status,
     ] = tagReduce([baseText, [], [0,0], []], rootTag)
 
-    return [modifiedText, stack, status[0], baseStack]
+    return [modifiedText, stack, isReady(status[0]), baseStack]
 }

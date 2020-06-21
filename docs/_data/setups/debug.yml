@@ -1,0 +1,10 @@
+name: Debug
+code: |
+  const debugRecipes = [
+    Closet.recipes.debug(),
+    Closet.recipes.meta(),
+  ]
+
+  for (const recipe of debugRecipes) {
+    filterManager.addRecipe(recipe)
+  }

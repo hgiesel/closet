@@ -6,18 +6,18 @@ import { sortWithIndices, topUpSortingIndices } from './utils'
 
 export const sequencer = (
     // identifies each unit (tag) receiving shuffled items
-    tagId: string,
+    unitId: string,
     // identifies each collection of items being shuffled
     sequenceId: string,
     values: unknown[],
     { cache, memory, deferred, round }: Internals,
 ) => {
-    const applyKey = `${tagId}:apply`
+    const applyKey = `${unitId}:apply`
     // in cache: boolean whether ready for application
-    // in deferred: sets apply key true, deletes tagId from waitingSet
+    // in deferred: sets apply key true, deletes unitId from waitingSet
 
     const waitingSetKey = `${sequenceId}:waitingSet`
-    // in cache: Set with all tags (contains tagId) who wait for their inner sets to be ready
+    // in cache: Set with all tags (contains unitId) who wait for their inner sets to be ready
 
     const shuffleKey = `${sequenceId}:shuffle`
     // in cache: holds all string values for one fullKey; will be empty after it's done
@@ -46,7 +46,7 @@ export const sequencer = (
     /////////// ADD TO SHUFFLE KEY LOGIC
     if (!round.ready) {
         // add to waitingSet
-        cache.over(waitingSetKey, (s: Set<string>) => s.add(tagId), new Set())
+        cache.over(waitingSetKey, (s: Set<string>) => s.add(unitId), new Set())
         return
     }
 
@@ -56,7 +56,7 @@ export const sequencer = (
     // needs to be executed per individual tag, because of applyKey
     deferred.registerIfNotExists(applyKey, () => {
         cache.set(applyKey, true)
-        cache.over(waitingSetKey, (set: Set<string>) => set.delete(tagId), new Set())
+        cache.over(waitingSetKey, (set: Set<string>) => set.delete(unitId), new Set())
     }, {
         priority: 15,
     })

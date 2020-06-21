@@ -8,9 +8,12 @@ export const shufflingRecipe = ({
     stylizer = new Stylizer(),
 }) => (filterApi: FilterApi) => {
     const shuffleFilter = (tag: TagData, internals: Internals) => {
+        const unitId = `${tag.fullKey}:${tag.fullOccur}`
+        const sequenceId = tag.num ? tag.fullKey : unitId
+
         const maybeValues = sequencer(
-            `${tag.fullKey}:${tag.fullOccur}`,
-            tag.num ? tag.fullKey : `${tag.key}:${tag.fullOccur}`,
+            unitId,
+            sequenceId,
             tag.values,
             internals,
         )

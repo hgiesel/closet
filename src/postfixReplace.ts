@@ -1,13 +1,15 @@
 import type { FilterProcessor } from './filterManager'
 import type { TagInfo } from './tags'
+import type { Parser } from './parser'
 
-import { calculateCoordinates, replaceAndGetOffset, removeViaBooleanList } from './utils'
+import { calculateCoordinates, replaceAndGetOffset, removeViaBooleanList, flatMapViaStatusList } from './utils'
 import { Status } from './filterManager'
 
-const isReady = (v: Status): boolean => v !== Status.NotReady
+const isReady = (v: Status): boolean => v === Status.Ready
+const canReplace = (v: Status): boolean => v !== Status.NotReady
 
 // traverses in postfix order
-export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean, [number, number][]] => {
+export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor, parser: Parser): [string, number[], boolean, [number, number][]] => {
     const baseStack = []
 
     const tagReduce = ([text, tagPath, stack, statusStack]: [string, number[], number[], Status[]], tagInfo: TagInfo): [string, number[], number[], Status[]] => {
@@ -75,8 +77,8 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         tagInfo.update(
             lend,
             rend + newOffset,
-            isReady(filterOutput.status) ? tagData.shadow(filterOutput.result) : tagData,
-            removeViaBooleanList(tagInfo.innerTags, innerStatusStack.map(isReady)),
+            canReplace(filterOutput.status) ? tagData.shadow(filterOutput.result) : tagData,
+            flatMapViaStatusList(parser, tagInfo.innerTags, innerStatusStack),
         )
 
         if (tagPath.length !== 0) {

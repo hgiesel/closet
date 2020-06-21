@@ -68,7 +68,7 @@ export enum BaseDepth {
 export class Parser {
     tagCounter: Map<string, number> = new Map()
 
-    parse (texts: string[], baseDepth: BaseDepth, baseLeftOffset = 0): TagInfo {
+    parse (texts: string[], baseDepth: BaseDepth, baseLeftOffset=0): TagInfo {
         let result: TagInfo = null
 
         tagBuilder.push(this.tagCounter)
@@ -87,6 +87,16 @@ export class Parser {
 
         this.tagCounter = tagBuilder.pop()
 
+        return result
+    }
+
+    rawParse (text: string, baseLeftOffset=0): TagInfo[] {
+        tagInfoBuilder.push(baseLeftOffset)
+        tagBuilder.push(this.tagCounter)
+
+        const result = mainParse(text).innerTags
+
+        this.tagCounter = tagBuilder.pop()
         return result
     }
 }

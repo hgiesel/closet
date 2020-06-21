@@ -21,7 +21,7 @@ export const metaRecipe = () => (filterApi: FilterApi) => {
                                 ? 0
                                 : Number(match[1])
 
-                            return innerValues[paramNo]
+                            return innerValues && innerValues[paramNo]
                                 ? innerValues[paramNo].join('||')
                                 : ''
                         }

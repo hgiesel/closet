@@ -91,6 +91,7 @@ export class Template {
                 this.rootTag,
                 this.baseDepth,
                 filterManager.filterProcessor(iterationInfo),
+                this.parser,
             )
 
             text = newText

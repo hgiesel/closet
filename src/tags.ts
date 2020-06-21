@@ -79,7 +79,9 @@ export class TagData {
     }
 
     get values() {
-        return splitValues(this.valuesText, this.separators)
+        return this.valuesText === null
+            ? null
+            : splitValues(this.valuesText, this.separators)
     }
 
     get fullOccur() {

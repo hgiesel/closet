@@ -1,3 +1,7 @@
+import { Parser } from './parser'
+import { Status } from './filterManager'
+import { TagInfo } from './tags'
+
 export const TAG_OPEN = '[['
 export const TAG_CLOSE = ']]'
 
@@ -46,4 +50,17 @@ export const removeViaBooleanList = <T>(lst: T[], booleanLst: boolean[]): T[] =>
     })
 
     return lst.filter(Boolean)
+}
+
+export const flatMapViaStatusList = (parser: Parser, lst: TagInfo[], statusLst: Status[]): TagInfo[] => {
+    return (lst as any).flatMap((tagInfo: TagInfo, idx: number) => {
+        switch(statusLst[idx]) {
+            case Status.Ready:
+                return []
+            case Status.NotReady:
+                return [tagInfo]
+            case Status.ContainsTags:
+                return parser.rawParse(tagInfo.data.valuesText, tagInfo.start)
+        }
+    })
 }

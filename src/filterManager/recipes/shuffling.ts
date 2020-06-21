@@ -19,9 +19,10 @@ export const shufflingRecipe = ({
         )
 
         if (maybeValues) {
+            console.log('mbv', sequenceId, unitId, maybeValues)
             return stylizer.stylize(maybeValues)
         }
     }
 
-    filterApi.register(tagname, shuffleFilter as any, ['::', '||'])
+    filterApi.register(tagname, shuffleFilter as any, ['||'])
 }

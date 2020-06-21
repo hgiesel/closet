@@ -37,7 +37,7 @@ content -> _ (tag _):* {% ([first, rest]) => {
 }
 %}
 
-tag -> tagopen inner %tagclose {% ([startTokenIdx,[keyname, valuesRaw, innerTags],tagclose]) => {
+tag -> %tagopen inner %tagclose {% ([tagopen, [keyname, valuesRaw, innerTags], tagclose]) => {
     // NOTE empty string is also falsy!!!
     const hasValuesRaw = typeof valuesRaw === 'string'
 
@@ -52,7 +52,7 @@ tag -> tagopen inner %tagclose {% ([startTokenIdx,[keyname, valuesRaw, innerTags
     return [
         valuesRawArray,
         tagInfoBuilder.build(
-            startTokenIdx,
+            tagopen.offset,
             tagclose.offset + TAG_CLOSE.length,
             tagBuilder.build(keyname, hasValuesRaw
                 ? valuesRaw
@@ -60,12 +60,6 @@ tag -> tagopen inner %tagclose {% ([startTokenIdx,[keyname, valuesRaw, innerTags
             innerTags.map(v => v[1]),
         ),
     ]
-}
-%}
-
-tagopen -> %tagopen {% ([startToken]) => {
-    tagBuilder.signalTagOpen()
-    return startToken.offset + startToken.value.length - TAG_OPEN.length 
 }
 %}
 

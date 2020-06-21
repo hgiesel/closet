@@ -43,8 +43,6 @@ const parseTemplateFragments = (textFragments: string[]): TagInfo => {
     const parsedFragments: TagInfo[] = []
 
     for (const fragment of textFragments) {
-        tagBuilder.signalTagOpen()
-
         const parsed = mainParse(fragment)
         parsedFragments.push(parsed)
 
@@ -69,13 +67,11 @@ export enum BaseDepth {
 
 export class Parser {
     tagCounter: Map<string, number> = new Map()
-    tagPathStack: number[] = []
-    tagPathNext: number = 0
 
     parse (texts: string[], baseDepth: BaseDepth, baseLeftOffset = 0): TagInfo {
         let result: TagInfo = null
 
-        tagBuilder.push(this.tagCounter, this.tagPathStack, this.tagPathNext)
+        tagBuilder.push(this.tagCounter)
         tagInfoBuilder.push(baseLeftOffset)
 
         switch (baseDepth) {
@@ -89,15 +85,7 @@ export class Parser {
                 throw new Error('should not happen')
         }
 
-        const [
-            tagCounter,
-            tagPathStack,
-            tagPathNext,
-        ] = tagBuilder.pop()
-
-        this.tagCounter = tagCounter
-        this.tagPathStack = tagPathStack
-        this.tagPathNext = tagPathNext
+        this.tagCounter = tagBuilder.pop()
 
         return result
     }

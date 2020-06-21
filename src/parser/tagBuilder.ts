@@ -1,12 +1,9 @@
 import { TagData, TagInfo } from '../tags'
 
-export type TagBuilderSettings = [Map<string, number>, number[], number]
+export type TagBuilderSettings = Map<string, number>
 
 export class TagBuilder {
     private tagCounter: Map<string, number>
-
-    private tagPathStack: number[]
-    private tagPathNext: number
 
     private getAndInc(key: string): number {
         const result = this.tagCounter.has(key)
@@ -17,14 +14,9 @@ export class TagBuilder {
         return result
     }
 
-    signalTagOpen(): void {
-        this.tagPathStack.push(this.tagPathNext)
-        this.tagPathNext = 0
-    }
-
     build(fullKey: string, valuesText: string | null): TagData {
         // you need to signalTagOpen, before you build, otherwise they have all [] path
-        const result = new TagData(fullKey, valuesText, [...this.tagPathStack])
+        const result = new TagData(fullKey, valuesText)
 
         const fullOccur = this.getAndInc(result.fullKey)
 
@@ -33,31 +25,18 @@ export class TagBuilder {
             result.fullKey === result.key ? fullOccur : this.getAndInc(result.key),
         )
 
-        this.tagPathNext = this.tagPathStack.length === 0
-            ? 0
-            : this.tagPathStack.pop() + 1
-
         return result
     }
 
     pop(): TagBuilderSettings {
-        const saveStats: TagBuilderSettings = [
-            new Map(this.tagCounter),
-            [...this.tagPathStack],
-            this.tagPathNext,
-        ]
-
+        const saveStats = new Map(this.tagCounter)
         this.tagCounter.clear()
-        this.tagPathStack.length = 0
-        this.tagPathNext = 0
 
         return saveStats
     }
 
-    push(tagCounter: Map<string, number>, tagPathStack: number[], tagPathNext: number): void {
+    push(tagCounter: TagBuilderSettings): void {
         this.tagCounter = tagCounter
-        this.tagPathStack = tagPathStack
-        this.tagPathNext = tagPathNext
     }
 }
 

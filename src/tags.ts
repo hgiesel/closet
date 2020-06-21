@@ -54,12 +54,9 @@ export class TagData {
     _fullOccur: number
     _occur: number
 
-    readonly path: number[]
-
     constructor(
         fullKey: string,
         valuesText: string | null,
-        path: number[],
     ) {
         this.fullKey = fullKey
 
@@ -68,9 +65,6 @@ export class TagData {
         this.num = match[2].length === 0 ? null : Number(match[2])
 
         this.valuesText = valuesText
-
-
-        this.path = path
     }
 
     setOptions(seps: WeakSeparator[]) {
@@ -101,15 +95,10 @@ export class TagData {
         this._occur = occur
     }
 
-    get depth(): number {
-        return this.path.length
-    }
-
     shadow(newValuesText: string | null): TagData {
         const result = new TagData(
             this.fullKey,
             newValuesText,
-            this.path,
         )
 
         result.setOccur(this.fullOccur, this.occur)

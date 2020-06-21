@@ -1,13 +1,11 @@
 import type { Comparator } from './priorityQueue'
-import type { Internals } from '.'
-
 import { PriorityQueue } from './priorityQueue'
 
-export type Deferred = (entry: DeferredEntry, internals: Internals) => void
+export type Deferred<T> = (entry: DeferredEntry<T>, internals: T) => void
 
-interface DeferredEntry {
+interface DeferredEntry<T> {
     keyword: string,
-    procedure: Deferred
+    procedure: Deferred<T>
     priority: number
     persistent: boolean
 }
@@ -23,10 +21,10 @@ const defaultDeferredOptions: DeferredOptions = {
 }
 
 // bigger number means higher priority, and higher priority means executed first
-const deferredComparator: Comparator = (x: DeferredEntry, y: DeferredEntry): boolean => x.priority > y.priority
+const deferredComparator: Comparator = <T>(x: DeferredEntry<T>, y: DeferredEntry<T>): boolean => x.priority > y.priority
 
-export class DeferredApi {
-    private readonly _deferred: Map<string, DeferredEntry>
+export class DeferredApi<T> {
+    private readonly _deferred: Map<string, DeferredEntry<T>>
     private readonly _blocked: Set<string>
 
     constructor() {
@@ -34,7 +32,7 @@ export class DeferredApi {
         this._blocked = new Set()
     }
 
-    register(keyword: string, procedure: Deferred, {
+    register(keyword: string, procedure: Deferred<T>, {
         priority = 0,
         persistent = false,
     }: DeferredOptions,
@@ -47,7 +45,7 @@ export class DeferredApi {
         })
     }
 
-    registerIfNotExists(keyword: string, procedure: Deferred, options = defaultDeferredOptions): void {
+    registerIfNotExists(keyword: string, procedure: Deferred<T>, options = defaultDeferredOptions): void {
         if (!this.isRegistered(keyword)) {
             this.register(keyword, procedure, options)
         }
@@ -78,8 +76,8 @@ export class DeferredApi {
         this._blocked.clear()
     }
 
-    executeEach(internals: Internals): void {
-        const prioQueue = new PriorityQueue<DeferredEntry>(deferredComparator)
+    executeEach(internals: T): void {
+        const prioQueue = new PriorityQueue<DeferredEntry<T>>(deferredComparator)
         prioQueue.push(...this._deferred.values())
 
         for (const def of prioQueue.generate()) {

@@ -20,18 +20,14 @@ const splitTextFromIntervals = (text: string, intervals: [number, number][]): st
 
 export class Template {
     private textFragments: string[]
-    private text: string
     private baseDepth: number
     private parser: Parser
 
     private rootTag: TagInfo
     private currentZoom: TagPath
 
-    private tagBuilderSettings
-
     private constructor(text: string[], baseDepth: number, preparsed: TagInfo, zoom: TagPath) {
         this.textFragments = text
-        this.text = text.join('')
         this.baseDepth = baseDepth
         this.parser = new Parser()
 
@@ -72,13 +68,15 @@ export class Template {
         let ready = false
         let text = this.textFragments
 
+        filterManager.setTemplateInfo({
+            template: this,
+            parser: this.parser,
+        })
+
         for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
             console.groupCollapsed(`Iteration ${i}`)
             const iterationInfo = {
-                iteration: {
-                    index: i,
-                },
-                template: this,
+                iteration: i,
                 baseDepth: this.baseDepth,
             }
 

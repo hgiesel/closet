@@ -3,12 +3,6 @@ import type { TagInfo } from './tags'
 
 import { calculateCoordinates, replaceAndGetOffset, removeViaBooleanList } from './utils'
 
-enum Status {
-    Ready,
-    NotReady,
-    ContainsTags,
-}
-
 // traverses in postfix order
 export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean[], [number, number][]] => {
     const baseStack = []
@@ -35,13 +29,13 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         ] = calculateCoordinates(tagInfo.start, tagInfo.end, leftOffset, innerOffset)
 
         // correctly treat the base levels: they don't have have tags!
-        const realDepth = tagPath.length + 1
-        const tagData = realDepth <= baseDepth
+        const depth = tagPath.length + 1
+        const tagData = depth <= baseDepth
             ? tagInfo.data.shadowFromText(modText, lend, rend)
             : tagInfo.data.shadowFromTextWithoutDelimiters(modText, lend, rend)
 
         // save base tags
-        if (realDepth === baseDepth) {
+        if (depth === baseDepth) {
             baseStack.push([lend, rend])
         }
 
@@ -52,7 +46,7 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         const filterOutput = filterProcessor(tagData, {
             path: tagPath,
             ready: modReady,
-            depth: realDepth - baseDepth,
+            depth: depth,
         })
 
         // whether this tagInfo itself is ready

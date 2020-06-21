@@ -5,7 +5,7 @@ import type { Stylizer } from './stylizer'
 
 export type { FilterApi, WeakFilter, WeakFilterResult, DataOptions } from '../filters'
 export type { TagData, Separator, WeakSeparator } from '../../tags'
-export type { Internals } from '..'
+export type { AftermathInternals, DeferredInternals, Internals } from '..'
 export type { Deferred } from '../deferred'
 
 export type Recipe = (options: object) => (filterApi: FilterApi) => void

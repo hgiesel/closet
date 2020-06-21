@@ -1,4 +1,5 @@
 import type { Template } from '../template'
+import type { Parser } from '../parser'
 
 import {
     Storage,
@@ -15,45 +16,52 @@ import {
     DeferredApi,
 } from './deferred'
 
-export interface Internals {
+export interface ManagerInfo {
     filters: FilterApi
-
-    preset: object
-    iteration: IterationInfo | null
-    round: RoundInfo | null
 
     cache: Storage
     memory: Storage
     environment: Storage
 
-    deferred: DeferredApi
-    aftermath: DeferredApi
+    deferred: DeferredApi<DeferredInternals>
+    aftermath: DeferredApi<AftermathInternals>
+
+    preset: object
+}
+
+export interface TemplateInfo {
+    template: Template
+    parser: Parser
 }
 
 export interface IterationInfo {
-    template: Template
-    iteration: { index: number }
+    iteration: number
     baseDepth: number
 }
 
 export interface RoundInfo {
     ready: boolean
     depth: number
-    path: number[],
+    path: number[]
 }
+
+export type Internals = ManagerInfo & TemplateInfo & IterationInfo & RoundInfo
+export type DeferredInternals = ManagerInfo & TemplateInfo & IterationInfo
+export type AftermathInternals = ManagerInfo & TemplateInfo
 
 export type FilterProcessor = (data: Filterable, custom?: object) => FilterResult
 
 export class FilterManager {
     readonly filters: FilterApi
 
-    private readonly deferred: DeferredApi
-    private readonly aftermath: DeferredApi
+    private readonly deferred: DeferredApi<DeferredInternals>
+    private readonly aftermath: DeferredApi<AftermathInternals>
 
     private readonly cache: Storage
     private readonly memory: Storage
     private readonly environment: Storage
 
+    private template: TemplateInfo
     private readonly preset: object
 
     constructor(preset = {}, memory: StorageType = new Map()) {
@@ -74,13 +82,9 @@ export class FilterManager {
         this.environment = globalThis.closetEnvironment
     }
 
-    private getInternals(iteration: IterationInfo = null, round: RoundInfo = null): Internals {
-        return {
+    private getAftermathInternals(): AftermathInternals {
+        return Object.assign({}, {
             filters: this.filters,
-
-            preset: this.preset,
-            iteration: iteration,
-            round: round,
 
             cache: this.cache,
             memory: this.memory,
@@ -88,7 +92,21 @@ export class FilterManager {
 
             deferred: this.deferred,
             aftermath: this.aftermath,
-        }
+
+            preset: this.preset,
+        }, this.template)
+    }
+
+    private getDeferredInternals(iteration: IterationInfo): DeferredInternals {
+        return Object.assign(this.getAftermathInternals(), iteration)
+    }
+
+    private getInternals(iteration: IterationInfo, round: RoundInfo): Internals {
+        return Object.assign(this.getDeferredInternals(iteration), round)
+    }
+
+    setTemplateInfo(ti: TemplateInfo): void {
+        this.template = ti
     }
 
     filterProcessor(iteration: IterationInfo): FilterProcessor {
@@ -99,11 +117,11 @@ export class FilterManager {
     }
 
     executeDeferred(iteration: IterationInfo) {
-        this.deferred.executeEach(this.getInternals(iteration))
+        this.deferred.executeEach(this.getDeferredInternals(iteration))
     }
 
     executeAftermath() {
-        this.aftermath.executeEach(this.getInternals())
+        this.aftermath.executeEach(this.getAftermathInternals())
     }
 
     clearMemory() {

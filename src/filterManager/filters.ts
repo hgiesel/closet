@@ -6,9 +6,15 @@ export interface FilterResult {
     containsTags: boolean
 }
 
+export interface OptionFilterResult {
+    result: string
+    ready?: boolean
+    containsTags?: boolean
+}
+
 export type Filter = (t: Filterable, i: Internals) => FilterResult
 
-export type WeakFilterResult = FilterResult | string | void
+export type WeakFilterResult = OptionFilterResult | string | void
 export type WeakFilter = (t: Filterable, i: Internals) => WeakFilterResult
 
 export interface Filterable {
@@ -59,9 +65,9 @@ const withStandardizedFilterResult = (wf: WeakFilter): Filter => (t: Filterable,
 
 export type FilterWithSeparators = [Filter]
 
-const baseFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getRawRepresentation(), i.round.ready)
+const baseFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getRawRepresentation(), i.ready)
 const rawFilter: Filter = (t: Filterable) => wrapWithReady(t.getRawRepresentation())
-const defaultFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getDefaultRepresentation(), i.round.ready)
+const defaultFilter: Filter = (t: Filterable, i: Internals) => wrapWithReadyBubbled(t.getDefaultRepresentation(), i.ready)
 
 export class FilterApi {
     private filters: Map<string, [Filter, DataOptions]>

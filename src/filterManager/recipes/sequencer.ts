@@ -3,14 +3,13 @@ import type { Internals } from './types'
 import { sortWithIndices, topUpSortingIndices } from './utils'
 
 // TODO abstract to an object without dependence on Internals
-
 export const sequencer = (
     // identifies each unit (tag) receiving shuffled items
     unitId: string,
     // identifies each collection of items being shuffled
     sequenceId: string,
     values: unknown[],
-    { cache, memory, deferred, round }: Internals,
+    { cache, memory, deferred, ready }: Internals,
 ) => {
     const applyKey = `${unitId}:apply`
     // in cache: boolean whether ready for application
@@ -44,7 +43,7 @@ export const sequencer = (
     }
 
     /////////// ADD TO SHUFFLE KEY LOGIC
-    if (!round.ready) {
+    if (!ready) {
         // add to waitingSet
         cache.over(waitingSetKey, (s: Set<string>) => s.add(unitId), new Set())
         return

@@ -7,7 +7,7 @@ export interface FilterResult {
 }
 
 export interface OptionFilterResult {
-    result: string
+    result?: string
     ready?: boolean
     containsTags?: boolean
 }
@@ -43,15 +43,17 @@ const nullFilterResult: FilterResult = {
 
 const withStandardizedFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: Internals): FilterResult => {
     const input = wf(t, i)
+    console.log(wf, input, t.getFilterKey())
 
     switch (typeof input) {
         case 'string':
+            console.log('yo')
             return wrapWithReady(input)
 
         // includes null
         case 'object':
             return {
-                result: input.result,
+                result: input.result ?? '',
                 ready: input.ready ?? true,
                 containsTags: input.containsTags ?? false,
             }

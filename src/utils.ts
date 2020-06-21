@@ -30,13 +30,12 @@ const getNewOffset = (replacement: string, lend: number, rend: number): number =
 }
 
 export const replaceAndGetOffset = (text: string, repl: string | null, lend: number, rend: number): [string, number] => {
-
-    return repl
-        ? [
+    return repl === null
+        ? [text, 0]
+        : [
             spliceSlice(text, repl, lend, rend),
             getNewOffset(repl, lend, rend),
         ]
-        : [text, 0]
 }
 
 export const removeViaBooleanList = <T>(lst: T[], booleanLst: boolean[]): T[] => {

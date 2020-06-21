@@ -39,6 +39,7 @@ export interface IterationInfo {
 export interface RoundInfo {
     ready: boolean
     depth: number
+    path: number[],
 }
 
 export type FilterProcessor = (data: Filterable, custom?: object) => FilterResult

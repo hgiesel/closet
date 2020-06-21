@@ -1,5 +1,5 @@
-import type { TagData } from '../../tags'
-import type { FilterApi } from '../filters'
+import type { TagData, FilterApi } from './types'
+
 import { Stylizer } from './stylizer'
 
 export const styleRecipe = ({

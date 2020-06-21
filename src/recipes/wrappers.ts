@@ -1,5 +1,4 @@
-import type { TagData, FilterApi, Internals, Deferred, Recipe, WrapOptions } from './types'
-import type { DeferredApi } from '../deferred'
+import type { TagData, FilterApi, Internals, Deferred, Recipe, WrapOptions, DeferredApi } from './types'
 
 interface WithInternalKeyword {
     keyInternal: string,

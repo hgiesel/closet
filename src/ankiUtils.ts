@@ -1,4 +1,4 @@
-import { StorageType } from './filterManager/storage'
+import type { StorageType } from './filterManager/storage'
 import { interspliceChildNodes, ChildNodeSpan } from './browserUtils'
 
 const tagsFull = '{{Tags}}'

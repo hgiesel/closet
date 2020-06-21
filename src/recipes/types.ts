@@ -1,12 +1,13 @@
-import type { FilterApi, WeakFilterResult } from '../filters'
-import type { TagData } from '../../tags'
-import type { Internals } from '..'
+import type { FilterApi, WeakFilterResult } from '../filterManager/filters'
+import type { TagData } from '../template/tags'
+import type { Internals } from '../filterManager'
 import type { Stylizer } from './stylizer'
 
-export type { FilterApi, WeakFilter, WeakFilterResult, DataOptions } from '../filters'
-export type { TagData, Separator, WeakSeparator } from '../../tags'
-export type { AftermathInternals, DeferredInternals, Internals } from '..'
-export type { Deferred } from '../deferred'
+export type { AftermathInternals, DeferredInternals, Internals } from '../filterManager'
+export type { FilterApi, WeakFilter, WeakFilterResult, DataOptions } from '../filterManager/filters'
+export type { DeferredApi, Deferred } from '../filterManager/deferred'
+
+export type { TagData, Separator, WeakSeparator } from '../template/tags'
 
 export type Recipe = (options: object) => (filterApi: FilterApi) => void
 export type Ellipser = (t: TagData, i: Internals) => string

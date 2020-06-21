@@ -1,5 +1,5 @@
 import type { Template } from '../template'
-import type { Parser } from '../parser'
+import type { Parser } from '../template/parser'
 
 import {
     Storage,

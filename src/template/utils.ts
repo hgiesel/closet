@@ -1,6 +1,7 @@
-import { Parser } from './parser'
+import type { TagInfo } from './tags'
+import type { Parser } from './parser'
+
 import { Status } from './filterManager'
-import { TagInfo } from './tags'
 
 export const TAG_OPEN = '[['
 export const TAG_CLOSE = ']]'
@@ -40,16 +41,6 @@ export const replaceAndGetOffset = (text: string, repl: string | null, lend: num
             spliceSlice(text, repl, lend, rend),
             getNewOffset(repl, lend, rend),
         ]
-}
-
-export const removeViaBooleanList = <T>(lst: T[], booleanLst: boolean[]): T[] => {
-    booleanLst.forEach((v, idx) => {
-        if (v) {
-            delete lst[idx]
-        }
-    })
-
-    return lst.filter(Boolean)
 }
 
 export const flatMapViaStatusList = (parser: Parser, lst: TagInfo[], statusLst: Status[]): TagInfo[] => {

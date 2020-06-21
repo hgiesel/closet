@@ -1,5 +1,4 @@
-import type { TagData } from '../../tags'
-import type { FilterApi } from '../filters'
+import type { TagData, FilterApi } from './types'
 
 import { toNumbers } from './utils'
 

@@ -3,7 +3,13 @@ import type { Internals } from '.'
 export interface FilterResult {
     result: string
     ready: boolean
+    containsTags: boolean
 }
+
+export type Filter = (t: Filterable, i: Internals) => FilterResult
+
+export type WeakFilterResult = FilterResult | string | void
+export type WeakFilter = (t: Filterable, i: Internals) => WeakFilterResult
 
 export interface Filterable {
     getDefaultRepresentation(): string
@@ -14,15 +20,20 @@ export interface Filterable {
 
 export type DataOptions = object
 
-const wrapWithReady = (result: string): FilterResult => ({
+const wrapWithBool = (result: string, bool: boolean): FilterResult => ({
     result: result,
-    ready: true,
+    ready: bool,
+    containsTags: false,
 })
 
-const wrapWithReadyBubbled = (result: string, ready: boolean): FilterResult => ({
-    result: result,
-    ready: ready,
-})
+const wrapWithReady = (result: string): FilterResult => wrapWithBool(result, true)
+const wrapWithReadyBubbled = (result: string, ready: boolean): FilterResult => wrapWithBool(result, ready)
+
+const nullFilterResult: FilterResult = {
+    result: null,
+    ready: false,
+    containsTags: false,
+}
 
 const withStandardizedFilterResult = (wf: WeakFilter): Filter => (t: Filterable, i: Internals): FilterResult => {
     const input = wf(t, i)
@@ -36,21 +47,15 @@ const withStandardizedFilterResult = (wf: WeakFilter): Filter => (t: Filterable,
             return {
                 result: input.result,
                 ready: input.ready ?? true,
+                containsTags: input.containsTags ?? false,
             }
 
         // undefined
         default:
-            return {
-                // this will mark as "not ready"
-                result: null,
-                ready: false,
-            }
+            // marks as not ready
+            return nullFilterResult
     }
 }
-
-export type WeakFilterResult = FilterResult | string | void
-export type WeakFilter = (t: Filterable, i: Internals) => WeakFilterResult
-export type Filter = (t: Filterable, i: Internals) => FilterResult
 
 export type FilterWithSeparators = [Filter]
 

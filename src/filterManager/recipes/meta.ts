@@ -7,11 +7,10 @@ export const metaRecipe = () => (filterApi: FilterApi) => {
     const metaFilter = (tag: TagData, { filters }: Internals): WeakFilterResult => {
         const outerValues = tag.values
 
-        filters.register(outerValues[0][0], (tag: TagData) => {
+        const innerFilter = (tag: TagData) => {
             const innerValues = tag.values
 
-            return {
-                result: '[[' + outerValues
+            const result = '[[' + outerValues
                 .slice(1)
                 .map((vs: string[]) => {
                     return vs.map((v: string): string => {
@@ -30,10 +29,16 @@ export const metaRecipe = () => (filterApi: FilterApi) => {
                         return v
                     }).join('||')
                 })
-                .join('::') + ']]',
-                ready: false,
+                .join('::') + ']]'
+
+
+            return {
+                result: result,
+                containsTags: true,
             }
-        }, metaSeparators)
+        }
+
+        filters.register(outerValues[0][0], innerFilter, metaSeparators)
 
         return {
             ready: true,

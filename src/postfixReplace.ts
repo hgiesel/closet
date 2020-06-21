@@ -4,11 +4,13 @@ import type { TagInfo } from './tags'
 import { calculateCoordinates, replaceAndGetOffset, removeViaBooleanList } from './utils'
 import { Status } from './filterManager'
 
+const isReady = (v: Status): boolean => v !== Status.NotReady
+
 // traverses in postfix order
-export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], boolean[], [number, number][]] => {
+export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor): [string, number[], Status, [number, number][]] => {
     const baseStack = []
 
-    const tagReduce = ([text, tagPath, stack, readyStack]: [string, number[], number[], boolean[]], tagInfo: TagInfo): [string, number[], number[], boolean[]] => {
+    const tagReduce = ([text, tagPath, stack, statusStack]: [string, number[], number[], Status[]], tagInfo: TagInfo): [string, number[], number[], Status[]] => {
         /** 
          *
          * @param text - text with tags, is modified throughout the function
@@ -21,15 +23,15 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         stack.push(stack[stack.length - 1])
 
         const [
-            modText,
+            innerText,
             /* tagPath */,
-            modStack,
-            modReadyStack,
+            innerStack,
+            innerStatusStack,
         ] = tagInfo.innerTags.reduce(tagReduce, [text, [...tagPath, 0], stack, []])
 
         // get offsets
-        const innerOffset = modStack.pop() - modStack[modStack.length - 1]
-        const leftOffset = modStack.pop()
+        const innerOffset = innerStack.pop() - innerStack[innerStack.length - 1]
+        const leftOffset = innerStack.pop()
 
         ///////////////////// Updating valuesRaw and values with innerTags
         const [
@@ -40,8 +42,8 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         // correctly treat the base levels: they don't have have tags!
         const depth = tagPath.length
         const tagData = depth < baseDepth
-            ? tagInfo.data.shadowFromText(modText, lend, rend)
-            : tagInfo.data.shadowFromTextWithoutDelimiters(modText, lend, rend)
+            ? tagInfo.data.shadowFromText(innerText, lend, rend)
+            : tagInfo.data.shadowFromTextWithoutDelimiters(innerText, lend, rend)
 
         // save uppermost tags beneath base
         if (depth === baseDepth - 1) {
@@ -49,7 +51,7 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         }
 
         // whether all innerTags are ready
-        const modReady = modReadyStack.reduce((accu: boolean, v: boolean) => accu && v, true)
+        const modReady = innerStatusStack.reduce((accu: boolean, v: Status) => accu && isReady(v), true)
 
         ///////////////////// Evaluate current tag
         const filterOutput = filterProcessor(tagData, {
@@ -59,23 +61,22 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         })
 
         // whether this tagInfo itself is ready
-        const isReady = filterOutput.status !== Status.NotReady
-        readyStack.push(modReady && isReady)
+        statusStack.push(filterOutput.status)
 
         const [
             newText,
             newOffset,
-        ] = replaceAndGetOffset(modText, filterOutput.result, lend, rend)
+        ] = replaceAndGetOffset(innerText, filterOutput.result, lend, rend)
 
         // going UP
         const sum = innerOffset + leftOffset + newOffset
-        modStack.push(sum)
+        innerStack.push(sum)
 
         tagInfo.update(
             lend,
             rend + newOffset,
-            isReady ? tagData.shadow(filterOutput.result) : tagData,
-            removeViaBooleanList(tagInfo.innerTags, modReadyStack),
+            isReady(filterOutput.status) ? tagData.shadow(filterOutput.result) : tagData,
+            removeViaBooleanList(tagInfo.innerTags, innerStatusStack.map(isReady)),
         )
 
         if (tagPath.length !== 0) {
@@ -85,10 +86,10 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         return [
             newText,
             tagPath,
-            modStack,
+            innerStack,
             // ready means everything to the left is ready
             // filterOutput.ready means everything within and themselves are ready
-            readyStack,
+            statusStack,
         ]
     }
 
@@ -96,8 +97,8 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         modifiedText,
         /* tagPath */,
         stack,
-        ready,
+        status,
     ] = tagReduce([baseText, [], [0,0], []], rootTag)
 
-    return [modifiedText, stack, ready, baseStack]
+    return [modifiedText, stack, status[0], baseStack]
 }

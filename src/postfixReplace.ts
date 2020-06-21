@@ -91,15 +91,11 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         ]
     }
 
-    console.log('before', rootTag)
-
     const [
         modifiedText,
         stack,
         ready,
     ] = tagReduce([baseText, [0,0], []], rootTag)
-
-    console.log('after', rootTag)
 
     return [modifiedText, stack, ready, baseStack]
 }

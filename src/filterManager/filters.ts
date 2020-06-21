@@ -12,7 +12,7 @@ export interface Filterable {
     setOptions(options: DataOptions): void
 }
 
-type DataOptions = object
+export type DataOptions = object
 
 const wrapWithReady = (result: string): FilterResult => ({
     result: result,
@@ -89,11 +89,23 @@ export class FilterApi {
         return this.getWithOptions(name) ?? [defaultFilter, {}]
     }
 
-    get(name: string) {
-        return this.getWithOptions(name)[0]
+    get(name: string): Filter | null {
+        const result = this.getWithOptions(name)
+
+        return result === null
+            ? null
+            : result[0]
     }
 
-    getOrDefault(name: string) {
+    getOptions(name: string): DataOptions | null {
+        const result = this.getWithOptions(name)
+
+        return result === null
+            ? null
+            : result[1]
+    }
+
+    getOrDefault(name: string): Filter {
         return this.getOrDefaultWithOptions(name)[0]
     }
 

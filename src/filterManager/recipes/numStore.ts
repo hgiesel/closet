@@ -1,5 +1,5 @@
 import type { TagData, FilterApi, Internals } from './types'
-import { allowCommaStyle, keyPattern } from './utils'
+import { keyPattern } from './utils'
 
 class ActivateMap {
     theMap: Map<string, boolean>
@@ -70,7 +70,7 @@ const activateFilterTemplate = (
     activateId: string,
     operation: (key: string, occur: number | null, num: number | null) => (a: ActivateMap) => void,
 ) => (tag: TagData, { cache }: Internals) => {
-    const commands = tag.values(',')
+    const commands = tag.values
 
     commands.forEach((val: string) => {
         const [fullKey, occur] = val.split(':')
@@ -99,7 +99,7 @@ export const activateRecipe = ({
         (key, num, occur) => (activateMap) => {
             activateMap.on(key, num, occur)
         }
-    ))
+    ), { sep: ',' })
 }
 
 export const deactivateRecipe = ({
@@ -111,7 +111,7 @@ export const deactivateRecipe = ({
         (key, num, occur) => (activateMap) => {
             activateMap.off(key, num, occur)
         }
-    ))
+    ), { sep: ',' })
 }
 
 export const toggleRecipe = ({
@@ -123,5 +123,5 @@ export const toggleRecipe = ({
         (key, num, occur) => (activateMap) => {
             activateMap.toggle(key, num, occur)
         }
-    ))
+    ), { sep: ',' })
 }

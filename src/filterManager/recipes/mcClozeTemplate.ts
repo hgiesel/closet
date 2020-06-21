@@ -1,4 +1,5 @@
-import type { TagData, Internals, FilterApi, ActiveBehavior, InactiveBehavior } from './types'
+import type { TagData, Internals, FilterApi, ActiveBehavior, InactiveBehavior, DataOptions } from './types'
+
 import { fourWayWrap } from './nway'
 import { isBack, isActive } from './deciders'
 import { simpleRecipe } from './simple'
@@ -6,6 +7,7 @@ import { simpleRecipe } from './simple'
 export const mcClozeTemplate = (
     frontActiveBehavior: ActiveBehavior,
     backActiveBehavior: ActiveBehavior,
+    dataOptions: DataOptions,
 ) => (
     frontInactiveBehavior: InactiveBehavior,
     backInactiveBehavior: InactiveBehavior,
@@ -20,13 +22,14 @@ export const mcClozeTemplate = (
     contexter,
     activeEllipser,
     inactiveEllipser,
+
 }) => (filterApi: FilterApi) => {
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
 
     const isActiveWithOverwrite = (t: TagData, inter: Internals) => isActive(t, inter) || activeOverwrite
 
-    const clozeRecipe = fourWayWrap(
+    const mcClozeRecipe = fourWayWrap(
         isActiveWithOverwrite,
         isBack,
         simpleRecipe(frontInactiveBehavior(contexter, inactiveEllipser)),
@@ -35,9 +38,9 @@ export const mcClozeTemplate = (
         simpleRecipe(backActiveBehavior(backStylizer, activeEllipser)),
     )
 
-    clozeRecipe({ tagname: internalFilter })(filterApi)
+    mcClozeRecipe({ tagname: internalFilter })(filterApi)
 
-    const clozeFilter = (tag: TagData, inter: Internals) => {
+    const mcClozeFilter = (tag: TagData, inter: Internals) => {
         const theFilter = inter.cache.get(`${tagname}:${switcherKeyword}`, {
             get: (_k: string, _n: number | null, _o: number) => internalFilter,
         }).get(tag.key, tag.num, tag.fullOccur)
@@ -49,5 +52,5 @@ export const mcClozeTemplate = (
         return  inter.filters.get(theFilter)(tag, inter)
     }
 
-    filterApi.register(tagname, clozeFilter)
+    filterApi.register(tagname, mcClozeFilter, dataOptions)
 }

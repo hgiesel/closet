@@ -9,7 +9,7 @@ import { mcClozeTemplate } from './mcClozeTemplate'
 const activeBehavior: ActiveBehavior = (
     stylizer: Stylizer,
 ) => (tag: TagData, internals: Internals) => {
-    const flattedValuesWithIndex = tag.values('::', '||').flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
+    const flattedValuesWithIndex = tag.values.flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
 
     const maybeValues = sequencer(
         `${tag.fullKey}:${tag.fullOccur}`,
@@ -26,7 +26,9 @@ const activeBehavior: ActiveBehavior = (
     }
 }
 
-const multipleChoiceRecipe = mcClozeTemplate(activeBehavior, activeBehavior)
+const multipleChoiceSeparators = [{ sep: '::' }, { sep: '||' }]
+
+const multipleChoiceRecipe = mcClozeTemplate(activeBehavior, activeBehavior, multipleChoiceSeparators)
 
 const defaultFrontStylizer = new Stylizer({
     separator: ', ',

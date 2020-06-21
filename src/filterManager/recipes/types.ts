@@ -3,7 +3,7 @@ import type { TagData } from '../../tags'
 import type { Internals } from '..'
 import type { Stylizer } from './stylizer'
 
-export type { FilterApi, WeakFilter, WeakFilterResult } from '../filters'
+export type { FilterApi, WeakFilter, WeakFilterResult, DataOptions } from '../filters'
 export type { TagData, Separator, WeakSeparator } from '../../tags'
 export type { Internals } from '..'
 export type { Deferred } from '../deferred'

@@ -35,11 +35,11 @@ code: |
   )
 
   const obscureAndClick = (t) => {
-    return `<span class="cl--obscure cl--obscure-hint cl--obscure-clickable">${t.values[0].join('||')}</span>`
+    return `<span class="cl--obscure cl--obscure-hint cl--obscure-clickable">${t.values[0]}</span>`
   }
 
   const obscureAndClickFix = (t) => {
-    return `<span class="cl--obscure cl--obscure-fix cl--obscure-clickable"><span>${t.values[0].join('||')}</span></span>`
+    return `<span class="cl--obscure cl--obscure-fix cl--obscure-clickable"><span>${t.values[0]}</span></span>`
   }
 
   filterManager.addRecipe(wrappedClozeShow({

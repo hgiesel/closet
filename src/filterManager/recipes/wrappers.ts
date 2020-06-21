@@ -22,9 +22,11 @@ export const wrap = (
 ) => (filterApi: FilterApi): void => {
     const tagnames = getTagnames(options)
 
+    const makeInternalKeyword = (keyword: string) => `${keyword}:${wrapId}:internal`
+
     const keywordMap = new Map()
     const alteredTagnames = tagnames.map(keyword => {
-        const internalKeyword = `${keyword}:${wrapId}:internal`
+        const internalKeyword = makeInternalKeyword(keyword)
         keywordMap.set(keyword, internalKeyword)
         return internalKeyword
     })
@@ -41,7 +43,7 @@ export const wrap = (
     }
 
     for (const keyword of tagnames) {
-        filterApi.register(keyword, wrapFilter)
+        filterApi.register(keyword, wrapFilter, filterApi.getOptions(makeInternalKeyword(keyword)))
     }
 }
 

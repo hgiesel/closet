@@ -3,12 +3,14 @@ import type { TagData } from '../../tags'
 
 const paramPattern = /%(\d*)/u
 
+const metaSeparators = [{ sep: '::' }, { sep: '||' }]
+
 export const metaRecipe = () => (filterApi: FilterApi) => {
     filterApi.register('def', (tag: TagData, { filters }): FilterResult => {
-        const outerValues = tag.values('::', '||')
+        const outerValues = tag.values
 
         filters.register(outerValues[0][0], (tag: TagData) => {
-            const innerValues = tag.values('::', '||')
+            const innerValues = tag.values
 
             return {
                 result: '[[' + outerValues
@@ -33,11 +35,11 @@ export const metaRecipe = () => (filterApi: FilterApi) => {
                     .join('::') + ']]',
                 ready: false,
             }
-        })
+        }, metaSeparators)
 
         return {
             result: '',
             ready: false,
         }
-    })
+    }, metaSeparators)
 }

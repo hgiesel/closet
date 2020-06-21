@@ -59,11 +59,11 @@ code: |
   )
 
   const obscureAndKeydown = (t) => {
-    return `<span class="cl--obscure cl--obscure-hint cl--obscure-kd-5 cl--obscure-kd-6">${t.values[0].join('||')}</span>`
+    return `<span class="cl--obscure cl--obscure-hint cl--obscure-kd-5 cl--obscure-kd-6">${t.values[0]}</span>`
   }
 
   const obscureAndKeydownFix = (t) => {
-    return `<span class="cl--obscure cl--obscure-fix cl--obscure-kd-5 cl--obscure-kd-6"><span>${t.values[0].join('||')}</span></span>`
+    return `<span class="cl--obscure cl--obscure-fix cl--obscure-kd-5 cl--obscure-kd-6"><span>${t.values[0]}</span></span>`
   }
 
   filterManager.addRecipe(wrappedClozeShow({

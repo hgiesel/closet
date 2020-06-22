@@ -1,4 +1,4 @@
-import type { TagData, FilterApi, Internals } from './types'
+import type { TagData, Filters, Internals } from './types'
 
 import { Stylizer } from './stylizer'
 import { sequencer } from './sequencer'
@@ -6,7 +6,7 @@ import { sequencer } from './sequencer'
 export const shufflingRecipe = ({
     tagname,
     stylizer = new Stylizer(),
-}) => (filterApi: FilterApi) => {
+}) => (filterApi: Filters) => {
     const shuffleFilter = (tag: TagData, internals: Internals) => {
         const unitId = `${tag.fullKey}:${tag.fullOccur}`
         const sequenceId = tag.num ? tag.fullKey : unitId

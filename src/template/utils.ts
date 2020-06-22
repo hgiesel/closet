@@ -1,4 +1,4 @@
-import { Status } from '..'
+import { Status } from './replaceTags'
 
 import type { TagInfo } from './tags'
 import type { Parser } from './parser'

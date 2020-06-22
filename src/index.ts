@@ -1,11 +1,21 @@
 import { Status, ProcessorOutput } from './template/evaluate'
 
-import { MetaFilterManager } from './filterManager'
-import { FilterResult } from './filterManager/filters'
+import { MetaFilterManager, ManagerInfo } from './filterManager'
+import { Filter as FilterType, WeakFilter as WeakFilterType, FilterResult, FilterApi } from './filterManager/filters'
 
 import { TagRenderer, TemplateInfo, IterationInfo } from './template'
 import { TagProcessor, RoundInfo } from './template/evaluate'
 import { TagData } from './template/tags'
+
+export type Internals = ManagerInfo<TemplateInfo, IterationInfo, RoundInfo> & TemplateInfo & IterationInfo & RoundInfo
+export type DeferredInternals = ManagerInfo<TemplateInfo, IterationInfo, RoundInfo> & TemplateInfo & IterationInfo
+export type AftermathInternals = ManagerInfo<TemplateInfo, IterationInfo, RoundInfo> & TemplateInfo
+
+export type Filters = FilterApi<Internals>
+
+export type Filter = FilterType<Internals>
+export type WeakFilter = WeakFilterType<Internals>
+export type { FilterResult, WeakFilterResult, DataOptions } from './filterManager/filters'
 
 const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => {
     if (!filterResult.ready) {

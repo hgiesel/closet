@@ -1,9 +1,9 @@
-import type { FilterApi, TagData, Internals, WeakFilterResult } from './types'
+import type { Filters, TagData, Internals, WeakFilterResult } from './types'
 
 const paramPattern = /%(\d*)/u
 const metaSeparators = [{ sep: '::' }, { sep: '||' }]
 
-export const metaRecipe = () => (filterApi: FilterApi) => {
+export const metaRecipe = () => (filterApi: Filters) => {
     const metaFilter = (tag: TagData, { filters }: Internals): WeakFilterResult => {
         const outerValues = tag.values
 

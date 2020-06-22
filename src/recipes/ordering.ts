@@ -1,4 +1,4 @@
-import type { TagData, FilterApi, Internals } from './types'
+import type { TagData, Filters, Internals } from './types'
 
 import {
     toNumbers,
@@ -9,7 +9,7 @@ import {
 export const orderingRecipe = ({
     tagname,
     shuffleTagname,
-}) => (filterApi: FilterApi) => {
+}) => (filterApi: Filters) => {
     const ordFilter = (
         tag: TagData,
         { deferred, cache }: Internals,

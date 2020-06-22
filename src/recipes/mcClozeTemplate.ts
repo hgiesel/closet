@@ -1,4 +1,4 @@
-import type { TagData, Internals, FilterApi, ActiveBehavior, InactiveBehavior, DataOptions } from './types'
+import type { TagData, Internals, Filters, ActiveBehavior, InactiveBehavior, DataOptions } from './types'
 
 import { fourWayWrap } from './nway'
 import { isBack, isActive } from './deciders'
@@ -23,7 +23,7 @@ export const mcClozeTemplate = (
     activeEllipser,
     inactiveEllipser,
 
-}) => (filterApi: FilterApi) => {
+}) => (filterApi: Filters) => {
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
 

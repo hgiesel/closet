@@ -1,4 +1,4 @@
-import type { TagData, FilterApi, FilterPredicate, Internals, Recipe, WrapOptions } from './types'
+import type { TagData, Filters, FilterPredicate, Internals, Recipe, WrapOptions } from './types'
 
 export const twoWayWrap = (
     predicate: FilterPredicate,
@@ -16,7 +16,7 @@ export const twoWayWrap = (
 
     optionsTrue: object,
     optionsFalse: object,
-}) => (filterApi: FilterApi) => {
+}) => (filterApi: Filters) => {
     const tagnameTrue = `${tagname}:twoWay:true`
     const tagnameFalse = `${tagname}:twoWay:false`
 
@@ -66,7 +66,7 @@ export const fourWayWrap = (
     optionsZero: object,
 
     setTagname: (options: object, newName: string) => void,
-}) => (filterApi: FilterApi) => {
+}) => (filterApi: Filters) => {
     const tagnameZero = `${tagname}:fourWay:zero`
     const tagnameTwo = `${tagname}:fourWay:two`
 

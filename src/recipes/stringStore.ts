@@ -1,4 +1,4 @@
-import type { TagData, FilterApi, Internals } from './types'
+import type { TagData, Filters, Internals } from './types'
 import { keyPattern } from './utils'
 
 class StringMap {
@@ -76,7 +76,7 @@ const activateFilterTemplate = (
 export const activateRecipe = ({
     tagname,
     activateId = 'activate',
-}) => (filterApi: FilterApi) => {
+}) => (filterApi: Filters) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
@@ -88,7 +88,7 @@ export const activateRecipe = ({
 export const deactivateRecipe = ({
     tagname,
     activateId = 'activate',
-}) => (filterApi: FilterApi) => {
+}) => (filterApi: Filters) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
@@ -100,7 +100,7 @@ export const deactivateRecipe = ({
 export const toggleRecipe = ({
     tagname,
     activateId = 'activate',
-}) => (filterApi: FilterApi) => {
+}) => (filterApi: Filters) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {

@@ -1,4 +1,4 @@
-import type { TagData, FilterApi, Internals, Deferred, Recipe, WrapOptions, DeferredApi } from './types'
+import type { TagData, Filters, Internals, Deferred, Recipe, WrapOptions, DeferredApi } from './types'
 
 interface WithInternalKeyword {
     keyInternal: string,
@@ -18,7 +18,7 @@ export const wrap = (
     }: WrapOptions = {},
 ): Recipe => (
     options = {},
-) => (filterApi: FilterApi): void => {
+) => (filterApi: Filters): void => {
     const tagnames = getTagnames(options)
 
     const makeInternalKeyword = (keyword: string) => `${keyword}:${wrapId}:internal`

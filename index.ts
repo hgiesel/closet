@@ -1,5 +1,5 @@
 export { Template } from './src/template'
-export { FilterManager } from './src/filterManager'
+export { FilterManager } from './src'
 
 export {
     keyPattern,

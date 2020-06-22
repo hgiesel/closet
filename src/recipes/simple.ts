@@ -1,9 +1,9 @@
-import type { WeakFilter, Recipe, FilterApi } from './types'
+import type { WeakFilter, Recipe, Filters } from './types'
 
 export const simpleRecipe = (ellipser: WeakFilter): Recipe => ({
     tagname,
 }: {
     tagname: string,
-}) => (filterApi: FilterApi) => {
+}) => (filterApi: Filters) => {
     filterApi.register(tagname, ellipser)
 }

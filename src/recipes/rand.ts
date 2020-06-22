@@ -1,4 +1,4 @@
-import type { TagData, FilterApi } from './types'
+import type { TagData, Filters } from './types'
 
 import { toNumbers } from './utils'
 
@@ -54,7 +54,7 @@ const realGenerator = function*(
 
 export const randRecipe = (
     keyword: string,
-) => (filterApi: FilterApi) => {
+) => (filterApi: Filters) => {
     const intFilter = (tag: TagData) => {
         const [
             min = 1,

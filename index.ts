@@ -1,15 +1,15 @@
 export { Template } from './src/template'
 export { FilterManager } from './src/filterManager'
-export { recipes, wrappers, utils } from './src/filterManager/recipes'
 
 export {
     keyPattern,
     unicodeLetterPattern,
     unicodeNumberPattern,
     unicodeAlphanumericPattern,
-} from './src/filterManager/recipes/utils'
+} from './src/recipes/utils'
 
-export { Stylizer } from './src/filterManager/recipes/stylizer'
+export { recipes, wrappers, utils } from './src/recipes'
+export { Stylizer } from './src/recipes/stylizer'
 
 export * as anki from './src/ankiUtils'
 export * as browser from './src/browserUtils'

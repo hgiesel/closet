@@ -1,9 +1,9 @@
+export type Comparator = (a: unknown, b: unknown) => boolean
+
 const top = 0
 const parent = (i: number): number => ((i + 1) >>> 1) - 1
 const left = (i: number): number => (i << 1) + 1
 const right = (i: number): number => (i + 1) << 1
-
-export type Comparator = (a: unknown, b: unknown) => boolean
 
 export class PriorityQueue<T> {
     private readonly _heap: T[]

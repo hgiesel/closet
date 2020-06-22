@@ -1,6 +1,3 @@
-import type { Template } from '../template'
-import type { Parser } from '../template/parser'
-
 import {
     Storage,
     StorageType,
@@ -16,86 +13,31 @@ import {
     DeferredApi,
 } from './deferred'
 
-export interface ManagerInfo {
+export interface ManagerInfo<T,I> {
     filters: FilterApi
 
     cache: Storage
     memory: Storage
     environment: Storage
 
-    deferred: DeferredApi<DeferredInternals>
-    aftermath: DeferredApi<AftermathInternals>
+    deferred: DeferredApi<ManagerInfo<T,I> & T & I>
+    aftermath: DeferredApi<ManagerInfo<T,I> & T>
 
     preset: object
 }
 
-export interface TemplateInfo {
-    template: Template
-    parser: Parser
-}
+type FilterProcessor<R> = (data: Filterable, r: R) => FilterResult
 
-export interface IterationInfo {
-    iteration: number
-    baseDepth: number
-}
-
-export interface RoundInfo {
-    ready: boolean
-    depth: number
-    path: number[]
-}
-
-export type Internals = ManagerInfo & TemplateInfo & IterationInfo & RoundInfo
-export type DeferredInternals = ManagerInfo & TemplateInfo & IterationInfo
-export type AftermathInternals = ManagerInfo & TemplateInfo
-
-///////////////////////////
-
-export type FilterProcessor = (data: Filterable, custom?: object) => FilterOutput
-
-export enum Status {
-    Ready,
-    NotReady,
-    ContainsTags,
-}
-
-export interface FilterOutput {
-    result: string | null
-    status: Status
-}
-
-const filterResultToFilterOutput = (filterResult: FilterResult): FilterOutput => {
-    if (!filterResult.ready) {
-        return {
-            result: null,
-            status: Status.NotReady,
-        }
-    }
-
-    if (filterResult.containsTags) {
-        return {
-            result: filterResult.result,
-            status: Status.ContainsTags,
-        }
-    }
-
-    return {
-        result: filterResult.result,
-        status: Status.Ready,
-    }
-}
-
-export class FilterManager {
+export class MetaFilterManager<T,I,R> {
     readonly filters: FilterApi
 
-    private readonly deferred: DeferredApi<DeferredInternals>
-    private readonly aftermath: DeferredApi<AftermathInternals>
+    private readonly deferred: DeferredApi<ManagerInfo<T,I> & T & I>
+    private readonly aftermath: DeferredApi<ManagerInfo<T,I> & T>
 
     private readonly cache: Storage
     private readonly memory: Storage
     private readonly environment: Storage
 
-    private template: TemplateInfo
     private readonly preset: object
 
     constructor(preset = {}, memory: StorageType = new Map()) {
@@ -116,7 +58,7 @@ export class FilterManager {
         this.environment = globalThis.closetEnvironment
     }
 
-    private getAftermathInternals(): AftermathInternals {
+    private getAftermathInternals(t: T): ManagerInfo<T,I> & T {
         return Object.assign({}, {
             filters: this.filters,
 
@@ -128,34 +70,29 @@ export class FilterManager {
             aftermath: this.aftermath,
 
             preset: this.preset,
-        }, this.template)
+        }, t)
     }
 
-    private getDeferredInternals(iteration: IterationInfo): DeferredInternals {
-        return Object.assign(this.getAftermathInternals(), iteration)
+    private getDeferredInternals(t: T, i: I): ManagerInfo<T,I> & T & I {
+        return Object.assign(this.getAftermathInternals(t), i)
     }
 
-    private getInternals(iteration: IterationInfo, round: RoundInfo): Internals {
-        return Object.assign(this.getDeferredInternals(iteration), round)
+    private getInternals(t: T, i: I, r: R): ManagerInfo<T,I> & T & I & R {
+        return Object.assign(this.getDeferredInternals(t, i), r)
     }
 
-    setTemplateInfo(ti: TemplateInfo): void {
-        this.template = ti
-    }
-
-    filterProcessor(iteration: IterationInfo): FilterProcessor {
-        return (data: Filterable, round: RoundInfo): FilterOutput => {
-            const result = filterResultToFilterOutput(this.filters.execute(data, this.getInternals(iteration, round)))
-            return result
+    filterProcessor(t: T, i: I): FilterProcessor<R> {
+        return (data: Filterable, r: R): FilterResult => {
+            return this.filters.execute(data, this.getInternals(t, i, r))
         }
     }
 
-    executeDeferred(iteration: IterationInfo) {
-        this.deferred.executeEach(this.getDeferredInternals(iteration))
+    executeDeferred(t: T, i: I) {
+        this.deferred.executeEach(this.getDeferredInternals(t, i))
     }
 
-    executeAftermath() {
-        this.aftermath.executeEach(this.getAftermathInternals())
+    executeAftermath(t: T) {
+        this.aftermath.executeEach(this.getAftermathInternals(t))
     }
 
     clearMemory() {
@@ -172,5 +109,3 @@ export class FilterManager {
         recipe(this.filters)
     }
 }
-
-export default FilterManager

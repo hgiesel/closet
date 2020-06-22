@@ -1,19 +1,36 @@
-import type { FilterProcessor } from './filterManager'
-import type { TagInfo } from './tags'
+import type { TagInfo, TagData } from './tags'
 import type { Parser } from './parser'
 
-import { calculateCoordinates, replaceAndGetOffset, removeViaBooleanList, flatMapViaStatusList } from './utils'
-import { Status } from './filterManager'
+import { calculateCoordinates, replaceAndGetOffset, flatMapViaStatusList } from './utils'
+
+export interface RoundInfo {
+    ready: boolean
+    depth: number
+    path: number[]
+}
+
+export enum Status {
+    Ready,
+    NotReady,
+    ContainsTags,
+}
+
+export interface ProcessorOutput {
+    result: string | null
+    status: Status
+}
+
+export type TagProcessor = (data: TagData, round: RoundInfo) => ProcessorOutput
 
 const isReady = (v: Status): boolean => v === Status.Ready
 const canReplace = (v: Status): boolean => v !== Status.NotReady
 
-// traverses in postfix order
-export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: number, filterProcessor: FilterProcessor, parser: Parser): [string, number[], boolean, [number, number][]] => {
+export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: number, tagProcessor: TagProcessor, parser: Parser): [string, number[], boolean, [number, number][]] => {
     const baseStack = []
 
-    const tagReduce = ([text, tagPath, stack, statusStack]: [string, number[], number[], Status[]], tagInfo: TagInfo): [string, number[], number[], Status[]] => {
+    const foldTag = ([text, tagPath, stack, statusStack]: [string, number[], number[], Status[]], tagInfo: TagInfo): [string, number[], number[], Status[]] => {
         /** 
+         * traverses in postfix order through tag tree
          *
          * @param text - text with tags, is modified throughout the function
          * @param tagPath - used for roundInfo path info, indicates location of tag as a string of numbers
@@ -29,7 +46,7 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
             /* tagPath */,
             innerStack,
             innerStatusStack,
-        ] = tagInfo.innerTags.reduce(tagReduce, [text, [...tagPath, 0], stack, []])
+        ] = tagInfo.innerTags.reduce(foldTag, [text, [...tagPath, 0], stack, []])
 
         // get offsets
         const innerOffset = innerStack.pop() - innerStack[innerStack.length - 1]
@@ -56,11 +73,12 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         const allReady = innerStatusStack.reduce((accu: boolean, v: Status) => accu && isReady(v), true)
 
         ///////////////////// Evaluate current tag
-        const filterOutput = filterProcessor(tagData, {
+        const roundInfo: RoundInfo = {
             path: tagPath,
             ready: allReady,
             depth: depth,
-        })
+        }
+        const filterOutput = tagProcessor(tagData, roundInfo)
 
         // whether this tagInfo itself is ready
         statusStack.push(filterOutput.status)
@@ -100,7 +118,7 @@ export const postfixReplace = (baseText: string, rootTag: TagInfo, baseDepth: nu
         /* tagPath */,
         stack,
         status,
-    ] = tagReduce([baseText, [], [0,0], []], rootTag)
+    ] = foldTag([baseText, [], [0,0], []], rootTag)
 
     return [modifiedText, stack, isReady(status[0]), baseStack]
 }

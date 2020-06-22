@@ -1,5 +1,4 @@
-import { Template } from './template'
-import { FilterManager } from './filterManager'
+import { Template, TagRenderer } from './template'
 
 // negative result implies invalid idx
 const parseIndexArgument = (idx: number, min: number, max: number): number => {
@@ -273,32 +272,14 @@ export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate)
     return result
 }
 
-export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | string, filterManager: FilterManager, cb: (output: string) => void = null): void => {
+export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | string, tagRenderer: TagRenderer): void => {
     const tmpl = Template.make(getText(input))
-    const result = tmpl.render(filterManager)
-
-    if (cb) {
-        cb(result[0])
-    }
-    else {
-        setText(input, result[0])
-    }
-
-    filterManager.executeAftermath()
+    tmpl.render(tagRenderer, (t: string[]) => setText(input, t[0]))
 }
 
-export const renderTemplateFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>, filterManager: FilterManager, cb: (output: string[]) => void = null): void => {
+export const renderTemplateFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>, tagRenderer: TagRenderer): void => {
     const tmpl = Template.makeFromFragments(inputs.map(getText))
-    const results = tmpl.render(filterManager)
-
-    if (cb) {
-        cb(results)
-    }
-    else {
-        inputs.forEach((input, index: number) => setText(input, results[index]))
-    }
-
-    filterManager.executeAftermath()
+    tmpl.render(tagRenderer, (t: string[]) => t.forEach((text: string, index: number) => setText(inputs[index], text)))
 }
 
 export const appendStyleScript = (input: string): void => {

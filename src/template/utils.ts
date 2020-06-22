@@ -1,13 +1,11 @@
+import { Status } from '..'
+
 import type { TagInfo } from './tags'
 import type { Parser } from './parser'
 
-import { Status } from './filterManager'
-
 export const TAG_OPEN = '[['
 export const TAG_CLOSE = ']]'
-
 export const ARG_SEP = '::'
-export const ALT_SEP = '||'
 
 export const calculateCoordinates = (
     tagStart: number,

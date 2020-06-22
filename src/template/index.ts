@@ -1,8 +1,24 @@
 import type { TagInfo, TagData } from './tags'
-import type { FilterManager } from './filterManager'
+import type { TagProcessor } from './evaluate'
 
 import { Parser } from './parser'
-import { postfixReplace } from './postfixReplace'
+import { evaluateTemplate } from './evaluate'
+
+export interface TemplateInfo {
+    template: Template
+    parser: Parser
+}
+
+export interface IterationInfo {
+    iteration: number
+    baseDepth: number
+}
+
+export interface TagRenderer {
+    makeProcessor: (t: TemplateInfo, i: IterationInfo) => TagProcessor
+    finishIteration: (t: TemplateInfo, i: IterationInfo) => void
+    finishRun: (t: TemplateInfo) => void
+}
 
 type TagPath = number[]
 
@@ -64,19 +80,19 @@ export class Template {
         return currentPos
     }
 
-    render(filterManager: FilterManager, cb?: (t: string[]) => void) {
+    render(tagRenderer: TagRenderer, cb?: (t: string[]) => void) {
         let ready = false
         let text = this.textFragments.join('')
         let baseStack = []
 
-        filterManager.setTemplateInfo({
+        const templateInfo: TemplateInfo = {
             template: this,
             parser: this.parser,
-        })
+        }
 
         for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
             console.groupCollapsed(`Iteration ${i}`)
-            const iterationInfo = {
+            const iterationInfo: IterationInfo = {
                 iteration: i,
                 baseDepth: this.baseDepth,
             }
@@ -86,11 +102,11 @@ export class Template {
                 /* finalOffset */,
                 newReady,
                 newBaseStack,
-            ] = postfixReplace(
+            ] = evaluateTemplate(
                 text,
                 this.rootTag,
                 this.baseDepth,
-                filterManager.filterProcessor(iterationInfo),
+                tagRenderer.makeProcessor(templateInfo, iterationInfo),
                 this.parser,
             )
 
@@ -98,7 +114,7 @@ export class Template {
             ready = newReady
             baseStack = newBaseStack
 
-            filterManager.executeDeferred(iterationInfo)
+            tagRenderer.finishIteration(templateInfo, iterationInfo)
             console.groupEnd()
         }
 
@@ -108,8 +124,7 @@ export class Template {
             cb(result)
         }
 
-        filterManager.executeAftermath()
-        filterManager.reset()
+        tagRenderer.finishRun(templateInfo)
 
         return result
     }

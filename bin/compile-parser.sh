@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-declare DIR="$(cd "$(dirname "$0")/../src/parser" && pwd -P)"
+declare DIR="$(cd "$(dirname "$0")/../src/template/parser" && pwd -P)"
 
 if ! type nearleyc &> /dev/null; then
   echo 'No nearleyc executable found in $PATH'

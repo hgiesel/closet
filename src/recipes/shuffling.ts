@@ -19,7 +19,6 @@ export const shufflingRecipe = ({
         )
 
         if (maybeValues) {
-            console.log('mbv', sequenceId, unitId, maybeValues)
             return stylizer.stylize(maybeValues)
         }
     }

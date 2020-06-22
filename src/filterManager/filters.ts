@@ -39,7 +39,6 @@ const nullFilterResult: FilterResult = {
 
 const withStandardizedFilterResult = <T,D>(wf: WeakFilter<T,D>): Filter<T,D> => (t: Filterable<D>, i: T): FilterResult => {
     const input = wf(t, i)
-    console.log(wf, input, t.getFilterKey())
 
     switch (typeof input) {
         case 'string':

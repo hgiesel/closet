@@ -82,18 +82,21 @@ const processTemplateText = () => {
     try {
         const tmpl = Closet.Template.make(text)
         tmpl.render(filterManager, result => display(templateRendered, result, false))
+
+        console.timeEnd('Render template')
+        console.groupEnd(`Run ${run}`)
     }
     catch (e) {
         console.error(templateErrorMessage, e)
-        codeCM.getWrapperElement().classList.add('failed')
-        display(templateRendered, templateErrorMessage, escape=false)
-        return
-    }
-    finally {
+
         console.timeEnd('Render template')
         console.groupEnd(`Run ${run}`)
-        run++
+
+        codeCM.getWrapperElement().classList.add('failed')
+        display(templateRendered, templateErrorMessage, escape=false)
     }
+
+    run++
 }
 
 btnExecute.addEventListener('click', processTemplateText)

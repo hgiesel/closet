@@ -1,7 +1,7 @@
 name: Obscuring clozes
 code: |
   const obscure = (tag) => {
-    return '<span style="filter: blur(0.2rem);">' + tag.values({ sep: '::', max: 2 })[0] + '</span>'
+    return '<span style="filter: blur(0.2rem);">' + tag.values[0] + '</span>'
   }
 
   const useYellow = new Closet.Stylizer({

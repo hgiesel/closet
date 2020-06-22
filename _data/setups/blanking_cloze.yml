@@ -1,7 +1,7 @@
 name: Blanking Clozes
 code: |
   const blank = function(tag) {
-    return tag.values({ sep: '::', max: 2 })[0].replace(Closet.unicodeAlphanumericPattern, '_')
+    return tag.values[0].replace(Closet.unicodeAlphanumericPattern, '_')
   }
 
   filterManager.addRecipe(Closet.recipes.clozeShow({

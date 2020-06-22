@@ -233,7 +233,6 @@ code: |
 
   const wrappedRemoveFormatting = Closet.wrappers.aftermath((_e, internals) => {
     if (!internals.environment.has('addMandarinToneStyleTag')) {
-      console.log(Closet.browser)
       Closet.browser.appendStyleScript(`
       .zh--tone-1 { color: dodgerblue; }
       .zh--tone-2 { color: lime; }

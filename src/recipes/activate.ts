@@ -1,4 +1,4 @@
-import type { TagData, Filters, Internals } from './types'
+import type { TagData, Filters, Internals, WeakDataOptions } from './types'
 import { keyPattern } from './utils'
 
 class ActivateMap {
@@ -90,6 +90,8 @@ const activateFilterTemplate = (
     return ''
 }
 
+const activateDataOptions: WeakDataOptions = { separators: [','] }
+
 export const activateRecipe = ({
     tagname,
     activateId = 'activate',
@@ -99,7 +101,7 @@ export const activateRecipe = ({
         (key, num, occur) => (activateMap) => {
             activateMap.on(key, num, occur)
         }
-    ), { sep: ',' })
+    ), activateDataOptions)
 }
 
 export const deactivateRecipe = ({
@@ -111,7 +113,7 @@ export const deactivateRecipe = ({
         (key, num, occur) => (activateMap) => {
             activateMap.off(key, num, occur)
         }
-    ), { sep: ',' })
+    ), activateDataOptions)
 }
 
 export const toggleRecipe = ({
@@ -123,5 +125,5 @@ export const toggleRecipe = ({
         (key, num, occur) => (activateMap) => {
             activateMap.toggle(key, num, occur)
         }
-    ), { sep: ',' })
+    ), activateDataOptions)
 }

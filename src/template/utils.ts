@@ -1,5 +1,3 @@
-import { Status } from './replaceTags'
-
 import type { TagInfo } from './tags'
 import type { Parser } from './parser'
 
@@ -39,6 +37,12 @@ export const replaceAndGetOffset = (text: string, repl: string | null, lend: num
             spliceSlice(text, repl, lend, rend),
             getNewOffset(repl, lend, rend),
         ]
+}
+
+export enum Status {
+    Ready,
+    NotReady,
+    ContainsTags,
 }
 
 export const flatMapViaStatusList = (parser: Parser, lst: TagInfo[], statusLst: Status[]): TagInfo[] => {

@@ -1,4 +1,4 @@
-import type { TagData, Internals, Filters, ActiveBehavior, InactiveBehavior, DataOptions } from './types'
+import type { TagData, Internals, Filters, ActiveBehavior, InactiveBehavior, WeakDataOptions } from './types'
 
 import { fourWayWrap } from './nway'
 import { isBack, isActive } from './deciders'
@@ -7,7 +7,7 @@ import { simpleRecipe } from './simple'
 export const mcClozeTemplate = (
     frontActiveBehavior: ActiveBehavior,
     backActiveBehavior: ActiveBehavior,
-    dataOptions: DataOptions,
+    dataOptions: WeakDataOptions = null,
 ) => (
     frontInactiveBehavior: InactiveBehavior,
     backInactiveBehavior: InactiveBehavior,

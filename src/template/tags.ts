@@ -4,6 +4,16 @@ import {
     ARG_SEP,
 } from './utils'
 
+export interface DataOptions {
+    separators: WeakSeparator[],
+    capture: boolean,
+}
+
+export interface WeakDataOptions {
+    separators?: WeakSeparator[],
+    capture?: boolean,
+}
+
 export interface Separator {
     sep: string
     max?: number
@@ -42,6 +52,10 @@ const splitValues = (text: string, seps: Separator[]) => {
 }
 
 const keyPattern = /^([^0-9]+)([0-9]*)$/u
+const defaultDataOptions: DataOptions = {
+    separators: [],
+    capture: false,
+}
 
 export class TagData {
     readonly fullKey: string
@@ -53,6 +67,8 @@ export class TagData {
 
     _fullOccur: number
     _occur: number
+
+    capture: boolean = false
 
     constructor(
         fullKey: string,
@@ -67,11 +83,18 @@ export class TagData {
         this.valuesText = valuesText
     }
 
-    setOptions(seps: WeakSeparator[]) {
-        // default options from filter manager is {}
-        if (seps.length > 0) {
-            this.separators = seps.map(v => typeof v === 'string' ? { sep: v } : v)
+    private setSeparators(seps: WeakSeparator[]) {
+        this.separators = seps.map(v => typeof v === 'string' ? { sep: v } : v)
+    }
+
+    setOptions(wdo: WeakDataOptions | null) {
+        if (!wdo) {
+            wdo = defaultDataOptions
         }
+
+        // default options from filter manager is {}
+        this.setSeparators(wdo.separators ?? defaultDataOptions.separators)
+        this.capture = (wdo.capture ?? defaultDataOptions.capture)
     }
 
     hasValues(): boolean {

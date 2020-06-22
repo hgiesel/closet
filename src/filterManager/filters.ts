@@ -10,19 +10,17 @@ export interface OptionFilterResult {
     containsTags?: boolean
 }
 
-export type Filter<T> = (t: Filterable, i: T) => FilterResult
+export type Filter<T,D> = (t: Filterable<D>, i: T) => FilterResult
 
 export type WeakFilterResult = OptionFilterResult | string | void
-export type WeakFilter<T> = (t: Filterable, i: T) => WeakFilterResult
+export type WeakFilter<T,D> = (t: Filterable<D>, i: T) => WeakFilterResult
 
-export interface Filterable {
+export interface Filterable<D> {
     getDefaultRepresentation(): string
     getRawRepresentation(): string
     getFilterKey(): string
-    setOptions(options: DataOptions): void
+    setOptions(options: D): void
 }
-
-export type DataOptions = object
 
 const wrapWithBool = (result: string, bool: boolean): FilterResult => ({
     result: result,
@@ -39,7 +37,7 @@ const nullFilterResult: FilterResult = {
     containsTags: false,
 }
 
-const withStandardizedFilterResult = <T>(wf: WeakFilter<T>): Filter<T> => (t: Filterable, i: T): FilterResult => {
+const withStandardizedFilterResult = <T,D>(wf: WeakFilter<T,D>): Filter<T,D> => (t: Filterable<D>, i: T): FilterResult => {
     const input = wf(t, i)
     console.log(wf, input, t.getFilterKey())
 
@@ -66,21 +64,21 @@ export interface Readiable {
     ready: boolean
 }
 
-const defaultFilter = <T extends Readiable>(t: Filterable, i: T) => wrapWithReadyBubbled(t.getDefaultRepresentation(), i.ready)
-const baseFilter = <T extends Readiable>(t: Filterable, i: T) => wrapWithReadyBubbled(t.getRawRepresentation(), i.ready)
-const rawFilter = (t: Filterable) => wrapWithReady(t.getRawRepresentation())
+const defaultFilter = <T extends Readiable, D extends object>(t: Filterable<D>, i: T) => wrapWithReadyBubbled(t.getDefaultRepresentation(), i.ready)
+const baseFilter = <T extends Readiable, D extends object>(t: Filterable<D>, i: T) => wrapWithReadyBubbled(t.getRawRepresentation(), i.ready)
+const rawFilter = <D extends object>(t: Filterable<D>) => wrapWithReady(t.getRawRepresentation())
 
-export class FilterApi<T extends Readiable> {
-    private filters: Map<string, [Filter<T>, DataOptions]>
+export class FilterApi<T extends Readiable, D extends object> {
+    private filters: Map<string, [Filter<T,D>, D]>
 
     constructor() {
         this.filters = new Map()
 
-        this.register('base', baseFilter, {})
-        this.register('raw', rawFilter, {})
+        this.register('base', baseFilter)
+        this.register('raw', rawFilter)
     }
 
-    register(name: string, filter: WeakFilter<T>, options: DataOptions = {}): void {
+    register(name: string, filter: WeakFilter<T,D>, options: D = null): void {
         this.filters.set(name, [withStandardizedFilterResult(filter), options])
     }
 
@@ -90,17 +88,17 @@ export class FilterApi<T extends Readiable> {
             : this.filters.has(name)
     }
 
-    getWithOptions(name: string): [Filter<T>, DataOptions] | null {
+    getWithOptions(name: string): [Filter<T,D>, D] | null {
         return this.filters.has(name)
             ? this.filters.get(name)
             : null
     }
 
-    getOrDefaultWithOptions(name: string): [Filter<T>, DataOptions] {
-        return this.getWithOptions(name) ?? [defaultFilter, {}]
+    getOrDefaultWithOptions(name: string): [Filter<T,D>, D] {
+        return this.getWithOptions(name) ?? [defaultFilter, null]
     }
 
-    get(name: string): Filter<T> | null {
+    get(name: string): Filter<T,D> | null {
         const result = this.getWithOptions(name)
 
         return result === null
@@ -108,7 +106,7 @@ export class FilterApi<T extends Readiable> {
             : result[0]
     }
 
-    getOptions(name: string): DataOptions | null {
+    getOptions(name: string): D | null {
         const result = this.getWithOptions(name)
 
         return result === null
@@ -116,7 +114,7 @@ export class FilterApi<T extends Readiable> {
             : result[1]
     }
 
-    getOrDefault(name: string): Filter<T> {
+    getOrDefault(name: string): Filter<T,D> {
         return this.getOrDefaultWithOptions(name)[0]
     }
 
@@ -128,7 +126,7 @@ export class FilterApi<T extends Readiable> {
         this.filters.clear()
     }
 
-    execute(data: Filterable, internals: T): FilterResult {
+    execute(data: Filterable<D>, internals: T): FilterResult {
         const filterKey = data.getFilterKey()
         const [filter, dataOptions] = this.getOrDefaultWithOptions(filterKey)
 

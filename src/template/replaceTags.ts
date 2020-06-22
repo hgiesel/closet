@@ -1,18 +1,12 @@
 import type { TagInfo, TagData } from './tags'
 import type { Parser } from './parser'
 
-import { calculateCoordinates, replaceAndGetOffset, flatMapViaStatusList } from './utils'
+import { Status, calculateCoordinates, replaceAndGetOffset, flatMapViaStatusList } from './utils'
 
 export interface RoundInfo {
     ready: boolean
     depth: number
     path: number[]
-}
-
-export enum Status {
-    Ready,
-    NotReady,
-    ContainsTags,
 }
 
 export interface ProcessorOutput {

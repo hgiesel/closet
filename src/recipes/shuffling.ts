@@ -24,5 +24,5 @@ export const shufflingRecipe = ({
         }
     }
 
-    filterApi.register(tagname, shuffleFilter as any, ['||'])
+    filterApi.register(tagname, shuffleFilter, { separators: ['||']})
 }

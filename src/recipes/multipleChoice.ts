@@ -26,7 +26,7 @@ const activeBehavior: ActiveBehavior = (
     }
 }
 
-const multipleChoiceSeparators = [{ sep: '::' }, { sep: '||' }]
+const multipleChoiceSeparators = { separators: [{ sep: '::' }, { sep: '||' }]}
 
 const multipleChoiceRecipe = mcClozeTemplate(activeBehavior, activeBehavior, multipleChoiceSeparators)
 

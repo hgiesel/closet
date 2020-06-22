@@ -18,26 +18,26 @@ import {
     DeferredApi,
 } from './deferred'
 
-export interface ManagerInfo<T,I,R extends Readiable> {
-    filters: FilterApi<R>
+export interface ManagerInfo<T,I,R extends Readiable,D extends object> {
+    filters: FilterApi<R,D>
 
     cache: Storage
     memory: Storage
     environment: Storage
 
-    deferred: DeferredApi<ManagerInfo<T,I,R> & T & I>
-    aftermath: DeferredApi<ManagerInfo<T,I,R> & T>
+    deferred: DeferredApi<ManagerInfo<T,I,R,D> & T & I>
+    aftermath: DeferredApi<ManagerInfo<T,I,R,D> & T>
 
     preset: object
 }
 
-type FilterProcessor<R> = (data: Filterable, r: R) => FilterResult
+type FilterProcessor<R,D> = (data: Filterable<D>, r: R) => FilterResult
 
-export class MetaFilterManager<T,I,R extends Readiable> {
-    readonly filters: FilterApi<R>
+export class MetaFilterManager<T,I,R extends Readiable, D extends object> {
+    readonly filters: FilterApi<R,D>
 
-    private readonly deferred: DeferredApi<ManagerInfo<T,I,R> & T & I>
-    private readonly aftermath: DeferredApi<ManagerInfo<T,I,R> & T>
+    private readonly deferred: DeferredApi<ManagerInfo<T,I,R,D> & T & I>
+    private readonly aftermath: DeferredApi<ManagerInfo<T,I,R,D> & T>
 
     private readonly cache: Storage
     private readonly memory: Storage
@@ -63,7 +63,7 @@ export class MetaFilterManager<T,I,R extends Readiable> {
         this.environment = globalThis.closetEnvironment
     }
 
-    private getAftermathInternals(t: T): ManagerInfo<T,I,R> & T {
+    private getAftermathInternals(t: T): ManagerInfo<T,I,R,D> & T {
         return Object.assign({}, {
             filters: this.filters,
 
@@ -78,16 +78,16 @@ export class MetaFilterManager<T,I,R extends Readiable> {
         }, t)
     }
 
-    private getDeferredInternals(t: T, i: I): ManagerInfo<T,I,R> & T & I {
+    private getDeferredInternals(t: T, i: I): ManagerInfo<T,I,R,D> & T & I {
         return Object.assign(this.getAftermathInternals(t), i)
     }
 
-    private getInternals(t: T, i: I, r: R): ManagerInfo<T,I,R> & T & I & R {
+    private getInternals(t: T, i: I, r: R): ManagerInfo<T,I,R,D> & T & I & R {
         return Object.assign(this.getDeferredInternals(t, i), r)
     }
 
-    filterProcessor(t: T, i: I): FilterProcessor<R> {
-        return (data: Filterable, r: R): FilterResult => {
+    filterProcessor(t: T, i: I): FilterProcessor<R,D> {
+        return (data: Filterable<D>, r: R): FilterResult => {
             return this.filters.execute(data, this.getInternals(t, i, r))
         }
     }
@@ -110,7 +110,7 @@ export class MetaFilterManager<T,I,R extends Readiable> {
         this.deferred.clear()
     }
 
-    addRecipe(recipe: (filters: FilterApi<R>) => void): void {
+    addRecipe(recipe: (filters: FilterApi<R,D>) => void): void {
         recipe(this.filters)
     }
 }

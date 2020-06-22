@@ -4,7 +4,7 @@ import type { Internals, Filters } from '..'
 import type { Stylizer } from './stylizer'
 
 export type { Filters, AftermathInternals, DeferredInternals, Internals } from '..'
-export type { WeakFilter, WeakFilterResult, DataOptions } from '..'
+export type { WeakFilter, WeakFilterResult, WeakDataOptions } from '..'
 export type { DeferredApi, Deferred } from '../filterManager/deferred'
 
 export type { TagData, Separator, WeakSeparator } from '../template/tags'

@@ -18,7 +18,7 @@ const clozeBackActiveBehavior: ActiveBehavior = (
     return stylizer.stylize([tag.values[0]])
 }
 
-const clozeSeparators = [{ sep: '::', max: 2 }]
+const clozeSeparators = { separators: [{ sep: '::', max: 2 }]}
 
 const clozeRecipe = mcClozeTemplate(clozeFrontActiveBehavior, clozeBackActiveBehavior, clozeSeparators)
 

@@ -1,13 +1,13 @@
 import type { StorageType } from './filterManager/storage'
 import { interspliceChildNodes, ChildNodeSpan } from './browserUtils'
 
-const tagsFull = '{{Tags}}'
 const cardType = '{{Card}}'
+const tagsFull = '{{Tags}}'
 const tags = tagsFull.split(' ')
 
 export const preset = {
-    tagsFull: tagsFull,
     card: cardType,
+    tagsFull: tagsFull,
     tags: tags,
 }
 

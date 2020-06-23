@@ -272,16 +272,6 @@ export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate)
     return result
 }
 
-export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | string, tagRenderer: TagRenderer): void => {
-    const tmpl = Template.make(getText(input))
-    tmpl.render(tagRenderer, (t: string[]) => setText(input, t[0]))
-}
-
-export const renderTemplateFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>, tagRenderer: TagRenderer): void => {
-    const tmpl = Template.makeFromFragments(inputs.map(getText))
-    tmpl.render(tagRenderer, (t: string[]) => t.forEach((text: string, index: number) => setText(inputs[index], text)))
-}
-
 export const appendStyleScript = (input: string): void => {
     var styleSheet = document.createElement("style")
     styleSheet.type = "text/css"
@@ -291,3 +281,13 @@ export const appendStyleScript = (input: string): void => {
 
 export const zeroWidthSpaceEntity = "&#8203;"
 export const wordBreakTag = "<wbr />"
+
+export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | string, tagRenderer: TagRenderer): void => {
+    const tmpl = Template.make(getText(input))
+    tmpl.render(tagRenderer, (t: string[]) => setText(input, t[0]))
+}
+
+export const renderTemplateFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>, tagRenderer: TagRenderer): void => {
+    const tmpl = Template.makeFromFragments(inputs.map(getText))
+    tmpl.render(tagRenderer, (t: string[]) => t.forEach((text: string, index: number) => setText(inputs[index], text)))
+}

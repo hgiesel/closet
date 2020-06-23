@@ -35,7 +35,7 @@ export const twoWayWrap = <T extends object, U extends object>(
             : internals.filters.get(tagnameFalse)(tag, internals)
     }
 
-    filterApi.register(tagname, twoWayFilter)
+    filterApi.register(tagname, twoWayFilter, filterApi.getOptions(tagnameTrue /* have to be same for True/False */))
 }
 
 export const fourWayWrap = <T extends object, U extends object, V extends object, W extends object>(

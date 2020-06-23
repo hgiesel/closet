@@ -5,11 +5,11 @@ import { Stylizer } from './stylizer'
 export const styleRecipe = ({
     tagname,
     stylizer = new Stylizer(),
-    separator = '::',
+    separators = ['::'],
 }) => (filterApi: Filters<{}>) => {
     const styleFilter = (tag: TagData) => {
-        return stylizer.stylize(tag.values(separator))
+        return stylizer.stylize(tag.values)
     }
 
-    filterApi.register(tagname, styleFilter as any)
+    filterApi.register(tagname, styleFilter as any, { separators: separators })
 }

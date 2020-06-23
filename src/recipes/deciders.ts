@@ -1,10 +1,10 @@
 import type { TagData, Internals } from './types'
 
-export const isBack = (_t: TagData, { preset }: Internals): boolean => {
+export const isBack = (_t: TagData, { preset }: Internals<{ side: 'front' | 'back' }>): boolean => {
     return preset['side'] === 'back'
 }
 
-export const isActive = ({ num }: TagData, { preset }: Internals): boolean => {
+export const isActive = ({ num }: TagData, { preset }: Internals<{ card: string }>): boolean => {
     switch (num) {
         case null:
             return false

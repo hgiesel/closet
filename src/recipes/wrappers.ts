@@ -8,17 +8,17 @@ const defaultTagnameGetter = (o: object) => [o['tagname']]
 const defaultTagnameSetter = (o: object, newNames: string[]) => o['tagname'] = newNames[0]
 const defaultWrapId = 'wrapped'
 
-export const wrap = (
-    wrapped: (tag: TagData & WithInternalKeyword, internals: Internals) => void,
+export const wrap = <T extends object>(
+    wrapped: (tag: TagData & WithInternalKeyword, internals: Internals<T>) => void,
 ) => (
-    mainRecipe: Recipe, {
+    mainRecipe: Recipe<T>, {
         wrapId = defaultWrapId,
         getTagnames = defaultTagnameGetter,
         setTagnames = defaultTagnameSetter,
     }: WrapOptions = {},
-): Recipe => (
+): Recipe<T> => (
     options = {},
-) => (filterApi: Filters): void => {
+) => (filterApi: Filters<T>): void => {
     const tagnames = getTagnames(options)
 
     const makeInternalKeyword = (keyword: string) => `${keyword}:${wrapId}:internal`
@@ -33,7 +33,7 @@ export const wrap = (
     setTagnames(options, alteredTagnames)
     mainRecipe(options)(filterApi)
 
-    const wrapFilter = (tag: TagData, inter: Internals) => {
+    const wrapFilter = (tag: TagData, inter: Internals<T>) => {
         const internalKeyword = keywordMap.get(tag.key)
 
         wrapped(Object.assign({}, tag, { keyInternal: internalKeyword }), inter)
@@ -46,13 +46,13 @@ export const wrap = (
     }
 }
 
-const wrapWithDeferredTemplate = <T>(
-    getDeferredApi: (i: Internals) => DeferredApi<T>,
+const wrapWithDeferredTemplate = <T extends object, D>(
+    getDeferredApi: (i: Internals<T>) => DeferredApi<D>,
 ) => (
-    action: Deferred<T>,
-    mainRecipe: Recipe,
+    action: Deferred<D>,
+    mainRecipe: Recipe<T>,
     wrapOptions: WrapOptions = {},
-): Recipe => {
+): Recipe<T> => {
     return wrap((t, internals) => {
         getDeferredApi(internals).registerIfNotExists(t.keyInternal, action)
     })(mainRecipe, wrapOptions)

@@ -1,4 +1,5 @@
 import type { TagData, Recipe, Internals, Ellipser, ActiveBehavior } from './types'
+import type { McClozePreset } from './mcClozeTemplate'
 
 import { id, id2 } from './utils'
 import { Stylizer } from './stylizer'
@@ -6,9 +7,9 @@ import { sequencer } from './sequencer'
 import { noneEllipser } from './ellipser'
 import { mcClozeTemplate } from './mcClozeTemplate'
 
-const activeBehavior: ActiveBehavior = (
+const activeBehavior: ActiveBehavior<McClozePreset, McClozePreset> = (
     stylizer: Stylizer,
-) => (tag: TagData, internals: Internals) => {
+) => (tag: TagData, internals: Internals<McClozePreset>) => {
     const flattedValuesWithIndex = tag.values.flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
 
     const maybeValues = sequencer(
@@ -44,7 +45,7 @@ const defaultBackStylizer = defaultFrontStylizer.toStylizer({
     },
 })
 
-const defaultContexter = (tag: TagData, internals: Internals) => {
+const defaultContexter = (tag: TagData, internals: Internals<McClozePreset>) => {
     const maybeValues = sequencer(
         `${tag.fullKey}:${tag.fullOccur}`,
         `${tag.fullKey}:${tag.fullOccur}`,
@@ -59,8 +60,8 @@ const defaultContexter = (tag: TagData, internals: Internals) => {
 }
 
 const multipleChoicePublicApi = (
-    multipleChoiceRecipe: Recipe,
-): Recipe => (options: {
+    multipleChoiceRecipe: Recipe<McClozePreset>,
+): Recipe<McClozePreset> => (options: {
     tagname: string,
     switcherKeyword?: string,
     activateKeyword?: string,
@@ -68,8 +69,8 @@ const multipleChoicePublicApi = (
     frontStylizer?: Stylizer,
     backStylizer?: Stylizer,
 
-    contexter?: Ellipser,
-    ellipser?: Ellipser,
+    contexter?: Ellipser<McClozePreset>,
+    ellipser?: Ellipser<McClozePreset>,
 })  => {
     const {
         tagname,

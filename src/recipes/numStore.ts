@@ -69,7 +69,7 @@ class ActivateMap {
 const activateFilterTemplate = (
     activateId: string,
     operation: (key: string, occur: number | null, num: number | null) => (a: ActivateMap) => void,
-) => (tag: TagData, { cache }: Internals) => {
+) => (tag: TagData, { cache }: Internals<{}>) => {
     const commands = tag.values
 
     commands.forEach((val: string) => {
@@ -90,38 +90,40 @@ const activateFilterTemplate = (
     return ''
 }
 
+const activateDataOptions = { separators: [','] }
+
 export const activateRecipe = ({
     tagname,
     activateId = 'activate',
-}) => (filterApi: Filters) => {
+}) => (filterApi: Filters<{}>) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
             activateMap.on(key, num, occur)
         }
-    ), { sep: ',' })
+    ), activateDataOptions)
 }
 
 export const deactivateRecipe = ({
     tagname,
     activateId = 'activate',
-}) => (filterApi: Filters) => {
+}) => (filterApi: Filters<{}>) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
             activateMap.off(key, num, occur)
         }
-    ), { sep: ',' })
+    ), activateDataOptions)
 }
 
 export const toggleRecipe = ({
     tagname,
     activateId = 'activate',
-}) => (filterApi: Filters) => {
+}) => (filterApi: Filters<{}>) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
             activateMap.toggle(key, num, occur)
         }
-    ), { sep: ',' })
+    ), activateDataOptions)
 }

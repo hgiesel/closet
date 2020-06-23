@@ -19,7 +19,7 @@ export interface Filterable<D> {
     getDefaultRepresentation(): string
     getRawRepresentation(): string
     getFilterKey(): string
-    setOptions(options: D): void
+    setOptions(options: Partial<D>): void
 }
 
 const wrapWithBool = (result: string, bool: boolean): FilterResult => ({
@@ -68,7 +68,7 @@ const baseFilter = <T extends Readiable, D extends object>(t: Filterable<D>, i: 
 const rawFilter = <D extends object>(t: Filterable<D>) => wrapWithReady(t.getRawRepresentation())
 
 export class FilterApi<T extends Readiable, D extends object> {
-    private filters: Map<string, [Filter<T,D>, D]>
+    private filters: Map<string, [Filter<T,D>, Partial<D>]>
 
     constructor() {
         this.filters = new Map()
@@ -77,7 +77,7 @@ export class FilterApi<T extends Readiable, D extends object> {
         this.register('raw', rawFilter)
     }
 
-    register(name: string, filter: WeakFilter<T,D>, options: D = null): void {
+    register(name: string, filter: WeakFilter<T,D>, options: Partial<D> = {}): void {
         this.filters.set(name, [withStandardizedFilterResult(filter), options])
     }
 
@@ -87,13 +87,13 @@ export class FilterApi<T extends Readiable, D extends object> {
             : this.filters.has(name)
     }
 
-    getWithOptions(name: string): [Filter<T,D>, D] | null {
+    getWithOptions(name: string): [Filter<T,D>, Partial<D>] | null {
         return this.filters.has(name)
             ? this.filters.get(name)
             : null
     }
 
-    getOrDefaultWithOptions(name: string): [Filter<T,D>, D] {
+    getOrDefaultWithOptions(name: string): [Filter<T,D>, Partial<D>] {
         return this.getWithOptions(name) ?? [defaultFilter, null]
     }
 
@@ -105,7 +105,7 @@ export class FilterApi<T extends Readiable, D extends object> {
             : result[0]
     }
 
-    getOptions(name: string): D | null {
+    getOptions(name: string): Partial<D> | null {
         const result = this.getWithOptions(name)
 
         return result === null

@@ -1,16 +1,21 @@
-import type { TagData, Internals, Filters, ActiveBehavior, InactiveBehavior, WeakDataOptions } from './types'
+import type { TagData, Internals, Filters, Stylizer, Ellipser, ActiveBehavior, InactiveBehavior, DataOptions } from './types'
 
 import { fourWayWrap } from './nway'
 import { isBack, isActive } from './deciders'
 import { simpleRecipe } from './simple'
 
+export interface McClozePreset {
+    card: string
+    side: 'front' | 'back'
+}
+
 export const mcClozeTemplate = (
-    frontActiveBehavior: ActiveBehavior,
-    backActiveBehavior: ActiveBehavior,
-    dataOptions: WeakDataOptions = null,
+    frontActiveBehavior: ActiveBehavior<McClozePreset, McClozePreset>,
+    backActiveBehavior: ActiveBehavior<McClozePreset, McClozePreset>,
+    dataOptions: Partial<DataOptions> = {},
 ) => (
-    frontInactiveBehavior: InactiveBehavior,
-    backInactiveBehavior: InactiveBehavior,
+    frontInactiveBehavior: InactiveBehavior<McClozePreset, McClozePreset>,
+    backInactiveBehavior: InactiveBehavior<McClozePreset, McClozePreset>,
 ) => ({
     tagname,
     switcherKeyword = 'switch',
@@ -22,12 +27,22 @@ export const mcClozeTemplate = (
     contexter,
     activeEllipser,
     inactiveEllipser,
+}: {
+    tagname: string,
+    switcherKeyword: string,
+    activateKeyword: string,
 
-}) => (filterApi: Filters) => {
+    frontStylizer: Stylizer,
+    backStylizer: Stylizer,
+
+    contexter: Ellipser<McClozePreset>,
+    activeEllipser: Ellipser<McClozePreset>,
+    inactiveEllipser: Ellipser<McClozePreset>,
+}) => (filterApi: Filters<McClozePreset>) => {
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
 
-    const isActiveWithOverwrite = (t: TagData, inter: Internals) => isActive(t, inter) || activeOverwrite
+    const isActiveWithOverwrite = (t: TagData, inter: Internals<McClozePreset>) => isActive(t, inter) || activeOverwrite
 
     const mcClozeRecipe = fourWayWrap(
         isActiveWithOverwrite,
@@ -40,7 +55,7 @@ export const mcClozeTemplate = (
 
     mcClozeRecipe({ tagname: internalFilter })(filterApi)
 
-    const mcClozeFilter = (tag: TagData, inter: Internals) => {
+    const mcClozeFilter = (tag: TagData, inter: Internals<McClozePreset>) => {
         const theFilter = inter.cache.get(`${tagname}:${switcherKeyword}`, {
             get: (_k: string, _n: number | null, _o: number) => internalFilter,
         }).get(tag.key, tag.num, tag.fullOccur)

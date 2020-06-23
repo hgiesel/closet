@@ -4,14 +4,15 @@ import type { Internals, Filters } from '..'
 import type { Stylizer } from './stylizer'
 
 export type { Filters, AftermathInternals, DeferredInternals, Internals } from '..'
-export type { WeakFilter, WeakFilterResult, WeakDataOptions } from '..'
+export type { DataOptions, WeakFilter, WeakFilterResult } from '..'
 export type { DeferredApi, Deferred } from '../filterManager/deferred'
 
-export type { TagData, Separator, WeakSeparator } from '../template/tags'
+export type { TagData, Separator } from '../template/tags'
 
-export type Recipe = (options: object) => (filters: Filters) => void
-export type Ellipser = (t: TagData, i: Internals) => string
-export type FilterPredicate = (t: TagData, i: Internals) => boolean
+export type Recipe<T extends object> = (options: object) => (filters: Filters<T>) => void
+export type Ellipser<T extends object> = (t: TagData, i: Internals<T>) => string
+export type FilterPredicate<T extends object> = (t: TagData, i: Internals<T>) => boolean
+export type { Stylizer } from './stylizer'
 
 export interface WrapOptions {
     wrapId?: string
@@ -19,5 +20,5 @@ export interface WrapOptions {
     setTagnames?: (o: object, newNames: string[]) => void
 }
 
-export type ActiveBehavior = (stylizer: Stylizer, ellipser: Ellipser) => (t: TagData, i: Internals) => WeakFilterResult
-export type InactiveBehavior = (contexter: Ellipser, ellipser: Ellipser) => (t: TagData, i: Internals) => WeakFilterResult
+export type ActiveBehavior<T extends object, U extends object> = (stylizer: Stylizer, ellipser: Ellipser<T>) => (t: TagData, i: Internals<U>) => WeakFilterResult
+export type InactiveBehavior<T extends object, U extends object> = (contexter: Ellipser<T>, ellipser: Ellipser<T>) => (t: TagData, i: Internals<U>) => WeakFilterResult

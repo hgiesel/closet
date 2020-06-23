@@ -1,4 +1,4 @@
-import type { TagData, Filters, Internals, WeakDataOptions } from './types'
+import type { TagData, Filters, Internals, DataOptions } from './types'
 import { keyPattern } from './utils'
 
 class ActivateMap {
@@ -69,7 +69,7 @@ class ActivateMap {
 const activateFilterTemplate = (
     activateId: string,
     operation: (key: string, occur: number | null, num: number | null) => (a: ActivateMap) => void,
-) => (tag: TagData, { cache }: Internals) => {
+) => (tag: TagData, { cache }: Internals<{}>) => {
     const commands = tag.values
 
     commands.forEach((val: string) => {
@@ -90,12 +90,12 @@ const activateFilterTemplate = (
     return ''
 }
 
-const activateDataOptions: WeakDataOptions = { separators: [','] }
+const activateDataOptions: Partial<DataOptions> = { separators: [','] }
 
 export const activateRecipe = ({
     tagname,
     activateId = 'activate',
-}) => (filterApi: Filters) => {
+}) => (filterApi: Filters<{}>) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
@@ -107,7 +107,7 @@ export const activateRecipe = ({
 export const deactivateRecipe = ({
     tagname,
     activateId = 'activate',
-}) => (filterApi: Filters) => {
+}) => (filterApi: Filters<{}>) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
@@ -119,7 +119,7 @@ export const deactivateRecipe = ({
 export const toggleRecipe = ({
     tagname,
     activateId = 'activate',
-}) => (filterApi: Filters) => {
+}) => (filterApi: Filters<{}>) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {

@@ -1,7 +1,7 @@
 import type { Filters, TagData, Internals } from './types'
 
-export const debugRecipe = () => (filterApi: Filters) => {
-    const pathFilter = (_t: TagData, { path }: Internals) => path.join(':')
+export const debugRecipe = () => (filterApi: Filters<{}>) => {
+    const pathFilter = (_t: TagData, { path }: Internals<{}>) => path.join(':')
 
     filterApi.register('tagpath', pathFilter)
     filterApi.register('never', (() => {}))

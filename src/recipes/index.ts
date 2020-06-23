@@ -1,7 +1,7 @@
 import type { Recipe } from './types'
 
 interface Recipes {
-    [propName: string]: Recipe;
+    [propName: string]: Recipe<any>;
 }
 
 import { shufflingRecipe } from './shuffling'

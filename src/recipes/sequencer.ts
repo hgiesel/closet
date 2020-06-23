@@ -9,7 +9,7 @@ export const sequencer = (
     // identifies each collection of items being shuffled
     sequenceId: string,
     values: unknown[],
-    { cache, memory, deferred, ready }: Internals,
+    { cache, memory, deferred, ready }: Internals<{}>,
 ) => {
     const applyKey = `${unitId}:apply`
     // in cache: boolean whether ready for application

@@ -1,18 +1,19 @@
 import type { TagData, Internals, Ellipser, Recipe, ActiveBehavior } from './types'
+import type { McClozePreset } from './mcClozeTemplate'
 
 import { id, id2 } from './utils'
 import { Stylizer } from './stylizer'
 import { noneEllipser, stylizeEllipser } from './ellipser'
 import { mcClozeTemplate } from './mcClozeTemplate'
 
-const clozeFrontActiveBehavior: ActiveBehavior = (
+const clozeFrontActiveBehavior: ActiveBehavior<McClozePreset, McClozePreset> = (
     stylizer: Stylizer,
-    activeEllipser: Ellipser,
-) => (tag: TagData, internals: Internals) => {
+    activeEllipser: Ellipser<McClozePreset>,
+) => (tag: TagData, internals: Internals<McClozePreset>) => {
     return stylizer.stylize([activeEllipser(tag, internals)])
 }
 
-const clozeBackActiveBehavior: ActiveBehavior = (
+const clozeBackActiveBehavior: ActiveBehavior<McClozePreset, McClozePreset> = (
     stylizer: Stylizer,
 ) => (tag: TagData) => {
     return stylizer.stylize([tag.values[0]])
@@ -36,19 +37,19 @@ const defaultStylizer: Stylizer = new Stylizer({
     postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-const joinValues: Ellipser = (tag: TagData): string => tag.values[0]
+const joinValues: Ellipser<McClozePreset> = (tag: TagData): string => tag.values[0]
 
 const clozePublicApi = (
-    clozeRecipe: Recipe,
-): Recipe => (options: {
+    clozeRecipe: Recipe<McClozePreset>,
+): Recipe<McClozePreset> => (options: {
     tagname: string,
     switcherKeyword?: string,
     activateKeyword?: string,
 
     activeStylizer?: Stylizer,
 
-    activeEllipser?: Ellipser,
-    inactiveEllipser?: Ellipser,
+    activeEllipser?: Ellipser<McClozePreset>,
+    inactiveEllipser?: Ellipser<McClozePreset>,
 }) => {
     const {
         tagname,

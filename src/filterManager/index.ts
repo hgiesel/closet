@@ -18,34 +18,36 @@ import {
     DeferredApi,
 } from './deferred'
 
-export interface ManagerInfo<T,I,R extends Readiable,D extends object> {
+type PartialObject<T> = Partial<T>
+
+export interface ManagerInfo<T,I,R extends Readiable, D extends object, P extends object> {
     filters: FilterApi<R,D>
 
     cache: Storage
     memory: Storage
     environment: Storage
 
-    deferred: DeferredApi<ManagerInfo<T,I,R,D> & T & I>
-    aftermath: DeferredApi<ManagerInfo<T,I,R,D> & T>
+    deferred: DeferredApi<ManagerInfo<T,I,R,D,P> & T & I>
+    aftermath: DeferredApi<ManagerInfo<T,I,R,D,P> & T>
 
-    preset: object
+    preset: PartialObject<P>
 }
 
 type FilterProcessor<R,D> = (data: Filterable<D>, r: R) => FilterResult
 
-export class MetaFilterManager<T,I,R extends Readiable, D extends object> {
+export class MetaFilterManager<T,I,R extends Readiable, D extends object, P extends object> {
     readonly filters: FilterApi<R,D>
 
-    private readonly deferred: DeferredApi<ManagerInfo<T,I,R,D> & T & I>
-    private readonly aftermath: DeferredApi<ManagerInfo<T,I,R,D> & T>
+    private readonly deferred: DeferredApi<ManagerInfo<T,I,R,D,P> & T & I>
+    private readonly aftermath: DeferredApi<ManagerInfo<T,I,R,D,P> & T>
 
     private readonly cache: Storage
     private readonly memory: Storage
     private readonly environment: Storage
 
-    private readonly preset: object
+    private readonly preset: PartialObject<P>
 
-    constructor(preset = {}, memory: StorageType = new Map()) {
+    constructor(preset: PartialObject<P> = {}, memory: StorageType = new Map()) {
         this.preset = preset
 
         this.filters = new FilterApi()
@@ -63,7 +65,7 @@ export class MetaFilterManager<T,I,R extends Readiable, D extends object> {
         this.environment = globalThis.closetEnvironment
     }
 
-    private getAftermathInternals(t: T): ManagerInfo<T,I,R,D> & T {
+    private getAftermathInternals(t: T): ManagerInfo<T,I,R,D,P> & T {
         return Object.assign({}, {
             filters: this.filters,
 
@@ -78,11 +80,11 @@ export class MetaFilterManager<T,I,R extends Readiable, D extends object> {
         }, t)
     }
 
-    private getDeferredInternals(t: T, i: I): ManagerInfo<T,I,R,D> & T & I {
+    private getDeferredInternals(t: T, i: I): ManagerInfo<T,I,R,D,P> & T & I {
         return Object.assign(this.getAftermathInternals(t), i)
     }
 
-    private getInternals(t: T, i: I, r: R): ManagerInfo<T,I,R,D> & T & I & R {
+    private getInternals(t: T, i: I, r: R): ManagerInfo<T,I,R,D,P> & T & I & R {
         return Object.assign(this.getDeferredInternals(t, i), r)
     }
 

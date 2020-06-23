@@ -5,21 +5,14 @@ import {
 } from './utils'
 
 export interface DataOptions {
-    separators: WeakSeparator[],
-    capture: boolean,
-}
-
-export interface WeakDataOptions {
-    separators?: WeakSeparator[],
-    capture?: boolean,
+    separators: Array<string | Partial<Separator>>
+    capture: boolean
 }
 
 export interface Separator {
     sep: string
-    max?: number
+    max: number
 }
-
-export type WeakSeparator = Separator | string
 
 const splitValues = (text: string, seps: Separator[]) => {
     if (seps.length === 0) {
@@ -52,10 +45,6 @@ const splitValues = (text: string, seps: Separator[]) => {
 }
 
 const keyPattern = /^([^0-9]+)([0-9]*)$/u
-const defaultDataOptions: DataOptions = {
-    separators: [],
-    capture: false,
-}
 
 export class TagData {
     readonly fullKey: string
@@ -83,18 +72,16 @@ export class TagData {
         this.valuesText = valuesText
     }
 
-    private setSeparators(seps: WeakSeparator[]) {
-        this.separators = seps.map(v => typeof v === 'string' ? { sep: v } : v)
+    private setSeparators(seps: Array<string | Partial<Separator>>) {
+        this.separators = seps.map((v: string | Partial<Separator>): Separator => typeof v === 'string'
+            ? { sep: v, max: Infinity }
+            : { sep: v.sep ?? '::', max: v.max ?? Infinity })
     }
 
-    setOptions(wdo: WeakDataOptions | null) {
-        if (!wdo) {
-            wdo = defaultDataOptions
-        }
-
+    setOptions(wdo: Partial<DataOptions> = {}) {
         // default options from filter manager is {}
-        this.setSeparators(wdo.separators ?? defaultDataOptions.separators)
-        this.capture = (wdo.capture ?? defaultDataOptions.capture)
+        this.setSeparators(wdo.separators ?? [])
+        this.capture = wdo.capture ?? false
     }
 
     hasValues(): boolean {

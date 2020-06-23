@@ -9,10 +9,10 @@ import {
 export const orderingRecipe = ({
     tagname,
     shuffleTagname,
-}) => (filterApi: Filters) => {
+}) => (filterApi: Filters<{}>) => {
     const ordFilter = (
         tag: TagData,
-        { deferred, cache }: Internals,
+        { deferred, cache }: Internals<{}>,
     ) => {
         // mixes occupied by other ords
         const ordOccupiedKey = `${tag.key}:ord:occupied`

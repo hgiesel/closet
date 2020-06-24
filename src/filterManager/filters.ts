@@ -67,6 +67,8 @@ const defaultFilter = <T extends Readiable, D extends object>(t: Filterable<D>, 
 const baseFilter = <T extends Readiable, D extends object>(t: Filterable<D>, i: T) => wrapWithReadyBubbled(t.getRawRepresentation(), i.ready)
 const rawFilter = <D extends object>(t: Filterable<D>) => wrapWithReady(t.getRawRepresentation())
 
+const defaultOptions = {}
+
 export class FilterApi<T extends Readiable, D extends object> {
     private filters: Map<string, [Filter<T,D>, Partial<D>]>
 
@@ -77,7 +79,7 @@ export class FilterApi<T extends Readiable, D extends object> {
         this.register('raw', rawFilter)
     }
 
-    register(name: string, filter: WeakFilter<T,D>, options: Partial<D> = {}): void {
+    register(name: string, filter: WeakFilter<T,D>, options: Partial<D> = defaultOptions): void {
         this.filters.set(name, [withStandardizedFilterResult(filter), options])
     }
 
@@ -94,7 +96,7 @@ export class FilterApi<T extends Readiable, D extends object> {
     }
 
     getOrDefaultWithOptions(name: string): [Filter<T,D>, Partial<D>] {
-        return this.getWithOptions(name) ?? [defaultFilter, null]
+        return this.getWithOptions(name) ?? [defaultFilter, defaultOptions]
     }
 
     get(name: string): Filter<T,D> | null {
@@ -105,6 +107,10 @@ export class FilterApi<T extends Readiable, D extends object> {
             : result[0]
     }
 
+    getOrDefault(name: string): Filter<T,D> {
+        return this.getOrDefaultWithOptions(name)[0]
+    }
+
     getOptions(name: string): Partial<D> | null {
         const result = this.getWithOptions(name)
 
@@ -113,8 +119,9 @@ export class FilterApi<T extends Readiable, D extends object> {
             : result[1]
     }
 
-    getOrDefault(name: string): Filter<T,D> {
-        return this.getOrDefaultWithOptions(name)[0]
+    getOrDefaultOptions(name: string): Partial<D> {
+        const result = this.getOptions(name)
+        return result ?? defaultOptions
     }
 
     unregisterFilter(name: string): void {

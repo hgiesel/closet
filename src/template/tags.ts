@@ -78,10 +78,10 @@ export class TagData {
             : { sep: v.sep ?? '::', max: v.max ?? Infinity })
     }
 
-    setOptions(wdo: Partial<DataOptions> = {}) {
+    setOptions(dataOptions: Partial<DataOptions> = {}) {
         // default options from filter manager is {}
-        this.setSeparators(wdo.separators ?? [])
-        this.capture = wdo.capture ?? false
+        this.setSeparators(dataOptions.separators ?? [])
+        this.capture = dataOptions.capture ?? false
     }
 
     hasValues(): boolean {

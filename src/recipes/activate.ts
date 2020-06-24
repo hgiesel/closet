@@ -47,19 +47,19 @@ class ActivateMap {
         const firstKey = this.getKey(key, num, occur)
 
         if (this.theMap.has(firstKey)) {
-            return this.theMap.get(firstKey)
+            return this.theMap.get(firstKey) ?? false
         }
 
         const secondKey = this.getKey(key, num, null)
 
         if (this.theMap.has(secondKey)) {
-            return this.theMap.get(secondKey)
+            return this.theMap.get(secondKey) ?? false
         }
 
         const thirdKey = this.getKey(key, null, null)
 
         if (this.theMap.has(thirdKey)) {
-            return this.theMap.get(thirdKey)
+            return this.theMap.get(thirdKey) ?? false
         }
 
         return false
@@ -93,9 +93,9 @@ const activateFilterTemplate = (
 const activateDataOptions: Partial<DataOptions> = { separators: [','] }
 
 export const activateRecipe = ({
-    tagname,
+    tagname = 'on',
     activateId = 'activate',
-}) => (filterApi: Filters<{}>) => {
+} = {}) => (filterApi: Filters<{}>) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
@@ -105,9 +105,9 @@ export const activateRecipe = ({
 }
 
 export const deactivateRecipe = ({
-    tagname,
+    tagname = 'off',
     activateId = 'activate',
-}) => (filterApi: Filters<{}>) => {
+} = {}) => (filterApi: Filters<{}>) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
@@ -117,9 +117,9 @@ export const deactivateRecipe = ({
 }
 
 export const toggleRecipe = ({
-    tagname,
+    tagname = 'toggle',
     activateId = 'activate',
-}) => (filterApi: Filters<{}>) => {
+} = {}) => (filterApi: Filters<{}>) => {
     filterApi.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {

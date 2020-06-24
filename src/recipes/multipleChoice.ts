@@ -62,7 +62,7 @@ const defaultContexter = (tag: TagData, internals: Internals<McClozePreset>) => 
 const multipleChoicePublicApi = (
     multipleChoiceRecipe: Recipe<McClozePreset>,
 ): Recipe<McClozePreset> => (options: {
-    tagname: string,
+    tagname?: string,
     switcherKeyword?: string,
     activateKeyword?: string,
 
@@ -71,9 +71,9 @@ const multipleChoicePublicApi = (
 
     contexter?: Ellipser<McClozePreset>,
     ellipser?: Ellipser<McClozePreset>,
-})  => {
+} = {})  => {
     const {
-        tagname,
+        tagname = 'mc',
         switcherKeyword = 'switch',
         activateKeyword = 'activate',
         frontStylizer = defaultFrontStylizer,

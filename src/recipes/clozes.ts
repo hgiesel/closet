@@ -42,7 +42,7 @@ const joinValues: Ellipser<McClozePreset> = (tag: TagData): string => tag.values
 const clozePublicApi = (
     clozeRecipe: Recipe<McClozePreset>,
 ): Recipe<McClozePreset> => (options: {
-    tagname: string,
+    tagname?: string,
     switcherKeyword?: string,
     activateKeyword?: string,
 
@@ -50,9 +50,9 @@ const clozePublicApi = (
 
     activeEllipser?: Ellipser<McClozePreset>,
     inactiveEllipser?: Ellipser<McClozePreset>,
-}) => {
+} = {}) => {
     const {
-        tagname,
+        tagname = 'c',
         switcherKeyword = 'switch',
         activateKeyword = 'activate',
         activeStylizer = defaultStylizer,

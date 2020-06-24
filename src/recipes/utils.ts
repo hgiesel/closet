@@ -38,16 +38,16 @@ export const unicodeAlphanumericPattern = new RegExp(`[${unicodeLetters}${unicod
 
 export const shuffle = <T>(array: T[]): T[] => {
     const result = array.slice(0)
-    let currentIndex = array.length, temporaryValue = null, randomIndex = null
+    let currentIndex = array.length
 
     // While there remain elements to shuffle...
     while (currentIndex !== 0) {
         // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex)
+        let randomIndex = Math.floor(Math.random() * currentIndex)
         currentIndex -= 1
 
         // And swap it with the current element.
-        temporaryValue = result[currentIndex]
+        let temporaryValue: T = result[currentIndex]
         result[currentIndex] = result[randomIndex]
         result[randomIndex] = temporaryValue
     }
@@ -56,10 +56,10 @@ export const shuffle = <T>(array: T[]): T[] => {
 }
 
 export const sortWithIndices = <T>(items: T[], indices: number[]): T[] => {
-    const result = []
+    const result: T[] = []
 
     for (const idx of indices) {
-        const maybeItem = items[idx]
+        const maybeItem: T = items[idx]
 
         if (maybeItem) {
             result.push(maybeItem)

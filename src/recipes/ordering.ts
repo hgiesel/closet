@@ -7,9 +7,9 @@ import {
 } from './utils'
 
 export const orderingRecipe = ({
-    tagname,
-    shuffleTagname,
-}) => (filterApi: Filters<{}>) => {
+    tagname = 'ord',
+    shuffleTagname = 'mix',
+} = {}) => (filterApi: Filters<{}>) => {
     const ordFilter = (
         tag: TagData,
         { deferred, cache }: Internals<{}>,
@@ -29,7 +29,7 @@ export const orderingRecipe = ({
         const ordKey = `${tag.key}:${tag.fullOccur}:ord`
 
         deferred.register(ordKey, () => {
-            const finishedKeys = []
+            const finishedKeys: string[] = []
 
             for (const mk of mixKeys) {
                 deferred.block(`${mk}:mix`)

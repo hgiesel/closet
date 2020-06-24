@@ -3,10 +3,10 @@ import type { TagData, Filters } from './types'
 import { Stylizer } from './stylizer'
 
 export const styleRecipe = ({
-    tagname,
+    tagname = 's',
     stylizer = new Stylizer(),
     separators = ['::'],
-}) => (filterApi: Filters<{}>) => {
+} = {}) => (filterApi: Filters<{}>) => {
     const styleFilter = (tag: TagData) => {
         return stylizer.stylize(tag.values)
     }

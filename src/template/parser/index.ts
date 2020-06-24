@@ -12,19 +12,22 @@ const makeTrivialBaseTagInfo = (text: string): TagInfo => tagInfoBuilder.build(
     [],
 )
 
-const mainParse = (text: string): TagInfo => {
+const coreParse = (text: string): TagInfo[] => {
     const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
-    let parsed: TagInfo[] = null
 
     try {
-        parsed = parser.feed(text + '$').results
+        return parser.feed(text + '$').results
     }
     catch (e) {
         console.error(`Error parsing text:`, e)
         console.info('Default to Trivial Base Tag')
 
-        parsed = [makeTrivialBaseTagInfo(text)]
+        return [makeTrivialBaseTagInfo(text)]
     }
+}
+
+const mainParse = (text: string): TagInfo => {
+    let parsed: TagInfo[] = coreParse(text)
 
     if (parsed.length > 1) {
         console.error('Ambiguous template grammar')
@@ -69,7 +72,7 @@ export class Parser {
     tagCounter: Map<string, number> = new Map()
 
     parse (texts: string[], baseDepth: BaseDepth, baseLeftOffset=0): TagInfo {
-        let result: TagInfo = null
+        let result: TagInfo | null = null
 
         tagBuilder.push(this.tagCounter)
         tagInfoBuilder.push(baseLeftOffset)

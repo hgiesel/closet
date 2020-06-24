@@ -25,7 +25,7 @@ type TagPath = number[]
 const MAX_ITERATIONS = 50
 
 const splitTextFromIntervals = (text: string, intervals: [number, number][]): string[] => {
-    const result = []
+    const result: string[] = []
 
     for (const [ivlStart, ivlEnd] of intervals) {
         result.push(text.slice(ivlStart, ivlEnd))
@@ -42,7 +42,7 @@ export class Template {
     private rootTag: TagInfo
     private currentZoom: TagPath
 
-    private constructor(text: string[], baseDepth: number, preparsed: TagInfo, zoom: TagPath) {
+    private constructor(text: string[], baseDepth: number, preparsed: TagInfo | null, zoom: TagPath) {
         this.textFragments = text
         this.baseDepth = baseDepth
         this.parser = new Parser()
@@ -64,7 +64,7 @@ export class Template {
         return new Template(this.textFragments /* TODO probably bad idea */, this.baseDepth, this.rootTag, zoom)
     }
 
-    traverse (path: TagPath): TagInfo {
+    traverse (path: TagPath): TagInfo | null {
         let currentPos = this.rootTag
 
         for (const p of path) {
@@ -83,7 +83,7 @@ export class Template {
     render(tagRenderer: TagRenderer, cb?: (t: string[]) => void) {
         let ready = false
         let text = this.textFragments.join('')
-        let baseStack = []
+        let baseStack: [number, number][] = []
 
         const templateInfo: TemplateInfo = {
             template: this,

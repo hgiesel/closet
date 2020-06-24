@@ -15,7 +15,7 @@ const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): st
     switch (input.nodeType) {
         case Node.TEXT_NODE:
             const textNode = input as Text
-            return textNode.textContent
+            return textNode.textContent ?? ''
 
         case Node.ELEMENT_NODE:
             const elementNode = input as Element
@@ -40,9 +40,11 @@ const setText = (input: Element | Text | ChildNodeSpan | string, newText: string
             const textNode = input as Text
             const placeholderNode = document.createElement('div')
 
-            textNode.parentElement.insertBefore(placeholderNode, textNode)
+            if (textNode.parentElement) {
+                textNode.parentElement.insertBefore(placeholderNode, textNode)
+                textNode.parentElement.removeChild(textNode)
+            }
 
-            textNode.parentElement.removeChild(textNode)
             placeholderNode.outerHTML = newText
             break
 
@@ -112,18 +114,18 @@ export class ChildNodeSpan {
 
         this.max = parentElement.childNodes.length - 1
 
-        const fromFunc = this.getFromMethod(fromValue.type)
-        const toFunc = this.getToMethod(toValue.type)
+        const fromFunc = this.getFromMethod(fromValue.type) as any
+        const toFunc = this.getToMethod(toValue.type) as any
 
         this._fromIndex = fromFunc.call(
-            this,
+            this as ChildNodeSpan,
             (fromValue.value as any),
             fromValue.startAtIndex ?? 0,
             fromValue.exclusive ?? false,
         )
 
         this._toIndex = toFunc.call(
-            this,
+            this as ChildNodeSpan,
             (toValue.value as any),
             Math.max(toValue.startAtIndex ?? 0, this.from),
             toValue.exclusive ?? false,
@@ -165,15 +167,15 @@ export class ChildNodeSpan {
         return this.fromSafe(parsed, min)
     }
 
-    private fromPredicate(pred: (v: Node) => boolean, min: number, exclusive: boolean): number {
-        const found = this.childNodes.slice(min).findIndex(pred) + min + (exclusive ? 1 : 0)
-        return this.fromSafe(found, min)
-    }
-
     private fromNode(node: Node, min: number, exclusive: boolean): number {
         const found = this.childNodes.slice(min).findIndex(
             (v: ChildNode): boolean => v === node,
         ) + min + (exclusive ? 1 : 0)
+        return this.fromSafe(found, min)
+    }
+
+    private fromPredicate(pred: (v: Node) => boolean, min: number, exclusive: boolean): number {
+        const found = this.childNodes.slice(min).findIndex(pred) + min + (exclusive ? 1 : 0)
         return this.fromSafe(found, min)
     }
 
@@ -188,15 +190,15 @@ export class ChildNodeSpan {
         return this.toSafe(parsed, min)
     }
 
-    private toPredicate(pred: (v: Node) => boolean, min: number, exclusive: boolean): number {
-        const found = this.childNodes.slice(min).findIndex(pred) + min - (exclusive ? 1 : 0)
-        return this.toSafe(found, min)
-    }
-
     private toNode(node: Node, min: number, exclusive: boolean): number {
         const found = this.childNodes.slice(min).findIndex(
             (v: ChildNode): boolean => v === node,
         ) + min - (exclusive ? 1 : 0)
+        return this.toSafe(found, min)
+    }
+
+    private toPredicate(pred: (v: Node) => boolean, min: number, exclusive: boolean): number {
+        const found = this.childNodes.slice(min).findIndex(pred) + min - (exclusive ? 1 : 0)
         return this.toSafe(found, min)
     }
 
@@ -260,7 +262,7 @@ const makePositions = (template: ChildNodePredicate, currentIndex: number = 0): 
 }
 
 export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate): ChildNodeSpan[] => {
-    const result = []
+    const result: ChildNodeSpan[] = []
     let currentSpan = new ChildNodeSpan(parent, ...makePositions(skip))
 
     while (currentSpan.valid) {

@@ -26,7 +26,7 @@ const isReady = (v: Status): boolean => v === Status.Ready
 const canReplace = (v: Status): boolean => v !== Status.NotReady
 
 export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: number, tagProcessor: TagProcessor, parser: Parser): [string, number[], boolean, [number, number][]] => {
-    const baseStack = []
+    const baseStack: [number, number][] = []
 
     const foldTag = ([text, tagPath, stack, statusStack]: [string, number[], number[], Status[]], tagInfo: TagInfo): [string, number[], number[], Status[]] => {
         /** 
@@ -49,8 +49,8 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
         ] = tagInfo.innerTags.reduce(foldTag, [text, [...tagPath, 0], stack, []])
 
         // get offsets
-        const innerOffset = innerStack.pop() - innerStack[innerStack.length - 1]
-        const leftOffset = innerStack.pop()
+        const innerOffset = innerStack.pop() as number - innerStack[innerStack.length - 1]
+        const leftOffset = innerStack.pop() as number
 
         ///////////////////// Updating valuesRaw and values with innerTags
         const [
@@ -99,8 +99,8 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
             flatMapViaStatusList(parser, tagInfo.innerTags, innerStatusStack),
         )
 
-        if (tagPath.length !== 0) {
-            tagPath.push(tagPath.pop() + 1)
+        if (tagPath.length > 0) {
+            tagPath.push(tagPath.pop() as number + 1)
         }
 
         return [

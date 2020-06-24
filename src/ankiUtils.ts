@@ -24,29 +24,25 @@ interface AnkiPersistence {
 
 interface MemorySwitcher extends StorageType {
     switchTo: (i: string) => void
-    fallback: () => void
 }
 
 export const memorySwitch = (p: AnkiPersistence): MemorySwitcher => {
-    var path = null
+    let path: Map<string, unknown> = new Map<string, unknown>()
 
     return {
         switchTo: (i: string) => {
             if (p.getItem(i)) {
-                path = p.getItem(i)
+                path = p.getItem(i) as Map<string, unknown>
             }
             else {
                 p.setItem(i, new Map())
-                path = p.getItem(i)
+                path = p.getItem(i) as Map<string, unknown>
             }
         },
-        fallback: () => {
-            path = new Map()
-        },
         has: (k: string): boolean => path.has(k),
-        get: <T>(k: string): T => path.get(k),
-        set: (k: string, v: unknown): void => path.set(k, v),
-        delete: (k: string): void => path.delete(k),
+        get: <T>(k: string): T => path.get(k) as T,
+        set: (k: string, v: unknown): void => { path.set(k, v) },
+        delete: (k: string): void => { path.delete(k) },
         clear: (): void => path.clear(),
     }
 }

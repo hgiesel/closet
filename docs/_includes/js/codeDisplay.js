@@ -1,15 +1,15 @@
-{% assign contentId = include.content.name | slugify %}
+{% capture newLine %}
+{% endcapture %}
+
 {% assign contentCode = include.content.code | replace: "'", "\\'" | strip | newline_to_br | strip_newlines %}
+{% assign fmCode = include.fmCode | join: newLine | strip %}
 
-{% assign fmId = include.filterManager.name | slugify %}
-{% assign fmCode = include.filterManager.code | strip %}
+console.log(`{{ contentCode }}`)
 
-{% assign theId = contentId | append: "-with-" | append: fmId %}
-
-{% for button in theButtons %}
+{% for button in include.theButtons %}
 {% assign theButton = button | split: ", " %}
 readyRenderButton(
-    '#{{ theId }}',
+    '#{{ include.theId }}',
     '{{ theButton[1] }}',
     '{{ contentCode }}',
     {{ theButton[2] }} /* the preset */,
@@ -24,12 +24,12 @@ readyRenderButton(
 {% endfor %}
 
 readyFmButton(
-    '#{{ theId }}',
+    '#{{ include.theId }}',
     `{{ fmCode | replace: "`", "\\`" | replace: "$", "\\$" }}`,
 )
 
 readyTryButton(
-    '#{{ theId }}',
+    '#{{ include.theId }}',
     '{{ contentCode }}',
-    '{{ fmId }}',
+    '{{ include.setupId }}',
 )

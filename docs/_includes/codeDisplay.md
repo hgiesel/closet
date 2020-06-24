@@ -2,14 +2,27 @@
 
 {% assign contentId = include.content.name | slugify %}
 
-{% assign fmId = include.filterManager.name | slugify %}
-{% assign fmCode = include.filterManager.code | strip %}
+{% assign theSetups = include.setups | split: ',' %}
+{% assign setupId = theSetups | join: '-and-' | slugify %}
 
-{% assign theId = contentId | append: "-with-" | append: fmId %}
+{% assign theId = contentId | append: "-with-" | append: setupId %}
+
+{% assign fmCode = '' | split: '' %}
+
+{% capture newLine %}
+{% endcapture %}
+
+{% for setup in site.data.setups %}
+  {% if theSetups contains setup[0] %}
+    {% assign codeSnippetName = "/** " | append: setup[1].name | append: " */" %}
+    {% assign code = setup[1].code %}
+    {% assign fmCode = fmCode | push: codeSnippetName | push: code %}
+  {% endif %}
+{% endfor %}
 
 <div class="code-container" markdown="1">
   <div class="code-example" id="{{ theId }}">
-    <button class="btn-fm btn-purple btn-outline">fm</button>
+    <button class="btn-fm btn-purple btn-outline">setup</button>
 
     <div class="output-display"></div>
 
@@ -22,11 +35,11 @@
     </div>
 
     <div class="fm-display">
-      <pre><code class="language-js">{{ fmCode | escape_once }}</code></pre>
+      <pre><code class="language-js">{{ fmCode | join: newLine | escape_once }}</code></pre>
     </div>
 
     <script>
-      {% include js/codeDisplay.js %}
+      {% include js/codeDisplay.js theId=theId setupId=setupId theButtons=theButtons fmCode=fmCode content=include.content %}
     </script>
   </div>
   {% include codeSection.md %}

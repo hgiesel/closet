@@ -4,21 +4,27 @@
 {% assign contentCode = include.content.code | replace: "'", "\\'" | strip | newline_to_br | strip_newlines %}
 {% assign fmCode = include.fmCode | join: newLine | strip %}
 
+{% assign fmName = include.theId | replace: "-", "" | replace: "_", "" %}
+
+const {{ fmName }}filterManager = new Closet.FilterManager()
+
+const {{ fmName }}func = (filterManager) => {
+    {{ fmCode }}
+    return filterManager
+}
+
+{{ fmName }}func({{ fmName }}filterManager)
+
 {% for button in include.theButtons %}
 {% assign theButton = button | split: ", " %}
+
 readyRenderButton(
     '#{{ include.theId }}',
     '{{ theButton[1] }}',
     '{{ contentCode }}',
     {{ theButton[2] }} /* the preset */,
-    {{ theButton[3] }} /* keep memory or not */,
-    // inject filterManager
-    ((preset) => {
-        const filterManager = new Closet.FilterManager(preset)
-        {{ fmCode }}
-        return filterManager
-    })({{ theButton[2] }}),
-)
+    {{ fmName }}filterManager /* filterManager */,
+){% if forloop.first == true %}.dispatchEvent(new Event('click')){% endif %}
 {% endfor %}
 
 readyFmButton(

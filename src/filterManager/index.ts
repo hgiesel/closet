@@ -45,10 +45,10 @@ export class MetaFilterManager<T,I,R extends Readiable, D extends object, P exte
     private readonly memory: Storage
     private readonly environment: Storage
 
-    private readonly preset: PartialObject<P>
+    private preset: PartialObject<P>
 
-    constructor(preset: PartialObject<P> = {}, memory: StorageType = new Map()) {
-        this.preset = preset
+    constructor(memory: StorageType = new Map()) {
+        this.preset = {}
 
         this.filters = new FilterApi()
 
@@ -102,7 +102,7 @@ export class MetaFilterManager<T,I,R extends Readiable, D extends object, P exte
         this.aftermath.executeEach(this.getAftermathInternals(t))
     }
 
-    clearMemory() {
+    clear() {
         this.memory.clear()
         this.aftermath.clear()
     }
@@ -114,5 +114,9 @@ export class MetaFilterManager<T,I,R extends Readiable, D extends object, P exte
 
     addRecipe(recipe: (filters: FilterApi<R,D>) => void): void {
         recipe(this.filters)
+    }
+
+    setPreset(preset: PartialObject<P> = {}) {
+        this.preset = preset
     }
 }

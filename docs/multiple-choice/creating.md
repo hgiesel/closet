@@ -6,9 +6,9 @@ permalink: multiple-choice/creating
 parent: Multiple Choice
 ---
 
-{% assign b='Frontside, q, {"side": "front"}, true; Backside, a, {"side": "back"}, true' %}
-{% assign bOneTwo='Frontside 1, q1, {side: "front",card: "c1"}, true; Backside 1, a1, {side: "back",card: "c1"}, true; Frontside 2, q2, {side: "front",card: "c2"}, true; Backside 2, a2, {side: "back",card: "c2"}, true' %}
-{% assign bOneTwoThree='F1, q1, {side: "front",card: "c1"}, true; B1, a1, {side: "back",card: "c1"}, true; F2, q2, {side: "front",card: "c2"}, true; B2, a2, {side: "back",card: "c2"}, true; F3, q3, {side: "front",card: "c3"}, true; B3, a3, {side: "back",card: "c3"}, true' %}
+{% assign b='Frontside, q, {"side": "front"}; Backside, a, {"side": "back"}' %}
+{% assign bOneTwo='Frontside 1, q1, {side: "front",card: "c1"}; Backside 1, a1, {side: "back",card: "c1"}; Frontside 2, q2, {side: "front",card: "c2"}; Backside 2, a2, {side: "back",card: "c2"}' %}
+{% assign bOneTwoThree='F1, q1, {side: "front",card: "c1"}; B1, a1, {side: "back",card: "c1"}; F2, q2, {side: "front",card: "c2"}; B2, a2, {side: "back",card: "c2"}; F3, q3, {side: "front",card: "c3"}; B3, a3, {side: "back",card: "c3"}' %}
 
 {% assign mc = site.data.snippets.multiple_choice %}
 {% assign setups = site.data.setups %}

@@ -70,7 +70,7 @@ const readyFmButton = (id, _fmCode) => {
 const readyTryButton = (
     id,
     code,
-    filterManagerId,
+    setupString,
 ) => {
     const buttonQuery = `${id} .btn-edit`
     const btnEdit = document.querySelector(buttonQuery)
@@ -79,14 +79,14 @@ const readyTryButton = (
         const linkBase = '/tester'
         const textComp = `?text=${encodeURIComponent(code.replace(/<br \/>/g, '\n'))}`
         const presetComp = `&preset=${encodeURIComponent(JSON.stringify(currentPreset.get(id)))}`
-        const fmComp = `&fm=${filterManagerId}`
+        const setupsComp = `&setups=${setupString}`
         const memoryComp = `&memory=${String(currentKeepMemories[id])[0]}`
 
         window.location = (
             linkBase +
             textComp +
             presetComp +
-            fmComp +
+            setupsComp +
             memoryComp
         )
         })

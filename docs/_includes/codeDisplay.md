@@ -3,7 +3,15 @@
 {% assign contentId = include.content.name | slugify %}
 
 {% assign theSetups = include.setups | split: ',' %}
-{% assign setupId = theSetups | join: '-and-' | slugify %}
+
+{% assign setupIds = '' | split: '' %}
+{% for setup in theSetups %}
+  {% assign slugifiedName = setup | slugify %}
+  {% assign setupIds = setupIds | push: slugifiedName %}
+{% endfor %}
+
+{% assign setupId = theSetups | join: '-and-' %}
+{% assign setupString = setupIds | join: ',' %}
 
 {% assign theId = contentId | append: "-with-" | append: setupId %}
 
@@ -39,7 +47,7 @@
     </div>
 
     <script>
-      {% include js/codeDisplay.js theId=theId setupId=setupId theButtons=theButtons fmCode=fmCode content=include.content %}
+      {% include js/codeDisplay.js theId=theId setupString=setupString theButtons=theButtons fmCode=fmCode content=include.content %}
     </script>
   </div>
   {% include codeSection.md %}

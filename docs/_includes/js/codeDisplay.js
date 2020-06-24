@@ -4,8 +4,6 @@
 {% assign contentCode = include.content.code | replace: "'", "\\'" | strip | newline_to_br | strip_newlines %}
 {% assign fmCode = include.fmCode | join: newLine | strip %}
 
-console.log(`{{ contentCode }}`)
-
 {% for button in include.theButtons %}
 {% assign theButton = button | split: ", " %}
 readyRenderButton(
@@ -31,5 +29,5 @@ readyFmButton(
 readyTryButton(
     '#{{ include.theId }}',
     '{{ contentCode }}',
-    '{{ include.setupId }}',
+    '{{ include.setupString }}',
 )

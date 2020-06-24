@@ -20,7 +20,7 @@ parent: Clozes
 
 One possible way would be to show the answer all blanked out by underscore symbols `_`.
 
-{% include codeDisplay.md content=cloze.hiding_cloze filterManager=setups.blanking_cloze buttons=bOneTwoThree %}
+{% include codeDisplay.md content=cloze.hiding_cloze setups="blanking_cloze" buttons=bOneTwoThree %}
 
 Notice how the commas are left out.
 Together with the blanks, this lets us know that the flash card wants us to name _three_ catecholamines.
@@ -30,7 +30,7 @@ This might have otherwise been done with a hint.
 
 Closet has a built-in [regular expression](https://en.wikipedia.org/wiki/Regular_expression), which specifically targets _alphanumeric characters_, no matter the language.
 
-{% include codeDisplay.md content=cloze.hiding_cloze_symbols filterManager=setups.blanking_cloze buttons=bOneTwoThree %}
+{% include codeDisplay.md content=cloze.hiding_cloze_symbols setups="blanking_cloze" buttons=bOneTwoThree %}
 
 Depending on the context you might want to hide symbols as well.
 In this case, you have to change the used regular expression.
@@ -40,7 +40,7 @@ In this case, you have to change the used regular expression.
 
 Another option is to obscure the solution by bluring the answer text.
 
-{% include codeDisplay.md content=cloze.hiding_cloze filterManager=setups.obscuring_cloze buttons=bOneTwoThree %}
+{% include codeDisplay.md content=cloze.hiding_cloze setups="obscuring_cloze" buttons=bOneTwoThree %}
 
 Note how we changed the highlight color: Seeing blurred blue on a black background would be hard to see.
 

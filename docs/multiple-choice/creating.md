@@ -18,8 +18,8 @@ parent: Multiple Choice
 
 ## Creating multiple choice
 
-{% include codeDisplay.md content=mc.simple filterManager=setups.default_multiple_choice buttons=b %}
+{% include codeDisplay.md content=mc.simple setups="default_multiple_choice" buttons=b %}
 
 Bla Bla Bla
 
-{% include codeDisplay.md content=mc.simple filterManager=setups.fancy_multiple_choice buttons=b %}
+{% include codeDisplay.md content=mc.simple setups="fancy_multiple_choice" buttons=b %}

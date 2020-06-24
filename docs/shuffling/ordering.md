@@ -20,7 +20,7 @@ Sometimes you want to shuffle items, however you still want to preserve some rel
 In these cases, the `ord` tag can come in handy.
 Let's look at a first example:
 
-{% include codeDisplay.md content=shuffling.on_extra_line filterManager=setups.shuffle_order buttons=b %}
+{% include codeDisplay.md content=shuffling.on_extra_line setups="shuffle_order" buttons=b %}
 
 In this we want to mix the countries, and we want to mix the capitals.
 However we don't want to get countries and capitals to get out of order with each other.
@@ -30,13 +30,13 @@ You can use the `ord` tag in two ways:
 - `[[ord::1||2||3]]`
 - `[[ord::1,2,3]]`
 
-{% include codeDisplay.md content=shuffling.individual_items filterManager=setups.shuffle_order buttons=b %}
+{% include codeDisplay.md content=shuffling.individual_items setups="shuffle_order" buttons=b %}
 
 When shuffling sentences, the `ord` tag is especially handy, because you can focus on the important parts.
 
 ---
 ## Ordering inline and non-contiguous shuffles
 
-{% include codeDisplay.md content=shuffling.inline_vs_list filterManager=setups.fancy_shuffle buttons=b %}
+{% include codeDisplay.md content=shuffling.inline_vs_list setups="fancy_shuffle" buttons=b %}
 
 The `ord` tag can also relate values from a `mix` single with individual `mix` tags

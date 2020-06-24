@@ -17,4 +17,4 @@ parent: Stylizing
 ---
 ## Ordering
 
-{% include codeDisplay.md content=stylizing.mandarin filterManager=setups.mandarin_support buttons=bOneTwo %}
+{% include codeDisplay.md content=stylizing.mandarin setups="mandarin_support" buttons=bOneTwo %}

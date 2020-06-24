@@ -1,35 +1,39 @@
-{% assign contentId = include.content.name | slugify %}
+{% capture newLine %}
+{% endcapture %}
+
 {% assign contentCode = include.content.code | replace: "'", "\\'" | strip | newline_to_br | strip_newlines %}
+{% assign fmCode = include.fmCode | join: newLine | strip %}
 
-{% assign fmId = include.filterManager.name | slugify %}
-{% assign fmCode = include.filterManager.code | strip %}
+{% assign fmName = include.theId | replace: "-", "" | replace: "_", "" %}
 
-{% assign theId = contentId | append: "-with-" | append: fmId %}
+const {{ fmName }}filterManager = new Closet.FilterManager()
 
-{% for button in theButtons %}
+const {{ fmName }}func = (filterManager) => {
+    {{ fmCode }}
+    return filterManager
+}
+
+{{ fmName }}func({{ fmName }}filterManager)
+
+{% for button in include.theButtons %}
 {% assign theButton = button | split: ", " %}
+
 readyRenderButton(
-    '#{{ theId }}',
+    '#{{ include.theId }}',
     '{{ theButton[1] }}',
     '{{ contentCode }}',
     {{ theButton[2] }} /* the preset */,
-    {{ theButton[3] }} /* keep memory or not */,
-    // inject filterManager
-    ((preset) => {
-        const filterManager = new Closet.FilterManager(preset)
-        {{ fmCode }}
-        return filterManager
-    })({{ theButton[2] }}),
-)
+    {{ fmName }}filterManager /* filterManager */,
+){% if forloop.first == true %}.dispatchEvent(new Event('click')){% endif %}
 {% endfor %}
 
 readyFmButton(
-    '#{{ theId }}',
+    '#{{ include.theId }}',
     `{{ fmCode | replace: "`", "\\`" | replace: "$", "\\$" }}`,
 )
 
 readyTryButton(
-    '#{{ theId }}',
+    '#{{ include.theId }}',
     '{{ contentCode }}',
-    '{{ fmId }}',
+    '{{ include.setupString }}',
 )

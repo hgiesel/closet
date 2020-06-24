@@ -1,15 +1,14 @@
 const allButtons = new Map()
-const currentPreset = new Map()
 
-let currentKeepMemories = {}
+const currentPresets = {}
+const lastButtons = {}
 
 const readyRenderButton = (
     id,
     btnId,
     code,
     preset,
-    keepMemory,
-    filterManager = new Closet.FilterManager(preset),
+    filterManager,
 ) => {
     const buttonQuery = `${id} .btn-${btnId}`
     const displayQuery = `${id} > .output-display`
@@ -25,24 +24,31 @@ const readyRenderButton = (
     }
 
     btnRerender.addEventListener('click', () => {
-        const tmpl = Closet.Template.make(code)
-        tmpl.render(filterManager, output => theDisplay.innerHTML = output)
+        // decide whether to clear memory
+        const currentButtonIndex = allButtons.get(id).findIndex(v => v === btnRerender)
 
-        currentKeepMemories[id] = keepMemory
-
-        if (!keepMemory) {
-            filterManager.clearMemory()
+        if (currentButtonIndex === lastButtons[id]) {
+            filterManager.clear()
         }
 
+        lastButtons[id] = currentButtonIndex
+
+        // render
+        const tmpl = Closet.Template.make(code)
+        filterManager.setPreset(preset)
+
+        tmpl.render(filterManager, output => theDisplay.innerHTML = output)
+
+        // update render buttons
         for (const btn of allButtons.get(id)) {
             btn.classList.remove('active')
         }
         btnRerender.classList.add('active')
 
-        currentPreset.set(id, preset)
+        currentPresets[id] = preset
     })
 
-    btnRerender.dispatchEvent(new Event('click'))
+    return btnRerender
 }
 
 const readyFmButton = (id, _fmCode) => {
@@ -70,7 +76,7 @@ const readyFmButton = (id, _fmCode) => {
 const readyTryButton = (
     id,
     code,
-    filterManagerId,
+    setupString,
 ) => {
     const buttonQuery = `${id} .btn-edit`
     const btnEdit = document.querySelector(buttonQuery)
@@ -78,15 +84,15 @@ const readyTryButton = (
     btnEdit.addEventListener('click', () => {
         const linkBase = '/tester'
         const textComp = `?text=${encodeURIComponent(code.replace(/<br \/>/g, '\n'))}`
-        const presetComp = `&preset=${encodeURIComponent(JSON.stringify(currentPreset.get(id)))}`
-        const fmComp = `&fm=${filterManagerId}`
-        const memoryComp = `&memory=${String(currentKeepMemories[id])[0]}`
+        const presetComp = `&preset=${encodeURIComponent(JSON.stringify(currentPresets[id]))}`
+        const setupsComp = `&setups=${setupString}`
+        const memoryComp = '&memory=f'
 
         window.location = (
             linkBase +
             textComp +
             presetComp +
-            fmComp +
+            setupsComp +
             memoryComp
         )
         })

@@ -17,7 +17,7 @@
           {% assign setupId = setup[1].name | slugify %}
           {% assign s = setup[1] %}
 
-          <input type="radio" id="input-{{ setupId }}" name="fm-list" value="{{ setupId }}" />
+          <input type="checkbox" id="input-{{ setupId }}" name="fm-list" value="{{ setupId }}" />
 
           <li>
             <label class="li-fm" id="label-{{ setupId }}" for="input-{{ setupId }}">{{ s.name }}</label>
@@ -45,8 +45,7 @@
 
         registerSetup(
           `{{ setupId }}`,
-          (preset, memory) => {
-            const filterManager = new Closet.FilterManager(preset, memory)
+          (filterManager, preset, memory) => {
             {{ s.code }}
             return filterManager
           },

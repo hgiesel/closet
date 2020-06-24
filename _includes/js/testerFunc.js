@@ -29,12 +29,17 @@ const presetMustBeObjectMessage = '<i>Error with preset JSON: preset must be an 
 
 ///////////////////////////// setups
 // registerSetup and setupMap is declared in tester.html
-const getCurrentSetup = (preset, memory) => {
-    const currentSetup = document.querySelector('input[name="fm-list"]:checked')
+const getActiveSetups = () => {
+    const activeSetups = document.querySelectorAll('input[name="fm-list"]:checked')
 
-    return currentSetup && setups.has(currentSetup.value)
-        ? setups.get(currentSetup.value)(preset, memory)
-        : ''
+    const results = []
+    for (const as of activeSetups) {
+        if (setups.has(as.value)) {
+            results.push(setups.get(as.value))
+        }
+    }
+
+    return results
 }
 
 ///////////////////////////// render button
@@ -72,8 +77,13 @@ const processTemplateText = () => {
     }
 
     /////////////////////////////
+    const filterManager = new Closet.FilterManager(preset, memory)
+    const setups = getActiveSetups()
 
-    const filterManager = getCurrentSetup(preset, memory)
+    for (const s of setups) {
+        s(filterManager, preset, memory)
+    }
+
     const text = codeCM.getValue().replace(/\n/g, '<br />')
 
     console.groupCollapsed(`Run ${run}`)
@@ -121,8 +131,8 @@ const copyTemplateTextAsLink = () => {
         ? 'memory=t'
         : ''
 
-    const currentSetup = document.querySelector('input[name="fm-list"]:checked')
-    const queryFm = `fm=${currentSetup.value}`
+    const currentSetups = Array.from(document.querySelectorAll('input[name="fm-list"]:checked'))
+    const queryFm = `setups=${currentSetups.map(v => v.value).join(',')}`
 
     const joinedQueries = [queryText, queryPreset, queryFm, queryMemory]
         .filter(v => v.length > 0)

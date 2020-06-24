@@ -68,6 +68,12 @@
             box-shadow: inset 0 0 0 3px white !important;
         }
 
+        // label
+        & > .li-fm {
+            display: inline-block;
+            width: 100%;
+        }
+
         // info button
         & > .li-fm-info {
             position: absolute;

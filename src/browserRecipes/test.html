@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+<style>
+#skull {
+  display: inline-block;
+  position: relative;
+}
+
+#skull > * {
+  display: block;
+
+  max-width: 100%
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#skull > img {
+  position: relative;
+  z-index: 3;
+}
+
+#skull > svg {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+}
+</style>
+
+</head>
+<body>
+
+  <img src="./image.jpg" />
+
+  <script type="text/javascript" src="./mysvg.js">
+  </script>
+
+</body>
+</html>

@@ -11,6 +11,6 @@ for (const [inherit_id, elements, filterManager] of configurations) {
         persistenceSwitch.switchTo(inherit_id)
     }
 
-    const bt = BrowserTemplate.makeFromNodes(elements)
+    const bt = Closet.BrowserTemplate.makeFromNodes(elements)
     bt.renderToNodes(filterManager)
 }

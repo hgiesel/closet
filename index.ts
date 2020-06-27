@@ -1,4 +1,6 @@
 export { Template } from './src/template'
+export { BrowserTemplate } from './src/browserUtils'
+
 export { FilterManager } from './src'
 
 export {

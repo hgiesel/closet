@@ -10,10 +10,7 @@ for (const [inherit_id, elements, filterManager] of configurations) {
     if (globalThis.Persistence && Persistence.isAvailable()) {
         persistenceSwitch.switchTo(inherit_id)
     }
-    else {
-        persistenceSwitch.fallback()
-    }
 
-    const bt = BrowserTemplate.make(elements)
-    bt.renderNodes(filterManager)
+    const bt = BrowserTemplate.makeFromNodes(elements)
+    bt.renderToNodes(filterManager)
 }

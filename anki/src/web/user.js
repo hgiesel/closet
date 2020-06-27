@@ -1,11 +1,12 @@
 const inherit_id = 1
 const elements = Closet.anki.getQaChildNodes()
-const filterManager = new FilterManager(Closet.anki.preset, persistenceSwitch)
+const filterManager = new FilterManager(persistenceSwitch)
+filterManager.setPreset(Closet.anki.preset)
 
 /* here goes the setup - change it to fit your own needs */
 
-filterManager.addRecipe(Closet.recipes.shuffling('mix'))
-filterManager.addRecipe(Closet.recipes.ordering('ord', 'mix'))
+filterManager.addRecipe(Closet.recipes.shuffling())
+filterManager.addRecipe(Closet.recipes.ordering())
 
 /* end of setup */
 

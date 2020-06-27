@@ -20,7 +20,7 @@ export interface TagRenderer {
     finishRun: (t: TemplateInfo) => void
 }
 
-type TagPath = number[]
+export type TagPath = number[]
 
 const MAX_ITERATIONS = 50
 
@@ -42,7 +42,7 @@ export class Template {
     private rootTag: TagInfo
     private currentZoom: TagPath
 
-    private constructor(text: string[], baseDepth: number, preparsed: TagInfo | null, zoom: TagPath) {
+    protected constructor(text: string[], baseDepth: number, preparsed: TagInfo | null, zoom: TagPath) {
         this.textFragments = text
         this.baseDepth = baseDepth
         this.parser = new Parser()

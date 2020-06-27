@@ -1,4 +1,6 @@
 import { Template, TagRenderer } from './template'
+import type { TagInfo } from './template/tags'
+import type { TagPath } from './template'
 
 // negative result implies invalid idx
 const parseIndexArgument = (idx: number, min: number, max: number): number => {
@@ -284,12 +286,23 @@ export const appendStyleScript = (input: string): void => {
 export const zeroWidthSpaceEntity = "&#8203;"
 export const wordBreakTag = "<wbr />"
 
-export const renderTemplateFromNode = (input: Element | Text | ChildNodeSpan | string, tagRenderer: TagRenderer): void => {
-    const tmpl = Template.make(getText(input))
-    tmpl.render(tagRenderer, (t: string[]) => setText(input, t[0]))
-}
+export class BrowserTemplate extends Template {
+    inputs: Array<Element | Text | ChildNodeSpan | string>
 
-export const renderTemplateFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>, tagRenderer: TagRenderer): void => {
-    const tmpl = Template.makeFromFragments(inputs.map(getText))
-    tmpl.render(tagRenderer, (t: string[]) => t.forEach((text: string, index: number) => setText(inputs[index], text)))
+    protected constructor(text: string[], baseDepth: number, preparsed: TagInfo | null, zoom: TagPath, inputs: Array<Element | Text | ChildNodeSpan | string>) {
+        super(text, baseDepth, preparsed, zoom)
+        this.inputs = inputs
+    }
+
+    static makeFromNode = (input: Element | Text | ChildNodeSpan | string): BrowserTemplate => {
+        return new BrowserTemplate([getText(input)], 1, null, [], [input])
+    }
+
+    static makeFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>): BrowserTemplate => {
+        return new BrowserTemplate(inputs.map(getText), 2, null, [], inputs)
+    }
+
+    renderToNodes(tagRenderer: TagRenderer): void {
+        super.render(tagRenderer, (t: string[]) => t.forEach((text: string, index: number) => setText(this.inputs[index], text)))
+    }
 }

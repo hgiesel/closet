@@ -33,7 +33,7 @@ if mw.addonManager.addonName(path.dirname(__file__)) != 'Template Tools':
 
         mw.addonManager.writeAddonMeta(dir_path, meta)
 
-from .src.main import setup_models_dialog, setup_hook
+from .src import setup_models_dialog, setup_hook
 
 setup_models_dialog()
 setup_hook()

@@ -16,6 +16,10 @@ fi
 
 cd "$DIR/anki"
 
+if [[ -f "$DIR/$addon_id.ankiaddon" ]]; then
+  rm  "$DIR/$addon_id.ankiaddon"
+fi
+
 zip -r "$DIR/$addon_id.ankiaddon" \
   ""*".py" \
   "manifest.json" \

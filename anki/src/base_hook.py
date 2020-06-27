@@ -27,7 +27,7 @@ def setup_script():
 
     filepath = Path(f'{dirname(realpath(__file__))}', 'web', f'{file_name}.js')
 
-    with open(filepath, 'r') as file:
+    with open(filepath, mode='r', encoding='utf-8') as file:
         script = file.read().strip()
 
         amr.make_and_register_interface(

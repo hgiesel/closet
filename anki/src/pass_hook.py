@@ -8,7 +8,7 @@ from .utils import find_addon_by_name
 
 script_name = 'Closetjs'
 
-file_name = 'base'
+file_name = 'main'
 user_file_name = 'user'
 
 version = 'v1.0'

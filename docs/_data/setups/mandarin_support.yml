@@ -225,7 +225,7 @@ code: |
 
   const wrappedSideSensitive = Closet.wrappers.aftermath((_e, internals) => {
     if (!internals.environment.has('addMandarinToneStyleTag')) {
-      Closet.browser.appendStyleScript(`
+      Closet.browser.appendStyleTag(`
       .zh--tone-1 { color: dodgerblue; }
       .zh--tone-2 { color: lime; }
       .zh--tone-3 { color: yellow; }

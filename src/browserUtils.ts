@@ -277,10 +277,10 @@ export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate)
     return result
 }
 
-export const appendStyleScript = (input: string): void => {
+export const appendStyleTag = (input: string): void => {
     var styleSheet = document.createElement('style')
     styleSheet.type = 'text/css'
-    styleSheet.innerText = input
+    styleSheet.innerHTML = input
     globalThis.document.head.appendChild(styleSheet)
 }
 

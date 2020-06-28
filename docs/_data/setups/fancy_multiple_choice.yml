@@ -62,7 +62,7 @@ code: |
     const keyword = 'fancyMultipleChoice'
 
     if (!inter.environment.has(keyword)) {
-      Closet.browser.appendStyleScript(fancyMultipleChoiceStyle)
+      Closet.browser.appendStyleTag(fancyMultipleChoiceStyle)
       inter.environment.set(keyword, true)
     }
   }, Closet.recipes.multipleChoiceShow)

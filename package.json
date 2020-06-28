@@ -36,7 +36,10 @@
     "rollup-watch-test": "rollup -c rollup/rollup.config.test.js -w",
     "serve-docs": "bin/serve.sh",
     "serve-test": "serve -l 59045",
+
+    "link": "bin/link.sh -c",
     "dev-docs": "run-p serve-docs watch-docs",
+    "dev-anki": "run-s watch-anki",
     "zip": "run-s build-anki zip-sub",
     "zip-ankiweb": "run-s build-anki zip-ankiweb-sub",
     "zip-sub": "bin/zip.sh",

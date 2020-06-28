@@ -9,7 +9,7 @@ import { orderingRecipe } from './ordering'
 import { clozeShowRecipe, clozeHideRecipe, clozeRevealRecipe } from './clozes'
 import { multipleChoiceShowRecipe, multipleChoiceHideRecipe, multipleChoiceRevealRecipe } from './multipleChoice'
 // import { randRecipe } from './rand'
-import { styleRecipe } from './stylizing'
+import { styleRecipe, processRecipe } from './stylizing'
 
 import { debugRecipe } from './debug'
 import { metaRecipe } from './meta'
@@ -28,6 +28,7 @@ export const recipes: Recipes = {
     multipleChoiceReveal: multipleChoiceRevealRecipe,
 
     stylizing: styleRecipe,
+    processing: processRecipe,
 
     activate: activateRecipe,
     deactivate: deactivateRecipe,

@@ -3,13 +3,16 @@ import { interspliceChildNodes, ChildNodeSpan } from './browserUtils'
 
 const cardType = '{{Card}}'
 const tagsFull = '{{Tags}}'
-const tags = tagsFull.split(' ')
+const tags = tagsFull.length === 0
+    ? []
+    : tagsFull.split(' ')
 
-export const preset = {
+export const preset = (side: 'front' | 'back') => ({
     card: cardType,
     tagsFull: tagsFull,
     tags: tags,
-}
+    side: side,
+})
 
 // https://github.com/SimonLammer/anki-persistence#usage
 interface AnkiPersistence {

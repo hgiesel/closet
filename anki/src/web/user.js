@@ -1,7 +1,7 @@
 const inherit_id = 1
 const elements = Closet.anki.getQaChildNodes()
-const filterManager = new FilterManager(persistenceSwitch)
-filterManager.setPreset(Closet.anki.preset)
+const filterManager = new Closet.FilterManager(persistenceSwitch)
+filterManager.setPreset(preset)
 
 /* here goes the setup - change it to fit your own needs */
 

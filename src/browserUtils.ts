@@ -21,7 +21,7 @@ export const getText = (input: Element | Text | ChildNodeSpan | ChildNode | stri
 
         case Node.ELEMENT_NODE:
             const elementNode = input as Element
-            return elementNode.innerHTML
+            return elementNode.outerHTML
 
         case ChildNodeSpan.CHILD_NODE_SPAN:
             const span = input as ChildNodeSpan
@@ -214,7 +214,7 @@ export class ChildNodeSpan {
 
     span(): ChildNode[] {
         return this.valid
-            ? this.childNodes.slice(this._fromIndex, this._toIndex)
+            ? this.childNodes.slice(this._fromIndex, this._toIndex + 1)
             : []
     }
 

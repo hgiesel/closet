@@ -18,7 +18,7 @@ default_description = (
     'The defaults try already to be as useful as possible, so they might already suit your needs!\n'
 )
 
-iteration_tag = f'{script_name}Iteration'
+pass_tag = f'{script_name}Pass'
 
 am = find_addon_by_name('Asset Manager')
 
@@ -58,7 +58,7 @@ def setup_pass_script():
                 # The name of script tag
                 # Multiple scripts can be registered under the same tag
                 # Scripts under one tag share one *interface*: rules for setting, getting, generation, stored fields, readonly fields, etc.
-                tag = iteration_tag,
+                tag = pass_tag,
 
                 # What happens when the user tries to receive the script
                 # This is is used for displaying the script in the tag window
@@ -116,6 +116,7 @@ def setup_pass_script():
                 # if your return an empty str, it won't insert anything
                 generator = lambda id, storage, model, tmpl, fmt: DoubleTemplate(script).safe_substitute(
                     userCode=indent_lines(storage.code if storage.code is not None else user_script, 4),
+                    side='front' if fmt == 'qfmt' else 'back'
                 )
             )
 
@@ -124,9 +125,9 @@ def install_pass_script():
     if not am:
         return
 
-    my_meta_script = ami.make_meta_script(
+    pass_meta_script = ami.make_meta_script(
         # this is the tag you interface above is registered on!
-        iteration_tag,
+        pass_tag,
         # your id: you can register an id only once per model per tag
         f"{script_name}_id",
     )
@@ -135,5 +136,5 @@ def install_pass_script():
     for model_id in mw.col.models.ids():
         amr.register_meta_script(
             model_id,
-            my_meta_script,
+            pass_meta_script,
         )

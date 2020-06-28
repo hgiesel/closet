@@ -1,4 +1,5 @@
 var persistenceSwitch = Closet.anki.memorySwitch(globalThis.Persistence)
+var preset = Closet.anki.preset('$$side')
 
 function userLogic() {
 $$userCode

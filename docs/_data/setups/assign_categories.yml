@@ -18,7 +18,7 @@ code: |
 
   const baseStylizer = new Closet.Stylizer({
     separator: '・',
-    postprocess: (v) => `《${v}》`,
+    processor: (v) => `《${v}》`,
   })
 
   const theBackStylizer = baseStylizer.toStylizer({

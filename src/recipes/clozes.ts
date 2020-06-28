@@ -25,7 +25,7 @@ const clozeRecipe = mcClozeTemplate(clozeFrontActiveBehavior, clozeBackActiveBeh
 
 const hintEllipser = stylizeEllipser(
     new Stylizer({
-        postprocess: (v: string) => `[${v}]`,
+        processor: (v: string) => `[${v}]`,
     }),
     (tag: TagData) => {
         const vs = tag.values
@@ -34,7 +34,7 @@ const hintEllipser = stylizeEllipser(
 )
 
 const defaultStylizer: Stylizer = new Stylizer({
-    postprocess: v => `<span style="color: cornflowerblue;">${v}</span>`,
+    processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
 const joinValues: Ellipser<McClozePreset> = (tag: TagData): string => tag.values[0]

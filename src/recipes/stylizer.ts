@@ -6,32 +6,32 @@ type StringPlusFunction = (v: string, i: number, ...a: any[]) => string
 export class Stylizer {
     readonly separator: string
     readonly mapper: StringPlusFunction
-    readonly postprocess: StringFunction
+    readonly processor: StringFunction
 
     constructor({
         separator = ', ',
         mapper = id as StringPlusFunction,
-        postprocess = id as StringFunction,
+        processor = id as StringFunction,
     } = {}) {
         this.separator = separator
         this.mapper = mapper
-        this.postprocess = postprocess
+        this.processor = processor
     }
 
     toStylizer({
         separator = this.separator,
         mapper = this.mapper,
-        postprocess = this.postprocess,
+        processor = this.processor,
     } = {}): Stylizer {
         return new Stylizer({
             separator: separator,
             mapper: mapper,
-            postprocess: postprocess,
+            processor: processor,
         })
     }
 
     stylize(input: string[], args: unknown[][] = []): string {
-        return this.postprocess(input
+        return this.processor(input
             .flatMap((v, i) => this.mapper(v, i, ...args.map(arg => arg[i])))
             .join(this.separator)
         )

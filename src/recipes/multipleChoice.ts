@@ -36,7 +36,7 @@ const defaultFrontStylizer = new Stylizer({
     mapper: (v: string) => {
         return `<span style="color: orange;">${v}</span>`
     },
-    postprocess: (v: string) => `( ${v} )`,
+    processor: (v: string) => `( ${v} )`,
 })
 
 const defaultBackStylizer = defaultFrontStylizer.toStylizer({

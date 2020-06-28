@@ -114,9 +114,11 @@ def setup_pass_script():
                 # By default it uses `getter(id, storage).code`
                 # model is the note type name, tmpl is the card type name, fmt is 'qfmt' (front) or 'afmt' (back)
                 # if your return an empty str, it won't insert anything
-                generator = lambda id, storage, model, tmpl, fmt: DoubleTemplate(script).safe_substitute(
+                generator = lambda id, storage, model, tmpl, pos: DoubleTemplate(script).safe_substitute(
                     userCode=indent_lines(storage.code if storage.code is not None else user_script, 4),
-                    side='front' if fmt == 'qfmt' else 'back'
+                    cardType='{{Card}}',
+                    tagsFull='{{Tags}}',
+                    side='front' if pos == 'question' else 'back',
                 )
             )
 

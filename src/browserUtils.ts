@@ -9,7 +9,7 @@ const parseIndexArgument = (idx: number, min: number, max: number): number => {
     : min + idx
 }
 
-const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): string => {
+export const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): string => {
     if (typeof(input) === 'string') {
         return input
     }
@@ -32,7 +32,7 @@ const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): st
     }
 }
 
-const setText = (input: Element | Text | ChildNodeSpan | string, newText: string): void => {
+export const setText = (input: Element | Text | ChildNodeSpan | string, newText: string): void => {
     if (typeof(input) === 'string') {
         return
     }

@@ -1,6 +1,7 @@
-import { Template, TagRenderer } from './template'
 import type { TagInfo } from './template/tags'
-import type { TagPath } from './template'
+import type { TagPath, TagRenderer } from './template'
+
+import { Template } from './template'
 
 // negative result implies invalid idx
 const parseIndexArgument = (idx: number, min: number, max: number): number => {
@@ -277,8 +278,8 @@ export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate)
 }
 
 export const appendStyleScript = (input: string): void => {
-    var styleSheet = document.createElement("style")
-    styleSheet.type = "text/css"
+    var styleSheet = document.createElement('style')
+    styleSheet.type = 'text/css'
     styleSheet.innerText = input
     globalThis.document.head.appendChild(styleSheet)
 }

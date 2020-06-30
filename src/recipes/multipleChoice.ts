@@ -1,13 +1,15 @@
-import type { TagData, Recipe, Internals, Ellipser, ActiveBehavior } from './types'
+import type { TagData, Recipe, Internals, Ellipser, InactiveBehavior, ActiveBehavior, WeakSeparator } from './types'
 import type { McClozePreset } from './mcClozeTemplate'
+import type { SortInStrategy } from './sortInStrategies'
 
 import { id, id2 } from './utils'
 import { Stylizer } from './stylizer'
 import { sequencer } from './sequencer'
 import { noneEllipser } from './ellipser'
 import { mcClozeTemplate } from './mcClozeTemplate'
+import { topUp } from './sortInStrategies'
 
-const activeBehavior: ActiveBehavior<McClozePreset, McClozePreset> = (
+const activeBehavior= (sortIn: SortInStrategy): ActiveBehavior<McClozePreset, McClozePreset>  => (
     stylizer: Stylizer,
 ) => (tag: TagData, internals: Internals<McClozePreset>) => {
     const flattedValuesWithIndex = tag.values.flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
@@ -16,6 +18,7 @@ const activeBehavior: ActiveBehavior<McClozePreset, McClozePreset> = (
         `${tag.fullKey}:${tag.fullOccur}`,
         `${tag.fullKey}:${tag.fullOccur}`,
         flattedValuesWithIndex,
+        sortIn,
         internals,
     )
 
@@ -26,10 +29,6 @@ const activeBehavior: ActiveBehavior<McClozePreset, McClozePreset> = (
         )
     }
 }
-
-const multipleChoiceSeparators = { separators: [{ sep: '::' }, { sep: '||' }]}
-
-const multipleChoiceRecipe = mcClozeTemplate(activeBehavior, activeBehavior, multipleChoiceSeparators)
 
 const defaultFrontStylizer = new Stylizer({
     separator: ', ',
@@ -44,12 +43,12 @@ const defaultBackStylizer = defaultFrontStylizer.toStylizer({
         return `<span style="color: ${t === 0 ? 'lime' : 'red'};">${v}</span>`
     },
 })
-
-const defaultContexter = (tag: TagData, internals: Internals<McClozePreset>) => {
+const defaultContexter = (sortIn: (indices: number[], toLength: number) => number[]) => (tag: TagData, internals: Internals<McClozePreset>) => {
     const maybeValues = sequencer(
         `${tag.fullKey}:${tag.fullOccur}`,
         `${tag.fullKey}:${tag.fullOccur}`,
         tag.values[0],
+        sortIn,
         internals,
     )
 
@@ -60,7 +59,8 @@ const defaultContexter = (tag: TagData, internals: Internals<McClozePreset>) => 
 }
 
 const multipleChoicePublicApi = (
-    multipleChoiceRecipe: Recipe<McClozePreset>,
+    choice1: InactiveBehavior<McClozePreset, McClozePreset>,
+    choice2: InactiveBehavior<McClozePreset, McClozePreset>,
 ): Recipe<McClozePreset> => (options: {
     tagname?: string,
     switcherKeyword?: string,
@@ -68,6 +68,10 @@ const multipleChoicePublicApi = (
 
     frontStylizer?: Stylizer,
     backStylizer?: Stylizer,
+
+    sortInStrategy?: SortInStrategy,
+    outerSeparator?: WeakSeparator,
+    innerSeparator?: WeakSeparator,
 
     contexter?: Ellipser<McClozePreset>,
     ellipser?: Ellipser<McClozePreset>,
@@ -78,9 +82,17 @@ const multipleChoicePublicApi = (
         activateKeyword = 'activate',
         frontStylizer = defaultFrontStylizer,
         backStylizer = defaultBackStylizer,
-        contexter = defaultContexter,
+        sortInStrategy = topUp,
+        outerSeparator = { sep: '::' },
+        innerSeparator = { sep: '||' },
+        contexter = defaultContexter(sortInStrategy),
         ellipser = noneEllipser,
     } = options
+
+    const multipleChoiceSeparators = { separators: [outerSeparator, innerSeparator] }
+    const theActiveBehavior = activeBehavior(sortInStrategy)
+
+    const multipleChoiceRecipe = mcClozeTemplate(theActiveBehavior, theActiveBehavior, multipleChoiceSeparators)(choice1, choice2)
 
     return multipleChoiceRecipe({
         tagname: tagname,
@@ -96,6 +108,6 @@ const multipleChoicePublicApi = (
     })
 }
 
-export const multipleChoiceShowRecipe = multipleChoicePublicApi(multipleChoiceRecipe(id, id))
-export const multipleChoiceHideRecipe = multipleChoicePublicApi(multipleChoiceRecipe(id2, id2))
-export const multipleChoiceRevealRecipe = multipleChoicePublicApi(multipleChoiceRecipe(id2, id))
+export const multipleChoiceShowRecipe = multipleChoicePublicApi(id, id)
+export const multipleChoiceHideRecipe = multipleChoicePublicApi(id2, id2)
+export const multipleChoiceRevealRecipe = multipleChoicePublicApi(id2, id)

@@ -1,6 +1,6 @@
 import type { Internals } from './types'
 
-import { sortWithIndices, topUpSortingIndices } from './utils'
+import { sortWithIndices } from './utils'
 
 // TODO abstract to an object without dependence on Internals
 export const sequencer = (
@@ -9,6 +9,7 @@ export const sequencer = (
     // identifies each collection of items being shuffled
     sequenceId: string,
     values: unknown[],
+    strategy: (indices: number[], toLength: number) => number[],
     { cache, memory, deferred, ready }: Internals<{}>,
 ) => {
     const applyKey = `${unitId}:apply`
@@ -70,7 +71,7 @@ export const sequencer = (
 
         cache.fold(shuffleKey, <T>(vs: T[]) => {
             const sortingIndices = memory.fold(shuffleKey, (vs: number[]) => {
-                return topUpSortingIndices(vs, cache.get(shuffleKey, []).length)
+                return strategy(vs, cache.get(shuffleKey, []).length)
             }, [])
 
             return sortWithIndices(vs, sortingIndices)

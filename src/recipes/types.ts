@@ -7,7 +7,7 @@ export type { Registrar, Filters, AftermathInternals, DeferredInternals, Interna
 export type { DataOptions, WeakFilter, WeakFilterResult } from '..'
 export type { DeferredApi, Deferred } from '../filterManager/deferred'
 
-export type { TagData, Separator } from '../template/tags'
+export type { TagData, Separator, WeakSeparator } from '../template/tags'
 
 export type Recipe<T extends object> = (options?: object) => (filters: Registrar<T>) => void
 export type Ellipser<T extends object> = (t: TagData, i: Internals<T>) => string

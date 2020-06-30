@@ -1,4 +1,4 @@
-import type { TagData, Internals, Ellipser, Recipe, ActiveBehavior } from './types'
+import type { TagData, Internals, Ellipser, WeakSeparator, Recipe, InactiveBehavior, ActiveBehavior } from './types'
 import type { McClozePreset } from './mcClozeTemplate'
 
 import { id, id2 } from './utils'
@@ -19,10 +19,6 @@ const clozeBackActiveBehavior: ActiveBehavior<McClozePreset, McClozePreset> = (
     return stylizer.stylize([tag.values[0]])
 }
 
-const clozeSeparators = { separators: [{ sep: '::', max: 2 }]}
-
-const clozeRecipe = mcClozeTemplate(clozeFrontActiveBehavior, clozeBackActiveBehavior, clozeSeparators)
-
 const hintEllipser = stylizeEllipser(
     new Stylizer({
         processor: (v: string) => `[${v}]`,
@@ -40,7 +36,8 @@ const defaultStylizer: Stylizer = new Stylizer({
 const joinValues: Ellipser<McClozePreset> = (tag: TagData): string => tag.values[0]
 
 const clozePublicApi = (
-    clozeRecipe: Recipe<McClozePreset>,
+    choice1: InactiveBehavior<McClozePreset, McClozePreset>,
+    choice2: InactiveBehavior<McClozePreset, McClozePreset>,
 ): Recipe<McClozePreset> => (options: {
     tagname?: string,
     switcherKeyword?: string,
@@ -50,6 +47,8 @@ const clozePublicApi = (
 
     activeEllipser?: Ellipser<McClozePreset>,
     inactiveEllipser?: Ellipser<McClozePreset>,
+
+    separator?: WeakSeparator,
 } = {}) => {
     const {
         tagname = 'c',
@@ -58,7 +57,11 @@ const clozePublicApi = (
         activeStylizer = defaultStylizer,
         activeEllipser = hintEllipser,
         inactiveEllipser = noneEllipser,
+        separator = { sep: '::', max: 2},
     } = options
+
+    const clozeSeparators = { separators: [separator] }
+    const clozeRecipe = mcClozeTemplate(clozeFrontActiveBehavior, clozeBackActiveBehavior, clozeSeparators)(choice1, choice2)
 
     return clozeRecipe({
         tagname: tagname,
@@ -74,6 +77,6 @@ const clozePublicApi = (
     })
 }
 
-export const clozeShowRecipe = clozePublicApi(clozeRecipe(id, id))
-export const clozeHideRecipe = clozePublicApi(clozeRecipe(id2, id2))
-export const clozeRevealRecipe = clozePublicApi(clozeRecipe(id2, id))
+export const clozeShowRecipe = clozePublicApi(id, id)
+export const clozeHideRecipe = clozePublicApi(id2, id2)
+export const clozeRevealRecipe = clozePublicApi(id2, id)

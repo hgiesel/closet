@@ -3,15 +3,25 @@ import type { TagData, Registrar, Internals } from './types'
 import {
     toNumbers,
     sortWithIndices,
-    topUpSortingIndices,
 } from './utils'
+
+import {
+    topUp,
+} from './sortInStrategies'
 
 export const orderingRecipe = ({
     tagname = 'ord',
     shuffleTagname = 'mix',
+    separator = ',',
+    sortInStrategy = topUp,
 } = {}) => (registrar: Registrar<{}>) => {
-    const ordFilter = (tag: TagData, { deferred, cache }: Internals<{}>) => {
-        // mixes occupied by other ords
+    const ordFilter = (tag: TagData, { deferred, cache, memory }: Internals<{}>) => {
+        /**
+         * ordOccupiedKey in cache: 
+         * - shuffled nums which are already used
+         * - cannot belong to multiple ords at once
+         */
+
         const ordOccupiedKey = `${tag.key}:ord:occupied`
 
         const toBeOrdered = toNumbers(tag.values)
@@ -19,54 +29,48 @@ export const orderingRecipe = ({
 
         cache.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])
 
-        const mixKeys = new Set(
-            toBeOrdered.map((v: number) => `${shuffleTagname}${v}`)
-        )
-
+        const shuffleKeys = new Set(toBeOrdered.map((v: number) => `${shuffleTagname}${v}`))
         const ordKey = `${tag.key}:${tag.fullOccur}:ord`
 
         deferred.register(ordKey, () => {
-            const finishedKeys: string[] = []
+            for (const sk of shuffleKeys) {
+                deferred.block(`${sk}:shuffle`)
 
-            for (const mk of mixKeys) {
-                deferred.block(`${mk}:mix`)
-
-                const waitingSet = cache.get<Set<string>>(`${mk}:waitingSet`, new Set())
+                const waitingSet = cache.get<Set<string>>(`${sk}:waitingSet`, new Set())
+                const shuffleKey = `${sk}:shuffle`
 
                 if (waitingSet.size !== 0) {
                     continue
                 }
 
-                const mixItems = cache.get<string[]>(mk, [])
-                const toppedUpIndices = topUpSortingIndices(
-                    cache.get<number[]>(ordKey, []),
-                    mixItems.length,
+                const shuffleItems = cache.get<string[]>(shuffleKey, [])
+                const toppedUpIndices = sortInStrategy(
+                    cache.get<number[]>(ordKey, memory.get<number[]>(shuffleKey, [])),
+                    shuffleItems.length,
                 )
 
                 // order mix items
-                cache.fold(mk, (vs: string[]) => sortWithIndices(vs, toppedUpIndices), [])
+                cache.fold(shuffleKey, (vs: string[]) => sortWithIndices(vs, toppedUpIndices), [])
 
-                // mark this mix tag as done
-                finishedKeys.push(mk)
+                // remove mixKey from ord pool
+                shuffleKeys.delete(shuffleKey)
 
                 // possibly update with longer sort order
                 cache.set(ordKey, toppedUpIndices)
+                memory.set(shuffleKey, toppedUpIndices)
             }
 
-            // remove mixKey from ord pool
-            finishedKeys.forEach(fk => mixKeys.delete(fk))
-
             // need to remove ord deferred because it is persistent
-            if (mixKeys.size === 0) {
+            if (shuffleKeys.size === 0) {
                 deferred.unregister(ordKey)
             }
         }, {
-            priority: 35,
-            persistent: true
+            priority: 35 /* must be higher than sequencers 15 */,
+            persistent: true,
         })
 
-        return ''
+        return { ready: true }
     }
 
-    registrar.register(tagname, ordFilter, { separators: [','] })
+    registrar.register(tagname, ordFilter, { separators: [separator] })
 }

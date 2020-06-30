@@ -4,9 +4,10 @@ import type { Parser } from './parser'
 import { calculateCoordinates, replaceAndGetOffset, flatMapViaStatusList } from './utils'
 
 export interface RoundInfo {
-    ready: boolean
-    depth: number
     path: number[]
+    depth: number
+    ready: boolean
+    capture: boolean
 }
 
 export enum Status {
@@ -92,8 +93,9 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
 
         const roundInfo: RoundInfo = {
             path: tagPath,
-            ready: allReady,
             depth: depth,
+            ready: allReady,
+            capture: tagProcessor.options.capture,
         }
 
         const filterOutput = tagProcessor.execute(tagData, roundInfo)

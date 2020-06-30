@@ -5,7 +5,7 @@ code: |
   }
 
   const useYellow = new Closet.Stylizer({
-    postprocess: v => `<span style="color: yellow;">${v}</span>`,
+    processor: v => `<span style="color: yellow;">${v}</span>`,
   })
 
   filterManager.addRecipe(Closet.recipes.clozeShow({

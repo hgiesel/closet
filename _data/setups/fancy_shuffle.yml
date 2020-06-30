@@ -16,7 +16,7 @@ code: |
     mapper: v => (
       `<span style="color: ${cw.next().value};">${v}</span>`
     ),
-    postprocess: v => `〈${v}〉`,
+    processor: v => `〈${v}〉`,
   })
 
   const withMiddleDot = new Closet.Stylizer({

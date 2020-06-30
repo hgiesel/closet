@@ -62,7 +62,7 @@ code: |
     const keyword = 'fancyMultipleChoice'
 
     if (!inter.environment.has(keyword)) {
-      Closet.browser.appendStyleScript(fancyMultipleChoiceStyle)
+      Closet.browser.appendStyleTag(fancyMultipleChoiceStyle)
       inter.environment.set(keyword, true)
     }
   }, Closet.recipes.multipleChoiceShow)
@@ -74,11 +74,11 @@ code: |
     frontStylizer: new Closet.Stylizer({
       mapper: wrapItem,
       separator: '',
-      postprocess: (v) => `<div class="cl--container">${v}</div>`,
+      processor: (v) => `<div class="cl--container">${v}</div>`,
     }),
     backStylizer: new Closet.Stylizer({
       mapper: wrapItem,
       separator: '',
-      postprocess: (v) => `<div class="cl--container cl--reveal">${v}</div>`,
+      processor: (v) => `<div class="cl--container cl--reveal">${v}</div>`,
     }),
   }))

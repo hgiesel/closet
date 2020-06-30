@@ -1,6 +1,6 @@
 name: Click to reveal cloze
 code: |
-  Closet.browser.appendStyleScript(`
+  Closet.browser.appendStyleTag(`
   .cl--obscure-hint {
     filter: blur(0.25em);
   }

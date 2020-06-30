@@ -32,7 +32,7 @@ code: |
       const keyword = 'keydownToRevealObscure'
 
       if (!inter.environment.has(keyword)) {
-        Closet.browser.appendStyleScript(`
+        Closet.browser.appendStyleTag(`
         .cl--obscure-hint {
           filter: blur(0.25em);
         }

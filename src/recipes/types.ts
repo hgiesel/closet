@@ -1,15 +1,15 @@
 import type { WeakFilterResult } from '../filterManager/filters'
 import type { TagData } from '../template/tags'
-import type { Internals, Filters } from '..'
+import type { Internals, Registrar } from '..'
 import type { Stylizer } from './stylizer'
 
-export type { Filters, AftermathInternals, DeferredInternals, Internals } from '..'
+export type { Registrar, Filters, AftermathInternals, DeferredInternals, Internals } from '..'
 export type { DataOptions, WeakFilter, WeakFilterResult } from '..'
 export type { DeferredApi, Deferred } from '../filterManager/deferred'
 
 export type { TagData, Separator } from '../template/tags'
 
-export type Recipe<T extends object> = (options?: object) => (filters: Filters<T>) => void
+export type Recipe<T extends object> = (options?: object) => (filters: Registrar<T>) => void
 export type Ellipser<T extends object> = (t: TagData, i: Internals<T>) => string
 export type FilterPredicate<T extends object> = (t: TagData, i: Internals<T>) => boolean
 export type { Stylizer } from './stylizer'

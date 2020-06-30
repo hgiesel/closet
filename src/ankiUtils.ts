@@ -21,7 +21,7 @@ interface AnkiPersistence {
     removeItem(): void
 }
 
-interface MemorySwitcher extends StorageType {
+interface MemorySwitcher extends StorageType<unknown> {
     switchTo: (i: string) => void
 }
 

@@ -1,4 +1,4 @@
-import type { TagData, Internals, Filters, Stylizer, Ellipser, ActiveBehavior, InactiveBehavior, DataOptions } from './types'
+import type { TagData, Internals, Registrar, Stylizer, Ellipser, ActiveBehavior, InactiveBehavior, DataOptions } from './types'
 
 import { fourWayWrap } from './nway'
 import { isBack, isActive } from './deciders'
@@ -38,7 +38,7 @@ export const mcClozeTemplate = (
     contexter: Ellipser<McClozePreset>,
     activeEllipser: Ellipser<McClozePreset>,
     inactiveEllipser: Ellipser<McClozePreset>,
-}) => (filterApi: Filters<McClozePreset>) => {
+}) => (registrar: Registrar<McClozePreset>) => {
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
 
@@ -53,7 +53,7 @@ export const mcClozeTemplate = (
         simpleRecipe(backActiveBehavior(backStylizer, activeEllipser)),
     )
 
-    mcClozeRecipe({ tagname: internalFilter })(filterApi)
+    mcClozeRecipe({ tagname: internalFilter })(registrar)
 
     const mcClozeFilter = (tag: TagData, inter: Internals<McClozePreset>) => {
         const theFilter = inter.cache.get(`${tagname}:${switcherKeyword}`, {
@@ -67,5 +67,5 @@ export const mcClozeTemplate = (
         return  inter.filters.get(theFilter)(tag, inter)
     }
 
-    filterApi.register(tagname, mcClozeFilter, dataOptions)
+    registrar.register(tagname, mcClozeFilter, dataOptions)
 }

@@ -1,39 +1,40 @@
-export interface StorageType {
+export interface StorageType<D> {
     has(k: string): boolean
-    get<T>(k: string): T
-    set<T>(k: string, v: T): void
+    get<T extends D>(k: string): T
+    set<T extends D>(k: string, v: T): void
     delete(k: string): void
     clear(): void
 }
 
-export class Storage {
-    private readonly storage: StorageType
+export class Storage<D> {
+    private readonly storage: StorageType<D>
 
-    constructor(v: StorageType) {
+    constructor(v: StorageType<D>) {
         this.storage = v
     }
 
-    set<T>(name: string, value: T): void {
+    set<T extends D>(name: string, value: T): void {
         this.storage.set(name, value)
     }
 
     has(name: string): boolean {
         return this.storage.has(name)
     }
-    get<T>(name: string, defaultValue: T = null): T | null {
+
+    get<T extends D>(name: string, defaultValue: T = null): T | null {
         return this.has(name)
             ? this.storage.get(name)
             : defaultValue
     }
 
-    fold<T>(name: string, f: (v: T) => T, mempty: T): T {
+    fold<T extends D>(name: string, f: (v: T) => T, mempty: T): T {
         const result = f(this.get(name, mempty))
         this.set(name, result)
 
         return result
     }
 
-    over<T>(name: string, f: (v: T) => void, mempty: T): void {
+    over<T extends D>(name: string, f: (v: T) => void, mempty: T): void {
         if (!this.has(name)) {
             f(mempty)
             this.set(name, mempty)

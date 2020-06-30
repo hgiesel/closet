@@ -1,4 +1,4 @@
-import type { TagData, Filters, Internals, DataOptions } from './types'
+import type { TagData, Registrar, Internals, DataOptions } from './types'
 import { keyPattern } from './utils'
 
 class ActivateMap {
@@ -95,8 +95,8 @@ const activateDataOptions: Partial<DataOptions> = { separators: [','] }
 export const activateRecipe = ({
     tagname = 'on',
     activateId = 'activate',
-} = {}) => (filterApi: Filters<{}>) => {
-    filterApi.register(tagname, activateFilterTemplate(
+} = {}) => (registrar: Registrar<{}>) => {
+    registrar.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
             activateMap.on(key, num, occur)
@@ -107,8 +107,8 @@ export const activateRecipe = ({
 export const deactivateRecipe = ({
     tagname = 'off',
     activateId = 'activate',
-} = {}) => (filterApi: Filters<{}>) => {
-    filterApi.register(tagname, activateFilterTemplate(
+} = {}) => (registrar: Registrar<{}>) => {
+    registrar.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
             activateMap.off(key, num, occur)
@@ -119,8 +119,8 @@ export const deactivateRecipe = ({
 export const toggleRecipe = ({
     tagname = 'toggle',
     activateId = 'activate',
-} = {}) => (filterApi: Filters<{}>) => {
-    filterApi.register(tagname, activateFilterTemplate(
+} = {}) => (registrar: Registrar<{}>) => {
+    registrar.register(tagname, activateFilterTemplate(
         activateId,
         (key, num, occur) => (activateMap) => {
             activateMap.toggle(key, num, occur)

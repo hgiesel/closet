@@ -1,10 +1,10 @@
-import type { Filters, TagData, Internals, WeakFilterResult } from './types'
+import type { Registrar, TagData, WeakFilterResult } from './types'
 
 const paramPattern = /%(\d*)/u
 const metaSeparators = { separators: [{ sep: '::' }, { sep: '||' }]}
 
-export const metaRecipe = () => (filterApi: Filters<{}>) => {
-    const metaFilter = (tag: TagData, { filters }: Internals<{}>): WeakFilterResult => {
+export const metaRecipe = () => (registrar: Registrar<{}>) => {
+    const metaFilter = (tag: TagData): WeakFilterResult => {
         const outerValues = tag.values
 
         const innerFilter = (tag: TagData) => {
@@ -38,12 +38,12 @@ export const metaRecipe = () => (filterApi: Filters<{}>) => {
             }
         }
 
-        filters.register(outerValues[0][0], innerFilter, metaSeparators)
+        registrar.register(outerValues[0][0], innerFilter, metaSeparators)
 
         return {
             ready: true,
         }
     }
 
-    filterApi.register('def', metaFilter, metaSeparators)
+    registrar.register('def', metaFilter, metaSeparators)
 }

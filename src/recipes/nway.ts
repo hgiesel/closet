@@ -1,4 +1,4 @@
-import type { TagData, Filters, FilterPredicate, Internals, Recipe, WrapOptions } from './types'
+import type { TagData, Registrar, FilterPredicate, Internals, Recipe, WrapOptions } from './types'
 
 export const twoWayWrap = <T extends object, U extends object>(
     predicate: FilterPredicate<T & U>,
@@ -16,15 +16,15 @@ export const twoWayWrap = <T extends object, U extends object>(
 
     optionsTrue: object,
     optionsFalse: object,
-}) => (filterApi: Filters<T & U>) => {
+}) => (registrar: Registrar<T & U>) => {
     const tagnameTrue = `${tagname}:twoWay:true`
     const tagnameFalse = `${tagname}:twoWay:false`
 
     setTagnames(optionsTrue, [tagnameTrue])
     setTagnames(optionsFalse, [tagnameFalse])
 
-    recipeTrue(optionsTrue)(filterApi)
-    recipeFalse(optionsFalse)(filterApi)
+    recipeTrue(optionsTrue)(registrar)
+    recipeFalse(optionsFalse)(registrar)
 
     const twoWayFilter = (
         tag: TagData,
@@ -35,7 +35,7 @@ export const twoWayWrap = <T extends object, U extends object>(
             : internals.filters.get(tagnameFalse)(tag, internals)
     }
 
-    filterApi.register(tagname, twoWayFilter, filterApi.getOptions(tagnameTrue /* have to be same for True/False */))
+    registrar.register(tagname, twoWayFilter, registrar.getOptions(tagnameTrue /* have to be same for True/False */))
 }
 
 export const fourWayWrap = <T extends object, U extends object, V extends object, W extends object>(
@@ -66,7 +66,7 @@ export const fourWayWrap = <T extends object, U extends object, V extends object
     optionsZero: object,
 
     setTagname: (options: object, newName: string) => void,
-}) => (filterApi: Filters<T & U & V & W>) => {
+}) => (registrar: Registrar<T & U & V & W>) => {
     const tagnameZero = `${tagname}:fourWay:zero`
     const tagnameTwo = `${tagname}:fourWay:two`
 
@@ -78,7 +78,7 @@ export const fourWayWrap = <T extends object, U extends object, V extends object
 
         optionsFalse: optionsZero,
         optionsTrue: optionsOne,
-    })(filterApi)
+    })(registrar)
 
     setTagnames(optionsTwo, [tagnameTwo])
     setTagnames(optionsThree, [tagnameTwo])
@@ -88,7 +88,7 @@ export const fourWayWrap = <T extends object, U extends object, V extends object
 
         optionsFalse: optionsTwo,
         optionsTrue: optionsThree,
-    })(filterApi)
+    })(registrar)
 
     const fourWayFilter = (
         tag: TagData,
@@ -99,5 +99,5 @@ export const fourWayWrap = <T extends object, U extends object, V extends object
             : internals.filters.get(tagnameZero)(tag, internals)
     }
 
-    filterApi.register(tagname, fourWayFilter)
+    registrar.register(tagname, fourWayFilter)
 }

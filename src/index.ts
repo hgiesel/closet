@@ -2,6 +2,7 @@ import { Status, ProcessorOutput } from './template/evaluate'
 
 import { MetaFilterManager, ManagerInfo } from './filterManager'
 import { Filter as FilterType, WeakFilter as WeakFilterType, FilterResult, FilterApi } from './filterManager/filters'
+import { RegistrarApi } from './filterManager/registrar'
 
 import { TagRenderer, TemplateInfo, IterationInfo } from './template'
 import { TagAccessor, TagProcessor, RoundInfo, DataOptions } from './template/evaluate'
@@ -11,11 +12,12 @@ export type Internals<P extends object> = ManagerInfo<TemplateInfo, IterationInf
 export type DeferredInternals<P extends object> = ManagerInfo<TemplateInfo, IterationInfo, RoundInfo, DataOptions, P> & TemplateInfo & IterationInfo
 export type AftermathInternals<P extends object> = ManagerInfo<TemplateInfo, IterationInfo, RoundInfo, DataOptions, P> & TemplateInfo
 
-export type Filters<P extends object> = FilterApi<Internals<P>, DataOptions>
+export type Registrar<P extends object> = RegistrarApi<Internals<P>, DataOptions>
+export type Filters<P extends object> = FilterApi<Internals<P>>
 export type { DataOptions } from './template/evaluate'
 
-export type Filter<P extends object> = FilterType<Internals<P>, DataOptions>
-export type WeakFilter<P extends object> = WeakFilterType<Internals<P>, DataOptions>
+export type Filter<P extends object> = FilterType<Internals<P>>
+export type WeakFilter<P extends object> = WeakFilterType<Internals<P>>
 export type { FilterResult, WeakFilterResult } from './filterManager/filters'
 
 const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => {

@@ -18,19 +18,22 @@ import {
     DeferredApi,
 } from './deferred'
 
-type PartialObject<T> = Partial<T>
+import {
+    RegistrarApi,
+} from './registrar'
 
 export interface ManagerInfo<T,I,R extends Readiable, D extends object, P extends object> {
-    filters: FilterApi<R,D>
+    filters: FilterApi<R>
+    options: Storage<Partial<D>>
 
-    cache: Storage
-    memory: Storage
-    environment: Storage
+    cache: Storage<unknown>
+    memory: Storage<unknown>
+    environment: Storage<unknown>
 
     deferred: DeferredApi<ManagerInfo<T,I,R,D,P> & T & I>
     aftermath: DeferredApi<ManagerInfo<T,I,R,D,P> & T>
 
-    preset: PartialObject<P>
+    preset: Partial<P>
 }
 
 interface FilterAccessor<R,D> {
@@ -38,26 +41,32 @@ interface FilterAccessor<R,D> {
 }
 
 interface FilterProcessor<R,D> {
-    execute: (data: Filterable<D>, r: R) => FilterResult
+    execute: (data: Filterable, r: R) => FilterResult
     options: Partial<D>
 }
 
 export class MetaFilterManager<T,I,R extends Readiable, D extends object, P extends object> {
-    readonly filters: FilterApi<R,D>
+    private readonly filters: FilterApi<R>
+    private readonly options: Storage<Partial<D>>
+
+    readonly registrar: RegistrarApi<R, Partial<D>>
 
     private readonly deferred: DeferredApi<ManagerInfo<T,I,R,D,P> & T & I>
     private readonly aftermath: DeferredApi<ManagerInfo<T,I,R,D,P> & T>
 
-    private readonly cache: Storage
-    private readonly memory: Storage
-    private readonly environment: Storage
+    private readonly cache: Storage<unknown>
+    private readonly memory: Storage<unknown>
+    private readonly environment: Storage<unknown>
 
-    private preset: PartialObject<P>
+    private preset: Partial<P>
 
-    constructor(memory: StorageType = new Map()) {
+    constructor(memory: StorageType<unknown> = new Map()) {
         this.preset = {}
 
         this.filters = new FilterApi()
+        this.options = new Storage(new Map())
+
+        this.registrar = new RegistrarApi(this.filters, this.options)
 
         this.deferred = new DeferredApi()
         this.aftermath = new DeferredApi()
@@ -75,6 +84,7 @@ export class MetaFilterManager<T,I,R extends Readiable, D extends object, P exte
     private getAftermathInternals(t: T): ManagerInfo<T,I,R,D,P> & T {
         return Object.assign({}, {
             filters: this.filters,
+            options: this.options,
 
             cache: this.cache,
             memory: this.memory,
@@ -98,10 +108,10 @@ export class MetaFilterManager<T,I,R extends Readiable, D extends object, P exte
     filterAccessor(t: T, i: I): FilterAccessor<R,D> {
         return {
             getProcessor: (name: string): FilterProcessor<R,D> => {
-                const options = this.filters.getOrDefaultOptions(name)
+                const options = this.options.get(name, {})
 
                 return {
-                    execute: (data: Filterable<D>, r: R): FilterResult => {
+                    execute: (data: Filterable, r: R): FilterResult => {
                         return this.filters.execute(name, data, this.getInternals(t, i, r))
                     },
                     options: options,
@@ -128,11 +138,11 @@ export class MetaFilterManager<T,I,R extends Readiable, D extends object, P exte
         this.deferred.clear()
     }
 
-    addRecipe(recipe: (filters: FilterApi<R,D>) => void): void {
-        recipe(this.filters)
+    addRecipe(recipe: (registrar: RegistrarApi<R,D>) => void): void {
+        recipe(this.registrar)
     }
 
-    setPreset(preset: PartialObject<P> = {}) {
+    setPreset(preset: Partial<P> = {}) {
         this.preset = preset
     }
 }

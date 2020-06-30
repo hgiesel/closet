@@ -1,5 +1,5 @@
 name: "Order inline items with lists"
 code: |
-    [[mix1::Russell's sign||Granulosa cell tumor[[ord::1||2]]]]
+    [[mix1::Russell's sign||Granulosa cell tumor[[ord::1,2]]]]
     - [[mix2::indirect sign of bulimia nervosa or anorexia nervosa]]
     - [[mix2::ovarian tumor associated with estrogen secretion]]

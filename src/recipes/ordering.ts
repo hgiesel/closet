@@ -10,15 +10,12 @@ export const orderingRecipe = ({
     tagname = 'ord',
     shuffleTagname = 'mix',
 } = {}) => (registrar: Registrar<{}>) => {
-    const ordFilter = (
-        tag: TagData,
-        { deferred, cache }: Internals<{}>,
-    ) => {
+    const ordFilter = (tag: TagData, { deferred, cache }: Internals<{}>) => {
         // mixes occupied by other ords
         const ordOccupiedKey = `${tag.key}:ord:occupied`
 
-        const toBeOrdered = toNumbers(tag.values(','))
-            .filter((v: number) => !(cache.get(ordOccupiedKey, []) as number[]).includes(v))
+        const toBeOrdered = toNumbers(tag.values)
+            .filter((v: number) => !cache.get<number[]>(ordOccupiedKey, []).includes(v))
 
         cache.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])
 
@@ -34,15 +31,15 @@ export const orderingRecipe = ({
             for (const mk of mixKeys) {
                 deferred.block(`${mk}:mix`)
 
-                const waitingSet = (cache.get(`${mk}:waitingSet`, new Set()) as Set<string>)
+                const waitingSet = cache.get<Set<string>>(`${mk}:waitingSet`, new Set())
 
                 if (waitingSet.size !== 0) {
                     continue
                 }
 
-                const mixItems = cache.get(mk, []) as string[]
+                const mixItems = cache.get<string[]>(mk, [])
                 const toppedUpIndices = topUpSortingIndices(
-                    cache.get(ordKey, []) as number[],
+                    cache.get<number[]>(ordKey, []),
                     mixItems.length,
                 )
 
@@ -71,5 +68,5 @@ export const orderingRecipe = ({
         return ''
     }
 
-    registrar.register(tagname, ordFilter as any)
+    registrar.register(tagname, ordFilter, { separators: [','] })
 }

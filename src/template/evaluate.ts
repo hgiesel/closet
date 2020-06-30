@@ -80,8 +80,6 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
             ? tagInfo.data.shadowFromText(innerText, lend, rend)
             : tagInfo.data.shadowFromTextWithoutDelimiters(innerText, lend, rend)
 
-        console.log('ttp', innerText, tagPath, tagData)
-
         // save uppermost tags beneath base
         if (depth === baseDepth - 1) {
             baseStack.push([lend, rend])

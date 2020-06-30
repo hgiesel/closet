@@ -54,14 +54,12 @@ export class FilterManager<P extends object> extends MetaFilterManager<TemplateI
         const accessor = this.filterAccessor(template, iteration)
 
         return (name: string): TagProcessor => {
+
             const processor = accessor.getProcessor(name)
-            const options = fillDataOptions(processor.options)
 
             return {
-                execute: (data: TagData, round: RoundInfo): ProcessorOutput => {
-                    return filterResultToProcessorOutput(processor.execute(data, round))
-                },
-                options: options,
+                execute: (data: TagData, round: RoundInfo): ProcessorOutput => filterResultToProcessorOutput(processor.execute(data, round)),
+                getOptions: () => fillDataOptions(processor.getOptions()),
             }
         }
     }

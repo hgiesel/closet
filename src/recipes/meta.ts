@@ -4,8 +4,6 @@ const paramPattern = /%(.)/gu
 const defOptions = { separators: [{ sep: '::', max: 2 }], capture: true }
 
 const matcher = (argTag: TagData) => (match: string, p1: string) => {
-    console.log('foo', match, p1)
-
     const num = Number(p1)
     if (Number.isNaN(num)) {
         switch (p1) {

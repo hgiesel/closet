@@ -43,7 +43,7 @@ interface FilterAccessor<R,D> {
 
 interface FilterProcessor<R,D> {
     execute: (data: Filterable, r: R) => FilterResult
-    options: Partial<D>
+    getOptions: () => Partial<D>
 }
 
 export class MetaFilterManager<T,I,R extends Readiable, D extends object, P extends object> {
@@ -110,13 +110,9 @@ export class MetaFilterManager<T,I,R extends Readiable, D extends object, P exte
     filterAccessor(t: T, i: I): FilterAccessor<R,D> {
         return {
             getProcessor: (name: string): FilterProcessor<R,D> => {
-                const options = this.options.get(name, {})
-
                 return {
-                    execute: (data: Filterable, r: R): FilterResult => {
-                        return this.filters.execute(name, data, this.getInternals(t, i, r))
-                    },
-                    options: options,
+                    execute: (data: Filterable, r: R): FilterResult => this.filters.execute(name, data, this.getInternals(t, i, r)),
+                    getOptions: () => this.options.get(name, {}),
                 }
             },
         }

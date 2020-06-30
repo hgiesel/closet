@@ -30,7 +30,7 @@ export type TagAccessor = (name: string) => TagProcessor
 
 export interface TagProcessor {
     execute: (data: TagData, round: RoundInfo) => ProcessorOutput
-    options: DataOptions
+    getOptions: () => DataOptions
 }
 
 const isReady = (v: Status): boolean => v === Status.Ready
@@ -56,13 +56,14 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
         stack.push(stack[stack.length - 1])
 
         const [
+            wasCapture,
             innerText,
             /* tagPath */,
             innerStack,
             innerStatusStack,
-        ] = tagProcessor.options.capture
-            ? [text, tagPath, stack, tagInfo.innerTags.map((_v: TagInfo) => Status.NotReady)] 
-            : tagInfo.innerTags.reduce(foldTag, [text, [...tagPath, 0], stack, []])
+        ]: [boolean, string, number[], number[], Status[]] = tagProcessor.getOptions().capture
+            ? [true, text, tagPath, stack, tagInfo.innerTags.map((_v: TagInfo) => Status.NotReady)] 
+            : [false, ...tagInfo.innerTags.reduce(foldTag, [text, [...tagPath, 0], stack, []]) as [string, number[], number[], Status[]]]
 
         // going UP
         const innerOffset = innerStack.pop() as number - innerStack[innerStack.length - 1]
@@ -79,6 +80,8 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
             ? tagInfo.data.shadowFromText(innerText, lend, rend)
             : tagInfo.data.shadowFromTextWithoutDelimiters(innerText, lend, rend)
 
+        console.log('ttp', innerText, tagPath, tagData)
+
         // save uppermost tags beneath base
         if (depth === baseDepth - 1) {
             baseStack.push([lend, rend])
@@ -89,13 +92,13 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
 
         ///////////////////// Evaluate current tag
 
-        tagData.setSeparators(tagProcessor.options.separators)
+        tagData.setSeparators(tagProcessor.getOptions().separators)
 
         const roundInfo: RoundInfo = {
             path: tagPath,
             depth: depth,
             ready: allReady,
-            capture: tagProcessor.options.capture,
+            capture: wasCapture,
         }
 
         const filterOutput = tagProcessor.execute(tagData, roundInfo)

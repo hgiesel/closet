@@ -49,6 +49,9 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
          */
 
         // going DOWN
+        const tagProcessor = tagAccessor(tagInfo.data.getFilterKey(/* filterKey cannot change from inner replacement */))
+        const depth = tagPath.length
+
         stack.push(stack[stack.length - 1])
 
         const [
@@ -56,9 +59,11 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
             /* tagPath */,
             innerStack,
             innerStatusStack,
-        ] = tagInfo.innerTags.reduce(foldTag, [text, [...tagPath, 0], stack, []])
+        ] = tagProcessor.options.capture
+            ? [text, tagPath, stack, tagInfo.innerTags.map((_v: TagInfo) => Status.NotReady)] 
+            : tagInfo.innerTags.reduce(foldTag, [text, [...tagPath, 0], stack, []])
 
-        // get offsets
+        // going UP
         const innerOffset = innerStack.pop() as number - innerStack[innerStack.length - 1]
         const leftOffset = innerStack.pop() as number
 
@@ -69,7 +74,6 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
         ] = calculateCoordinates(tagInfo.start, tagInfo.end, leftOffset, innerOffset)
 
         // correctly treat the base levels: they don't have have tags!
-        const depth = tagPath.length
         const tagData = depth < baseDepth
             ? tagInfo.data.shadowFromText(innerText, lend, rend)
             : tagInfo.data.shadowFromTextWithoutDelimiters(innerText, lend, rend)
@@ -83,14 +87,14 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
         const allReady = innerStatusStack.reduce((accu: boolean, v: Status) => accu && isReady(v), true)
 
         ///////////////////// Evaluate current tag
+
+        tagData.setSeparators(tagProcessor.options.separators)
+
         const roundInfo: RoundInfo = {
             path: tagPath,
             ready: allReady,
             depth: depth,
         }
-
-        const tagProcessor = tagAccessor(tagData.getFilterKey())
-        tagData.setSeparators(tagProcessor.options.separators)
 
         const filterOutput = tagProcessor.execute(tagData, roundInfo)
 

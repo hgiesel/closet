@@ -12,7 +12,9 @@ const matcher = (argTag: TagData) => (match: string, p1: string) => {
             case '%':
                 return p1
             case 'n':
-                return argTag.num ? String(argTag.num) : ''
+                return typeof argTag.num === 'number'
+                    ? String(argTag.num)
+                    : ''
             case 'k':
                 return argTag.key
             case 'f':
@@ -24,7 +26,9 @@ const matcher = (argTag: TagData) => (match: string, p1: string) => {
     }
 
     if (num >= 0) {
-        return argTag.valuesText ? argTag.values[num] : ''
+        return argTag.valuesText
+            ? argTag.values[num] ?? ''
+            : ''
     }
 }
 

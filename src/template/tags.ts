@@ -39,7 +39,7 @@ const splitValues = (text: string, seps: Separator[]) => {
         : splits.map(v => splitValues(v, nextSeps))
 }
 
-const keyPattern = /^([^0-9]+)([0-9]*)$/u
+const keyPattern = /^(.+?)([0-9]*)$/u
 
 export class TagData {
     readonly fullKey: string

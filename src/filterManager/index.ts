@@ -25,6 +25,7 @@ import {
 export interface ManagerInfo<T,I,R extends Readiable, D extends object, P extends object> {
     filters: FilterApi<R>
     options: Storage<Partial<D>>
+    registrar: RegistrarApi<R, Partial<D>>
 
     cache: Storage<unknown>
     memory: Storage<unknown>
@@ -85,6 +86,7 @@ export class MetaFilterManager<T,I,R extends Readiable, D extends object, P exte
         return Object.assign({}, {
             filters: this.filters,
             options: this.options,
+            registrar: this.registrar,
 
             cache: this.cache,
             memory: this.memory,

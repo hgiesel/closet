@@ -12,7 +12,7 @@ import { multipleChoiceShowRecipe, multipleChoiceHideRecipe, multipleChoiceRevea
 import { styleRecipe, processRecipe } from './stylizing'
 
 import { debugRecipe } from './debug'
-import { metaRecipe } from './meta'
+import { defRecipe } from './meta'
 import { activateRecipe, deactivateRecipe, toggleRecipe } from './activate'
 
 export const recipes: Recipes = {
@@ -35,7 +35,7 @@ export const recipes: Recipes = {
     toggle: toggleRecipe,
 
     debug: debugRecipe,
-    meta: metaRecipe,
+    meta: defRecipe,
 }
 
 import { wrap, wrapWithDeferred, wrapWithAftermath } from './wrappers'

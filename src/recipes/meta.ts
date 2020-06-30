@@ -1,36 +1,44 @@
 import type { Registrar, TagData, WeakFilterResult } from './types'
 
-const paramPattern = /%(\d*)/u
-const metaSeparators = { separators: [{ sep: '::' }, { sep: '||' }]}
+const paramPattern = /%(.)/gu
+const defOptions = { separators: [{ sep: '::', max: 2 }], capture: true }
 
-export const metaRecipe = () => (registrar: Registrar<{}>) => {
-    const metaFilter = (tag: TagData): WeakFilterResult => {
-        const outerValues = tag.values
+const matcher = (argTag: TagData) => (match: string, p1: string) => {
+    console.log('foo', match, p1)
+
+    const num = Number(p1)
+    if (Number.isNaN(num)) {
+        switch (p1) {
+            case '%':
+                return p1
+            case 'n':
+                return argTag.num ? String(argTag.num) : ''
+            case 'k':
+                return argTag.key
+            case 'f':
+                return argTag.fullKey
+
+            default:
+                return match
+        }
+    }
+
+    if (num >= 0) {
+        return argTag.valuesText ? argTag.values[num] : ''
+    }
+}
+
+export const defRecipe = () => (registrar: Registrar<{}>) => {
+    const innerOptions = { separators: [{ sep: '::' }] }
+
+    const defFilter = (tag: TagData): WeakFilterResult => {
+        const [
+            definedTag,
+            template,
+        ] = tag.values
 
         const innerFilter = (tag: TagData) => {
-            const innerValues = tag.values
-
-            const result = '[[' + outerValues
-                .slice(1)
-                .map((vs: string[]) => {
-                    return vs.map((v: string): string => {
-                        const match = v.match(paramPattern)
-
-                        if (match) {
-                            const paramNo = match[1].length === 0
-                                ? 0
-                                : Number(match[1])
-
-                            return innerValues && innerValues[paramNo]
-                                ? innerValues[paramNo].join('||')
-                                : ''
-                        }
-
-                        return v
-                    }).join('||')
-                })
-                .join('::') + ']]'
-
+            const result = template.replace(paramPattern, matcher(tag))
 
             return {
                 result: result,
@@ -38,12 +46,12 @@ export const metaRecipe = () => (registrar: Registrar<{}>) => {
             }
         }
 
-        registrar.register(outerValues[0][0], innerFilter, metaSeparators)
+        registrar.register(definedTag, innerFilter, innerOptions)
 
         return {
-            ready: true,
+            result: '',
         }
     }
 
-    registrar.register('def', metaFilter, metaSeparators)
+    registrar.register('def', defFilter, defOptions)
 }

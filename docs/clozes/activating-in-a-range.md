@@ -14,3 +14,8 @@ parent: Clozes
 {% assign setups = site.data.setups %}
 
 {% include toc-doc.md %}
+
+## Activating tags in a range
+
+This is also known as _overlapping clozes_.
+It is especially popular with remembering poems.

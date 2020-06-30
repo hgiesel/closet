@@ -1,4 +1,4 @@
-import type { TagInfo, TagData } from './tags'
+import type { TagInfo, TagData, Separator } from './tags'
 import type { Parser } from './parser'
 
 import { calculateCoordinates, replaceAndGetOffset, flatMapViaStatusList } from './utils'
@@ -20,12 +20,22 @@ export interface ProcessorOutput {
     status: Status
 }
 
-export type TagProcessor = (data: TagData, round: RoundInfo) => ProcessorOutput
+export interface DataOptions {
+    separators: Array<string | Partial<Separator>>
+    capture: boolean
+}
+
+export type TagAccessor = (name: string) => TagProcessor
+
+export interface TagProcessor {
+    execute: (data: TagData, round: RoundInfo) => ProcessorOutput
+    options: DataOptions
+}
 
 const isReady = (v: Status): boolean => v === Status.Ready
 const canReplace = (v: Status): boolean => v !== Status.NotReady
 
-export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: number, tagProcessor: TagProcessor, parser: Parser): [string, number[], boolean, [number, number][]] => {
+export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: number, tagAccessor: TagAccessor, parser: Parser): [string, number[], boolean, [number, number][]] => {
     const baseStack: [number, number][] = []
 
     const foldTag = ([text, tagPath, stack, statusStack]: [string, number[], number[], Status[]], tagInfo: TagInfo): [string, number[], number[], Status[]] => {
@@ -78,7 +88,11 @@ export const evaluateTemplate = (baseText: string, rootTag: TagInfo, baseDepth: 
             ready: allReady,
             depth: depth,
         }
-        const filterOutput = tagProcessor(tagData, roundInfo)
+
+        const tagProcessor = tagAccessor(tagData.getFilterKey())
+        tagData.setSeparators(tagProcessor.options.separators)
+
+        const filterOutput = tagProcessor.execute(tagData, roundInfo)
 
         // whether this tagInfo itself is ready
         statusStack.push(filterOutput.status)

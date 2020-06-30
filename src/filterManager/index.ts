@@ -33,7 +33,14 @@ export interface ManagerInfo<T,I,R extends Readiable, D extends object, P extend
     preset: PartialObject<P>
 }
 
-type FilterProcessor<R,D> = (data: Filterable<D>, r: R) => FilterResult
+interface FilterAccessor<R,D> {
+    getProcessor: (name: string) => FilterProcessor<R,D>
+}
+
+interface FilterProcessor<R,D> {
+    execute: (data: Filterable<D>, r: R) => FilterResult
+    options: Partial<D>
+}
 
 export class MetaFilterManager<T,I,R extends Readiable, D extends object, P extends object> {
     readonly filters: FilterApi<R,D>
@@ -88,9 +95,18 @@ export class MetaFilterManager<T,I,R extends Readiable, D extends object, P exte
         return Object.assign(this.getDeferredInternals(t, i), r)
     }
 
-    filterProcessor(t: T, i: I): FilterProcessor<R,D> {
-        return (data: Filterable<D>, r: R): FilterResult => {
-            return this.filters.execute(data, this.getInternals(t, i, r))
+    filterAccessor(t: T, i: I): FilterAccessor<R,D> {
+        return {
+            getProcessor: (name: string): FilterProcessor<R,D> => {
+                const options = this.filters.getOrDefaultOptions(name)
+
+                return {
+                    execute: (data: Filterable<D>, r: R): FilterResult => {
+                        return this.filters.execute(name, data, this.getInternals(t, i, r))
+                    },
+                    options: options,
+                }
+            },
         }
     }
 

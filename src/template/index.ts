@@ -1,5 +1,5 @@
 import type { TagInfo, TagData } from './tags'
-import type { TagProcessor } from './evaluate'
+import type { TagAccessor } from './evaluate'
 
 import { Parser } from './parser'
 import { evaluateTemplate } from './evaluate'
@@ -14,8 +14,9 @@ export interface IterationInfo {
     baseDepth: number
 }
 
+// TagRenderer -> TagAcessor -> TagProcessor
 export interface TagRenderer {
-    makeProcessor: (t: TemplateInfo, i: IterationInfo) => TagProcessor
+    makeAccessor: (t: TemplateInfo, i: IterationInfo) => TagAccessor
     finishIteration: (t: TemplateInfo, i: IterationInfo) => void
     finishRun: (t: TemplateInfo) => void
 }
@@ -106,7 +107,7 @@ export class Template {
                 text,
                 this.rootTag,
                 this.baseDepth,
-                tagRenderer.makeProcessor(templateInfo, iterationInfo),
+                tagRenderer.makeAccessor(templateInfo, iterationInfo),
                 this.parser,
             )
 

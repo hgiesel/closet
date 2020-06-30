@@ -4,11 +4,6 @@ import {
     ARG_SEP,
 } from './utils'
 
-export interface DataOptions {
-    separators: Array<string | Partial<Separator>>
-    capture: boolean
-}
-
 export interface Separator {
     sep: string
     max: number
@@ -57,8 +52,6 @@ export class TagData {
     _fullOccur: number
     _occur: number
 
-    capture: boolean = false
-
     constructor(
         fullKey: string,
         valuesText: string | null,
@@ -72,16 +65,10 @@ export class TagData {
         this.valuesText = valuesText
     }
 
-    private setSeparators(seps: Array<string | Partial<Separator>>) {
+    setSeparators(seps: Array<string | Partial<Separator>>) {
         this.separators = seps.map((v: string | Partial<Separator>): Separator => typeof v === 'string'
             ? { sep: v, max: Infinity }
             : { sep: v.sep ?? '::', max: v.max ?? Infinity })
-    }
-
-    setOptions(dataOptions: Partial<DataOptions> = {}) {
-        // default options from filter manager is {}
-        this.setSeparators(dataOptions.separators ?? [])
-        this.capture = dataOptions.capture ?? false
     }
 
     hasValues(): boolean {

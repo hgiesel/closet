@@ -63,8 +63,11 @@ const multipleChoicePublicApi = (
     choice2: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
 ): Recipe<FlashcardPreset> => (options: {
     tagname?: string,
+
     switcherKeyword?: string,
     activeKeyword?: string,
+    bottomRangeKeyword?: string,
+    topRangeKeyword?: string,
 
     frontStylizer?: Stylizer,
     backStylizer?: Stylizer,
@@ -78,8 +81,12 @@ const multipleChoicePublicApi = (
 } = {})  => {
     const {
         tagname = 'mc',
+
         switcherKeyword = 'switch',
         activeKeyword = 'active',
+        bottomRangeKeyword = 'bottom',
+        topRangeKeyword = 'top',
+
         frontStylizer = defaultFrontStylizer,
         backStylizer = defaultBackStylizer,
         sortInStrategy = topUp,
@@ -96,8 +103,11 @@ const multipleChoicePublicApi = (
 
     return multipleChoiceRecipe({
         tagname: tagname,
+
         switcherKeyword: switcherKeyword,
         activeKeyword: activeKeyword,
+        bottomRangeKeyword: bottomRangeKeyword,
+        topRangeKeyword: topRangeKeyword,
 
         frontStylizer: frontStylizer,
         backStylizer: backStylizer,

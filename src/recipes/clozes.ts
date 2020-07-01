@@ -40,8 +40,11 @@ const clozePublicApi = (
     choice2: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
 ): Recipe<FlashcardPreset> => (options: {
     tagname?: string,
+
     switcherKeyword?: string,
     activeKeyword?: string,
+    bottomRangeKeyword?: string,
+    topRangeKeyword?: string,
 
     activeStylizer?: Stylizer,
 
@@ -52,8 +55,12 @@ const clozePublicApi = (
 } = {}) => {
     const {
         tagname = 'c',
+
         switcherKeyword = 'switch',
         activeKeyword = 'active',
+        bottomRangeKeyword = 'bottom',
+        topRangeKeyword = 'top',
+
         activeStylizer = defaultStylizer,
         activeEllipser = hintEllipser,
         inactiveEllipser = noneEllipser,
@@ -65,8 +72,11 @@ const clozePublicApi = (
 
     return clozeRecipe({
         tagname: tagname,
+
         switcherKeyword: switcherKeyword,
         activeKeyword: activeKeyword,
+        bottomRangeKeyword: bottomRangeKeyword,
+        topRangeKeyword: topRangeKeyword,
 
         frontStylizer: activeStylizer,
         backStylizer: activeStylizer,

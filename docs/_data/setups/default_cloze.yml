@@ -4,9 +4,13 @@ code: |
     Closet.recipes.clozeShow({ tagname: 'c' }),
     Closet.recipes.clozeHide({ tagname: 'ch' }),
     Closet.recipes.clozeReveal({ tagname: 'cr' }),
+
     Closet.recipes.activate({ tagname: 'on' }),
     Closet.recipes.deactivate({ tagname: 'off' }),
     Closet.recipes.toggle({ tagname: 'toggle' }),
+
+    Closet.recipes.setNumber({ tagname: 'top', storeId: 'top' }),
+    Closet.recipes.setNumber({ tagname: 'bottom', storeId: 'bottom' }),
   ]
 
   for (const recipe of recipes) {

@@ -71,13 +71,13 @@ export const valueStoreTemplate = <T extends ValueStore<U>, U>(
 ) => (
     storeId: string,
     defaultValue: U,
-    operation: (val: string) => (a: T) => void,
+    operation: (...vals: string[]) => (a: T) => void,
 ) => (tag: TagData, { cache }: Internals<{}>) => {
     const commands = tag.values
 
     commands.forEach((cmd: string) => {
         const at = cmd
-        cache.over(storeId, operation(at), new T(defaultValue))
+        cache.over(storeId, operation(...at), new T(defaultValue))
     })
 
     return { ready: true }

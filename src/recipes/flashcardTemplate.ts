@@ -22,8 +22,11 @@ export const flashcardTemplate = (
     backInactiveBehavior: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
 ) => ({
     tagname,
+
     switcherKeyword = 'switch',
     activeKeyword = 'active',
+    bottomRangeKeyword = 'bottom',
+    topRangeKeyword = 'top',
 
     frontStylizer,
     backStylizer,
@@ -33,8 +36,11 @@ export const flashcardTemplate = (
     inactiveEllipser,
 }: {
     tagname: string,
+
     switcherKeyword: string,
     activeKeyword: string,
+    bottomRangeKeyword: string,
+    topRangeKeyword: string,
 
     frontStylizer: Stylizer,
     backStylizer: Stylizer,
@@ -45,8 +51,10 @@ export const flashcardTemplate = (
 }) => (registrar: Registrar<FlashcardPreset>) => {
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
+    let bottomRange = 0
+    let topRange = 0
 
-    const isActiveWithOverwrite = (t: TagData, inter: Internals<FlashcardPreset>) => isActive(t, inter) || activeOverwrite
+    const isActiveWithOverwrite = (t: TagData, inter: Internals<FlashcardPreset>) => activeOverwrite || isActive(bottomRange, topRange)(t, inter)
 
     const flashcardRecipe = fourWayWrap(
         isActiveWithOverwrite,
@@ -68,6 +76,16 @@ export const flashcardTemplate = (
         activeOverwrite = inter.cache.get<StoreGetter<boolean>>(
             activeKeyword,
             defaultGet(false),
+        ).get(tag.key, tag.num, tag.fullOccur)
+
+        bottomRange = inter.cache.get<StoreGetter<number>>(
+            bottomRangeKeyword,
+            defaultGet(0),
+        ).get(tag.key, tag.num, tag.fullOccur)
+
+        topRange = inter.cache.get<StoreGetter<number>>(
+            topRangeKeyword,
+            defaultGet(0),
         ).get(tag.key, tag.num, tag.fullOccur)
 
         return  inter.filters.get(theFilter)(tag, inter)

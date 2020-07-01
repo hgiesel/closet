@@ -2,24 +2,24 @@ import type { Registrar } from './types'
 
 import { ValueStore, valueStoreTemplate } from './valueStore'
 
-class NumStore extends ValueStore<number> {
-    setNumber(at: string, value = 0): void {
+class NumberStore extends ValueStore<number> {
+    setNumber(at: string, value: number): void {
         const [key, num, occur] = this.getComponents(at)
-        this.set(key, num, occur, value)
+        this.set(key, num, occur, Number.isNaN(value) ? 0 : value)
     }
 
-    increment(at: string, value = 1): void {
+    increment(at: string, value: number): void {
         const [key, num, occur] = this.getComponents(at)
-        this.set(key, num, occur, this.get(key, num, occur) + value)
+        this.set(key, num, occur, this.get(key, num, occur) + (Number.isNaN(value) ? 1 : value))
     }
 
-    decrement(at: string, value = 1): void {
+    decrement(at: string, value: number): void {
         const [key, num, occur] = this.getComponents(at)
-        this.set(key, num, occur, this.get(key, num, occur) - value)
+        this.set(key, num, occur, this.get(key, num, occur) - (Number.isNaN(value) ? 1 : value))
     }
 }
 
-const numStoreFilterTemplate = valueStoreTemplate(NumStore)
+const numStoreFilterTemplate = valueStoreTemplate(NumberStore)
 
 export const incrementRecipe = ({
     tagname = 'inc',
@@ -30,8 +30,8 @@ export const incrementRecipe = ({
     registrar.register(tagname, numStoreFilterTemplate(
         storeId,
         0,
-        (val) => (numberMap) => {
-            numberMap.increment(val)
+        (at, val) => (numberMap) => {
+            numberMap.increment(at, Number(val))
         }
     ), { separators: [separator, assignmentSeparator] })
 }
@@ -45,8 +45,8 @@ export const decrementRecipe = ({
     registrar.register(tagname, numStoreFilterTemplate(
         storeId,
         0,
-        (val) => (numberMap) => {
-            numberMap.decrement(val)
+        (at, val) => (numberMap) => {
+            numberMap.decrement(at, Number(val))
         }
     ), { separators: [separator, assignmentSeparator] })
 }
@@ -60,8 +60,8 @@ export const setNumberRecipe = ({
     registrar.register(tagname, numStoreFilterTemplate(
         storeId,
         0,
-        (val) => (numberMap) => {
-            numberMap.setNumber(val)
+        (at, val) => (numberMap) => {
+            numberMap.setNumber(at, Number(val))
         }
     ), { separators: [separator, assignmentSeparator] })
 }

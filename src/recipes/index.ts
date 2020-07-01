@@ -14,6 +14,7 @@ import { styleRecipe, processRecipe } from './stylizing'
 import { debugRecipe } from './debug'
 import { defRecipe } from './meta'
 import { activateRecipe, deactivateRecipe, toggleRecipe } from './boolStore'
+import { setNumberRecipe, incrementRecipe, decrementRecipe } from './numberStore'
 
 export const recipes: Recipes = {
     shuffling: shufflingRecipe,
@@ -33,6 +34,10 @@ export const recipes: Recipes = {
     activate: activateRecipe,
     deactivate: deactivateRecipe,
     toggle: toggleRecipe,
+
+    setNumber: setNumberRecipe,
+    increment: incrementRecipe,
+    decrement: decrementRecipe,
 
     debug: debugRecipe,
     meta: defRecipe,

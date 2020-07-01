@@ -21,7 +21,7 @@ export const flashcardTemplate = (
 ) => ({
     tagname,
     switcherKeyword = 'switch',
-    activateKeyword = 'activate',
+    activeKeyword = 'active',
 
     frontStylizer,
     backStylizer,
@@ -32,7 +32,7 @@ export const flashcardTemplate = (
 }: {
     tagname: string,
     switcherKeyword: string,
-    activateKeyword: string,
+    activeKeyword: string,
 
     frontStylizer: Stylizer,
     backStylizer: Stylizer,
@@ -66,7 +66,7 @@ export const flashcardTemplate = (
         ).get(storeKey)
 
         activeOverwrite = inter.cache.get<{ get: (storeKey: string) => boolean }>(
-            activateKeyword,
+            activeKeyword,
             defaultGet(false),
         ).get(storeKey)
 

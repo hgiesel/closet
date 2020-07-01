@@ -1,3 +1,5 @@
+import { TagData, Internals } from './types'
+
 export const storeKeyPattern = /^([a-zA-Z0-9%\/]+?)([0-9]*|\*)$/u
 
 export class ValueStore<T> {
@@ -56,4 +58,21 @@ export class ValueStore<T> {
 
         return this.defaultValue
     }
+}
+
+export const valueStoreTemplate = <T extends ValueStore<U>, U>(
+    T: new (u: U) => T,
+) => (
+    storeId: string,
+    defaultValue: U,
+    operation: (val: string) => (a: T) => void,
+) => (tag: TagData, { cache }: Internals<{}>) => {
+    const commands = tag.values
+
+    commands.forEach((cmd: string) => {
+        const at = cmd
+        cache.over(storeId, operation(at), new T(defaultValue))
+    })
+
+    return { ready: true }
 }

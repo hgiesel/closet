@@ -13,7 +13,7 @@ import { styleRecipe, processRecipe } from './stylizing'
 
 import { debugRecipe } from './debug'
 import { defRecipe } from './meta'
-import { activateRecipe, deactivateRecipe, toggleRecipe } from './activate'
+import { activateRecipe, deactivateRecipe, toggleRecipe } from './boolStore'
 
 export const recipes: Recipes = {
     shuffling: shufflingRecipe,

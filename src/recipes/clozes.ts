@@ -41,7 +41,7 @@ const clozePublicApi = (
 ): Recipe<FlashcardPreset> => (options: {
     tagname?: string,
     switcherKeyword?: string,
-    activateKeyword?: string,
+    activeKeyword?: string,
 
     activeStylizer?: Stylizer,
 
@@ -53,7 +53,7 @@ const clozePublicApi = (
     const {
         tagname = 'c',
         switcherKeyword = 'switch',
-        activateKeyword = 'activate',
+        activeKeyword = 'active',
         activeStylizer = defaultStylizer,
         activeEllipser = hintEllipser,
         inactiveEllipser = noneEllipser,
@@ -66,7 +66,7 @@ const clozePublicApi = (
     return clozeRecipe({
         tagname: tagname,
         switcherKeyword: switcherKeyword,
-        activateKeyword: activateKeyword,
+        activeKeyword: activeKeyword,
 
         frontStylizer: activeStylizer,
         backStylizer: activeStylizer,

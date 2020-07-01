@@ -1,6 +1,6 @@
-import type { TagData, Registrar, Internals } from './types'
+import type { Registrar } from './types'
 
-import { ValueStore } from './valueStore'
+import { ValueStore, valueStoreTemplate } from './valueStore'
 
 class BoolStore extends ValueStore<boolean> {
     on(value: string): void {
@@ -27,26 +27,16 @@ class BoolStore extends ValueStore<boolean> {
     }
 }
 
-const activateFilterTemplate = (
-    activateId: string,
-    operation: (val: string) => (a: BoolStore) => void,
-) => (tag: TagData, { cache }: Internals<{}>) => {
-    const commands = tag.values
-
-    commands.forEach((at: string) => {
-        cache.over(`${activateId}`, operation(at), new BoolStore(false))
-    })
-
-    return { ready: true }
-}
+const numStoreFilterTemplate = valueStoreTemplate(BoolStore)
 
 export const activateRecipe = ({
     tagname = 'on',
-    activateId = 'activate',
+    activateId = 'active',
     separator = { sep: ',' },
 } = {}) => (registrar: Registrar<{}>) => {
-    registrar.register(tagname, activateFilterTemplate(
+    registrar.register(tagname, numStoreFilterTemplate(
         activateId,
+        false,
         (val) => (activateMap) => {
             activateMap.on(val)
         }
@@ -55,11 +45,12 @@ export const activateRecipe = ({
 
 export const deactivateRecipe = ({
     tagname = 'off',
-    activateId = 'activate',
+    activateId = 'active',
     separator = { sep: ',' },
 } = {}) => (registrar: Registrar<{}>) => {
-    registrar.register(tagname, activateFilterTemplate(
+    registrar.register(tagname, numStoreFilterTemplate(
         activateId,
+        false,
         (val) => (activateMap) => {
             activateMap.off(val)
         }
@@ -68,11 +59,12 @@ export const deactivateRecipe = ({
 
 export const toggleRecipe = ({
     tagname = 'toggle',
-    activateId = 'activate',
+    activateId = 'active',
     separator = { sep: ',' },
 } = {}) => (registrar: Registrar<{}>) => {
-    registrar.register(tagname, activateFilterTemplate(
+    registrar.register(tagname, numStoreFilterTemplate(
         activateId,
+        false,
         (val) => (activateMap) => {
             activateMap.toggle(val)
         }

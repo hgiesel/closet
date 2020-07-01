@@ -64,7 +64,7 @@ const multipleChoicePublicApi = (
 ): Recipe<FlashcardPreset> => (options: {
     tagname?: string,
     switcherKeyword?: string,
-    activateKeyword?: string,
+    activeKeyword?: string,
 
     frontStylizer?: Stylizer,
     backStylizer?: Stylizer,
@@ -79,7 +79,7 @@ const multipleChoicePublicApi = (
     const {
         tagname = 'mc',
         switcherKeyword = 'switch',
-        activateKeyword = 'activate',
+        activeKeyword = 'active',
         frontStylizer = defaultFrontStylizer,
         backStylizer = defaultBackStylizer,
         sortInStrategy = topUp,
@@ -97,7 +97,7 @@ const multipleChoicePublicApi = (
     return multipleChoiceRecipe({
         tagname: tagname,
         switcherKeyword: switcherKeyword,
-        activateKeyword: activateKeyword,
+        activeKeyword: activeKeyword,
 
         frontStylizer: frontStylizer,
         backStylizer: backStylizer,

@@ -38,9 +38,7 @@ export class ValueStore<T> {
         return `${key}${numString}:${occurString}`
     }
 
-    get(value: string): T {
-        const [key, num, occur] = this.getComponents(value)
-
+    get(key: string, num: string | null, occur: string | null): T {
         const firstKey = this.getKey(key, num, occur)
         if (this.map.has(firstKey)) {
             return this.map.get(firstKey)
@@ -57,6 +55,14 @@ export class ValueStore<T> {
         }
 
         return this.defaultValue
+    }
+
+    set(key: string, num: string | null, occur: string | null, value: T): void {
+        this.map.set(this.getKey(key, num, occur), value)
+    }
+
+    has(key: string, num: string | null, occur: string | null): void {
+        this.map.has(this.getKey(key, num, occur))
     }
 }
 

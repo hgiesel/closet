@@ -7,6 +7,7 @@ import {
 export interface Separator {
     sep: string
     max: number
+    trim: boolean
 }
 
 export type WeakSeparator = Partial<Separator> | string
@@ -16,7 +17,7 @@ const splitValues = (text: string, seps: Separator[]) => {
         return text
     }
 
-    const [{ sep, max=Infinity }, ...nextSeps] = seps
+    const [{ sep, max, trim }, ...nextSeps] = seps
 
     let textSplit = text
 
@@ -28,7 +29,7 @@ const splitValues = (text: string, seps: Separator[]) => {
             ? [textSplit.slice(0, pos), textSplit.slice(pos + sep.length)]
             : [textSplit, '']
 
-        splits.push(currentSplit)
+        splits.push(trim ? currentSplit.trim() : currentSplit)
         textSplit = rest
     }
 
@@ -69,8 +70,8 @@ export class TagData {
 
     setSeparators(seps: Array<WeakSeparator>) {
         this.separators = seps.map((v: string | Partial<Separator>): Separator => typeof v === 'string'
-            ? { sep: v, max: Infinity }
-            : { sep: v.sep ?? '::', max: v.max ?? Infinity })
+            ? { sep: v, max: Infinity, trim: false }
+            : { sep: v.sep ?? '::', max: v.max ?? Infinity, trim: v.trim ?? false })
     }
 
     hasValues(): boolean {

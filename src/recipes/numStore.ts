@@ -1,86 +1,67 @@
-import type { TagData, Registrar, Internals } from './types'
+import type { Registrar } from './types'
 
-import { keyPattern } from './utils'
-import { ValueStore } from './valueStore'
+import { ValueStore, valueStoreTemplate } from './valueStore'
 
 class NumStore extends ValueStore<number> {
-    set(key: string, num: number | null, occur: number | null, value = 0): void {
-        const mapKey = this.getKey(key, num, occur)
-
-        this.map.set(mapKey, value)
+    setNumber(at: string, value = 0): void {
+        const [key, num, occur] = this.getComponents(at)
+        this.set(key, num, occur, value)
     }
 
-    inc(key: string, num: number | null, occur: number | null, inc = 1): void {
-        const mapKey = this.getKey(key, num, occur)
-
-        this.map.set(mapKey, this.get(key, num, occur) + inc)
+    increment(at: string, value = 1): void {
+        const [key, num, occur] = this.getComponents(at)
+        this.set(key, num, occur, this.get(key, num, occur) + value)
     }
 
-    dec(key: string, num: number | null, occur: number | null, dec = 1): void {
-        const mapKey = this.getKey(key, num, occur)
-
-        this.map.set(mapKey, this.get(key, num, occur) + dec)
+    decrement(at: string, value = 1): void {
+        const [key, num, occur] = this.getComponents(at)
+        this.set(key, num, occur, this.get(key, num, occur) - value)
     }
 }
 
-const activateFilterTemplate = (
-    activateId: string,
-    operation: (key: string, occur: number | null, num: number | null) => (a: ActivateMap) => void,
-) => (tag: TagData, { cache }: Internals<{}>) => {
-    const commands = tag.values
+const numStoreFilterTemplate = valueStoreTemplate(NumStore)
 
-    commands.forEach((val: string) => {
-        const [fullKey, occur] = val.split(':')
-        const [, key, num] = fullKey.match(keyPattern)
-
-        const theOccur = occur
-            ? Number(occur)
-            : null
-
-        const theNum = num.length === 0
-            ? null
-            : Number(num)
-
-        cache.over(`${key}:${activateId}`, operation(key, theNum, theOccur), new ActivateMap())
-    })
-
-    return ''
+export const incrementRecipe = ({
+    tagname = 'inc',
+    storeId = 'numerical',
+    separator = { sep: ',' },
+    assignmentSeparator = { sep: '=', trim: true },
+} = {}) => (registrar: Registrar<{}>) => {
+    registrar.register(tagname, numStoreFilterTemplate(
+        storeId,
+        0,
+        (val) => (numberMap) => {
+            numberMap.increment(val)
+        }
+    ), { separators: [separator, assignmentSeparator] })
 }
 
-// const activateDataOptions = { separators: [','] }
+export const decrementRecipe = ({
+    tagname = 'dec',
+    storeId = 'numerical',
+    separator = { sep: ',' },
+    assignmentSeparator = { sep: '=', trim: true },
+} = {}) => (registrar: Registrar<{}>) => {
+    registrar.register(tagname, numStoreFilterTemplate(
+        storeId,
+        0,
+        (val) => (numberMap) => {
+            numberMap.decrement(val)
+        }
+    ), { separators: [separator, assignmentSeparator] })
+}
 
-// export const activateRecipe = ({
-//     tagname,
-//     activateId = 'activate',
-// }) => (filterApi: Registrar<{}>) => {
-//     filterApi.register(tagname, activateFilterTemplate(
-//         activateId,
-//         (key, num, occur) => (activateMap) => {
-//             activateMap.on(key, num, occur)
-//         }
-//     ), activateDataOptions)
-// }
-
-// export const deactivateRecipe = ({
-//     tagname,
-//     activateId = 'activate',
-// }) => (filterApi: Registrar<{}>) => {
-//     filterApi.register(tagname, activateFilterTemplate(
-//         activateId,
-//         (key, num, occur) => (activateMap) => {
-//             activateMap.off(key, num, occur)
-//         }
-//     ), activateDataOptions)
-// }
-
-// export const toggleRecipe = ({
-//     tagname,
-//     activateId = 'activate',
-// }) => (filterApi: Registrar<{}>) => {
-//     filterApi.register(tagname, activateFilterTemplate(
-//         activateId,
-//         (key, num, occur) => (activateMap) => {
-//             activateMap.toggle(key, num, occur)
-//         }
-//     ), activateDataOptions)
-// }
+export const setNumberRecipe = ({
+    tagname = 'set',
+    storeId = 'numerical',
+    separator = { sep: ',' },
+    assignmentSeparator = { sep: '=', trim: true },
+} = {}) => (registrar: Registrar<{}>) => {
+    registrar.register(tagname, numStoreFilterTemplate(
+        storeId,
+        0,
+        (val) => (numberMap) => {
+            numberMap.setNumber(val)
+        }
+    ), { separators: [separator, assignmentSeparator] })
+}

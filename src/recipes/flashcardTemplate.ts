@@ -58,15 +58,17 @@ export const flashcardTemplate = (
     flashcardRecipe({ tagname: internalFilter })(registrar)
 
     const flashcardFilter = (tag: TagData, inter: Internals<FlashcardPreset>) => {
-        const theFilter = inter.cache.get<{ get: (k: string, n: number | null, o: number) => string }>(
-            `${tagname}:${switcherKeyword}`,
-            defaultGet(internalFilter),
-        ).get(tag.key, tag.num, tag.fullOccur)
+        const storeKey = `${tag.key}${tag.num ?? ''}:${tag.fullOccur}`
 
-        activeOverwrite = inter.cache.get<{ get: (k: string, n: number | null, o: number) => boolean }>(
-            `${tagname}:${activateKeyword}`,
+        const theFilter = inter.cache.get<{ get: (storeKey: string) => string }>(
+            switcherKeyword,
+            defaultGet(internalFilter),
+        ).get(storeKey)
+
+        activeOverwrite = inter.cache.get<{ get: (storeKey: string) => boolean }>(
+            activateKeyword,
             defaultGet(false),
-        ).get(tag.key, tag.num, tag.fullOccur)
+        ).get(storeKey)
 
         return  inter.filters.get(theFilter)(tag, inter)
     }

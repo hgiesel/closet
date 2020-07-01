@@ -1,129 +1,80 @@
-import type { TagData, Registrar, Internals, DataOptions } from './types'
-import { keyPattern } from './utils'
+import type { TagData, Registrar, Internals } from './types'
 
-class ActivateMap {
-    theMap: Map<string, boolean>
+import { ValueStore } from './valueStore'
 
-    constructor() {
-        this.theMap = new Map()
+class BoolStore extends ValueStore<boolean> {
+    on(value: string): void {
+        const mapKey = this.getKey(...this.getComponents(value))
+
+        this.map.set(mapKey, true)
     }
 
-    private getKey(key: string, num: number | null, occur: number | null): string {
-        const numString = typeof(num) === 'number'
-            ? String(num)
-            : 'all'
+    off(value: string): void {
+        const mapKey = this.getKey(...this.getComponents(value))
 
-        const occurString = typeof(occur) === 'number'
-            ? String(occur)
-            : 'all'
-
-        return `${key}:${numString}:${occurString}`
+        this.map.set(mapKey, false)
     }
 
-    on(key: string, num: number | null, occur: number | null): void {
-        const mapKey = this.getKey(key, num, occur)
+    toggle(value: string): void {
+        const mapKey = this.getKey(...this.getComponents(value))
 
-        this.theMap.set(mapKey, true)
-    }
-
-    off(key: string, num: number | null, occur: number | null): void {
-        const mapKey = this.getKey(key, num, occur)
-
-        this.theMap.set(mapKey, false)
-    }
-
-    toggle(key: string, num: number | null, occur: number | null): void {
-        const mapKey = this.getKey(key, num, occur)
-
-        if (this.theMap.has(mapKey)) {
-            this.theMap.set(mapKey, !this.theMap.get(mapKey))
+        if (this.map.has(mapKey)) {
+            this.map.set(mapKey, !this.map.get(mapKey))
         }
         else {
-            this.theMap.set(mapKey, true)
+            this.map.set(mapKey, !this.defaultValue)
         }
-    }
-
-    get(key: string, num: number | null, occur: number): boolean {
-        const firstKey = this.getKey(key, num, occur)
-
-        if (this.theMap.has(firstKey)) {
-            return this.theMap.get(firstKey) ?? false
-        }
-
-        const secondKey = this.getKey(key, num, null)
-
-        if (this.theMap.has(secondKey)) {
-            return this.theMap.get(secondKey) ?? false
-        }
-
-        const thirdKey = this.getKey(key, null, null)
-
-        if (this.theMap.has(thirdKey)) {
-            return this.theMap.get(thirdKey) ?? false
-        }
-
-        return false
     }
 }
 
 const activateFilterTemplate = (
     activateId: string,
-    operation: (key: string, occur: number | null, num: number | null) => (a: ActivateMap) => void,
+    operation: (val: string) => (a: BoolStore) => void,
 ) => (tag: TagData, { cache }: Internals<{}>) => {
     const commands = tag.values
 
-    commands.forEach((val: string) => {
-        const [fullKey, occur] = val.split(':')
-        const [, key, num] = fullKey.match(keyPattern)
-
-        const theOccur = occur
-            ? Number(occur)
-            : null
-
-        const theNum = num.length === 0
-            ? null
-            : Number(num)
-
-        cache.over(`${key}:${activateId}`, operation(key, theNum, theOccur), new ActivateMap())
+    commands.forEach((at: string) => {
+        cache.over(`${activateId}`, operation(at), new BoolStore(false))
     })
 
-    return ''
+    return { ready: true }
 }
-
-const activateDataOptions: Partial<DataOptions> = { separators: [','] }
 
 export const activateRecipe = ({
     tagname = 'on',
     activateId = 'activate',
+    separator = { sep: ',' },
 } = {}) => (registrar: Registrar<{}>) => {
     registrar.register(tagname, activateFilterTemplate(
         activateId,
-        (key, num, occur) => (activateMap) => {
-            activateMap.on(key, num, occur)
+        (val) => (activateMap) => {
+            activateMap.on(val)
         }
-    ), activateDataOptions)
+    ), { separators: [separator] })
 }
 
 export const deactivateRecipe = ({
     tagname = 'off',
     activateId = 'activate',
+    separator = { sep: ',' },
 } = {}) => (registrar: Registrar<{}>) => {
     registrar.register(tagname, activateFilterTemplate(
         activateId,
-        (key, num, occur) => (activateMap) => {
-            activateMap.off(key, num, occur)
+        (val) => (activateMap) => {
+            activateMap.off(val)
         }
-    ), activateDataOptions)
+    ), { separators: [separator] })
 }
 
 export const toggleRecipe = ({
     tagname = 'toggle',
     activateId = 'activate',
+    separator = { sep: ',' },
 } = {}) => (registrar: Registrar<{}>) => {
     registrar.register(tagname, activateFilterTemplate(
         activateId,
-        (key, num, occur) => (activateMap) => {
-            activateMap.toggle(key, num, occur)
+        (val) => (activateMap) => {
+            activateMap.toggle(val)
         }
-    ), activateDataOptions)
+    ), { separators: [separator] })
 }

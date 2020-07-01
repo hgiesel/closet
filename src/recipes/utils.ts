@@ -1,7 +1,7 @@
 export const id = <T>(v: T): T => v
 export const id2 = <T>(_v: unknown, w: T): T => w
 
-export const keyPattern = /^([a-zA-Z]+)([0-9]*)$/u
+export const keyPattern = /^([a-zA-Z0-9%\/]+?)([0-9]*)$/u
 
 export const zeroWidthSpace = "​"
 

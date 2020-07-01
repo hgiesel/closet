@@ -1,68 +1,25 @@
 import type { TagData, Registrar, Internals } from './types'
+
 import { keyPattern } from './utils'
+import { ValueStore } from './valueStore'
 
-class ActivateMap {
-    theMap: Map<string, boolean>
-
-    constructor() {
-        this.theMap = new Map()
-    }
-
-    private getKey(key: string, num: number | null, occur: number | null): string {
-        const numString = typeof(num) === 'number'
-            ? String(num)
-            : 'all'
-
-        const occurString = typeof(occur) === 'number'
-            ? String(occur)
-            : 'all'
-
-        return `${key}:${numString}:${occurString}`
-    }
-
-    on(key: string, num: number | null, occur: number | null): void {
+class NumStore extends ValueStore<number> {
+    set(key: string, num: number | null, occur: number | null, value = 0): void {
         const mapKey = this.getKey(key, num, occur)
 
-        this.theMap.set(mapKey, true)
+        this.map.set(mapKey, value)
     }
 
-    off(key: string, num: number | null, occur: number | null): void {
+    inc(key: string, num: number | null, occur: number | null, inc = 1): void {
         const mapKey = this.getKey(key, num, occur)
 
-        this.theMap.set(mapKey, false)
+        this.map.set(mapKey, this.get(key, num, occur) + inc)
     }
 
-    toggle(key: string, num: number | null, occur: number | null): void {
+    dec(key: string, num: number | null, occur: number | null, dec = 1): void {
         const mapKey = this.getKey(key, num, occur)
 
-        if (this.theMap.has(mapKey)) {
-            this.theMap.set(mapKey, !this.theMap.get(mapKey))
-        }
-        else {
-            this.theMap.set(mapKey, true)
-        }
-    }
-
-    get(key: string, num: number | null, occur: number): boolean {
-        const firstKey = this.getKey(key, num, occur)
-
-        if (this.theMap.has(firstKey)) {
-            return this.theMap.get(firstKey)
-        }
-
-        const secondKey = this.getKey(key, num, null)
-
-        if (this.theMap.has(secondKey)) {
-            return this.theMap.get(secondKey)
-        }
-
-        const thirdKey = this.getKey(key, null, null)
-
-        if (this.theMap.has(thirdKey)) {
-            return this.theMap.get(thirdKey)
-        }
-
-        return false
+        this.map.set(mapKey, this.get(key, num, occur) + dec)
     }
 }
 
@@ -90,40 +47,40 @@ const activateFilterTemplate = (
     return ''
 }
 
-const activateDataOptions = { separators: [','] }
+// const activateDataOptions = { separators: [','] }
 
-export const activateRecipe = ({
-    tagname,
-    activateId = 'activate',
-}) => (filterApi: Registrar<{}>) => {
-    filterApi.register(tagname, activateFilterTemplate(
-        activateId,
-        (key, num, occur) => (activateMap) => {
-            activateMap.on(key, num, occur)
-        }
-    ), activateDataOptions)
-}
+// export const activateRecipe = ({
+//     tagname,
+//     activateId = 'activate',
+// }) => (filterApi: Registrar<{}>) => {
+//     filterApi.register(tagname, activateFilterTemplate(
+//         activateId,
+//         (key, num, occur) => (activateMap) => {
+//             activateMap.on(key, num, occur)
+//         }
+//     ), activateDataOptions)
+// }
 
-export const deactivateRecipe = ({
-    tagname,
-    activateId = 'activate',
-}) => (filterApi: Registrar<{}>) => {
-    filterApi.register(tagname, activateFilterTemplate(
-        activateId,
-        (key, num, occur) => (activateMap) => {
-            activateMap.off(key, num, occur)
-        }
-    ), activateDataOptions)
-}
+// export const deactivateRecipe = ({
+//     tagname,
+//     activateId = 'activate',
+// }) => (filterApi: Registrar<{}>) => {
+//     filterApi.register(tagname, activateFilterTemplate(
+//         activateId,
+//         (key, num, occur) => (activateMap) => {
+//             activateMap.off(key, num, occur)
+//         }
+//     ), activateDataOptions)
+// }
 
-export const toggleRecipe = ({
-    tagname,
-    activateId = 'activate',
-}) => (filterApi: Registrar<{}>) => {
-    filterApi.register(tagname, activateFilterTemplate(
-        activateId,
-        (key, num, occur) => (activateMap) => {
-            activateMap.toggle(key, num, occur)
-        }
-    ), activateDataOptions)
-}
+// export const toggleRecipe = ({
+//     tagname,
+//     activateId = 'activate',
+// }) => (filterApi: Registrar<{}>) => {
+//     filterApi.register(tagname, activateFilterTemplate(
+//         activateId,
+//         (key, num, occur) => (activateMap) => {
+//             activateMap.toggle(key, num, occur)
+//         }
+//     ), activateDataOptions)
+// }

@@ -9,6 +9,8 @@ export interface FlashcardPreset {
     side: 'front' | 'back'
 }
 
+const defaultGet = <T>(v: T) => ({ get: () => v })
+
 export const flashcardTemplate = (
     frontActiveBehavior: ActiveBehavior<FlashcardPreset, FlashcardPreset>,
     backActiveBehavior: ActiveBehavior<FlashcardPreset, FlashcardPreset>,
@@ -56,13 +58,15 @@ export const flashcardTemplate = (
     flashcardRecipe({ tagname: internalFilter })(registrar)
 
     const flashcardFilter = (tag: TagData, inter: Internals<FlashcardPreset>) => {
-        const theFilter = inter.cache.get(`${tagname}:${switcherKeyword}`, {
-            get: (_k: string, _n: number | null, _o: number) => internalFilter,
-        }).get(tag.key, tag.num, tag.fullOccur)
+        const theFilter = inter.cache.get<{ get: (k: string, n: number | null, o: number) => string }>(
+            `${tagname}:${switcherKeyword}`,
+            defaultGet(internalFilter),
+        ).get(tag.key, tag.num, tag.fullOccur)
 
-        activeOverwrite = inter.cache.get(`${tagname}:${activateKeyword}`, {
-            get: (_k: string, _n: number | null, _o: number) => false,
-        }).get(tag.key, tag.num, tag.fullOccur)
+        activeOverwrite = inter.cache.get<{ get: (k: string, n: number | null, o: number) => boolean }>(
+            `${tagname}:${activateKeyword}`,
+            defaultGet(false),
+        ).get(tag.key, tag.num, tag.fullOccur)
 
         return  inter.filters.get(theFilter)(tag, inter)
     }

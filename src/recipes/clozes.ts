@@ -1,19 +1,19 @@
 import type { TagData, Internals, Ellipser, WeakSeparator, Recipe, InactiveBehavior, ActiveBehavior } from './types'
-import type { McClozePreset } from './mcClozeTemplate'
+import type { FlashcardPreset } from './flashcardTemplate'
 
 import { id, id2 } from './utils'
 import { Stylizer } from './stylizer'
 import { noneEllipser, stylizeEllipser } from './ellipser'
-import { mcClozeTemplate } from './mcClozeTemplate'
+import { flashcardTemplate } from './flashcardTemplate'
 
-const clozeFrontActiveBehavior: ActiveBehavior<McClozePreset, McClozePreset> = (
+const clozeFrontActiveBehavior: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
     stylizer: Stylizer,
-    activeEllipser: Ellipser<McClozePreset>,
-) => (tag: TagData, internals: Internals<McClozePreset>) => {
+    activeEllipser: Ellipser<FlashcardPreset>,
+) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
     return stylizer.stylize([activeEllipser(tag, internals)])
 }
 
-const clozeBackActiveBehavior: ActiveBehavior<McClozePreset, McClozePreset> = (
+const clozeBackActiveBehavior: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
     stylizer: Stylizer,
 ) => (tag: TagData) => {
     return stylizer.stylize([tag.values[0]])
@@ -33,20 +33,20 @@ const defaultStylizer: Stylizer = new Stylizer({
     processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-const joinValues: Ellipser<McClozePreset> = (tag: TagData): string => tag.values[0]
+const joinValues: Ellipser<FlashcardPreset> = (tag: TagData): string => tag.values[0]
 
 const clozePublicApi = (
-    choice1: InactiveBehavior<McClozePreset, McClozePreset>,
-    choice2: InactiveBehavior<McClozePreset, McClozePreset>,
-): Recipe<McClozePreset> => (options: {
+    choice1: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
+    choice2: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
+): Recipe<FlashcardPreset> => (options: {
     tagname?: string,
     switcherKeyword?: string,
     activateKeyword?: string,
 
     activeStylizer?: Stylizer,
 
-    activeEllipser?: Ellipser<McClozePreset>,
-    inactiveEllipser?: Ellipser<McClozePreset>,
+    activeEllipser?: Ellipser<FlashcardPreset>,
+    inactiveEllipser?: Ellipser<FlashcardPreset>,
 
     separator?: WeakSeparator,
 } = {}) => {
@@ -61,7 +61,7 @@ const clozePublicApi = (
     } = options
 
     const clozeSeparators = { separators: [separator] }
-    const clozeRecipe = mcClozeTemplate(clozeFrontActiveBehavior, clozeBackActiveBehavior, clozeSeparators)(choice1, choice2)
+    const clozeRecipe = flashcardTemplate(clozeFrontActiveBehavior, clozeBackActiveBehavior, clozeSeparators)(choice1, choice2)
 
     return clozeRecipe({
         tagname: tagname,

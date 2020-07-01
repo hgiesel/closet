@@ -4,18 +4,18 @@ import { fourWayWrap } from './nway'
 import { isBack, isActive } from './deciders'
 import { simpleRecipe } from './simple'
 
-export interface McClozePreset {
+export interface FlashcardPreset {
     card: string
     side: 'front' | 'back'
 }
 
-export const mcClozeTemplate = (
-    frontActiveBehavior: ActiveBehavior<McClozePreset, McClozePreset>,
-    backActiveBehavior: ActiveBehavior<McClozePreset, McClozePreset>,
+export const flashcardTemplate = (
+    frontActiveBehavior: ActiveBehavior<FlashcardPreset, FlashcardPreset>,
+    backActiveBehavior: ActiveBehavior<FlashcardPreset, FlashcardPreset>,
     dataOptions: Partial<DataOptions> = {},
 ) => (
-    frontInactiveBehavior: InactiveBehavior<McClozePreset, McClozePreset>,
-    backInactiveBehavior: InactiveBehavior<McClozePreset, McClozePreset>,
+    frontInactiveBehavior: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
+    backInactiveBehavior: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
 ) => ({
     tagname,
     switcherKeyword = 'switch',
@@ -35,16 +35,16 @@ export const mcClozeTemplate = (
     frontStylizer: Stylizer,
     backStylizer: Stylizer,
 
-    contexter: Ellipser<McClozePreset>,
-    activeEllipser: Ellipser<McClozePreset>,
-    inactiveEllipser: Ellipser<McClozePreset>,
-}) => (registrar: Registrar<McClozePreset>) => {
+    contexter: Ellipser<FlashcardPreset>,
+    activeEllipser: Ellipser<FlashcardPreset>,
+    inactiveEllipser: Ellipser<FlashcardPreset>,
+}) => (registrar: Registrar<FlashcardPreset>) => {
     const internalFilter = `${tagname}:internal`
     let activeOverwrite = false
 
-    const isActiveWithOverwrite = (t: TagData, inter: Internals<McClozePreset>) => isActive(t, inter) || activeOverwrite
+    const isActiveWithOverwrite = (t: TagData, inter: Internals<FlashcardPreset>) => isActive(t, inter) || activeOverwrite
 
-    const mcClozeRecipe = fourWayWrap(
+    const flashcardRecipe = fourWayWrap(
         isActiveWithOverwrite,
         isBack,
         simpleRecipe(frontInactiveBehavior(contexter, inactiveEllipser)),
@@ -53,9 +53,9 @@ export const mcClozeTemplate = (
         simpleRecipe(backActiveBehavior(backStylizer, activeEllipser)),
     )
 
-    mcClozeRecipe({ tagname: internalFilter })(registrar)
+    flashcardRecipe({ tagname: internalFilter })(registrar)
 
-    const mcClozeFilter = (tag: TagData, inter: Internals<McClozePreset>) => {
+    const flashcardFilter = (tag: TagData, inter: Internals<FlashcardPreset>) => {
         const theFilter = inter.cache.get(`${tagname}:${switcherKeyword}`, {
             get: (_k: string, _n: number | null, _o: number) => internalFilter,
         }).get(tag.key, tag.num, tag.fullOccur)
@@ -67,5 +67,5 @@ export const mcClozeTemplate = (
         return  inter.filters.get(theFilter)(tag, inter)
     }
 
-    registrar.register(tagname, mcClozeFilter, dataOptions)
+    registrar.register(tagname, flashcardFilter, dataOptions)
 }

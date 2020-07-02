@@ -126,7 +126,6 @@ export class Template {
         }
 
         tagRenderer.finishRun(templateInfo)
-
         return result
     }
 

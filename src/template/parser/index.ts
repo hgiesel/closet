@@ -1,6 +1,7 @@
 import nearley from 'nearley'
 import grammar from './template'
 
+import type { TagBuilderSettings } from './tagBuilder'
 import type { TagInfo } from '../tags'
 
 import { tagBuilder, tagInfoBuilder } from './template'
@@ -69,12 +70,12 @@ export enum BaseDepth {
 }
 
 export class Parser {
-    tagCounter: Map<string, number> = new Map()
+    tagBuilderSettings: TagBuilderSettings = [new Map(), new Map()]
 
-    parse (texts: string[], baseDepth: BaseDepth, baseLeftOffset=0): TagInfo {
+    parse (texts: string[], baseDepth: BaseDepth, baseLeftOffset = 0): TagInfo {
         let result: TagInfo | null = null
 
-        tagBuilder.push(this.tagCounter)
+        tagBuilder.push(this.tagBuilderSettings)
         tagInfoBuilder.push(baseLeftOffset)
 
         switch (baseDepth) {
@@ -88,18 +89,14 @@ export class Parser {
                 throw new Error('should not happen')
         }
 
-        this.tagCounter = tagBuilder.pop()
-
         return result
     }
 
-    rawParse (text: string, baseLeftOffset=0): TagInfo[] {
+    rawParse (text: string, baseLeftOffset = 0): TagInfo[] {
         tagInfoBuilder.push(baseLeftOffset)
-        tagBuilder.push(this.tagCounter)
+        tagBuilder.push(this.tagBuilderSettings)
 
         const result = mainParse(text).innerTags
-
-        this.tagCounter = tagBuilder.pop()
         return result
     }
 }

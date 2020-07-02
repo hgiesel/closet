@@ -20,6 +20,7 @@ class BoolStore extends ValueStore<boolean> {
 }
 
 const boolStoreFilterTemplate = valueStoreTemplate(BoolStore)
+const innerSeparator = { sep: '=', max: 2 /* unused */}
 
 export const activateRecipe = ({
     tagname = 'on',
@@ -32,7 +33,7 @@ export const activateRecipe = ({
         (val) => (activateMap) => {
             activateMap.on(val)
         }
-    ), { separators: [separator] })
+    ), { separators: [separator, innerSeparator] })
 }
 
 export const deactivateRecipe = ({
@@ -46,7 +47,7 @@ export const deactivateRecipe = ({
         (val) => (activateMap) => {
             activateMap.off(val)
         }
-    ), { separators: [separator] })
+    ), { separators: [separator, innerSeparator] })
 }
 
 export const toggleRecipe = ({
@@ -60,5 +61,5 @@ export const toggleRecipe = ({
         (val) => (activateMap) => {
             activateMap.toggle(val)
         }
-    ), { separators: [separator] })
+    ), { separators: [separator, innerSeparator] })
 }

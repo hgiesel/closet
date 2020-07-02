@@ -2,10 +2,9 @@ import type { TagData, Internals } from './types'
 import type { CardPreset, SidePreset } from './flashcardTemplate'
 
 import { constantGet, StoreGetter } from './valueStore'
+import { cardNumberToNum } from './utils'
 
 export type Decider<T extends object> = (t: TagData, i: Internals<T>) => boolean
-
-const cardNumberToNum = (textNum: string): number => Number(textNum.match(/[0-9]*$/))
 
 export const isActiveWithinRange = (bottomRange: number, topRange: number) => ({ num }: TagData, { preset }: Internals<CardPreset>): boolean => {
     switch (num) {

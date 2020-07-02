@@ -5,6 +5,7 @@ export const constant = <T,U>(x: T) => (_y: U) => x
 export const keyPattern = /^([a-zA-Z0-9%\/]+?)([0-9]*)$/u
 export const zeroWidthSpace = "​"
 
+export const cardNumberToNum = (textNum: string): number => Number(textNum.match(/[0-9]*$/))
 
 // from http://xregexp.com/v/3.2.0/xregexp-all.js
 /* The MIT License

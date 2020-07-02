@@ -1,7 +1,11 @@
-import type { InactiveBehavior, Ellipser, TagData, Internals } from './types'
+import type { InactiveAdapter, InactiveBehavior, Ellipser, TagData, Internals, WeakFilterResult } from './types'
 import type { CardPreset } from './flashcardTemplate'
 
 import { StoreGetter, constantGet } from './valueStore'
+import { cardNumberToNum } from './utils'
+
+const constantFalse = constantGet(false)
+const constantZero = constantGet(0)
 
 export const inactiveAdapter = <T extends object>(
     behavior: InactiveBehavior<T, CardPreset>,
@@ -25,8 +29,6 @@ export const inactiveAdapterOverwritten = <T extends object>(
     const showKeyword = 'flashcardShow'
     const hideKeyword = 'flashcardHide'
 
-    const constantFalse = constantGet(false)
-
     const showOverwrite = internals.cache.get<StoreGetter<boolean>>(showKeyword, constantFalse)
         .get(tag.key, tag.num, tag.fullOccur)
 
@@ -44,32 +46,54 @@ export const inactiveAdapterOverwritten = <T extends object>(
     return inactiveAdapter(behavior)(contexter, ellipser)(tag, internals)
 }
 
-export const inactiveAdapterAll = inactiveAdapterOverwritten
+export const inactiveAdapterWithinRange = <T extends object>(
+    showBottom: number,
+    showTop: number,
+    hideBottom: number,
+    hideTop: number,
+): InactiveAdapter<CardPreset, CardPreset> => (
+    behavior: InactiveBehavior<CardPreset, T>,
+) => (
+    contexter: Ellipser<CardPreset>,
+    ellipser: Ellipser<CardPreset>,
+) => (tag: TagData, internals: Internals<CardPreset & T>): WeakFilterResult => {
+    if (!internals.preset['card']) {
+        behavior(contexter, ellipser)(tag, internals)
+    }
 
-// export const isActiveGetRange = (tag: TagData, internals: Internals<CardPreset>): boolean => {
-//     const bottomRangeKeyword = 'bottom'
-//     const topRangeKeyword = 'top'
+    const cardNumber = cardNumberToNum(internals.preset['card'])
 
-//     const bottomRange = internals.cache.get<StoreGetter<number>>(
-//         bottomRangeKeyword,
-//         defaultGet(0),
-//     ).get(tag.key, tag.num, tag.fullOccur)
+    if (cardNumber - showBottom <= tag.num && tag.num <= cardNumber + showTop) {
+        return contexter(tag, internals)
+    }
 
-//     const topRange = internals.cache.get<StoreGetter<number>>(
-//         topRangeKeyword,
-//         defaultGet(0),
-//     ).get(tag.key, tag.num, tag.fullOccur)
+    if (cardNumber - hideBottom <= tag.num && tag.num <= cardNumber + hideTop) {
+        return ellipser(tag, internals)
+    }
 
-//     return isActiveWithinRange(bottomRange, topRange)(tag, internals)
-// }
+    return behavior(contexter, ellipser)(tag, internals)
+}
 
-// export const isActiveOverwritten = (tag: TagData, internals: Internals<CardPreset>): boolean => {
-//     const activeKeyword = 'active'
+export const inactiveAdapterGetRange = <T extends object>(tag: TagData, internals: Internals<CardPreset & T>): InactiveAdapter<CardPreset, T> => {
+    const showBottomKeyword = 'flashcardShowBottom'
+    const showTopKeyword = 'flashcardShowTop'
 
-//     const activeOverwrite = internals.cache.get<StoreGetter<boolean>>(
-//         activeKeyword,
-//         defaultGet(false),
-//     ).get(tag.key, tag.num, tag.fullOccur)
+    const showBottom = internals.cache.get<StoreGetter<number>>(showBottomKeyword, constantZero)
+        .get(tag.key, tag.num, tag.fullOccur)
 
-//     return activeOverwrite
-// }
+    const showTop = internals.cache.get<StoreGetter<number>>(showTopKeyword, constantZero)
+        .get(tag.key, tag.num, tag.fullOccur)
+
+    const hideBottomKeyword = 'flashcardHideBottom'
+    const hideTopKeyword = 'flashcardHideTop'
+
+    const hideBottom = internals.cache.get<StoreGetter<number>>(hideBottomKeyword, constantZero)
+        .get(tag.key, tag.num, tag.fullOccur)
+
+    const hideTop = internals.cache.get<StoreGetter<number>>(hideTopKeyword, constantZero)
+        .get(tag.key, tag.num, tag.fullOccur)
+
+    return inactiveAdapterWithinRange(showBottom, showTop, hideBottom, hideTop)
+}
+
+export const inactiveAdapterAll: InactiveAdapter<CardPreset,CardPreset> = inactiveAdapterOverwritten

@@ -22,3 +22,4 @@ export interface WrapOptions {
 
 export type ActiveBehavior<T extends object, U extends object> = (stylizer: Stylizer, ellipser: Ellipser<T>) => (t: TagData, i: Internals<U>) => WeakFilterResult
 export type InactiveBehavior<T extends object, U extends object> = (contexter: Ellipser<T>, ellipser: Ellipser<T>) => (t: TagData, i: Internals<U>) => WeakFilterResult
+export type InactiveAdapter<T extends object, U extends object> = (behavior: InactiveBehavior<T,U>) => InactiveBehavior<T,U>

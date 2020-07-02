@@ -12,3 +12,4 @@ export const stylizeEllipser = <T extends object>(
 }
 
 export const noneEllipser = <T extends object>(_t: TagData, _i: Internals<T>): string => zeroWrap('[...]')
+export const keyEllipser = <T extends object>(t: TagData, _i: Internals<T>): string => t.key

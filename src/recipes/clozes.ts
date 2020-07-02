@@ -1,10 +1,12 @@
 import type { TagData, Internals, Ellipser, WeakSeparator, Recipe, InactiveBehavior, ActiveBehavior } from './types'
-import type { FlashcardPreset } from './flashcardTemplate'
+import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
 
-import { id, id2 } from './utils'
+import { makeFlashcardTemplate } from './flashcardTemplate'
+
 import { Stylizer } from './stylizer'
 import { noneEllipser, stylizeEllipser } from './ellipser'
-import { flashcardTemplate } from './flashcardTemplate'
+
+import { id, id2 } from './utils'
 
 const clozeFrontActiveBehavior: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
     stylizer: Stylizer,
@@ -36,47 +38,34 @@ const defaultStylizer: Stylizer = new Stylizer({
 const joinValues: Ellipser<FlashcardPreset> = (tag: TagData): string => tag.values[0]
 
 const clozePublicApi = (
-    choice1: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-    choice2: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
+    frontInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
+    backInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
 ): Recipe<FlashcardPreset> => (options: {
     tagname?: string,
 
-    switcherKeyword?: string,
-    activeKeyword?: string,
-    bottomRangeKeyword?: string,
-    topRangeKeyword?: string,
-
     activeStylizer?: Stylizer,
-
     activeEllipser?: Ellipser<FlashcardPreset>,
     inactiveEllipser?: Ellipser<FlashcardPreset>,
 
     separator?: WeakSeparator,
+    flashcardTemplate?: FlashcardTemplate,
 } = {}) => {
     const {
         tagname = 'c',
 
-        switcherKeyword = 'switch',
-        activeKeyword = 'active',
-        bottomRangeKeyword = 'bottom',
-        topRangeKeyword = 'top',
-
         activeStylizer = defaultStylizer,
         activeEllipser = hintEllipser,
         inactiveEllipser = noneEllipser,
+
         separator = { sep: '::', max: 2},
+        flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
     const clozeSeparators = { separators: [separator] }
-    const clozeRecipe = flashcardTemplate(clozeFrontActiveBehavior, clozeBackActiveBehavior, clozeSeparators)(choice1, choice2)
+    const clozeRecipe = flashcardTemplate(frontInactive, backInactive)(clozeFrontActiveBehavior, clozeBackActiveBehavior, clozeSeparators)
 
     return clozeRecipe({
         tagname: tagname,
-
-        switcherKeyword: switcherKeyword,
-        activeKeyword: activeKeyword,
-        bottomRangeKeyword: bottomRangeKeyword,
-        topRangeKeyword: topRangeKeyword,
 
         frontStylizer: activeStylizer,
         backStylizer: activeStylizer,

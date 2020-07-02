@@ -43,6 +43,8 @@ export const recipes: Recipes = {
     meta: defRecipe,
 }
 
+////////////////////////////////////
+
 import { wrap, wrapWithDeferred, wrapWithAftermath } from './wrappers'
 import { twoWayWrap, fourWayWrap } from './nway'
 
@@ -56,9 +58,6 @@ export const wrappers = {
     fourWay: fourWayWrap,
 }
 
-import { isBack, isActive } from './deciders'
+////////////////////////////////////
 
-export const utils = {
-    isBack: isBack,
-    isActive: isActive,
-}
+export * as deciders from './deciders'

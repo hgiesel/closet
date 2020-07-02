@@ -1,12 +1,13 @@
 import type { TagData, Recipe, Internals, Ellipser, InactiveBehavior, ActiveBehavior, WeakSeparator } from './types'
-import type { FlashcardPreset } from './flashcardTemplate'
+import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'
 import type { SortInStrategy } from './sortInStrategies'
 
 import { id, id2 } from './utils'
 import { Stylizer } from './stylizer'
 import { sequencer } from './sequencer'
 import { noneEllipser } from './ellipser'
-import { flashcardTemplate } from './flashcardTemplate'
+
+import { makeFlashcardTemplate } from './flashcardTemplate'
 import { topUp } from './sortInStrategies'
 
 const activeBehavior= (sortIn: SortInStrategy): ActiveBehavior<FlashcardPreset, FlashcardPreset>  => (
@@ -59,15 +60,10 @@ const defaultContexter = (sortIn: (indices: number[], toLength: number) => numbe
 }
 
 const multipleChoicePublicApi = (
-    choice1: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-    choice2: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
+    frontInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
+    backInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
 ): Recipe<FlashcardPreset> => (options: {
     tagname?: string,
-
-    switcherKeyword?: string,
-    activeKeyword?: string,
-    bottomRangeKeyword?: string,
-    topRangeKeyword?: string,
 
     frontStylizer?: Stylizer,
     backStylizer?: Stylizer,
@@ -78,36 +74,32 @@ const multipleChoicePublicApi = (
 
     contexter?: Ellipser<FlashcardPreset>,
     ellipser?: Ellipser<FlashcardPreset>,
+
+    flashcardTemplate?: FlashcardTemplate,
 } = {})  => {
     const {
         tagname = 'mc',
 
-        switcherKeyword = 'switch',
-        activeKeyword = 'active',
-        bottomRangeKeyword = 'bottom',
-        topRangeKeyword = 'top',
-
         frontStylizer = defaultFrontStylizer,
         backStylizer = defaultBackStylizer,
+
         sortInStrategy = topUp,
         outerSeparator = { sep: '::' },
         innerSeparator = { sep: '||' },
+
         contexter = defaultContexter(sortInStrategy),
         ellipser = noneEllipser,
+
+        flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
     const multipleChoiceSeparators = { separators: [outerSeparator, innerSeparator] }
     const theActiveBehavior = activeBehavior(sortInStrategy)
 
-    const multipleChoiceRecipe = flashcardTemplate(theActiveBehavior, theActiveBehavior, multipleChoiceSeparators)(choice1, choice2)
+    const multipleChoiceRecipe = flashcardTemplate(frontInactive, backInactive)(theActiveBehavior, theActiveBehavior, multipleChoiceSeparators)
 
     return multipleChoiceRecipe({
         tagname: tagname,
-
-        switcherKeyword: switcherKeyword,
-        activeKeyword: activeKeyword,
-        bottomRangeKeyword: bottomRangeKeyword,
-        topRangeKeyword: topRangeKeyword,
 
         frontStylizer: frontStylizer,
         backStylizer: backStylizer,

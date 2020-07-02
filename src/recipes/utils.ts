@@ -1,5 +1,6 @@
 export const id = <T>(v: T): T => v
-export const id2 = <T>(_v: unknown, w: T): T => w
+export const id2 = <T,U>(_v: U, w: T): T => w
+export const constant = <T,U>(x: T) => (_y: U) => x
 
 export const keyPattern = /^([a-zA-Z0-9%\/]+?)([0-9]*)$/u
 

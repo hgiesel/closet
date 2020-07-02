@@ -1,25 +1,12 @@
 name: Default Multiple Choice
 code: |
-  const recipes = [
-    Closet.recipes.multipleChoiceShow({
-      tagname: 'mc',
-    }),
-    Closet.recipes.multipleChoiceHide({
-      tagname: 'mch',
-    }),
-    Closet.recipes.multipleChoiceReveal({
-      tagname: 'mcr',
-    }),
-
-    Closet.recipes.activate({ tagname: 'on' }),
-    Closet.recipes.deactivate({ tagname: 'off' }),
-    Closet.recipes.toggle({ tagname: 'toggle' }),
-
-    Closet.recipes.shuffling({ tagname: 'mix' }),
-    Closet.recipes.ordering({ tagname: 'ord', shuffleTagname: 'mix' }),
+  const defaultMcRecipes = [
+    Closet.recipes.multipleChoiceShow({ tagname: 'mc' }),
+    Closet.recipes.multipleChoiceHide({ tagname: 'mch' }),
+    Closet.recipes.multipleChoiceReveal({ tagname: 'mcr' }),
   ]
 
-  for (const recipe of recipes) {
+  for (const recipe of defaultMcRecipes) {
     filterManager.addRecipe(recipe)
   }
 

@@ -25,8 +25,8 @@ export const isActiveWithinRange = (bottomRange: number, topRange: number) => ({
 export const isActive = isActiveWithinRange(0, 0)
 
 export const isActiveGetRange = (tag: TagData, internals: Internals<CardPreset>): boolean => {
-    const bottomRangeKeyword = 'bottom'
-    const topRangeKeyword = 'top'
+    const bottomRangeKeyword = 'flashcardActiveBottom'
+    const topRangeKeyword = 'flashcardActiveTop'
     const constantZero = constantGet(0)
 
     const bottomRange = internals.cache.get<StoreGetter<number>>(bottomRangeKeyword, constantZero)
@@ -39,7 +39,7 @@ export const isActiveGetRange = (tag: TagData, internals: Internals<CardPreset>)
 }
 
 export const isActiveOverwritten = (tag: TagData, internals: Internals<CardPreset>): boolean => {
-    const activeKeyword = 'active'
+    const activeKeyword = 'flashcardActive'
 
     const activeOverwrite = internals.cache.get<StoreGetter<boolean>>(activeKeyword, constantGet(false))
         .get(tag.key, tag.num, tag.fullOccur)

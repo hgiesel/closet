@@ -34,7 +34,6 @@ In a flashcard, you usually want to test each piece of knowledge individually.
 This is also called the [minimum information principle](https://www.supermemo.com/de/archives1990-2015/articles/20rules#minimum%20information%20principle).
 In Anki, this is facilitated in the form of cards.
 
-
 ```closet
 The capital of Portugal is [[c1::Lisbon]]. Its area is [[c2::92km²]].
 ```

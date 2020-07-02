@@ -3,8 +3,8 @@ export const id2 = <T,U>(_v: U, w: T): T => w
 export const constant = <T,U>(x: T) => (_y: U) => x
 
 export const keyPattern = /^([a-zA-Z0-9%\/]+?)([0-9]*)$/u
-
 export const zeroWidthSpace = "​"
+
 
 // from http://xregexp.com/v/3.2.0/xregexp-all.js
 /* The MIT License

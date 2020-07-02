@@ -2,9 +2,9 @@ import type { TagData, Internals, Registrar, Stylizer, Ellipser, ActiveBehavior,
 import type { Decider } from './deciders'
 
 import { isActiveAll, isBackAll } from './deciders'
+import { inactiveAdapterAll } from './inactiveAdapter'
 import { fourWayWrap } from './nway'
 import { simpleRecipe } from './simple'
-import { id } from './utils'
 
 export type FlashcardTemplate = (
     f2: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
@@ -30,15 +30,20 @@ export interface FlashcardOptions {
     inactiveEllipser: Ellipser<FlashcardPreset>,
 }
 
-export interface FlashcardPreset {
+export interface CardPreset {
     card: string
+}
+
+export interface SidePreset {
     side: 'front' | 'back'
 }
+
+export type FlashcardPreset = CardPreset & SidePreset
 
 export const makeFlashcardTemplate = (
     isActive: Decider<FlashcardPreset> = isActiveAll,
     isBack: Decider<FlashcardPreset> = isBackAll,
-    inactiveAdapter: InactiveAdapter<FlashcardPreset, FlashcardPreset> = id,
+    inactiveAdapter: InactiveAdapter<FlashcardPreset, FlashcardPreset> = inactiveAdapterAll,
 ): FlashcardTemplate => (
     frontInactiveBehavior: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
     backInactiveBehavior: InactiveBehavior<FlashcardPreset, FlashcardPreset>,

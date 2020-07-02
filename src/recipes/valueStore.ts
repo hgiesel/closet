@@ -1,55 +1,79 @@
 import { TagData, Internals } from './types'
 
-export const storeKeyPattern = /^([a-zA-Z0-9%\/]+?)([0-9]*|\*)$/u
+export type StoreGetter<T> = { get: (key: string, num: number | null, occur: number) => T }
+
+export const storeKeyPattern = /^([a-zA-Z0-9%\/]*?)([0-9]*|\*)$/u
+export const constantGet = <T>(v: T): StoreGetter<T> => ({ get: () => v })
 
 export class ValueStore<T> {
     map: Map<string, T>
     defaultValue: T
+
+    static all = Symbol()
 
     constructor(defaultValue: T) {
         this.defaultValue = defaultValue
         this.map = new Map()
     }
 
-    protected getComponents(value: string): [string, string | null, string | null] {
+    protected getComponents(value: string): [string | symbol, number | symbol | null, number | symbol] {
+        /**
+         * turns a store key into its components
+         */
+
         const [fullKey, occur] = value.split(':')
         const [, key, num] = fullKey.match(storeKeyPattern)
 
-        const theNum = num.length === 0
+        const theKey = key === ''
+            ? ValueStore.all
+            : key
+
+        const theNum = num === '*'
+            ? ValueStore.all
+            : num.length === 0
             ? null
-            : num
+            : Number(num)
 
         const theOccur = occur
-            ? occur
-            : null
+            ? Number(occur)
+            : ValueStore.all
 
-        return [key, theNum, theOccur]
+        return [theKey, theNum, theOccur]
     }
 
 
-    protected getKey(key: string, num: string | null, occur: string | null): string {
+    protected getStoreKey(key: string | symbol, num: number | null | symbol, occur: number | symbol): string {
         /**
-         * empty string should never happen
+         * turns components into a fully qualified store key
          */
 
-        const numString = num ?? '*'
-        const occurString = occur ?? 'all'
+        const keyString: string = key === ValueStore.all ? '' : String(key)
 
-        return `${key}${numString}:${occurString}`
+        const numString: string = num === ValueStore.all
+            ? '*'
+            : num === null
+            ? ''
+            : String(num)
+
+        const occurString: string = occur === ValueStore.all
+            ? 'all'
+            : String(occur) 
+
+        return `${keyString}${numString}:${occurString}`
     }
 
-    get(key: string, num: string | null, occur: string | null): T {
-        const firstKey = this.getKey(key, num, occur)
+    get(key: string | symbol, num: number | null | symbol, occur: number | symbol): T {
+        const firstKey = this.getStoreKey(key, num, occur)
         if (this.map.has(firstKey)) {
             return this.map.get(firstKey)
         }
 
-        const secondKey = this.getKey(key, num, null)
+        const secondKey = this.getStoreKey(key, num, ValueStore.all)
         if (this.map.has(secondKey)) {
             return this.map.get(secondKey)
         }
 
-        const thirdKey = this.getKey(key, null, null)
+        const thirdKey = this.getStoreKey(key, ValueStore.all, ValueStore.all)
         if (this.map.has(thirdKey)) {
             return this.map.get(thirdKey)
         }
@@ -57,12 +81,12 @@ export class ValueStore<T> {
         return this.defaultValue
     }
 
-    set(key: string, num: string | null, occur: string | null, value: T): void {
-        this.map.set(this.getKey(key, num, occur), value)
+    set(key: string | symbol, num: number | null | symbol, occur: number | symbol, value: T): void {
+        this.map.set(this.getStoreKey(key, num, occur), value)
     }
 
-    has(key: string, num: string | null, occur: string | null): void {
-        this.map.has(this.getKey(key, num, occur))
+    has(key: string | symbol, num: number | null | symbol, occur: number | symbol): void {
+        this.map.has(this.getStoreKey(key, num, occur))
     }
 }
 

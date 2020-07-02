@@ -9,6 +9,8 @@ code: |
     Closet.recipes.deactivate({ tagname: 'off' }),
     Closet.recipes.toggle({ tagname: 'toggle' }),
 
+    Closet.recipes.activate({ tagname: 'show', storeId: 'flashcardShow' }),
+
     Closet.recipes.setNumber({ tagname: 'top', storeId: 'top' }),
     Closet.recipes.setNumber({ tagname: 'bottom', storeId: 'bottom' }),
   ]

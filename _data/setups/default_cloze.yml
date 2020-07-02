@@ -4,9 +4,27 @@ code: |
     Closet.recipes.clozeShow({ tagname: 'c' }),
     Closet.recipes.clozeHide({ tagname: 'ch' }),
     Closet.recipes.clozeReveal({ tagname: 'cr' }),
+
     Closet.recipes.activate({ tagname: 'on' }),
     Closet.recipes.deactivate({ tagname: 'off' }),
     Closet.recipes.toggle({ tagname: 'toggle' }),
+
+    Closet.recipes.activate({ tagname: 'show', storeId: 'flashcardShow' }),
+
+    Closet.wrappers.product(Closet.recipes.setNumber, Closet.recipes.setNumber)({
+      tagname: 'ctxt',
+      optionsFirst: { storeId: 'flashcardShowTop' },
+      optionsSecond: { storeId: 'flashcardShowBottom' },
+    }),
+
+    Closet.wrappers.product(Closet.recipes.setNumber, Closet.recipes.setNumber)({
+      tagname: 'on',
+      optionsFirst: { storeId: 'flashcardActiveTop' },
+      optionsSecond: { storeId: 'flashcardActiveBottom' },
+    }),
+
+    Closet.recipes.setNumber({ tagname: 'top', storeId: 'top' }),
+    Closet.recipes.setNumber({ tagname: 'bottom', storeId: 'bottom' }),
   ]
 
   for (const recipe of recipes) {

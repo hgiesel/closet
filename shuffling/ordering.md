@@ -22,13 +22,9 @@ Let's look at a first example:
 
 {% include codeDisplay.md content=shuffling.on_extra_line setups="shuffle_order" buttons=b %}
 
-In this we want to mix the countries, and we want to mix the capitals.
-However we don't want to get countries and capitals to get out of order with each other.
-The `ord` tag alters the `mix` tag in a way, that it will still shuffle randomly, but preserve this connection.
-
-You can use the `ord` tag in two ways:
-- `[[ord::1||2||3]]`
-- `[[ord::1,2,3]]`
+In this example, we shuffle the countries, and the capitals.
+However we don't want to get countries and capitals to get out of order with each other respectively.
+The `ord` tag alters the `mix` tag in a way, that it will still shuffle at random, but preserve this connection.
 
 {% include codeDisplay.md content=shuffling.individual_items setups="shuffle_order" buttons=b %}
 

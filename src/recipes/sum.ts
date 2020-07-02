@@ -1,9 +1,9 @@
 import type { TagData, Registrar, FilterPredicate, Internals, Recipe, WrapOptions } from './types'
 
 export const sum = <T extends object, U extends object>(
-    predicate: FilterPredicate<T & U>,
     recipeFalse: Recipe<T>,
-    recipeTrue: Recipe<U>, {
+    recipeTrue: Recipe<U>,
+    predicate: FilterPredicate<T & U>, {
         setTagnames = (options, newNames) => options['tagname'] = newNames[0],
     }: WrapOptions = {},
 ): Recipe<T & U> => ({
@@ -39,12 +39,12 @@ export const sum = <T extends object, U extends object>(
 }
 
 export const sumFour = <T extends object, U extends object, V extends object, W extends object>(
-    predicateOne: FilterPredicate<T & U & V & W>,
-    predicateTwo: FilterPredicate<T & U & V & W>,
     recipeZero: Recipe<T>,
     recipeOne: Recipe<U>,
     recipeTwo: Recipe<V>,
-    recipeThree: Recipe<W>, {
+    recipeThree: Recipe<W>,
+    predicateOne: FilterPredicate<T & U & V & W>,
+    predicateTwo: FilterPredicate<T & U & V & W>, {
         setTagnames = (options, newNames) => options['tagname'] = newNames[0],
     }: WrapOptions = {},
 ): Recipe<T & U & V & W> => ({
@@ -73,7 +73,7 @@ export const sumFour = <T extends object, U extends object, V extends object, W 
     setTagnames(optionsZero, [tagnameZero])
     setTagnames(optionsOne, [tagnameZero])
 
-    sum(predicateOne, recipeZero, recipeOne)({
+    sum(recipeZero, recipeOne, predicateOne)({
         tagname: tagnameZero,
 
         optionsFalse: optionsZero,
@@ -83,7 +83,7 @@ export const sumFour = <T extends object, U extends object, V extends object, W 
     setTagnames(optionsTwo, [tagnameTwo])
     setTagnames(optionsThree, [tagnameTwo])
 
-    sum(predicateOne, recipeTwo, recipeThree)({
+    sum(recipeTwo, recipeThree, predicateOne)({
         tagname: tagnameTwo,
 
         optionsFalse: optionsTwo,

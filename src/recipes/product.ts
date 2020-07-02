@@ -1,9 +1,9 @@
 import type { TagData, Registrar, WeakFilter, WeakFilterResult, Internals, Recipe, WrapOptions } from './types'
 
 export const product = <T extends object, U extends object>(
-    multiply: (fst: WeakFilterResult, snd: WeakFilterResult) => WeakFilter<T & U>,
     recipeFirst: Recipe<T>,
-    recipeSecond: Recipe<U>, {
+    recipeSecond: Recipe<U>,
+    multiply: (fst: WeakFilterResult, snd: WeakFilterResult) => WeakFilter<T & U> = () => () => ({ ready: true }), {
         setTagnames = (options, newNames) => options['tagname'] = newNames[0],
     }: WrapOptions = {},
 ): Recipe<T & U> => ({

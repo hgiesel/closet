@@ -64,12 +64,12 @@ export const makeFlashcardTemplate = (
     const internalFilter = `${tagname}:internal`
 
     const flashcardRecipe = sumFour(
-        isActive,
-        isBack,
         simpleRecipe(inactiveAdapter(frontInactiveBehavior)(contexter, inactiveEllipser)),
         simpleRecipe(frontActiveBehavior(frontStylizer, activeEllipser)),
         simpleRecipe(inactiveAdapter(backInactiveBehavior)(contexter, inactiveEllipser)),
         simpleRecipe(backActiveBehavior(backStylizer, activeEllipser)),
+        isActive,
+        isBack,
     )
 
     flashcardRecipe({ tagname: internalFilter })(registrar)

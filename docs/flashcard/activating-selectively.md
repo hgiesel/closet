@@ -1,9 +1,9 @@
 ---
 layout: doc
-title: Activating Clozes selectively
-nav_order: 4
-permalink: clozes/activating-selectively
-parent: Clozes
+title: Activating selectively
+nav_order: 1
+permalink: flashcard/activating-selectively
+parent: Flashcard Types
 ---
 
 {% assign b='Frontside, q, {"side": "front"}, true; Backside, a, {"side": "back"}, true' %}

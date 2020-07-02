@@ -1,6 +1,6 @@
 import type { TagData, Registrar, FilterPredicate, Internals, Recipe, WrapOptions } from './types'
 
-export const twoWayWrap = <T extends object, U extends object>(
+export const sum = <T extends object, U extends object>(
     predicate: FilterPredicate<T & U>,
     recipeFalse: Recipe<T>,
     recipeTrue: Recipe<U>, {
@@ -17,8 +17,8 @@ export const twoWayWrap = <T extends object, U extends object>(
     optionsTrue: object,
     optionsFalse: object,
 }) => (registrar: Registrar<T & U>) => {
-    const tagnameTrue = `${tagname}:twoWay:true`
-    const tagnameFalse = `${tagname}:twoWay:false`
+    const tagnameTrue = `${tagname}:sum:true`
+    const tagnameFalse = `${tagname}:sum:false`
 
     setTagnames(optionsTrue, [tagnameTrue])
     setTagnames(optionsFalse, [tagnameFalse])
@@ -26,7 +26,7 @@ export const twoWayWrap = <T extends object, U extends object>(
     recipeTrue(optionsTrue)(registrar)
     recipeFalse(optionsFalse)(registrar)
 
-    const twoWayFilter = (
+    const sumFilter = (
         tag: TagData,
         internals: Internals<T & U>,
     ) => {
@@ -35,10 +35,10 @@ export const twoWayWrap = <T extends object, U extends object>(
             : internals.filters.get(tagnameFalse)(tag, internals)
     }
 
-    registrar.register(tagname, twoWayFilter, registrar.getOptions(tagnameTrue /* have to be same for True/False */))
+    registrar.register(tagname, sumFilter, registrar.getOptions(tagnameTrue /* have to be same for True/False */))
 }
 
-export const fourWayWrap = <T extends object, U extends object, V extends object, W extends object>(
+export const sumFour = <T extends object, U extends object, V extends object, W extends object>(
     predicateOne: FilterPredicate<T & U & V & W>,
     predicateTwo: FilterPredicate<T & U & V & W>,
     recipeZero: Recipe<T>,
@@ -67,13 +67,13 @@ export const fourWayWrap = <T extends object, U extends object, V extends object
 
     setTagname: (options: object, newName: string) => void,
 }) => (registrar: Registrar<T & U & V & W>) => {
-    const tagnameZero = `${tagname}:fourWay:zero`
-    const tagnameTwo = `${tagname}:fourWay:two`
+    const tagnameZero = `${tagname}:sumFour:zero`
+    const tagnameTwo = `${tagname}:sumFour:two`
 
     setTagnames(optionsZero, [tagnameZero])
     setTagnames(optionsOne, [tagnameZero])
 
-    twoWayWrap(predicateOne, recipeZero, recipeOne)({
+    sum(predicateOne, recipeZero, recipeOne)({
         tagname: tagnameZero,
 
         optionsFalse: optionsZero,
@@ -83,14 +83,14 @@ export const fourWayWrap = <T extends object, U extends object, V extends object
     setTagnames(optionsTwo, [tagnameTwo])
     setTagnames(optionsThree, [tagnameTwo])
 
-    twoWayWrap(predicateOne, recipeTwo, recipeThree)({
+    sum(predicateOne, recipeTwo, recipeThree)({
         tagname: tagnameTwo,
 
         optionsFalse: optionsTwo,
         optionsTrue: optionsThree,
     })(registrar)
 
-    const fourWayFilter = (
+    const sumFourFilter = (
         tag: TagData,
         internals: Internals<T & U & V & W>,
     ) => {
@@ -99,5 +99,5 @@ export const fourWayWrap = <T extends object, U extends object, V extends object
             : internals.filters.get(tagnameZero)(tag, internals)
     }
 
-    registrar.register(tagname, fourWayFilter)
+    registrar.register(tagname, sumFourFilter)
 }

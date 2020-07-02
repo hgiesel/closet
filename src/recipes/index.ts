@@ -46,7 +46,7 @@ export const recipes: Recipes = {
 ////////////////////////////////////
 
 import { wrap, wrapWithDeferred, wrapWithAftermath } from './wrappers'
-import { twoWayWrap, fourWayWrap } from './nway'
+import { sum, sumFour } from './sum'
 import { product } from './product'
 
 export const wrappers = {
@@ -55,8 +55,8 @@ export const wrappers = {
     deferred: wrapWithDeferred,
     aftermath: wrapWithAftermath,
 
-    twoWay: twoWayWrap,
-    fourWay: fourWayWrap,
+    sum: sum,
+    sumFour: sumFour,
 
     product: product,
 }

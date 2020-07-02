@@ -3,7 +3,7 @@ import type { Decider } from './deciders'
 
 import { isActiveAll, isBackAll } from './deciders'
 import { inactiveAdapterAll } from './inactiveAdapter'
-import { fourWayWrap } from './nway'
+import { sumFour } from './sum'
 import { simpleRecipe } from './simple'
 
 export type FlashcardTemplate = (
@@ -63,7 +63,7 @@ export const makeFlashcardTemplate = (
 }: FlashcardOptions) => (registrar: Registrar<FlashcardPreset>) => {
     const internalFilter = `${tagname}:internal`
 
-    const flashcardRecipe = fourWayWrap(
+    const flashcardRecipe = sumFour(
         isActive,
         isBack,
         simpleRecipe(inactiveAdapter(frontInactiveBehavior)(contexter, inactiveEllipser)),

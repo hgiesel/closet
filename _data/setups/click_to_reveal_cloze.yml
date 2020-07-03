@@ -22,17 +22,14 @@ code: |
     }
   }
 
-  const wrappedClozeShow = Closet.wrappers.aftermath(
-    () => {
-      document.querySelectorAll('.cl--obscure')
-        .forEach(tag => {
-          tag.addEventListener('click', removeObscure, {
-            once: true,
-          })
-        })
-    },
-    Closet.recipes.clozeShow,
-  )
+  const wrappedClozeShow = Closet.wrappers.aftermath(Closet.recipes.clozeShow, () => {
+    document.querySelectorAll('.cl--obscure')
+    .forEach(tag => {
+      tag.addEventListener('click', removeObscure, {
+        once: true,
+      })
+    })
+  })
 
   const obscureAndClick = (t) => {
     return `<span class="cl--obscure cl--obscure-hint cl--obscure-clickable">${t.values[0]}</span>`

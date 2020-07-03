@@ -21,23 +21,36 @@ interface AnkiPersistence {
     isAvailable(): boolean
 }
 
-export const memoryMap = (memoryKey: string): Map<string, unknown> => {
-    const persistence = globalThis.Persistence as AnkiPersistence
+interface MemoryMap {
+    map: Map<string, unknown>
+    writeBack: () => void
+}
+
+const getPersistentMap = (persistence: AnkiPersistence, memoryKey: string): Map<string, unknown> => {
     if (persistence && persistence.isAvailable()) {
-        const maybeMap = persistence.getItem(memoryKey)
-
-        if (maybeMap instanceof Map) {
-            return maybeMap
-        }
-        else {
-            const newMap = new Map()
-
-            persistence.setItem(memoryKey, newMap)
-            return newMap
-        }
+        const maybeMap = persistence.getItem(memoryKey) as Iterable<readonly [string, unknown]>
+        return new Map(maybeMap)
     }
-    else {
-        return new Map()
+
+    return new Map()
+}
+
+const setPersistentMap = (persistence: AnkiPersistence, memoryKey: string, value: Map<string, unknown>): void => {
+    if (persistence && persistence.isAvailable()) {
+        const persistentData = Array.from(value.entries())
+        persistence.setItem(memoryKey, persistentData)
+    }
+}
+
+export const memoryMap = (memoryKey: string): MemoryMap => {
+    const persistence = globalThis.Persistence as AnkiPersistence
+    const map = getPersistentMap(persistence, memoryKey)
+
+    return {
+        map: map,
+        writeBack: (): void => {
+            setPersistentMap(persistence, memoryKey, map)
+        },
     }
 }
 

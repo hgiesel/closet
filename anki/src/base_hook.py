@@ -4,10 +4,10 @@ from aqt.utils import showInfo
 
 from .utils import find_addon_by_name
 
-script_name = 'Closetjs'
+script_name = 'Closet'
 file_name = 'closet'
 version = 'v1.0'
-description = 'This is my awesome script!'
+description = 'The Closet JS source code.'
 
 base_tag = f'{script_name}Base'
 
@@ -48,7 +48,7 @@ def setup_script():
                 description,
                 'into_template',
                 storage.conditions if storage.conditions is not None else [],
-                storage.code if storage.code is not None else script,
+                script,
             ),
 
             # What happens when the user commits new changes to the script
@@ -60,9 +60,9 @@ def setup_script():
             setter = lambda id, script: True,
 
             # Collection of fields that are stored on the side of Script Manager
-            store = ['enabled', 'code', 'conditions'],
+            store = ['enabled', 'conditions'],
             # Collection of fields that are readonly
-            readonly = ['name', 'type', 'version', 'position', 'description'],
+            readonly = ['name', 'code', 'type', 'version', 'position', 'description'],
 
             # Change the code that is showed in the script window
             # By default is "your_tag: your_id"
@@ -104,7 +104,7 @@ def install_script():
         # this is the tag you interface above is registered on!
         base_tag,
         # your id: you can register an id only once per model per tag
-        f"{script_name}_id",
+        f"{script_name}SourceCode",
     )
 
     # insert the script for every model

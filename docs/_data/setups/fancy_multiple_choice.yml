@@ -49,7 +49,7 @@ code: |
     background-color: coral;
   }`
 
-  const wrappedMultipleChoiceShow = Closet.wrappers.aftermath((e, inter) => {
+  const wrappedMultipleChoiceShow = Closet.wrappers.aftermath(Closet.recipes.multipleChoiceShow, (e, inter) => {
     document.querySelectorAll('.cl--child')
       .forEach(v => v.addEventListener('click', () => {
         const container = document.querySelector('.cl--container')
@@ -65,7 +65,7 @@ code: |
       Closet.browser.appendStyleTag(fancyMultipleChoiceStyle)
       inter.environment.set(keyword, true)
     }
-  }, Closet.recipes.multipleChoiceShow)
+  })
 
   const wrapItem = (v, _i, cat) => `<div class="cl--card"><div class="cl--child cl--category-${cat}"><h3>${v}</h3></div></div>`
 

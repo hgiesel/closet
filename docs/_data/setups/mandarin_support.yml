@@ -223,7 +223,7 @@ code: |
   // Filter Manager Setup
   const sideSensitiveStyler = Closet.wrappers.twoWay(Closet.utils.isBack, Closet.recipes.processing, Closet.recipes.processing)
 
-  const wrappedSideSensitive = Closet.wrappers.aftermath((_e, internals) => {
+  const wrappedSideSensitive = Closet.wrappers.aftermath(sideSensitiveStyler, (_e, internals) => {
     if (!internals.environment.has('addMandarinToneStyleTag')) {
       Closet.browser.appendStyleTag(`
       .zh--tone-1 { color: dodgerblue; }
@@ -234,7 +234,7 @@ code: |
 
       internals.environment.set('addMandarinToneStyleTag', true)
     }
-  }, sideSensitiveStyler)
+  })
 
   const removeFormatting = (v) => v.replace(/<.*?>/g, '')
 

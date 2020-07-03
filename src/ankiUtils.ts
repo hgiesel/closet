@@ -1,4 +1,3 @@
-import type { StorageType } from './filterManager/storage'
 import { interspliceChildNodes, ChildNodeSpan } from './browserUtils'
 
 export const preset = (cardType: string, tagsFull: string, side: 'front' | 'back') => ({
@@ -19,30 +18,26 @@ interface AnkiPersistence {
     setItem(value: unknown): void
     removeItem(key: string): void
     removeItem(): void
+    isAvailable(): boolean
 }
 
-interface MemorySwitcher extends StorageType<unknown> {
-    switchTo: (i: string) => void
-}
+export const memoryMap = (memoryKey: string): Map<string, unknown> => {
+    const persistence = globalThis.Persistence as AnkiPersistence
+    if (persistence && persistence.isAvailable()) {
+        const maybeMap = persistence.getItem(memoryKey)
 
-export const memorySwitch = (p: AnkiPersistence): MemorySwitcher => {
-    let path: Map<string, unknown> = new Map<string, unknown>()
+        if (maybeMap instanceof Map) {
+            return maybeMap
+        }
+        else {
+            const newMap = new Map()
 
-    return {
-        switchTo: (i: string) => {
-            if (p.getItem(i)) {
-                path = p.getItem(i) as Map<string, unknown>
-            }
-            else {
-                p.setItem(i, new Map())
-                path = p.getItem(i) as Map<string, unknown>
-            }
-        },
-        has: (k: string): boolean => path.has(k),
-        get: <T>(k: string): T => path.get(k) as T,
-        set: (k: string, v: unknown): void => { path.set(k, v) },
-        delete: (k: string): void => { path.delete(k) },
-        clear: (): void => path.clear(),
+            persistence.setItem(memoryKey, newMap)
+            return newMap
+        }
+    }
+    else {
+        return new Map()
     }
 }
 

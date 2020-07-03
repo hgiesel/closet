@@ -28,35 +28,33 @@ code: |
     }
   }
 
-  const wrappedClozeShow = Closet.wrappers.aftermath((e, inter) => {
-      const keyword = 'keydownToRevealObscure'
+  const wrappedClozeShow = Closet.wrappers.aftermath(Closet.recipes.clozeShow, (e, inter) => {
+    const keyword = 'keydownToRevealObscure'
 
-      if (!inter.environment.has(keyword)) {
-        Closet.browser.appendStyleTag(`
-        .cl--obscure-hint {
-          filter: blur(0.25em);
-        }
-
-        .cl--obscure-fix::after {
-          content: 'XXXXXXXXXX';
-          filter: blur(0.25em);
-        }
-
-        .cl--obscure-fix > span {
-          display: none;
-        }`)
-
-        const revealOnQ = makeObscureOnKd(KeyEvent.DOM_VK_Q, '6')
-        const revealAllOnW = makeObscureOnKdAll(KeyEvent.DOM_VK_W, '5')
-
-        document.addEventListener('keydown', revealOnQ)
-        document.addEventListener('keydown', revealAllOnW)
-
-        inter.environment.set(keyword, true)
+    if (!inter.environment.has(keyword)) {
+      Closet.browser.appendStyleTag(`
+      .cl--obscure-hint {
+        filter: blur(0.25em);
       }
-    },
-    Closet.recipes.clozeShow,
-  )
+
+      .cl--obscure-fix::after {
+        content: 'XXXXXXXXXX';
+        filter: blur(0.25em);
+      }
+
+      .cl--obscure-fix > span {
+        display: none;
+      }`)
+
+      const revealOnQ = makeObscureOnKd(KeyEvent.DOM_VK_Q, '6')
+      const revealAllOnW = makeObscureOnKdAll(KeyEvent.DOM_VK_W, '5')
+
+      document.addEventListener('keydown', revealOnQ)
+      document.addEventListener('keydown', revealAllOnW)
+
+      inter.environment.set(keyword, true)
+    }
+  })
 
   const obscureAndKeydown = (t) => {
     return `<span class="cl--obscure cl--obscure-hint cl--obscure-kd-5 cl--obscure-kd-6">${t.values[0]}</span>`

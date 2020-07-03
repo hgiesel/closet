@@ -51,6 +51,8 @@ export const isActiveAll = (tag: TagData, internals: Internals<CardPreset>): boo
 
 //////////////////////////////////////////
 
-export const isBackAll: Decider<SidePreset> = (_t, { preset }) => {
+export const isBack: Decider<SidePreset> = (_t, { preset }) => {
     return preset['side'] === 'back'
 }
+
+export const isBackAll = isBack

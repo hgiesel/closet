@@ -49,8 +49,8 @@ export const wrap = <T extends object>(
 const wrapWithDeferredTemplate = <T extends object, D>(
     getDeferredApi: (i: Internals<T>) => DeferredApi<D>,
 ) => (
-    action: Deferred<D>,
     mainRecipe: Recipe<T>,
+    action: Deferred<D>,
     wrapOptions: WrapOptions = {},
 ): Recipe<T> => {
     return wrap((t, internals) => {

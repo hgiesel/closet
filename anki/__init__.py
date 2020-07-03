@@ -13,7 +13,7 @@ from os import path
 import json
 
 # Write manifest.json to config.json
-if mw.addonManager.addonName(path.dirname(__file__)) != 'Template Tools':
+if mw.addonManager.addonName(path.dirname(__file__)) != 'Template Overload':
     dir_path = path.dirname(path.realpath(__file__))
 
     with open(path.join(dir_path, 'manifest.json')) as f:

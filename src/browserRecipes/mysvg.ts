@@ -1,26 +1,28 @@
 import { SVG } from './svgClasses'
+import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
 
-
-
-const dothing = (wrapper) => {
-    document.addEventListener('readystatechange', (e) => {
-        if (e.target.readyState === 'complete') {
-            const draw = SVG.make(wrapper)
+export const wrapImage = (wrapped) => {
+    const onReadyStateChange = () => {
+        if (document.readyState === 'complete') {
+            const draw = SVG.make(wrapped)
 
             draw.raw.addEventListener('mousedown', (e) => {
                 e.preventDefault()
 
-                if (e.target.nodeName !== 'svg') {
+                const eventTarget = e.target as any
+
+                if (eventTarget.nodeName !== 'svg') {
                     /* assumes its rect */
 
                     if (e.shiftKey) {
-                        e.target.remove()
+
+                        eventTarget.remove()
                         return
                     }
 
-                    const rect = SVGRect.wrap(e.target)
-                    const downX = e.layerX
-                    const downY = e.layerY
+                    const rect = (SVGRect as any).wrap(e.target)
+                    const downX = (e as any).layerX
+                    const downY = (e as any).layerY
 
                     const resizeParameters = getResizeParameters(rect, downX, downY)
 
@@ -44,13 +46,13 @@ const dothing = (wrapper) => {
                 }
 
                 else {
-                    const downX = e.layerX
-                    const downY = e.layerY
+                    const downX = (e as any).layerX
+                    const downY = (e as any).layerY
 
                     let anchorX = downX
                     let anchorY = downY
 
-                    const currentRect = SVGRect.make()
+                    const currentRect = (SVGRect as any).make()
                     draw.append(currentRect)
 
                     currentRect.x = anchorX
@@ -72,5 +74,7 @@ const dothing = (wrapper) => {
                 }
             })
         }
-    })
+    }
+
+    document.addEventListener('readystatechange', onReadyStateChange)
 }

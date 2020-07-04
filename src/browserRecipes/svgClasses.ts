@@ -1,119 +1,123 @@
 const ns = 'http://www.w3.org/2000/svg'
 
-class SVG {
-  svg
-
-  constructor(container) {
-    this.svg = document.createElementNS(ns, 'svg')
-    this.svg.setAttributeNS(null, 'width', '100%')
-    this.svg.setAttributeNS(null, 'height', '100%')
-    // svg.setAttribute('viewBox', `0 0 ${event.target.width} ${event.target.height}`)
-    // svg.setAttribute('reserveAspectRatio', 'xMidYMid meet')
-
-    container.appendChild(this.svg)
-  }
-
-  static make(container) {
-    return new SVG(container)
-  }
-
-  get raw() { return this.svg }
-
-  append(element) {
-    for (const elem of element.getElements()) {
-      this.svg.appendChild(elem)
-    }
-  }
+interface GettableSVG {
+    getElements(): Element[]
 }
 
-class SVGRect {
-  element
-  label
+export class SVG {
+    svg: SVGElement
 
-  constructor(element, label) {
-    this.element = element
-    this.label = label
-  }
+    constructor(container: Element) {
+        this.svg = document.createElementNS(ns, 'svg')
+        this.svg.setAttributeNS(null, 'width', '100%')
+        this.svg.setAttributeNS(null, 'height', '100%')
+        // svg.setAttribute('viewBox', `0 0 ${event.target.width} ${event.target.height}`)
+        // svg.setAttribute('reserveAspectRatio', 'xMidYMid meet')
 
-  get raw() {
-    return this.element
-  }
+        container.appendChild(this.svg)
+    }
 
-  getElements() {
-    return [this.element, this.label]
-  }
+    static make(container: Element) {
+        return new SVG(container)
+    }
 
-  attr(attr, i) {
-    this.element.setAttributeNS(null, attr, i)
-  }
+    get raw() { return this.svg }
 
-  labelAttr(attr, i) {
-    this.label.setAttributeNS(null, attr, i)
-  }
+    append(element: GettableSVG) {
+        for (const elem of element.getElements()) {
+            this.svg.appendChild(elem)
+        }
+    }
+}
 
-  get(attr) {
-    const result = this.element.getAttributeNS(null, attr)
-    return result
-  }
+export class SVGRect implements GettableSVG {
+    element: Element
+    label: Element
 
-  static make() {
-    const element = document.createElementNS(ns, 'rect')
-    const label = document.createElementNS(ns, 'text')
-    label.innerHTML = '1'
+    constructor(element, label) {
+        this.element = element
+        this.label = label
+    }
 
-    const theRect = new SVGRect(element, label)
+    static make() {
+        const element = document.createElementNS(ns, 'rect')
+        const label = document.createElementNS(ns, 'text')
+        label.innerHTML = '1'
 
-    theRect.x = 0
-    theRect.y = 0
-    theRect.width = 0
-    theRect.height = 0
+        const theRect = new SVGRect(element, label)
 
-    return theRect
-  }
+        theRect.x = 0
+        theRect.y = 0
+        theRect.width = 0
+        theRect.height = 0
 
-  static wrap(element) {
-    return new SVGRect(element, element.nextSibling)
-  }
+        return theRect
+    }
 
-  set width(i) {
-    this.attr('width', i)
-    this.labelAttr('width', i)
-  }
-  get width() { return Number(this.get('width')) }
+    static wrap(element: Element) {
+        return new SVGRect(element, element.nextSibling)
+    }
 
-  set height(i) {
-    this.attr('height', i)
-    this.labelAttr('height', i)
-  }
-  get height() { return Number(this.get('height')) }
+    get raw() {
+        return this.element
+    }
 
-  set x(i) {
-    this.attr('x', i)
-    this.labelAttr('x', i + 10)// + this.label.getBoundingClientRect().width)
-  }
-  get x() { return Number(this.get('x')) }
+    getElements(): Element[] {
+        return [this.element, this.label]
+    }
 
-  set y(i) {
-    this.attr('y', i)
-    this.labelAttr('y', i + this.label.getBoundingClientRect().height)
-  }
-  get y() { return Number(this.get('y')) }
+    attr(attr, i): void {
+        this.element.setAttributeNS(null, attr, i)
+    }
 
-  set rx(i) { this.attr('rx', i) }
-  get rx() { return Number(this.get('rx')) }
+    labelAttr(attr, i): void {
+        this.label.setAttributeNS(null, attr, i)
+    }
 
-  set ry(i) { this.attr('ry', i) }
-  get ry() { return Number(this.get('ry')) }
+    get(attr) {
+        const result = this.element.getAttributeNS(null, attr)
+        return result
+    }
 
-  set fill(color) { this.attr('fill', color) }
-  get fill() { return this.get('fill') }
+    set width(i) {
+        this.attr('width', i)
+        this.labelAttr('width', i)
+    }
+    get width() { return Number(this.get('width')) }
 
-  set stroke(color) { this.attr('stroke', color) }
-  get stroke() { return this.get('stroke') }
+    set height(i) {
+        this.attr('height', i)
+        this.labelAttr('height', i)
+    }
+    get height() { return Number(this.get('height')) }
 
-  set strokeWidth(i) { this.attr('stroke-width', i) }
-  get strokeWidth() { return Number(this.get('stroke-width')) }
+    set x(i) {
+        this.attr('x', i)
+        this.labelAttr('x', i + 10)// + this.label.getBoundingClientRect().width)
+    }
+    get x() { return Number(this.get('x')) }
 
-  set strokeOpacity(i) { this.attr('stroke-opacity', i) }
-  get strokeOpacity() { return this.get('stroke-opacity') }
+    set y(i) {
+        this.attr('y', i)
+        this.labelAttr('y', i + this.label.getBoundingClientRect().height)
+    }
+    get y() { return Number(this.get('y')) }
+
+    set rx(i) { this.attr('rx', i) }
+    get rx() { return Number(this.get('rx')) }
+
+    set ry(i) { this.attr('ry', i) }
+    get ry() { return Number(this.get('ry')) }
+
+    set fill(color) { this.attr('fill', color) }
+    get fill() { return this.get('fill') }
+
+    set stroke(color) { this.attr('stroke', color) }
+    get stroke() { return this.get('stroke') }
+
+    set strokeWidth(i) { this.attr('stroke-width', i) }
+    get strokeWidth() { return Number(this.get('stroke-width')) }
+
+    set strokeOpacity(i) { this.attr('stroke-opacity', i) }
+    get strokeOpacity() { return this.get('stroke-opacity') }
 }

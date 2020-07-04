@@ -15,3 +15,5 @@ export { Stylizer } from './src/recipes/stylizer'
 
 export * as anki from './src/ankiUtils'
 export * as browser from './src/browserUtils'
+
+export * as graphics from './src/browserRecipes/mysvg'

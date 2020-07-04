@@ -17,12 +17,12 @@ parent: Flashcard Types
 
 {% include toc-doc.md %}
 
+---
 ## Activating tags in a range
 
 This is also known as _overlapping clozes_.
 
 {% include codeDisplay.md content=flashcard.around_range setups="default_cloze,flashcard" buttons=bSix %}
-
 
 It is especially popular with remembering poems.
 

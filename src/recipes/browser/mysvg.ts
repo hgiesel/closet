@@ -78,12 +78,14 @@ export const wrapImage = (wrapped) => {
 
 export const occlusionMakerRecipe = ({
     tagname = 'makeOcclusions',
-}) => (registrar: Registrar<{}>) => {
+} = {}) => (registrar: Registrar<{}>) => {
 
-    const occlusionMakerFilter = (tag: TagData, { aftermath }: Internals<{}>) => {
-        aftermath.registerIfNotExists('makeOcclusion', (entry, internals) => {
-            console.log(entry)
+    const occlusionMakerFilter = (_tag: TagData, { path, aftermath }: Internals<{}>) => {
+        aftermath.registerIfNotExists('makeOcclusion', (entry, { template }) => {
+            console.log(entry, path, template)
         })
+
+        return { ready: true }
     }
 
     registrar.register(tagname, occlusionMakerFilter)

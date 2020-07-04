@@ -9,5 +9,5 @@ export const browser = {
 import { occlusionMakerRecipe } from './mysvg'
 
 export const browserRecipes = {
-    makeOcclusion: occlusionMakerRecipe,
+    makeOcclusions: occlusionMakerRecipe,
 }

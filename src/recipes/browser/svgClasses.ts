@@ -1,7 +1,6 @@
+import { appendStyleTag } from './utils'
+
 const ns = 'http://www.w3.org/2000/svg'
-
-import { appendStyleTag } from '../browserUtils'
-
 const svgCss = `
 .occlusion-container {
   display: inline-block;

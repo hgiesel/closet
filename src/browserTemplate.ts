@@ -1,5 +1,5 @@
-import type { TagInfo } from './template/tags'
 import type { TagPath, TagRenderer } from './template'
+import type { TagInfo } from './template/tags'
 
 import { Template } from './template'
 
@@ -10,7 +10,7 @@ const parseIndexArgument = (idx: number, min: number, max: number): number => {
     : min + idx
 }
 
-export const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): string => {
+const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): string => {
     if (typeof(input) === 'string') {
         return input
     }
@@ -33,7 +33,7 @@ export const getText = (input: Element | Text | ChildNodeSpan | ChildNode | stri
     }
 }
 
-export const setText = (input: Element | Text | ChildNodeSpan | string, newText: string): void => {
+const setText = (input: Element | Text | ChildNodeSpan | string, newText: string): void => {
     if (typeof(input) === 'string') {
         return
     }
@@ -276,16 +276,6 @@ export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate)
 
     return result
 }
-
-export const appendStyleTag = (input: string): void => {
-    var styleSheet = document.createElement('style')
-    styleSheet.type = 'text/css'
-    styleSheet.innerHTML = input
-    globalThis.document.head.appendChild(styleSheet)
-}
-
-export const zeroWidthSpaceEntity = "&#8203;"
-export const wordBreakTag = "<wbr />"
 
 export class BrowserTemplate extends Template {
     inputs: Array<Element | Text | ChildNodeSpan | string>

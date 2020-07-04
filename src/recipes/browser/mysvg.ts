@@ -6,7 +6,6 @@ export const wrapImage = (wrapped) => {
 
     draw.raw.addEventListener('mousedown', (e) => {
         e.preventDefault()
-        debugger
 
         const eventTarget = e.target as any
 

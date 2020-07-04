@@ -1,4 +1,4 @@
-import { interspliceChildNodes, ChildNodeSpan } from './browserUtils'
+import { interspliceChildNodes, ChildNodeSpan } from './browserTemplate'
 
 export const preset = (cardType: string, tagsFull: string, side: 'front' | 'back') => ({
     card: cardType,

@@ -15,11 +15,12 @@ parent: Multiple Choice
 
 {% include toc-doc.md %}
 
-
+---
 ## Creating multiple choice
 
 {% include codeDisplay.md content=mc.simple setups="default_multiple_choice" buttons=b %}
 
-Bla Bla Bla
+---
+## Graphical effects
 
 {% include codeDisplay.md content=mc.simple setups="fancy_multiple_choice" buttons=b %}

@@ -1,5 +1,10 @@
 name: Assign categories
 code: |
+  const baseStylizer = new Closet.Stylizer({
+    separator: '・',
+    processor: (v) => `《${v}》`,
+  })
+
   const colorMapper = (v, _i, cat) => {
     if (v === '') {
       return []
@@ -16,11 +21,6 @@ code: |
         : ''}">${v}</span>`
   }
 
-  const baseStylizer = new Closet.Stylizer({
-    separator: '・',
-    processor: (v) => `《${v}》`,
-  })
-
   const theBackStylizer = baseStylizer.toStylizer({
     mapper: colorMapper,
   })
@@ -35,22 +35,23 @@ code: |
     return baseStylizer.stylize(result)
   }
 
-  filterManager.addRecipe(Closet.recipes.multipleChoiceShow({
-    tagname: 'mc',
+  const assignCategorySettings = {
     backStylizer: theBackStylizer,
     frontStylizer: theFrontStylizer,
     contexter: theContexter,
+  }
+
+  filterManager.addRecipe(Closet.recipes.multipleChoiceShow({
+    tagname: 'mc',
+    ...assignCategorySettings,
   }))
 
   filterManager.addRecipe(Closet.recipes.multipleChoiceHide({
     tagname: 'mch',
-    backStylizer: theBackStylizer,
-    frontStylizer: theFrontStylizer,
+    ...assignCategorySettings,
   }))
 
   filterManager.addRecipe(Closet.recipes.multipleChoiceReveal({
     tagname: 'mcr',
-    backStylizer: theBackStylizer,
-    frontStylizer: theFrontStylizer,
-    contexter: theContexter,
+    ...assignCategorySettings,
   }))

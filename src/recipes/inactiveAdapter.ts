@@ -57,17 +57,16 @@ export const inactiveAdapterWithinRange = <T extends object>(
     ellipser: Ellipser<CardPreset>,
 ) => (tag: TagData, internals: Internals<CardPreset & T>): WeakFilterResult => {
     const [
+        cardNumber,
         showBottom,
         showTop,
         hideBottom,
         hideTop,
     ] = inactiveAdapterGetRange(tag, internals)
 
-    if (!internals.preset['card']) {
-        behavior(contexter, ellipser)(tag, internals)
+    if (!internals.preset.card) {
+        return behavior(contexter, ellipser)(tag, internals)
     }
-
-    const cardNumber = cardNumberToNum(internals.preset['card'])
 
     if (cardNumber - showBottom <= tag.num && tag.num <= cardNumber + showTop) {
         return contexter(tag, internals)
@@ -80,26 +79,28 @@ export const inactiveAdapterWithinRange = <T extends object>(
     return adapter(behavior)(contexter, ellipser)(tag, internals)
 }
 
-export const inactiveAdapterGetRange = <T extends object>(tag: TagData, internals: Internals<CardPreset & T>): [number, number, number, number] => {
+export const inactiveAdapterGetRange = <T extends object>(tag: TagData, internals: Internals<CardPreset & T>): [number, number, number, number, number] => {
     const showBottomKeyword = 'flashcardShowBottom'
     const showTopKeyword = 'flashcardShowTop'
 
+    const cardNumber = cardNumberToNum(internals.preset.card)
+
     const showBottom = internals.cache.get<StoreGetter<number>>(showBottomKeyword, constantZero)
-        .get(tag.key, tag.num, tag.fullOccur)
+        .get(tag.key, cardNumber, tag.fullOccur)
 
     const showTop = internals.cache.get<StoreGetter<number>>(showTopKeyword, constantZero)
-        .get(tag.key, tag.num, tag.fullOccur)
+        .get(tag.key, cardNumber, tag.fullOccur)
 
     const hideBottomKeyword = 'flashcardHideBottom'
     const hideTopKeyword = 'flashcardHideTop'
 
     const hideBottom = internals.cache.get<StoreGetter<number>>(hideBottomKeyword, constantZero)
-        .get(tag.key, tag.num, tag.fullOccur)
+        .get(tag.key, cardNumber, tag.fullOccur)
 
     const hideTop = internals.cache.get<StoreGetter<number>>(hideTopKeyword, constantZero)
-        .get(tag.key, tag.num, tag.fullOccur)
+        .get(tag.key, cardNumber, tag.fullOccur)
 
-    return [showBottom, showTop, hideBottom, hideTop]
+    return [cardNumber, showBottom, showTop, hideBottom, hideTop]
 }
 
 export const inactiveAdapterAll: InactiveAdapter<CardPreset,CardPreset> = inactiveAdapterOverwritten(inactiveAdapterWithinRange(inactiveAdapter))

@@ -84,11 +84,6 @@ if (sparams.has('memory')) {
 }
 
 //////////////////// fitlerManager preset
-const setDefaultFm = () => {
-    const omnipotentInput = document.querySelector(`input#input-${defaultFm}`)
-    omnipotentInput.checked = true
-}
-
 if (sparams.has('setups')) {
     const setupIds = sparams.get('setups').split(',')
 

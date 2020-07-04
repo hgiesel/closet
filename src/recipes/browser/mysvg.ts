@@ -1,5 +1,9 @@
+import type { Registrar, TagData, Internals } from '../types'
+
+
 import { SVG, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
+import { wrapWithAftermath } from '../wrappers'
 
 export const wrapImage = (wrapped) => {
     const draw = SVG.wrap(wrapped)
@@ -70,4 +74,17 @@ export const wrapImage = (wrapped) => {
             }, { once: true })
         }
     })
+}
+
+export const occlusionMakerRecipe = ({
+    tagname = 'makeOcclusions',
+}) => (registrar: Registrar<{}>) => {
+
+    const occlusionMakerFilter = (tag: TagData, { aftermath }: Internals<{}>) => {
+        aftermath.registerIfNotExists('makeOcclusion', (entry, internals) => {
+            console.log(entry)
+        })
+    }
+
+    registrar.register(tagname, occlusionMakerFilter)
 }

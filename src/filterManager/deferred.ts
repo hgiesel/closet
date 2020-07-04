@@ -32,16 +32,12 @@ export class DeferredApi<T> {
         this._blocked = new Set()
     }
 
-    register(keyword: string, procedure: Deferred<T>, {
-        priority = 0,
-        persistent = false,
-    }: DeferredOptions,
-    ): void {
+    register(keyword: string, procedure: Deferred<T>, options = defaultDeferredOptions): void {
         this._deferred.set(keyword, {
             keyword: keyword,
             procedure: procedure,
-            priority: priority,
-            persistent: persistent,
+            priority: options.priority,
+            persistent: options.persistent,
         })
     }
 

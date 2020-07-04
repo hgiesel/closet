@@ -1,5 +1,35 @@
 const ns = 'http://www.w3.org/2000/svg'
 
+import { appendStyleTag } from '../browserUtils'
+
+const svgCss = `
+.occlusion-container {
+  display: inline-block;
+  position: relative;
+}
+
+.occlusion-container > * {
+  display: block;
+
+  max-width: 100%
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.occlusion-container > img {
+  position: relative;
+  z-index: 3;
+}
+
+.occlusion-container > svg {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+}`
+
+appendStyleTag(svgCss)
+
 interface GettableSVG {
     getElements(): Element[]
 }
@@ -7,34 +37,45 @@ interface GettableSVG {
 export class SVG {
     svg: SVGElement
 
-    constructor(container: Element) {
+    protected constructor(container: Element) {
         this.svg = document.createElementNS(ns, 'svg')
         this.svg.setAttributeNS(null, 'width', '100%')
         this.svg.setAttributeNS(null, 'height', '100%')
-        // svg.setAttribute('viewBox', `0 0 ${event.target.width} ${event.target.height}`)
-        // svg.setAttribute('reserveAspectRatio', 'xMidYMid meet')
 
         container.appendChild(this.svg)
+        container.classList.add('occlusion-container')
     }
 
-    static make(container: Element) {
+    static make(container: Element): SVG {
         return new SVG(container)
     }
 
-    get raw() { return this.svg }
+    static wrap(image: HTMLImageElement): SVG {
+        const container = document.createElement('div')
 
-    append(element: GettableSVG) {
+        image.parentNode.replaceChild(container, image)
+        container.appendChild(image)
+
+        return SVG.make(container)
+    }
+
+
+    get raw(): SVGElement {
+        return this.svg
+    }
+
+    append(element: GettableSVG): void {
         for (const elem of element.getElements()) {
             this.svg.appendChild(elem)
         }
     }
 }
 
-export class SVGRect implements GettableSVG {
+export class Rect implements GettableSVG {
     element: Element
     label: Element
 
-    constructor(element, label) {
+    protected constructor(element, label) {
         this.element = element
         this.label = label
     }
@@ -44,7 +85,7 @@ export class SVGRect implements GettableSVG {
         const label = document.createElementNS(ns, 'text')
         label.innerHTML = '1'
 
-        const theRect = new SVGRect(element, label)
+        const theRect = new Rect(element, label)
 
         theRect.x = 0
         theRect.y = 0
@@ -55,7 +96,7 @@ export class SVGRect implements GettableSVG {
     }
 
     static wrap(element: Element) {
-        return new SVGRect(element, element.nextSibling)
+        return new Rect(element, element.nextSibling)
     }
 
     get raw() {

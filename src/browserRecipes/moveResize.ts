@@ -1,6 +1,6 @@
-import { SVGRect } from './svgClasses'
+import { Rect } from './svgClasses'
 
-export const onMouseMoveResize = (currentShape: SVGRect, left: boolean, right: boolean, top: boolean, bottom: boolean, downX: number, downY: number) => (e: MouseEvent) => {
+export const onMouseMoveResize = (currentShape: Rect, left: boolean, right: boolean, top: boolean, bottom: boolean, downX: number, downY: number) => (e: MouseEvent) => {
     const moveX = (e as any).layerX
     const moveY = (e as any).layerY
 
@@ -23,7 +23,7 @@ export const onMouseMoveResize = (currentShape: SVGRect, left: boolean, right: b
     }
 }
 
-export const onMouseMoveMove = (currentShape: SVGRect, startX: number, startY: number, downX: number, downY: number) => (e: MouseEvent): void => {
+export const onMouseMoveMove = (currentShape: Rect, startX: number, startY: number, downX: number, downY: number) => (e: MouseEvent): void => {
     const moveX = (e as any).layerX
     const moveY = (e as any).layerY
 
@@ -36,16 +36,16 @@ export const onMouseMoveMove = (currentShape: SVGRect, startX: number, startY: n
 
 
 const perDirection = <T>(
-    leftTop: (shape: SVGRect) => T,
-    leftBottom: (shape: SVGRect) => T,
-    left: (shape: SVGRect) => T,
-    rightTop: (shape: SVGRect) => T,
-    rightBottom: (shape: SVGRect) => T,
-    right: (shape: SVGRect) => T,
-    top: (shape: SVGRect) => T,
-    bottom: (shape: SVGRect) => T,
-    none: (shape: SVGRect) => T,
-) => (rect: SVGRect, downX: number, downY: number): T => {
+    leftTop: (shape: Rect) => T,
+    leftBottom: (shape: Rect) => T,
+    left: (shape: Rect) => T,
+    rightTop: (shape: Rect) => T,
+    rightBottom: (shape: Rect) => T,
+    right: (shape: Rect) => T,
+    top: (shape: Rect) => T,
+    bottom: (shape: Rect) => T,
+    none: (shape: Rect) => T,
+) => (rect: Rect, downX: number, downY: number): T => {
     const borderOffset = 5
 
     const offsetLeft = downX - rect.x
@@ -76,14 +76,14 @@ const perDirection = <T>(
 }
 
 export const getResizeParameters = perDirection<[boolean, boolean, boolean, boolean, number, number]>(
-    (rect: SVGRect) => [true, false, true, false, rect.x + rect.width, rect.y + rect.height],
-    (rect: SVGRect) => [true, false, false, true, rect.x + rect.width, rect.y],
-    (rect: SVGRect) => [true, false, false, false, rect.x + rect.width, 0],
-    (rect: SVGRect) => [false, true, true, false, rect.x, rect.y + rect.height],
-    (rect: SVGRect) => [false, true, false, true, rect.x, rect.y],
-    (rect: SVGRect) => [false, true, false, false, rect.x, 0],
-    (rect: SVGRect) => [false, false, true, false, 0, rect.y + rect.height],
-    (rect: SVGRect) => [false, false, false, true, 0, rect.y],
+    (rect: Rect) => [true, false, true, false, rect.x + rect.width, rect.y + rect.height],
+    (rect: Rect) => [true, false, false, true, rect.x + rect.width, rect.y],
+    (rect: Rect) => [true, false, false, false, rect.x + rect.width, 0],
+    (rect: Rect) => [false, true, true, false, rect.x, rect.y + rect.height],
+    (rect: Rect) => [false, true, false, true, rect.x, rect.y],
+    (rect: Rect) => [false, true, false, false, rect.x, 0],
+    (rect: Rect) => [false, false, true, false, 0, rect.y + rect.height],
+    (rect: Rect) => [false, false, false, true, 0, rect.y],
     () => [false, false, false, false, 0, 0],
 )
 
@@ -100,7 +100,7 @@ const getCursor = perDirection<string>(
 )
 
 export const adaptCursor = (e: MouseEvent) => {
-    const rect = SVGRect.wrap(e.target as Element)
+    const rect = Rect.wrap(e.target as Element)
     const rawElement = rect.raw as HTMLDivElement
 
     if (e.shiftKey) {

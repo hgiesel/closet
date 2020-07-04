@@ -1,0 +1,8 @@
+name: Top and Bottom Range
+code: |
+  [[c1::Mesolimbic pathway::starts with M[[up::c1=1,c2=1,c3=1]][[down::c4=1,c5=1,c6=1]]]]
+  [[c2::Mesocortical pathway]]
+  [[c3::Nigostriatal pathway::starts with N]]
+  [[c4::Tuberoinfundibular pathway]]
+  [[c5::Hypothalamospinal projection]]
+  [[c6::Incertohypothalamic pathway]]

@@ -221,7 +221,7 @@ code: |
   const splitAndMap = (f) => (str) => mapPinyin(split(str, true, true), f).join('')
 
   // Filter Manager Setup
-  const sideSensitiveStyler = Closet.wrappers.twoWay(Closet.utils.isBack, Closet.recipes.processing, Closet.recipes.processing)
+  const sideSensitiveStyler = Closet.wrappers.sum(Closet.recipes.processing, Closet.recipes.processing, Closet.deciders.isBack)
 
   const wrappedSideSensitive = Closet.wrappers.aftermath(sideSensitiveStyler, (_e, internals) => {
     if (!internals.environment.has('addMandarinToneStyleTag')) {

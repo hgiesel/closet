@@ -100,7 +100,7 @@ const getCursor = perDirection<string>(
 
 export const adaptCursor = (e: MouseEvent) => {
     const rect = Rect.wrap(e.target as SVGRectElement)
-    const rawElement = rect.raw
+    const rawElement = rect.rect
 
     if (e.shiftKey) {
         rawElement.style.cursor = 'no-drop'

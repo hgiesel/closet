@@ -64,8 +64,8 @@ export const wrapImage = (wrapped) => {
             draw.raw.addEventListener('mouseup', () => {
                 draw.raw.removeEventListener('mousemove', resizer)
 
-                currentRect.raw.addEventListener('mousemove', adaptCursor)
-                currentRect.raw.addEventListener('dblclick', () => { console.log('dblclick') })
+                currentRect.rect.addEventListener('mousemove', adaptCursor)
+                currentRect.rect.addEventListener('dblclick', () => { console.log('dblclick') })
             }, { once: true })
         }
     })

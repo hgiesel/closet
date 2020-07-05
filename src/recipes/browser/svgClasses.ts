@@ -103,6 +103,9 @@ export class Rect implements GettableSVG {
         const rect = document.createElementNS(ns, 'rect')
         const label = document.createElementNS(ns, 'text')
 
+        container.appendChild(rect)
+        container.appendChild(label)
+
         label.innerHTML = '1'
 
         const theRect = new Rect(container, rect, label)
@@ -122,12 +125,8 @@ export class Rect implements GettableSVG {
         return new Rect(null, rect, rect.nextSibling)
     }
 
-    get raw() {
-        return this.rect
-    }
-
     getElements(): Element[] {
-        return [this.rect, this.label]
+        return [this.container]
     }
 
     attr(attr, i): void {

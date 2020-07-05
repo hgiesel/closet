@@ -14,11 +14,15 @@ export interface IterationInfo {
     baseDepth: number
 }
 
+export interface ResultInfo {
+    result: string | string[]
+}
+
 // TagRenderer -> TagAcessor -> TagProcessor
 export interface TagRenderer {
     makeAccessor: (t: TemplateInfo, i: IterationInfo) => TagAccessor
     finishIteration: (t: TemplateInfo, i: IterationInfo) => void
-    finishRun: (t: TemplateInfo) => void
+    finishRun: (t: TemplateInfo, x: ResultInfo) => void
 }
 
 export type TagPath = number[]
@@ -125,7 +129,8 @@ export class Template {
             cb(result)
         }
 
-        tagRenderer.finishRun(templateInfo)
+        tagRenderer.finishRun(templateInfo, { result: result })
+
         return result
     }
 

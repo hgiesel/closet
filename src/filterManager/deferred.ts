@@ -10,7 +10,7 @@ interface DeferredEntry<T> {
     persistent: boolean
 }
 
-interface DeferredOptions {
+export interface DeferredOptions {
     priority?: number
     persistent?: boolean
 }

@@ -4,7 +4,7 @@ import { MetaFilterManager, ManagerInfo } from './filterManager'
 import { Filter as FilterType, WeakFilter as WeakFilterType, FilterResult, FilterApi } from './filterManager/filters'
 import { RegistrarApi } from './filterManager/registrar'
 
-import { TagRenderer, TemplateInfo, IterationInfo } from './template'
+import { TagRenderer, TemplateInfo, IterationInfo, ResultInfo } from './template'
 import { TagAccessor, TagProcessor, RoundInfo, DataOptions } from './template/evaluate'
 import { TagData } from './template/tags'
 
@@ -49,7 +49,7 @@ const fillDataOptions = (partial: Partial<DataOptions>): DataOptions => {
 
 }
 
-export class FilterManager<P extends object> extends MetaFilterManager<TemplateInfo, IterationInfo, RoundInfo, DataOptions, P> implements TagRenderer {
+export class FilterManager<P extends object> extends MetaFilterManager<TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> implements TagRenderer {
     makeAccessor(template: TemplateInfo, iteration: IterationInfo): TagAccessor {
         const accessor = this.filterAccessor(template, iteration)
 
@@ -68,8 +68,9 @@ export class FilterManager<P extends object> extends MetaFilterManager<TemplateI
         this.executeDeferred(template, iteration)
     }
 
-    finishRun(template: TemplateInfo): void {
-        this.executeAftermath(template)
+    finishRun(template: TemplateInfo, result: ResultInfo): void {
+        // this.aftermath.register('the:final', f, opt)
+        this.executeAftermath(template, result)
         this.reset()
     }
 }

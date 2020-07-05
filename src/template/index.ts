@@ -40,33 +40,26 @@ const splitTextFromIntervals = (text: string, intervals: [number, number][]): st
 }
 
 export class Template {
-    private textFragments: string[]
-    private baseDepth: number
-    private parser: Parser
+    readonly textFragments: string[]
+    readonly baseDepth: number
+    readonly parser: Parser
 
-    private rootTag: TagInfo
-    private currentZoom: TagPath
+    readonly rootTag: TagInfo
 
-    protected constructor(text: string[], baseDepth: number, preparsed: TagInfo | null, zoom: TagPath) {
+    protected constructor(text: string[], baseDepth: number, preparsed: TagInfo | null) {
         this.textFragments = text
         this.baseDepth = baseDepth
         this.parser = new Parser()
 
         this.rootTag = preparsed ?? this.parser.parse(text, baseDepth)
-
-        this.currentZoom = zoom
     }
 
     static make(text: string) {
-        return new Template([text], 1, null, [])
+        return new Template([text], 1, null)
     }
 
     static makeFromFragments(texts: string[]) {
-        return new Template(texts, 2, null, [])
-    }
-
-    zoom(zoom: number[]) {
-        return new Template(this.textFragments /* TODO probably bad idea */, this.baseDepth, this.rootTag, zoom)
+        return new Template(texts, 2, null)
     }
 
     traverse (path: TagPath): TagInfo | null {
@@ -134,7 +127,7 @@ export class Template {
         return result
     }
 
-    exists(path = this.currentZoom): boolean {
+    exists(path: TagPath): boolean {
         const resultTag = this.traverse(path)
 
         return resultTag
@@ -142,11 +135,11 @@ export class Template {
             : false
     }
 
-    getInfo(path = this.currentZoom): TagInfo | null {
+    getInfo(path: TagPath): TagInfo | null {
         return this.traverse(path)
     }
 
-    getData(path = this.currentZoom): TagData | null {
+    getData(path: TagPath): TagData | null {
         const maybeTagInfo = this.traverse(path)
 
         if (maybeTagInfo) {
@@ -156,7 +149,7 @@ export class Template {
         return null
     }
 
-    getOffsets(path = this.currentZoom): [number, number] | null {
+    getOffsets(path: TagPath): [number, number] | null {
         const maybeTagInfo = this.traverse(path)
 
         if (maybeTagInfo) {
@@ -164,9 +157,5 @@ export class Template {
         }
 
         return null
-    }
-
-    setZoom(path: TagPath): void {
-        this.currentZoom = path
     }
 }

@@ -280,17 +280,17 @@ export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate)
 export class BrowserTemplate extends Template {
     inputs: Array<Element | Text | ChildNodeSpan | string>
 
-    protected constructor(text: string[], baseDepth: number, preparsed: TagInfo | null, zoom: TagPath, inputs: Array<Element | Text | ChildNodeSpan | string>) {
-        super(text, baseDepth, preparsed, zoom)
+    protected constructor(text: string[], baseDepth: number, preparsed: TagInfo | null, inputs: Array<Element | Text | ChildNodeSpan | string>) {
+        super(text, baseDepth, preparsed)
         this.inputs = inputs
     }
 
     static makeFromNode = (input: Element | Text | ChildNodeSpan | string): BrowserTemplate => {
-        return new BrowserTemplate([getText(input)], 1, null, [], [input])
+        return new BrowserTemplate([getText(input)], 1, null, [input])
     }
 
     static makeFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>): BrowserTemplate => {
-        return new BrowserTemplate(inputs.map(getText), 2, null, [], inputs)
+        return new BrowserTemplate(inputs.map(getText), 2, null, inputs)
     }
 
     renderToNodes(tagRenderer: TagRenderer): void {

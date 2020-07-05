@@ -34,7 +34,6 @@ export const onMouseMoveMove = (currentShape: Rect, startX: number, startY: numb
     currentShape.y = newY
 }
 
-
 const perDirection = <T>(
     leftTop: (shape: Rect) => T,
     leftBottom: (shape: Rect) => T,
@@ -100,8 +99,8 @@ const getCursor = perDirection<string>(
 )
 
 export const adaptCursor = (e: MouseEvent) => {
-    const rect = Rect.wrap(e.target as Element)
-    const rawElement = rect.raw as HTMLDivElement
+    const rect = Rect.wrap(e.target as SVGRectElement)
+    const rawElement = rect.raw
 
     if (e.shiftKey) {
         rawElement.style.cursor = 'no-drop'

@@ -71,12 +71,15 @@ export class SVG {
 }
 
 export class Rect implements GettableSVG {
-    element: Element
-    label: Element
+    container: SVGElement
+    rect: SVGRectElement
+    label: SVGTextElement
 
-    protected constructor(element, label) {
-        this.element = element
+    protected constructor(rect, label) {
+        this.rect = rect
         this.label = label
+
+        this.container = document.createElementNS(ns, 'svg')
     }
 
     static make() {
@@ -94,20 +97,20 @@ export class Rect implements GettableSVG {
         return theRect
     }
 
-    static wrap(element: Element) {
-        return new Rect(element, element.nextSibling)
+    static wrap(rect: SVGRectElement) {
+        return new Rect(rect, rect.nextSibling)
     }
 
     get raw() {
-        return this.element
+        return this.rect
     }
 
     getElements(): Element[] {
-        return [this.element, this.label]
+        return [this.rect, this.label]
     }
 
     attr(attr, i): void {
-        this.element.setAttributeNS(null, attr, i)
+        this.rect.setAttributeNS(null, attr, i)
     }
 
     labelAttr(attr, i): void {
@@ -115,7 +118,7 @@ export class Rect implements GettableSVG {
     }
 
     get(attr) {
-        const result = this.element.getAttributeNS(null, attr)
+        const result = this.rect.getAttributeNS(null, attr)
         return result
     }
 
@@ -143,6 +146,8 @@ export class Rect implements GettableSVG {
     }
     get y() { return Number(this.get('y')) }
 
+    /////////////////// on rect
+
     set rx(i) { this.attr('rx', i) }
     get rx() { return Number(this.get('rx')) }
 
@@ -160,4 +165,6 @@ export class Rect implements GettableSVG {
 
     set strokeOpacity(i) { this.attr('stroke-opacity', i) }
     get strokeOpacity() { return this.get('stroke-opacity') }
+
+    /////////////////// on label
 }

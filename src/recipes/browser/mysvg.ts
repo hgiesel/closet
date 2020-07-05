@@ -59,8 +59,8 @@ export const wrapImage = (wrapped) => {
 
             currentRect.x = anchorX
             currentRect.y = anchorY
-            currentRect.fill = 'grey'
-            currentRect.stroke = 'orange'
+            currentRect.fill = 'moccasin'
+            currentRect.stroke = 'olive'
             currentRect.strokeWidth = 1
 
             const resizer = onMouseMoveResize(currentRect, true, true, true, true, downX, downY)
@@ -76,13 +76,37 @@ export const wrapImage = (wrapped) => {
     })
 }
 
+const imageSrcPattern = /<img[^>]*?src="(.+?)"[^>]*>/g
+const getImages = (txt: string) => {
+    const result = []
+    let match: RegExpExecArray | null
+
+    do {
+        match = imageSrcPattern.exec(txt)
+        if (match) {
+            result.push(match[1])
+        }
+    } while (match)
+
+    return result
+}
+
 export const occlusionMakerRecipe = ({
     tagname = 'makeOcclusions',
 } = {}) => (registrar: Registrar<{}>) => {
 
-    const occlusionMakerFilter = (_tag: TagData, { path, aftermath }: Internals<{}>) => {
-        aftermath.registerIfNotExists('makeOcclusion', (entry, { template }) => {
-            console.log(entry, path, template)
+    const occlusionMakerFilter = (_tag: TagData, { template, aftermath }: Internals<{}>) => {
+        console.log(template.textFragments)
+        const images = (template.textFragments as any).flatMap(getImages)
+
+        aftermath.registerIfNotExists('makeOcclusion', () => {
+            for (const srcUrl of images) {
+                const maybeElement = document.querySelector(`img[src="${srcUrl}"]`)
+
+                if (maybeElement) {
+                    wrapImage(maybeElement)
+                }
+            }
         })
 
         return { ready: true }

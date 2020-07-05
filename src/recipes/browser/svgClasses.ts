@@ -98,14 +98,14 @@ export class Rect implements GettableSVG {
         this.label = label
     }
 
-    static make() {
-        const element = document.createElementNS(ns, 'rect')
-        const label = document.createElementNS(ns, 'text')
+    static make(): Rect {
         const container = document.createElementNS(ns, 'svg')
+        const rect = document.createElementNS(ns, 'rect')
+        const label = document.createElementNS(ns, 'text')
 
         label.innerHTML = '1'
 
-        const theRect = new Rect(container, element, label)
+        const theRect = new Rect(container, rect, label)
 
         theRect.x = 0
         theRect.y = 0
@@ -118,7 +118,7 @@ export class Rect implements GettableSVG {
         return theRect
     }
 
-    static wrap(rect: SVGRectElement) {
+    static wrap(rect: SVGRectElement): Rect {
         return new Rect(null, rect, rect.nextSibling)
     }
 

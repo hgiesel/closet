@@ -66,7 +66,7 @@ export class SVG {
         return new SVG(container)
     }
 
-    static wrap(image: HTMLImageElement): SVG {
+    static wrapImage(image: HTMLImageElement): SVG {
         const container = document.createElement('div')
 
         image.parentNode.replaceChild(container, image)
@@ -92,30 +92,34 @@ export class Rect implements GettableSVG {
     rect: SVGRectElement
     label: SVGTextElement
 
-    protected constructor(rect, label) {
+    protected constructor(container, rect, label) {
+        this.container = container
         this.rect = rect
         this.label = label
-
-        this.container = document.createElementNS(ns, 'svg')
     }
 
     static make() {
         const element = document.createElementNS(ns, 'rect')
         const label = document.createElementNS(ns, 'text')
+        const container = document.createElementNS(ns, 'svg')
+
         label.innerHTML = '1'
 
-        const theRect = new Rect(element, label)
+        const theRect = new Rect(container, element, label)
 
         theRect.x = 0
         theRect.y = 0
         theRect.width = 0
         theRect.height = 0
+        theRect.fill = 'moccasin'
+        theRect.stroke = 'olive'
+        theRect.strokeWidth = 2
 
         return theRect
     }
 
     static wrap(rect: SVGRectElement) {
-        return new Rect(rect, rect.nextSibling)
+        return new Rect(null, rect, rect.nextSibling)
     }
 
     get raw() {

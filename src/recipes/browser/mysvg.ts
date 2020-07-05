@@ -4,7 +4,7 @@ import { SVG, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
 
 export const wrapImage = (wrapped) => {
-    const draw = SVG.wrap(wrapped)
+    const draw = SVG.wrapImage(wrapped)
 
     draw.raw.addEventListener('mousedown', (e) => {
         e.preventDefault()
@@ -57,9 +57,6 @@ export const wrapImage = (wrapped) => {
 
             currentRect.x = anchorX
             currentRect.y = anchorY
-            currentRect.fill = 'moccasin'
-            currentRect.stroke = 'olive'
-            currentRect.strokeWidth = 1
 
             const resizer = onMouseMoveResize(currentRect, true, true, true, true, downX, downY)
 

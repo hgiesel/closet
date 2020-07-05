@@ -1,9 +1,7 @@
 import type { Registrar, TagData, Internals } from '../types'
 
-
 import { SVG, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
-import { wrapWithAftermath } from '../wrappers'
 
 export const wrapImage = (wrapped) => {
     const draw = SVG.wrap(wrapped)

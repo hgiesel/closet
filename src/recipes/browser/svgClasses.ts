@@ -29,6 +29,23 @@ const svgCss = `
 
 appendStyleTag(svgCss)
 
+const occlusionRectCss = `
+.occlusion-rect > rect {
+  width: 100%;
+  height: 100%;
+}
+
+
+.occlusion-rect > text {
+  transform: translate(50%, 50%);
+  width: 100%;
+  height: 100%;
+  text-anchor: middle;
+  dominant-baseline: central;
+}`
+
+appendStyleTag(occlusionRectCss)
+
 interface GettableSVG {
     getElements(): Element[]
 }

@@ -112,3 +112,12 @@ export const adaptCursor = (e: MouseEvent) => {
         rawElement.style.cursor = getCursor(rect, downX, downY)
     }
 }
+
+export const adaptCursorKeydown = (e: KeyboardEvent) => {
+    const rect = Rect.wrap(e.target as SVGRectElement)
+    const rawElement = rect.rect
+
+    if (e.shiftKey) {
+        rawElement.style.cursor = 'no-drop'
+    }
+}

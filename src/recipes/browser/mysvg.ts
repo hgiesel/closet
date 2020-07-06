@@ -1,7 +1,7 @@
 import type { Registrar, TagData, Internals } from '../types'
 
 import { SVG, Rect } from './svgClasses'
-import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
+import { adaptCursor, adaptCursorKeydown, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
 
 export const wrapImage = (wrapped) => {
     const draw = SVG.wrapImage(wrapped)
@@ -13,14 +13,13 @@ export const wrapImage = (wrapped) => {
 
         if (eventTarget.nodeName !== 'svg') {
             /* assumes its rect */
+            const rect = Rect.wrap(e.target as any)
 
             if (e.shiftKey) {
-
-                eventTarget.remove()
+                rect.remove()
                 return
             }
 
-            const rect = Rect.wrap(e.target as any)
             const downX = (e as any).layerX
             const downY = (e as any).layerY
 
@@ -64,7 +63,9 @@ export const wrapImage = (wrapped) => {
             draw.raw.addEventListener('mouseup', () => {
                 draw.raw.removeEventListener('mousemove', resizer)
 
+                document.addEventListener('keydown', adaptCursorKeydown)
                 currentRect.rect.addEventListener('mousemove', adaptCursor)
+
                 currentRect.rect.addEventListener('dblclick', () => { console.log('dblclick') })
             }, { once: true })
         }

@@ -30,18 +30,10 @@ const svgCss = `
 appendStyleTag(svgCss)
 
 const occlusionRectCss = `
-.occlusion-rect > rect {
-  width: 100%;
-  height: 100%;
-}
-
-
 .occlusion-rect > text {
-  transform: translate(50%, 50%);
-  width: 100%;
-  height: 100%;
   text-anchor: middle;
   dominant-baseline: central;
+  pointer-events: none;
 }`
 
 appendStyleTag(occlusionRectCss)
@@ -105,8 +97,10 @@ export class Rect implements GettableSVG {
 
         container.appendChild(rect)
         container.appendChild(label)
+        container.classList.add('occlusion-rect')
+        container.tabIndex = -1
 
-        label.innerHTML = '1'
+        label.innerHTML = 'rect1'
 
         const theRect = new Rect(container, rect, label)
 
@@ -122,7 +116,11 @@ export class Rect implements GettableSVG {
     }
 
     static wrap(rect: SVGRectElement): Rect {
-        return new Rect(null, rect, rect.nextSibling)
+        return new Rect(rect.parentElement, rect, rect.nextSibling)
+    }
+
+    remove(): void {
+        this.container.remove()
     }
 
     getElements(): Element[] {
@@ -143,28 +141,30 @@ export class Rect implements GettableSVG {
     }
 
     set width(i) {
-        this.attr('width', i)
-        this.labelAttr('width', i)
+        const stringified = String(Math.max(10, i))
+        this.rect.setAttributeNS(null, 'width', stringified)
+        this.label.setAttributeNS(null, 'width', stringified)
     }
-    get width() { return Number(this.get('width')) }
+    get width() { return Number(this.rect.getAttributeNS(null, 'width')) }
 
     set height(i) {
-        this.attr('height', i)
-        this.labelAttr('height', i)
+        const stringified = String(Math.max(10, i))
+        this.rect.setAttributeNS(null, 'height', stringified)
+        this.label.setAttributeNS(null, 'height', stringified)
     }
-    get height() { return Number(this.get('height')) }
+    get height() { return Number(this.rect.getAttributeNS(null, 'height')) }
 
     set x(i) {
-        this.attr('x', i)
-        this.labelAttr('x', i + 10)// + this.label.getBoundingClientRect().width)
+        this.rect.setAttributeNS(null, 'x', String(i))
+        this.label.setAttributeNS(null, 'x', String(i + this.width / 2))
     }
-    get x() { return Number(this.get('x')) }
+    get x() { return Number(this.rect.getAttributeNS(null, 'x')) }
 
     set y(i) {
-        this.attr('y', i)
-        this.labelAttr('y', i + this.label.getBoundingClientRect().height)
+        this.rect.setAttributeNS(null, 'y', String(i))
+        this.label.setAttributeNS(null, 'y', String(i + this.height / 2))
     }
-    get y() { return Number(this.get('y')) }
+    get y() { return Number(this.rect.getAttributeNS(null, 'y')) }
 
     /////////////////// on rect
 

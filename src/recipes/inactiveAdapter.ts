@@ -56,6 +56,11 @@ export const inactiveAdapterWithinRange = <T extends object>(
     contexter: Ellipser<CardPreset>,
     ellipser: Ellipser<CardPreset>,
 ) => (tag: TagData, internals: Internals<CardPreset & T>): WeakFilterResult => {
+
+    if (!internals.preset.hasOwnProperty('card')) {
+        return adapter(behavior)(contexter, ellipser)(tag, internals)
+    }
+
     const [
         cardNumber,
         showBottom,

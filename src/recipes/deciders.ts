@@ -17,7 +17,7 @@ export const isActive = ({ num }: TagData, { preset }: Internals<CardPreset>): b
         case 0:
             return true
         default:
-            if (!preset.card) {
+            if (!preset.hasOwnProperty('card')) {
                 return false
             }
 
@@ -37,7 +37,7 @@ export const isActiveGetRange = ({ key, num, fullOccur }: TagData, { preset, cac
         case 0:
             return true
         default:
-            if (!preset.card) {
+            if (!preset.hasOwnProperty('card')) {
                 return false
             }
 

@@ -1,0 +1,3 @@
+name: Make occlusions
+code: |
+  filterManager.addRecipe(Closet.browserRecipes.makeOcclusions())

@@ -8,17 +8,11 @@ import { noneEllipser, stylizeEllipser } from './ellipser'
 
 import { id, id2 } from './utils'
 
-const clozeFrontActiveBehavior: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
+const ellipseThenStylize: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
     stylizer: Stylizer,
     activeEllipser: Ellipser<FlashcardPreset>,
 ) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
     return stylizer.stylize([activeEllipser(tag, internals)])
-}
-
-const clozeBackActiveBehavior: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
-    stylizer: Stylizer,
-) => (tag: TagData) => {
-    return stylizer.stylize([tag.values[0]])
 }
 
 const hintEllipser = stylizeEllipser(
@@ -31,11 +25,17 @@ const hintEllipser = stylizeEllipser(
     },
 )
 
-const defaultStylizer: Stylizer = new Stylizer({
+const blueHighlight: Stylizer = new Stylizer({
     processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-const joinValues: Ellipser<FlashcardPreset> = (tag: TagData): string => tag.values[0]
+const firstValue: Ellipser<FlashcardPreset> = (tag: TagData): string => tag.values[0]
+
+const stylizeFirstValueOnly: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
+    stylizer: Stylizer,
+) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
+    return stylizer.stylize([firstValue(tag, internals)])
+}
 
 const clozePublicApi = (
     frontInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
@@ -53,26 +53,27 @@ const clozePublicApi = (
     const {
         tagname = 'c',
 
-        activeStylizer = defaultStylizer,
-        activeEllipser = hintEllipser,
         inactiveEllipser = noneEllipser,
 
-        separator = { sep: '::', max: 2},
+        activeStylizer = blueHighlight,
+        activeEllipser = hintEllipser,
+
+        separator = { sep: '::', max: 2 },
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
     const clozeSeparators = { separators: [separator] }
-    const clozeRecipe = flashcardTemplate(frontInactive, backInactive)(clozeFrontActiveBehavior, clozeBackActiveBehavior, clozeSeparators)
+    const clozeRecipe = flashcardTemplate(frontInactive, backInactive)(ellipseThenStylize, stylizeFirstValueOnly, clozeSeparators)
 
     return clozeRecipe({
         tagname: tagname,
 
+        contexter: firstValue,
+        inactiveEllipser: inactiveEllipser,
+
         frontStylizer: activeStylizer,
         backStylizer: activeStylizer,
-
-        contexter: joinValues,
         activeEllipser: activeEllipser,
-        inactiveEllipser: inactiveEllipser,
     })
 }
 

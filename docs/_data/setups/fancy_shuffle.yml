@@ -32,27 +32,27 @@ code: |
     mapper: (v, i) => `${i}: ${v}`
   })
 
-  filterManager.addRecipe(Closet.recipes.shuffling({
+  filterManager.addRecipe(Closet.recipes.shuffle({
     tagname: 'cmix',
     stylizer: colorfulWithMiddleDot,
   }))
 
-  filterManager.addRecipe(Closet.recipes.shuffling({
+  filterManager.addRecipe(Closet.recipes.shuffle({
     tagname: 'amix',
     stylizer: withMiddleDot,
   }))
 
-  filterManager.addRecipe(Closet.recipes.shuffling({
+  filterManager.addRecipe(Closet.recipes.shuffle({
     tagname: 'vmix',
     stylizer: withVs,
   }))
 
-  filterManager.addRecipe(Closet.recipes.shuffling({
+  filterManager.addRecipe(Closet.recipes.shuffle({
     tagname: 'mix',
     stylizer: withSlash
   }))
 
-  filterManager.addRecipe(Closet.recipes.ordering({
+  filterManager.addRecipe(Closet.recipes.order({
     tagname: 'ord',
     shuffleTagname: 'mix'
   }))

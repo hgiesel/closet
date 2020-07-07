@@ -8,7 +8,8 @@ import { shufflingRecipe } from './shuffling'
 import { orderingRecipe } from './ordering'
 import { clozeShowRecipe, clozeHideRecipe, clozeRevealRecipe } from './clozes'
 import { multipleChoiceShowRecipe, multipleChoiceHideRecipe, multipleChoiceRevealRecipe } from './multipleChoice'
-// import { randRecipe } from './rand'
+import { shuffleShowRecipe, shuffleHideRecipe, shuffleRevealRecipe } from './shuffleQuestion'
+
 import { styleRecipe, processRecipe } from './stylizing'
 
 import { debugRecipe } from './debug'
@@ -20,6 +21,10 @@ export const recipes: Recipes = {
     shuffle: shufflingRecipe,
     order: orderingRecipe,
 
+    shuffleShow: shuffleShowRecipe,
+    shuffleHide: shuffleHideRecipe,
+    shuffleReveal: shuffleRevealRecipe,
+
     clozeShow: clozeShowRecipe,
     clozeHide: clozeHideRecipe,
     clozeReveal: clozeRevealRecipe,
@@ -28,8 +33,8 @@ export const recipes: Recipes = {
     multipleChoiceHide: multipleChoiceHideRecipe,
     multipleChoiceReveal: multipleChoiceRevealRecipe,
 
-    stylize: styleRecipe,
     process: processRecipe,
+    stylize: styleRecipe,
 
     activate: activateRecipe,
     deactivate: deactivateRecipe,

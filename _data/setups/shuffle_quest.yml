@@ -1,0 +1,3 @@
+name: "Shuffle Quest"
+code: |
+  filterManager.addRecipe(Closet.recipes.shuffleShow({ tagname: 'shuf' }))

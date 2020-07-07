@@ -10,7 +10,7 @@ import { noneEllipser } from './ellipser'
 import { makeFlashcardTemplate } from './flashcardTemplate'
 import { topUp } from './sortInStrategies'
 
-const activeBehavior= (sortIn: SortInStrategy): ActiveBehavior<FlashcardPreset, FlashcardPreset>  => (
+const shuffleAndStylize = (sortIn: SortInStrategy): ActiveBehavior<FlashcardPreset, FlashcardPreset>  => (
     stylizer: Stylizer,
 ) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
     const flattedValuesWithIndex = tag.values.flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
@@ -31,7 +31,7 @@ const activeBehavior= (sortIn: SortInStrategy): ActiveBehavior<FlashcardPreset, 
     }
 }
 
-const defaultFrontStylizer = new Stylizer({
+const orangeCommaSeparated = new Stylizer({
     separator: ', ',
     mapper: (v: string) => {
         return `<span style="color: orange;">${v}</span>`
@@ -39,12 +39,13 @@ const defaultFrontStylizer = new Stylizer({
     processor: (v: string) => `( ${v} )`,
 })
 
-const defaultBackStylizer = defaultFrontStylizer.toStylizer({
+const greenAndRed = orangeCommaSeparated.toStylizer({
     mapper: (v: string, _i, t: number) => {
         return `<span style="color: ${t === 0 ? 'lime' : 'red'};">${v}</span>`
     },
 })
-const defaultContexter = (sortIn: (indices: number[], toLength: number) => number[]) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
+
+const shuffledWithoutColors = (sortIn: (indices: number[], toLength: number) => number[]) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
     const maybeValues = sequencer(
         `${tag.fullKey}:${tag.fullOccur}`,
         `${tag.fullKey}:${tag.fullOccur}`,
@@ -69,8 +70,8 @@ const multipleChoicePublicApi = (
     backStylizer?: Stylizer,
 
     sortInStrategy?: SortInStrategy,
-    outerSeparator?: WeakSeparator,
-    innerSeparator?: WeakSeparator,
+    categorySeparator?: WeakSeparator,
+    valueSeparator?: WeakSeparator,
 
     contexter?: Ellipser<FlashcardPreset>,
     ellipser?: Ellipser<FlashcardPreset>,
@@ -80,32 +81,32 @@ const multipleChoicePublicApi = (
     const {
         tagname = 'mc',
 
-        frontStylizer = defaultFrontStylizer,
-        backStylizer = defaultBackStylizer,
+        frontStylizer = orangeCommaSeparated,
+        backStylizer = greenAndRed,
 
         sortInStrategy = topUp,
-        outerSeparator = { sep: '::' },
-        innerSeparator = { sep: '||' },
+        categorySeparator = { sep: '::' },
+        valueSeparator = { sep: '||' },
 
-        contexter = defaultContexter(sortInStrategy),
+        contexter = shuffledWithoutColors(sortInStrategy),
         ellipser = noneEllipser,
 
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
-    const multipleChoiceSeparators = { separators: [outerSeparator, innerSeparator] }
-    const theActiveBehavior = activeBehavior(sortInStrategy)
+    const multipleChoiceSeparators = { separators: [categorySeparator, valueSeparator] }
+    const shuffleAndStylizeWithStrategy = shuffleAndStylize(sortInStrategy)
 
-    const multipleChoiceRecipe = flashcardTemplate(frontInactive, backInactive)(theActiveBehavior, theActiveBehavior, multipleChoiceSeparators)
+    const multipleChoiceRecipe = flashcardTemplate(frontInactive, backInactive)(shuffleAndStylizeWithStrategy, shuffleAndStylizeWithStrategy, multipleChoiceSeparators)
 
     return multipleChoiceRecipe({
         tagname: tagname,
 
         frontStylizer: frontStylizer,
         backStylizer: backStylizer,
+        activeEllipser: ellipser,
 
         contexter: contexter,
-        activeEllipser: ellipser,
         inactiveEllipser: ellipser,
     })
 }

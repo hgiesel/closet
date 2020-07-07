@@ -17,8 +17,8 @@ import { activateRecipe, deactivateRecipe, toggleRecipe } from './boolStore'
 import { setNumberRecipe, incrementRecipe, decrementRecipe } from './numberStore'
 
 export const recipes: Recipes = {
-    shuffling: shufflingRecipe,
-    ordering: orderingRecipe,
+    shuffle: shufflingRecipe,
+    order: orderingRecipe,
 
     clozeShow: clozeShowRecipe,
     clozeHide: clozeHideRecipe,
@@ -28,8 +28,8 @@ export const recipes: Recipes = {
     multipleChoiceHide: multipleChoiceHideRecipe,
     multipleChoiceReveal: multipleChoiceRevealRecipe,
 
-    stylizing: styleRecipe,
-    processing: processRecipe,
+    stylize: styleRecipe,
+    process: processRecipe,
 
     activate: activateRecipe,
     deactivate: deactivateRecipe,

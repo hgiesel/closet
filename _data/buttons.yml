@@ -1,0 +1,3 @@
+frontBack: 'Frontside, q, {"side": "front"}, true; Backside, a, {"side": "back"}, true'
+twoCards: 'Frontside 1, q1, {side: "front", cardNumber: 1}, true; Backside 1, a1, {side: "back",cardNumber: 1}, true; Frontside 2, q2, {side: "front",cardNumber: "c2"}, true; Backside 2, a2, {side: "back",cardNumber: 2}, true'
+threeCards: 'F1, q1, {side: "front",cardNumber: 1}, true; B1, a1, {side: "back",cardNumber: 1}, true; F2, q2, {side: "front",cardNumber: 2}, true; B2, a2, {side: "back",cardNumber: 2}, true; F3, q3, {side: "front",cardNumber: 3}, true; B3, a3, {side: "back",cardNumber: 3}, true'

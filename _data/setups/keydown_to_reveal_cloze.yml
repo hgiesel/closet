@@ -56,20 +56,20 @@ code: |
     }
   })
 
-  const obscureAndKeydown = (t) => {
-    return `<span class="cl--obscure cl--obscure-hint cl--obscure-kd-5 cl--obscure-kd-6">${t.values[0]}</span>`
+  const obscureAndKeydown = (tag) => {
+    return [`<span class="cl--obscure cl--obscure-hint cl--obscure-kd-5 cl--obscure-kd-6">${tag.values[0]}</span>`]
   }
 
-  const obscureAndKeydownFix = (t) => {
-    return `<span class="cl--obscure cl--obscure-fix cl--obscure-kd-5 cl--obscure-kd-6"><span>${t.values[0]}</span></span>`
+  const obscureAndKeydownFix = (tag) => {
+    return [`<span class="cl--obscure cl--obscure-fix cl--obscure-kd-5 cl--obscure-kd-6"><span>${tag.values[0]}</span></span>`]
   }
 
   filterManager.addRecipe(wrappedClozeShow({
     tagname: 'c',
-    activeEllipser: obscureAndKeydown,
+    frontEllipser: obscureAndKeydown,
   }))
 
   filterManager.addRecipe(wrappedClozeShow({
     tagname: 'cx',
-    activeEllipser: obscureAndKeydownFix,
+    frontEllipser: obscureAndKeydownFix,
   }))

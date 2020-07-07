@@ -1,31 +1,36 @@
-import type { TagData, Internals, Ellipser, WeakSeparator, Recipe, InactiveBehavior, ActiveBehavior } from './types'
+import type { TagData, Internals, Ellipser, WeakSeparator, Recipe, InactiveBehavior, ActiveBehavior, WeakFilterResult } from './types'
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
 import type { SortInStrategy } from './sortInStrategies'
 
-import { makeFlashcardTemplate, choose, ellipsis } from './flashcardTemplate'
+import { makeFlashcardTemplate, choose, ellipsis, directApply } from './flashcardTemplate'
 
 import { Stylizer } from './stylizer'
 import { sequencer } from './sequencer'
-import { fullKeyEllipser, uidEllipser } from './ellipser'
 import { topUp } from './sortInStrategies'
 
 import { id, id2 } from './utils'
 
-const shuffleAndStylize = (sortIn: SortInStrategy) => (getKey: Ellipser<{}, string>): ActiveBehavior<FlashcardPreset, FlashcardPreset>  => (
-    stylizer: Stylizer,
-) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
-
-    const maybeValues = sequencer(
-        uidEllipser(tag, internals),
-        getKey(tag, internals),
+const acrossTagShuffle = (sortIn: SortInStrategy): Ellipser<{}, string[]> => (tag: TagData, internals: Internals<{}>) => {
+    return sequencer(
+        `${tag.fullKey}:${tag.fullOccur}`,
+        tag.fullKey,
         tag.values,
         sortIn,
         internals,
     )
+}
 
-    if (maybeValues) {
-        return stylizer.stylize(maybeValues)
-    }
+const justValues: Ellipser<{}, string[]> = (tag: TagData) => tag.values
+
+const shuffleAndStylize: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
+    stylizer: Stylizer,
+    ellipser: Ellipser<{}, string[]>,
+) => (tag: TagData, internals: Internals<FlashcardPreset>): WeakFilterResult => {
+    const maybeValues = ellipser(tag, internals)
+
+    return maybeValues
+        ? stylizer.stylize(maybeValues)
+        : { ready: false }
 }
 
 const inactive: Stylizer = new Stylizer({
@@ -68,9 +73,9 @@ const shuffleQuestPublicApi = (
     } = options
 
     const clozeSeparators = { separators: [separator] }
-    const shuffleAndStylizeWithStrategy = shuffleAndStylize(sortInStrategy)
+    const clozeRecipe = flashcardTemplate(frontInactive, backInactive)(shuffleAndStylize, directApply, clozeSeparators)
 
-    const clozeRecipe = flashcardTemplate(frontInactive, backInactive)(shuffleAndStylizeWithStrategy(fullKeyEllipser), shuffleAndStylizeWithStrategy(uidEllipser), clozeSeparators)
+    const acrossTagShuffleWithStrategy = acrossTagShuffle(sortInStrategy)
 
     return clozeRecipe({
         tagname: tagname,
@@ -80,8 +85,10 @@ const shuffleQuestPublicApi = (
         inactiveEllipser: ellipser,
 
         frontStylizer: activeStylizer,
+        frontEllipser: acrossTagShuffleWithStrategy,
+
         backStylizer: activeStylizer,
-        activeEllipser: ellipser /* never used in standard settings */,
+        backEllipser: justValues,
     })
 }
 

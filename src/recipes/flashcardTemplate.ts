@@ -23,8 +23,10 @@ export interface FlashcardOptions {
     tagname: string,
 
     frontStylizer: Stylizer,
+    frontEllipser: Ellipser<FlashcardPreset, string[]>,
+
     backStylizer: Stylizer,
-    activeEllipser: Ellipser<FlashcardPreset, string[]>,
+    backEllipser: Ellipser<FlashcardPreset, string[]>,
 
     inactiveStylizer: Stylizer,
     contexter: Ellipser<FlashcardPreset, string[]>,
@@ -56,8 +58,10 @@ export const makeFlashcardTemplate = (
     tagname,
 
     frontStylizer,
+    frontEllipser,
+
     backStylizer,
-    activeEllipser,
+    backEllipser,
 
     inactiveStylizer,
     contexter,
@@ -67,9 +71,9 @@ export const makeFlashcardTemplate = (
 
     const flashcardRecipe = sumFour(
         simpleRecipe(inactiveAdapter(frontInactiveBehavior)(inactiveStylizer, contexter, inactiveEllipser)),
-        simpleRecipe(frontActiveBehavior(frontStylizer, activeEllipser)),
+        simpleRecipe(frontActiveBehavior(frontStylizer, frontEllipser)),
         simpleRecipe(inactiveAdapter(backInactiveBehavior)(inactiveStylizer, contexter, inactiveEllipser)),
-        simpleRecipe(backActiveBehavior(backStylizer, activeEllipser)),
+        simpleRecipe(backActiveBehavior(backStylizer, backEllipser)),
         isActive,
         isBack,
     )
@@ -96,3 +100,10 @@ export const choose = <U extends object>(choice: (x: Ellipser<FlashcardPreset, s
 }
 
 export const ellipsis = () => ['[...]']
+
+export const directApply: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
+    stylizer: Stylizer,
+    ellipser: Ellipser<FlashcardPreset, string[]>,
+) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
+    return stylizer.stylize(ellipser(tag, internals))
+}

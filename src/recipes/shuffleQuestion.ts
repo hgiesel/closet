@@ -1,40 +1,40 @@
 import type { TagData, Internals, Ellipser, WeakSeparator, Recipe, InactiveBehavior, ActiveBehavior } from './types'
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
+import type { SortInStrategy } from './sortInStrategies'
 
 import { makeFlashcardTemplate } from './flashcardTemplate'
 
 import { Stylizer } from './stylizer'
-import { noneEllipser, stylizeEllipser } from './ellipser'
+import { sequencer } from './sequencer'
+import { noneEllipser, fullKeyEllipser, uidEllipser } from './ellipser'
+import { topUp } from './sortInStrategies'
 
 import { id, id2 } from './utils'
 
-const ellipseThenStylize: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
+const shuffleAndStylize = (sortIn: SortInStrategy) => (getKey: Ellipser<{}>): ActiveBehavior<FlashcardPreset, FlashcardPreset>  => (
     stylizer: Stylizer,
-    activeEllipser: Ellipser<FlashcardPreset>,
 ) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
-    return stylizer.stylize([activeEllipser(tag, internals)])
-}
 
-const hintEllipser = stylizeEllipser(
-    new Stylizer({
-        processor: (v: string) => `[${v}]`,
-    }),
-    (tag: TagData) => {
-        const vs = tag.values
-        return [vs[1] ?? '...']
-    },
-)
+    const maybeValues = sequencer(
+        uidEllipser(tag, internals),
+        getKey(tag, internals),
+        tag.values,
+        sortIn,
+        internals,
+    )
+
+    if (maybeValues) {
+        return stylizer.stylize(maybeValues)
+    }
+}
 
 const blueHighlight: Stylizer = new Stylizer({
     processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-const firstValue: Ellipser<FlashcardPreset> = (tag: TagData): string => tag.values[0]
-
-const stylizeFirstValueOnly: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
-    stylizer: Stylizer,
-) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
-    return stylizer.stylize([firstValue(tag, internals)])
+const valuesInOrder: Ellipser<FlashcardPreset> = (tag: TagData) => {
+    const stylizer = new Stylizer()
+    return stylizer.stylize(tag.values)
 }
 
 const shuffleQuestPublicApi = (
@@ -43,37 +43,43 @@ const shuffleQuestPublicApi = (
 ): Recipe<FlashcardPreset> => (options: {
     tagname?: string,
 
-    activeStylizer?: Stylizer,
-    activeEllipser?: Ellipser<FlashcardPreset>,
-    inactiveEllipser?: Ellipser<FlashcardPreset>,
+    contexter?: Ellipser<FlashcardPreset>,
+    ellipser?: Ellipser<FlashcardPreset>,
 
+    activeStylizer?: Stylizer,
+
+    sortInStrategy?: SortInStrategy,
     separator?: WeakSeparator,
     flashcardTemplate?: FlashcardTemplate,
 } = {}) => {
     const {
         tagname = 'c',
 
-        inactiveEllipser = noneEllipser,
+        sortInStrategy = topUp,
+
+        contexter = valuesInOrder,
+        ellipser = noneEllipser,
 
         activeStylizer = blueHighlight,
-        activeEllipser = hintEllipser,
 
-        separator = { sep: '::', max: 2 },
+        separator = { sep: '::' },
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
     const clozeSeparators = { separators: [separator] }
-    const clozeRecipe = flashcardTemplate(frontInactive, backInactive)(ellipseThenStylize, stylizeFirstValueOnly, clozeSeparators)
+    const shuffleAndStylizeWithStrategy = shuffleAndStylize(sortInStrategy)
+
+    const clozeRecipe = flashcardTemplate(frontInactive, backInactive)(shuffleAndStylizeWithStrategy(fullKeyEllipser), shuffleAndStylizeWithStrategy(uidEllipser), clozeSeparators)
 
     return clozeRecipe({
         tagname: tagname,
 
-        contexter: firstValue,
-        inactiveEllipser: inactiveEllipser,
+        contexter: contexter,
+        inactiveEllipser: ellipser,
 
         frontStylizer: activeStylizer,
         backStylizer: activeStylizer,
-        activeEllipser: activeEllipser,
+        activeEllipser: ellipser /* never used in standard settings */,
     })
 }
 

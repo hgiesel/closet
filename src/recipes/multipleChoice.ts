@@ -45,7 +45,7 @@ const greenAndRed = orangeCommaSeparated.toStylizer({
     },
 })
 
-const shuffledWithoutColors = (sortIn: (indices: number[], toLength: number) => number[]) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
+const shuffleWithoutColors = (sortIn: (indices: number[], toLength: number) => number[]) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
     const maybeValues = sequencer(
         `${tag.fullKey}:${tag.fullOccur}`,
         `${tag.fullKey}:${tag.fullOccur}`,
@@ -69,12 +69,12 @@ const multipleChoicePublicApi = (
     frontStylizer?: Stylizer,
     backStylizer?: Stylizer,
 
+    contexter?: Ellipser<FlashcardPreset>,
+    ellipser?: Ellipser<FlashcardPreset>,
+
     sortInStrategy?: SortInStrategy,
     categorySeparator?: WeakSeparator,
     valueSeparator?: WeakSeparator,
-
-    contexter?: Ellipser<FlashcardPreset>,
-    ellipser?: Ellipser<FlashcardPreset>,
 
     flashcardTemplate?: FlashcardTemplate,
 } = {})  => {
@@ -88,7 +88,7 @@ const multipleChoicePublicApi = (
         categorySeparator = { sep: '::' },
         valueSeparator = { sep: '||' },
 
-        contexter = shuffledWithoutColors(sortInStrategy),
+        contexter = shuffleWithoutColors(sortInStrategy),
         ellipser = noneEllipser,
 
         flashcardTemplate = makeFlashcardTemplate(),
@@ -102,12 +102,12 @@ const multipleChoicePublicApi = (
     return multipleChoiceRecipe({
         tagname: tagname,
 
-        frontStylizer: frontStylizer,
-        backStylizer: backStylizer,
-        activeEllipser: ellipser,
-
         contexter: contexter,
         inactiveEllipser: ellipser,
+
+        frontStylizer: frontStylizer,
+        backStylizer: backStylizer,
+        activeEllipser: ellipser /* never used in standard settings */,
     })
 }
 

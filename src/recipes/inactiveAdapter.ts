@@ -55,8 +55,7 @@ export const inactiveAdapterWithinRange = <T extends object>(
     contexter: Ellipser<CardPreset, string[]>,
     ellipser: Ellipser<CardPreset, string[]>,
 ) => (tag: TagData, internals: Internals<CardPreset & T>): WeakFilterResult => {
-
-    if (!internals.preset.hasOwnProperty('card')) {
+    if (!internals.preset.hasOwnProperty('cardNumber')) {
         return adapter(behavior)(stylizer, contexter, ellipser)(tag, internals)
     }
 
@@ -69,7 +68,7 @@ export const inactiveAdapterWithinRange = <T extends object>(
 
     const cardNumber = internals.preset.cardNumber
 
-    if (cardNumber) {
+    if (!cardNumber) {
         return behavior(stylizer, contexter, ellipser)(tag, internals)
     }
 

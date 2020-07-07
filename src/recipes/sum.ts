@@ -1,9 +1,9 @@
-import type { TagData, Registrar, FilterPredicate, Internals, Recipe, WrapOptions } from './types'
+import type { TagData, Registrar, Ellipser, Internals, Recipe, WrapOptions } from './types'
 
 export const sum = <T extends object, U extends object>(
     recipeFalse: Recipe<T>,
     recipeTrue: Recipe<U>,
-    predicate: FilterPredicate<T & U>, {
+    predicate: Ellipser<T & U, boolean>, {
         setTagnames = (options, newNames) => options['tagname'] = newNames[0],
     }: WrapOptions = {},
 ): Recipe<T & U> => ({
@@ -43,8 +43,8 @@ export const sumFour = <T extends object, U extends object, V extends object, W 
     recipeOne: Recipe<U>,
     recipeTwo: Recipe<V>,
     recipeThree: Recipe<W>,
-    predicateOne: FilterPredicate<T & U & V & W>,
-    predicateTwo: FilterPredicate<T & U & V & W>, {
+    predicateOne: Ellipser<T & U & V & W, boolean>,
+    predicateTwo: Ellipser<T & U & V & W, boolean>, {
         setTagnames = (options, newNames) => options['tagname'] = newNames[0],
     }: WrapOptions = {},
 ): Recipe<T & U & V & W> => ({

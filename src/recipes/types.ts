@@ -10,8 +10,7 @@ export type { DeferredApi, Deferred } from '../filterManager/deferred'
 export type { TagData, Separator, WeakSeparator } from '../template/tags'
 
 export type Recipe<T extends object> = (options?: object) => (filters: Registrar<T>) => void
-export type Ellipser<T extends object> = (t: TagData, i: Internals<T>) => string
-export type FilterPredicate<T extends object> = (t: TagData, i: Internals<T>) => boolean
+export type Ellipser<T extends object, U> = (t: TagData, i: Internals<T>) => U
 export type { Stylizer } from './stylizer'
 
 export interface WrapOptions {

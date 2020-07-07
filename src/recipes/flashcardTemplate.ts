@@ -34,7 +34,7 @@ export interface FlashcardOptions {
 }
 
 export interface CardPreset {
-    card: string
+    cardNumber: number
 }
 
 export interface SidePreset {

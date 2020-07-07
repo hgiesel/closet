@@ -32,6 +32,7 @@ const clozePublicApi = (
 
     frontStylizer?: Stylizer,
     frontEllipser?: Ellipser<FlashcardPreset, string[]>,
+
     backStylizer?: Stylizer,
     backEllipser?: Ellipser<FlashcardPreset, string[]>,
 
@@ -46,9 +47,9 @@ const clozePublicApi = (
         inactiveEllipser = ellipsis,
 
         frontStylizer = blueWithBrackets,
-        backStylizer = blueHighlight,
-
         frontEllipser = hintEllipser,
+
+        backStylizer = blueHighlight,
         backEllipser = firstValue,
 
         separator = { sep: '::', max: 2 },

@@ -1,7 +1,10 @@
 import { interspliceChildNodes, ChildNodeSpan } from './browserTemplate'
 
+export const getCardNumber = (textNum: string): number => Number(textNum.match(/[0-9]*$/))
+
 export const preset = (cardType: string, tagsFull: string, side: 'front' | 'back') => ({
     card: cardType,
+    cardNumber: getCardNumber(cardType),
     tagsFull: tagsFull,
     tags: tagsFull.length === 0
         ? []

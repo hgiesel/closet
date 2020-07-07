@@ -2,7 +2,6 @@ import type { TagData, Internals } from './types'
 import type { CardPreset, SidePreset } from './flashcardTemplate'
 
 import { constantGet, StoreGetter } from './valueStore'
-import { cardNumberToNum } from './utils'
 
 export type Decider<T extends object> = (t: TagData, i: Internals<T>) => boolean
 
@@ -17,12 +16,11 @@ export const isActive = ({ num }: TagData, { preset }: Internals<CardPreset>): b
         case 0:
             return true
         default:
-            if (!preset.hasOwnProperty('card')) {
+            if (!preset.hasOwnProperty('cardNumber')) {
                 return false
             }
 
-            const cardNumber = cardNumberToNum(preset.card)
-            return num === cardNumber
+            return num === preset.cardNumber
     }
 }
 
@@ -37,19 +35,17 @@ export const isActiveGetRange = ({ key, num, fullOccur }: TagData, { preset, cac
         case 0:
             return true
         default:
-            if (!preset.hasOwnProperty('card')) {
+            if (!preset.hasOwnProperty('cardNumber')) {
                 return false
             }
 
-            const cardNumber = cardNumberToNum(preset.card)
-
             const bottomRange = cache.get<StoreGetter<number>>(bottomRangeKeyword, constantZero)
-                .get(key, cardNumber, fullOccur)
+                .get(key, preset.cardNumber, fullOccur)
 
             const topRange = cache.get<StoreGetter<number>>(topRangeKeyword, constantZero)
-                .get(key, cardNumber, fullOccur)
+                .get(key, preset.cardNumber, fullOccur)
 
-            return isActiveWithinRange(cardNumber, num, bottomRange, topRange)
+            return isActiveWithinRange(preset.cardNumber, num, bottomRange, topRange)
     }
 }
 
@@ -67,7 +63,7 @@ export const isActiveAll = (tag: TagData, internals: Internals<CardPreset>): boo
 //////////////////////////////////////////
 
 export const isBack: Decider<SidePreset> = (_t, { preset }) => {
-    return preset['side'] === 'back'
+    return preset.side === 'back'
 }
 
 export const isBackAll = isBack

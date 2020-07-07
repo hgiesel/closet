@@ -1,30 +1,26 @@
 name: Obscuring clozes
 code: |
-  const obscure = (tag) => {
-    return '<span style="filter: blur(0.2rem);">' + tag.values[0] + '</span>'
-  }
-
-  const useYellow = new Closet.Stylizer({
-    processor: v => `<span style="color: yellow;">${v}</span>`,
+  const firstValue = (tag) => [tag.values[0]]
+  const obscureYellow = new Closet.Stylizer({
+    processor: v => `<span style="color: yellow; filter: blur(0.2rem);">${v}</span>`,
   })
+
+  const obscureOptions = {
+    frontEllipser: firstValue,
+    frontStylizer: obscureYellow,
+  }
 
   filterManager.addRecipe(Closet.recipes.clozeShow({
     tagname: 'c',
-
-    activeEllipser: obscure,
-    activeStylizer: useYellow,
+    ...obscureOptions,
   }))
 
   filterManager.addRecipe(Closet.recipes.clozeHide({
     tagname: 'ch',
-
-    activeEllipser: obscure,
-    activeStylizer: useYellow,
+    ...obscureOptions,
   }))
 
   filterManager.addRecipe(Closet.recipes.clozeReveal({
     tagname: 'cr',
-
-    activeEllipser: obscure,
-    activeStylizer: useYellow,
+    ...obscureOptions,
   }))

@@ -27,4 +27,4 @@ With indexes.
 ---
 ## Graphical effects
 
-{% include codeDisplay.md content=mc.simple setups="fancy_multiple_choice" buttons=b %}
+{% include codeDisplay.md content=mc.simple_zero setups="fancy_multiple_choice" buttons=b %}

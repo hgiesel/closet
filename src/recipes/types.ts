@@ -1,6 +1,5 @@
-import type { WeakFilterResult } from '../filterManager/filters'
 import type { TagData } from '../template/tags'
-import type { Internals, Registrar } from '..'
+import type { Internals, Registrar, WeakFilter } from '..'
 import type { Stylizer } from './stylizer'
 
 export type { Registrar, Filters, AftermathInternals, DeferredInternals, Internals } from '..'
@@ -19,6 +18,15 @@ export interface WrapOptions {
     setTagnames?: (o: object, newNames: string[]) => void
 }
 
-export type ActiveBehavior<T extends object, U extends object> = (stylizer: Stylizer, ellipser: Ellipser<T>) => (t: TagData, i: Internals<U>) => WeakFilterResult
-export type InactiveBehavior<T extends object, U extends object> = (contexter: Ellipser<T>, ellipser: Ellipser<T>) => (t: TagData, i: Internals<U>) => WeakFilterResult
+export type ActiveBehavior<T extends object, U extends object> = (
+    stylizer: Stylizer,
+    ellipser: Ellipser<T, string[]>,
+) => WeakFilter<U>
+
+export type InactiveBehavior<T extends object, U extends object> = (
+    stylizer: Stylizer,
+    contexter: Ellipser<T, string[]>,
+    ellipser: Ellipser<T, string[]>,
+) => WeakFilter<U>
+
 export type InactiveAdapter<T extends object, U extends object> = (behavior: InactiveBehavior<T,U>) => InactiveBehavior<T,U>

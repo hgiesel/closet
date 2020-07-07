@@ -1,4 +1,4 @@
-import type { TagData, Internals, Registrar, Stylizer, Ellipser, ActiveBehavior, InactiveBehavior, InactiveAdapter, DataOptions } from './types'
+import type { TagData, Internals, Registrar, Stylizer, Ellipser, ActiveBehavior, InactiveBehavior, InactiveAdapter, DataOptions, WeakFilterResult } from './types'
 import type { Decider } from './deciders'
 
 import { isActiveAll, isBackAll } from './deciders'
@@ -24,10 +24,11 @@ export interface FlashcardOptions {
 
     frontStylizer: Stylizer,
     backStylizer: Stylizer,
+    activeEllipser: Ellipser<FlashcardPreset, string[]>,
 
-    contexter: Ellipser<FlashcardPreset>,
-    activeEllipser: Ellipser<FlashcardPreset>,
-    inactiveEllipser: Ellipser<FlashcardPreset>,
+    inactiveStylizer: Stylizer,
+    contexter: Ellipser<FlashcardPreset, string[]>,
+    inactiveEllipser: Ellipser<FlashcardPreset, string[]>,
 }
 
 export interface CardPreset {
@@ -56,17 +57,18 @@ export const makeFlashcardTemplate = (
 
     frontStylizer,
     backStylizer,
-
-    contexter,
     activeEllipser,
+
+    inactiveStylizer,
+    contexter,
     inactiveEllipser,
 }: FlashcardOptions) => (registrar: Registrar<FlashcardPreset>) => {
     const internalFilter = `${tagname}:internal`
 
     const flashcardRecipe = sumFour(
-        simpleRecipe(inactiveAdapter(frontInactiveBehavior)(contexter, inactiveEllipser)),
+        simpleRecipe(inactiveAdapter(frontInactiveBehavior)(inactiveStylizer, contexter, inactiveEllipser)),
         simpleRecipe(frontActiveBehavior(frontStylizer, activeEllipser)),
-        simpleRecipe(inactiveAdapter(backInactiveBehavior)(contexter, inactiveEllipser)),
+        simpleRecipe(inactiveAdapter(backInactiveBehavior)(inactiveStylizer, contexter, inactiveEllipser)),
         simpleRecipe(backActiveBehavior(backStylizer, activeEllipser)),
         isActive,
         isBack,
@@ -80,3 +82,17 @@ export const makeFlashcardTemplate = (
 
     registrar.register(tagname, flashcardFilter, dataOptions)
 }
+
+export const choose = <U extends object>(choice: (x: Ellipser<FlashcardPreset, string[]>, y: Ellipser<FlashcardPreset, string[]>) => Ellipser<FlashcardPreset, string[]>): InactiveBehavior<FlashcardPreset, FlashcardPreset> => (
+    stylizer: Stylizer,
+    contexter: Ellipser<FlashcardPreset, string[]>,
+    ellipser: Ellipser<FlashcardPreset, string[]>,
+) => (tag: TagData, internals: Internals<U>): WeakFilterResult => {
+    const result = choice(contexter, ellipser)(tag, internals)
+
+    return Array.isArray(result)
+        ? stylizer.stylize(result)
+        : result
+}
+
+export const ellipsis = () => ['[...]']

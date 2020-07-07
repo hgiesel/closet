@@ -1,40 +1,40 @@
 import type { TagData, Internals, Ellipser, WeakSeparator, Recipe, InactiveBehavior, ActiveBehavior } from './types'
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
 
-import { makeFlashcardTemplate } from './flashcardTemplate'
-
+import { makeFlashcardTemplate, choose, ellipsis } from './flashcardTemplate'
 import { Stylizer } from './stylizer'
-import { noneEllipser, stylizeEllipser } from './ellipser'
-
 import { id, id2 } from './utils'
 
 const ellipseThenStylize: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
     stylizer: Stylizer,
-    activeEllipser: Ellipser<FlashcardPreset>,
+    activeEllipser: Ellipser<FlashcardPreset, string[]>,
 ) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
-    return stylizer.stylize([activeEllipser(tag, internals)])
+    return stylizer.stylize(activeEllipser(tag, internals))
 }
+const wrapWithBrackets = (v: string) => `[${v}]`
 
-const hintEllipser = stylizeEllipser(
-    new Stylizer({
-        processor: (v: string) => `[${v}]`,
-    }),
-    (tag: TagData) => {
-        const vs = tag.values
-        return [vs[1] ?? '...']
-    },
-)
+const inactive = new Stylizer()
+
+const hintEllipser: Ellipser<FlashcardPreset, string[]> = (
+    tag: TagData,
+) => {
+    return [tag.values[1] ?? '...']
+}
 
 const blueHighlight: Stylizer = new Stylizer({
     processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-const firstValue: Ellipser<FlashcardPreset> = (tag: TagData): string => tag.values[0]
+const blueWithBrackets = blueHighlight.toStylizer({
+    mapper: wrapWithBrackets,
+})
+
+const firstValue: Ellipser<FlashcardPreset, string[]> = (tag: TagData): string[] => [tag.values[0]]
 
 const stylizeFirstValueOnly: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
     stylizer: Stylizer,
 ) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
-    return stylizer.stylize([firstValue(tag, internals)])
+    return stylizer.stylize(firstValue(tag, internals))
 }
 
 const clozePublicApi = (
@@ -43,9 +43,10 @@ const clozePublicApi = (
 ): Recipe<FlashcardPreset> => (options: {
     tagname?: string,
 
-    activeStylizer?: Stylizer,
-    activeEllipser?: Ellipser<FlashcardPreset>,
-    inactiveEllipser?: Ellipser<FlashcardPreset>,
+    frontStylizer?: Stylizer,
+    backStylizer?: Stylizer,
+    activeEllipser?: Ellipser<FlashcardPreset, string[]>,
+    inactiveEllipser?: Ellipser<FlashcardPreset, string[]>,
 
     separator?: WeakSeparator,
     flashcardTemplate?: FlashcardTemplate,
@@ -53,9 +54,10 @@ const clozePublicApi = (
     const {
         tagname = 'c',
 
-        inactiveEllipser = noneEllipser,
+        inactiveEllipser = ellipsis,
 
-        activeStylizer = blueHighlight,
+        frontStylizer = blueWithBrackets,
+        backStylizer = blueHighlight,
         activeEllipser = hintEllipser,
 
         separator = { sep: '::', max: 2 },
@@ -68,15 +70,16 @@ const clozePublicApi = (
     return clozeRecipe({
         tagname: tagname,
 
+        inactiveStylizer: inactive,
         contexter: firstValue,
         inactiveEllipser: inactiveEllipser,
 
-        frontStylizer: activeStylizer,
-        backStylizer: activeStylizer,
+        frontStylizer: frontStylizer,
+        backStylizer: backStylizer,
         activeEllipser: activeEllipser,
     })
 }
 
-export const clozeShowRecipe = clozePublicApi(id, id)
-export const clozeHideRecipe = clozePublicApi(id2, id2)
-export const clozeRevealRecipe = clozePublicApi(id2, id)
+export const clozeShowRecipe = clozePublicApi(choose(id), choose(id))
+export const clozeHideRecipe = clozePublicApi(choose(id2), choose(id2))
+export const clozeRevealRecipe = clozePublicApi(choose(id2), choose(id))

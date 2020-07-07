@@ -5,9 +5,8 @@ import type { SortInStrategy } from './sortInStrategies'
 import { id, id2 } from './utils'
 import { Stylizer } from './stylizer'
 import { sequencer } from './sequencer'
-import { noneEllipser } from './ellipser'
 
-import { makeFlashcardTemplate } from './flashcardTemplate'
+import { makeFlashcardTemplate, choose, ellipsis } from './flashcardTemplate'
 import { topUp } from './sortInStrategies'
 
 const shuffleAndStylize = (sortIn: SortInStrategy): ActiveBehavior<FlashcardPreset, FlashcardPreset>  => (
@@ -31,12 +30,13 @@ const shuffleAndStylize = (sortIn: SortInStrategy): ActiveBehavior<FlashcardPres
     }
 }
 
-const orangeCommaSeparated = new Stylizer({
-    separator: ', ',
+const inactive = new Stylizer()
+
+const orangeCommaSeparated = inactive.toStylizer({
+    processor: (v: string) => `( ${v} )`,
     mapper: (v: string) => {
         return `<span style="color: orange;">${v}</span>`
     },
-    processor: (v: string) => `( ${v} )`,
 })
 
 const greenAndRed = orangeCommaSeparated.toStylizer({
@@ -55,8 +55,7 @@ const shuffleWithoutColors = (sortIn: (indices: number[], toLength: number) => n
     )
 
     if (maybeValues) {
-        const stylizer = new Stylizer()
-        return stylizer.stylize(maybeValues)
+        return maybeValues
     }
 }
 
@@ -69,8 +68,8 @@ const multipleChoicePublicApi = (
     frontStylizer?: Stylizer,
     backStylizer?: Stylizer,
 
-    contexter?: Ellipser<FlashcardPreset>,
-    ellipser?: Ellipser<FlashcardPreset>,
+    contexter?: Ellipser<FlashcardPreset, string[]>,
+    ellipser?: Ellipser<FlashcardPreset, string[]>,
 
     sortInStrategy?: SortInStrategy,
     categorySeparator?: WeakSeparator,
@@ -89,7 +88,7 @@ const multipleChoicePublicApi = (
         valueSeparator = { sep: '||' },
 
         contexter = shuffleWithoutColors(sortInStrategy),
-        ellipser = noneEllipser,
+        ellipser = ellipsis,
 
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
@@ -102,6 +101,7 @@ const multipleChoicePublicApi = (
     return multipleChoiceRecipe({
         tagname: tagname,
 
+        inactiveStylizer: inactive,
         contexter: contexter,
         inactiveEllipser: ellipser,
 
@@ -111,6 +111,6 @@ const multipleChoicePublicApi = (
     })
 }
 
-export const multipleChoiceShowRecipe = multipleChoicePublicApi(id, id)
-export const multipleChoiceHideRecipe = multipleChoicePublicApi(id2, id2)
-export const multipleChoiceRevealRecipe = multipleChoicePublicApi(id2, id)
+export const multipleChoiceShowRecipe = multipleChoicePublicApi(choose(id), choose(id))
+export const multipleChoiceHideRecipe = multipleChoicePublicApi(choose(id2), choose(id2))
+export const multipleChoiceRevealRecipe = multipleChoicePublicApi(choose(id2), choose(id))

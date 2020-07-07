@@ -2,16 +2,16 @@ import type { TagData, Internals, Ellipser, WeakSeparator, Recipe, InactiveBehav
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
 import type { SortInStrategy } from './sortInStrategies'
 
-import { makeFlashcardTemplate } from './flashcardTemplate'
+import { makeFlashcardTemplate, choose, ellipsis } from './flashcardTemplate'
 
 import { Stylizer } from './stylizer'
 import { sequencer } from './sequencer'
-import { noneEllipser, fullKeyEllipser, uidEllipser } from './ellipser'
+import { fullKeyEllipser, uidEllipser } from './ellipser'
 import { topUp } from './sortInStrategies'
 
 import { id, id2 } from './utils'
 
-const shuffleAndStylize = (sortIn: SortInStrategy) => (getKey: Ellipser<{}>): ActiveBehavior<FlashcardPreset, FlashcardPreset>  => (
+const shuffleAndStylize = (sortIn: SortInStrategy) => (getKey: Ellipser<{}, string>): ActiveBehavior<FlashcardPreset, FlashcardPreset>  => (
     stylizer: Stylizer,
 ) => (tag: TagData, internals: Internals<FlashcardPreset>) => {
 
@@ -28,14 +28,15 @@ const shuffleAndStylize = (sortIn: SortInStrategy) => (getKey: Ellipser<{}>): Ac
     }
 }
 
+const inactive: Stylizer = new Stylizer({
+    separator: ', ',
+})
+
 const blueHighlight: Stylizer = new Stylizer({
     processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-const valuesInOrder: Ellipser<FlashcardPreset> = (tag: TagData) => {
-    const stylizer = new Stylizer()
-    return stylizer.stylize(tag.values)
-}
+const valuesInOrder: Ellipser<FlashcardPreset, string[]> = (tag: TagData) => tag.values
 
 const shuffleQuestPublicApi = (
     frontInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
@@ -43,8 +44,8 @@ const shuffleQuestPublicApi = (
 ): Recipe<FlashcardPreset> => (options: {
     tagname?: string,
 
-    contexter?: Ellipser<FlashcardPreset>,
-    ellipser?: Ellipser<FlashcardPreset>,
+    contexter?: Ellipser<FlashcardPreset, string[]>,
+    ellipser?: Ellipser<FlashcardPreset, string[]>,
 
     activeStylizer?: Stylizer,
 
@@ -58,7 +59,7 @@ const shuffleQuestPublicApi = (
         sortInStrategy = topUp,
 
         contexter = valuesInOrder,
-        ellipser = noneEllipser,
+        ellipser = ellipsis,
 
         activeStylizer = blueHighlight,
 
@@ -74,6 +75,7 @@ const shuffleQuestPublicApi = (
     return clozeRecipe({
         tagname: tagname,
 
+        inactiveStylizer: inactive,
         contexter: contexter,
         inactiveEllipser: ellipser,
 
@@ -83,6 +85,6 @@ const shuffleQuestPublicApi = (
     })
 }
 
-export const shuffleShowRecipe = shuffleQuestPublicApi(id, id)
-export const shuffleHideRecipe = shuffleQuestPublicApi(id2, id2)
-export const shuffleRevealRecipe = shuffleQuestPublicApi(id2, id)
+export const shuffleShowRecipe = shuffleQuestPublicApi(choose(id), choose(id))
+export const shuffleHideRecipe = shuffleQuestPublicApi(choose(id2), choose(id2))
+export const shuffleRevealRecipe = shuffleQuestPublicApi(choose(id2), choose(id))

@@ -6,10 +6,6 @@ permalink: multiple-choice/categories
 parent: Multiple Choice
 ---
 
-{% assign mc = site.data.snippets.multiple_choice %}
-{% assign setups = site.data.setups %}
-{% assign setups = site.data.buttons %}
-
 {% include toc-doc.md %}
 
 ---

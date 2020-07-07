@@ -11,13 +11,13 @@ parent: Multiple Choice
 ---
 ## Creating multiple choice
 
-{% include codeDisplay.md content=mc.simple_zero setups="default_multiple_choice" buttons=b %}
+{% include codeDisplay.md content=mc.simple_zero setups="default_multiple_choice" buttons=buttons.frontBack %}
 
 With indexes.
 
-{% include codeDisplay.md content=mc.simple_nonzero setups="default_multiple_choice" buttons=bOneTwoThree %}
+{% include codeDisplay.md content=mc.simple_nonzero setups="default_multiple_choice" buttons=buttons.threeCards %}
 
 ---
 ## Graphical effects
 
-{% include codeDisplay.md content=mc.simple_zero setups="fancy_multiple_choice" buttons=b %}
+{% include codeDisplay.md content=mc.simple_zero setups="fancy_multiple_choice" buttons=buttons.frontBack %}

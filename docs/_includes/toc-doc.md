@@ -12,3 +12,5 @@
 
 {% assign mc = site.data.snippets.multiple_choice %}
 {% assign cloze = site.data.snippets.cloze %}
+{% assign flashcard = site.data.snippets.flashcard %}
+{% assign shuffling = site.data.snippets.shuffling %}

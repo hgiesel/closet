@@ -1,40 +1,46 @@
-import type { TagData, Recipe, Internals, Ellipser, InactiveBehavior, ActiveBehavior, WeakFilterResult, WeakSeparator } from './types'
+import type { TagData, Recipe, Eval, Internals, InactiveBehavior, WeakFilter, WeakFilterResult, WeakSeparator } from './types'
 import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'
 import type { SortInStrategy } from './sortInStrategies'
 
 import { Stylizer } from './stylizer'
 import { sequencer } from './sequencer'
-
 import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './flashcardTemplate'
 import { topUp } from './sortInStrategies'
 
-const inTagShuffle = (sortIn: SortInStrategy): Ellipser<{}, string[]> => (tag: TagData, internals: Internals<{}>) => {
-    const flattedValuesWithIndex = tag.values.flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
+type ValuePlusCategory = [string, number]
 
-    return sequencer(`${tag.fullKey}:${tag.fullOccur}`,
-        `${tag.fullKey}:${tag.fullOccur}`,
-        flattedValuesWithIndex,
-        sortIn,
-        internals,
-    )
+const inTagShuffle = (sortIn: SortInStrategy): Eval<{}, ValuePlusCategory[] | void> => (
+    tag: TagData,
+    internals: Internals<{}>,
+): [string, number][] | void => {
+    const flattedValuesWithIndex: [string, number][] = tag.values
+        .flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
+
+    const uid = `${tag.fullKey}:${tag.fullOccur}`
+    const maybeValues = sequencer(uid, uid, flattedValuesWithIndex, sortIn, internals)
+
+    if (maybeValues) {
+        return maybeValues
+    }
 }
 
-const firstCategory: Ellipser<{}, string[]> = (tag: TagData) => tag.values[0]
+const firstCategory: WeakFilter<{}> = (tag: TagData) => tag.values[0]
 
-const shuffleAndStylize: ActiveBehavior<FlashcardPreset, FlashcardPreset> = (
+const shuffleAndStylize = (
     stylizer: Stylizer,
-    ellipser: Ellipser<{}, string[]>,
-) => (tag: TagData, internals: Internals<FlashcardPreset>): WeakFilterResult => {
+    ellipser: Eval<{}, ValuePlusCategory[] | void>,
+): WeakFilter<{}> => (tag: TagData, internals: Internals<FlashcardPreset>): WeakFilterResult => {
     const maybeValues = ellipser(tag, internals)
 
     return maybeValues
-        ? stylizer.stylize(maybeValues.map(v => v[0]), [maybeValues.map(v => v[1])])
+        ? stylizer.stylize(
+            maybeValues.map((v: ValuePlusCategory) => v[0]),
+            [maybeValues.map((v: ValuePlusCategory) => v[1])],
+        )
         : { ready: false }
 }
 
-const inactive = new Stylizer()
-
-const orangeCommaSeparated = inactive.toStylizer({
+const orangeCommaSeparated = new Stylizer({
     processor: (v: string) => `( ${v} )`,
     mapper: (v: string) => {
         return `<span style="color: orange;">${v}</span>`
@@ -56,8 +62,8 @@ const multipleChoicePublicApi = (
     frontStylizer?: Stylizer,
     backStylizer?: Stylizer,
 
-    contexter?: Ellipser<FlashcardPreset, string[]>,
-    ellipser?: Ellipser<FlashcardPreset, string[]>,
+    contexter?: WeakFilter<FlashcardPreset>,
+    ellipser?: WeakFilter<FlashcardPreset>,
 
     sortInStrategy?: SortInStrategy,
     categorySeparator?: WeakSeparator,
@@ -81,24 +87,15 @@ const multipleChoicePublicApi = (
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
-    const multipleChoiceSeparators = { separators: [categorySeparator, valueSeparator] }
-    const multipleChoiceRecipe = flashcardTemplate(frontInactive, backInactive)(shuffleAndStylize, shuffleAndStylize, multipleChoiceSeparators)
-
     const inTagShuffleWithStrategy = inTagShuffle(sortInStrategy)
 
-    return multipleChoiceRecipe({
-        tagname: tagname,
+    const front = shuffleAndStylize(frontStylizer, inTagShuffleWithStrategy)
+    const back = shuffleAndStylize(backStylizer, inTagShuffleWithStrategy)
 
-        inactiveStylizer: inactive,
-        contexter: contexter,
-        inactiveEllipser: ellipser,
+    const multipleChoiceSeparators = { separators: [categorySeparator, valueSeparator] }
+    const multipleChoiceRecipe = flashcardTemplate(frontInactive, backInactive)
 
-        frontStylizer: frontStylizer,
-        frontEllipser: inTagShuffleWithStrategy,
-
-        backStylizer: backStylizer,
-        backEllipser: inTagShuffleWithStrategy,
-    })
+    return multipleChoiceRecipe(tagname, front, back, contexter, ellipser, multipleChoiceSeparators)
 }
 
 export const [

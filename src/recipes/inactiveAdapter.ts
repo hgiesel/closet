@@ -1,4 +1,4 @@
-import type { InactiveAdapter, InactiveBehavior, Ellipser, TagData, Internals, WeakFilterResult, Stylizer } from './types'
+import type { InactiveAdapter, InactiveBehavior, TagData, Internals, WeakFilter, WeakFilterResult } from './types'
 import type { CardPreset } from './flashcardTemplate'
 
 import { StoreGetter, constantGet } from './valueStore'
@@ -9,22 +9,20 @@ const constantZero = constantGet(0)
 export const inactiveAdapter = <T extends object>(
     behavior: InactiveBehavior<T, CardPreset>,
 ) => (
-    stylizer: Stylizer,
-    contexter: Ellipser<T, string[]>,
-    ellipser: Ellipser<T, string[]>,
+    contexter: WeakFilter<T>,
+    ellipser: WeakFilter<T>,
 ) => (
     tag: TagData,
     internals: Internals<T & CardPreset>,
-) => behavior(stylizer, contexter, ellipser)(tag, internals)
+) => behavior(contexter, ellipser)(tag, internals)
 
 export const inactiveAdapterOverwritten = <T extends object>(
     adapter: InactiveAdapter<CardPreset, T>,
 ): InactiveAdapter<CardPreset, CardPreset> => (
     behavior: InactiveBehavior<CardPreset, T>,
 ) => (
-    stylizer: Stylizer,
-    contexter: Ellipser<CardPreset, string[]>,
-    ellipser: Ellipser<CardPreset, string[]>,
+    contexter: WeakFilter<CardPreset>,
+    ellipser: WeakFilter<CardPreset>,
 ) => (tag: TagData, internals: Internals<CardPreset & T>): WeakFilterResult => {
     const showKeyword = 'flashcardShow'
     const hideKeyword = 'flashcardHide'
@@ -33,17 +31,17 @@ export const inactiveAdapterOverwritten = <T extends object>(
         .get(tag.key, tag.num, tag.fullOccur)
 
     if (showOverwrite) {
-        return stylizer.stylize(contexter(tag, internals))
+        return contexter(tag, internals)
     }
 
     const hideOverwrite = internals.cache.get<StoreGetter<boolean>>(hideKeyword, constantFalse)
         .get(tag.key, tag.num, tag.fullOccur)
 
     if (hideOverwrite) {
-        return stylizer.stylize(ellipser(tag, internals))
+        return ellipser(tag, internals)
     }
 
-    return adapter(behavior)(stylizer, contexter, ellipser)(tag, internals)
+    return adapter(behavior)(contexter, ellipser)(tag, internals)
 }
 
 export const inactiveAdapterWithinRange = <T extends object>(
@@ -51,12 +49,11 @@ export const inactiveAdapterWithinRange = <T extends object>(
 ): InactiveAdapter<CardPreset, CardPreset> => (
     behavior: InactiveBehavior<CardPreset, T>,
 ) => (
-    stylizer: Stylizer,
-    contexter: Ellipser<CardPreset, string[]>,
-    ellipser: Ellipser<CardPreset, string[]>,
+    contexter: WeakFilter<CardPreset>,
+    ellipser: WeakFilter<CardPreset>,
 ) => (tag: TagData, internals: Internals<CardPreset & T>): WeakFilterResult => {
     if (!internals.preset.hasOwnProperty('cardNumber')) {
-        return adapter(behavior)(stylizer, contexter, ellipser)(tag, internals)
+        return adapter(behavior)(contexter, ellipser)(tag, internals)
     }
 
     const [
@@ -69,18 +66,18 @@ export const inactiveAdapterWithinRange = <T extends object>(
     const cardNumber = internals.preset.cardNumber
 
     if (!cardNumber) {
-        return behavior(stylizer, contexter, ellipser)(tag, internals)
+        return behavior(contexter, ellipser)(tag, internals)
     }
 
     if (cardNumber - showBottom <= tag.num && tag.num <= cardNumber + showTop) {
-        return stylizer.stylize(contexter(tag, internals))
+        return contexter(tag, internals)
     }
 
     if (cardNumber - hideBottom <= tag.num && tag.num <= cardNumber + hideTop) {
-        return stylizer.stylize(ellipser(tag, internals))
+        return ellipser(tag, internals)
     }
 
-    return adapter(behavior)(stylizer, contexter, ellipser)(tag, internals)
+    return adapter(behavior)(contexter, ellipser)(tag, internals)
 }
 
 export const inactiveAdapterGetRange = <T extends object>(tag: TagData, internals: Internals<CardPreset & T>): [number, number, number, number] => {

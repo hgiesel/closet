@@ -16,7 +16,7 @@ export const shufflingRecipe = ({
         const maybeValues = sequencer(
             unitId,
             sequenceId,
-            tag.values,
+            tag.values as string[],
             sortInStrategy,
             internals,
         )

@@ -3,15 +3,15 @@ import type { Internals } from './types'
 import { sortWithIndices } from './utils'
 
 // TODO abstract to an object without dependence on Internals
-export const sequencer = (
+export const sequencer = <T>(
     // identifies each unit (tag) receiving shuffled items
     unitId: string,
     // identifies each collection of items being shuffled
     sequenceId: string,
-    values: unknown[],
+    values: T[],
     strategy: (indices: number[], toLength: number) => number[],
     { cache, memory, deferred, ready }: Internals<{}>,
-) => {
+): T[] | void => {
     const applyKey = `${unitId}:apply`
     // in cache: boolean whether ready for application
     // in deferred: sets apply key true, deletes unitId from waitingSet
@@ -32,8 +32,8 @@ export const sequencer = (
                 return
             }
 
-        const popped: string[] = []
-        const possibleValues = cache.get(shuffleKey, []) as string[]
+        const popped: T[] = []
+        const possibleValues = cache.get(shuffleKey, []) as T[]
 
         for (let x = 0; x < values.length; x++) {
             // pop off start, so the result is the same as in program logic

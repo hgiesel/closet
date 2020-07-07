@@ -2,11 +2,10 @@ import type { TagData, Recipe, Internals, Ellipser, InactiveBehavior, ActiveBeha
 import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'
 import type { SortInStrategy } from './sortInStrategies'
 
-import { id, id2 } from './utils'
 import { Stylizer } from './stylizer'
 import { sequencer } from './sequencer'
 
-import { makeFlashcardTemplate, choose, ellipsis } from './flashcardTemplate'
+import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './flashcardTemplate'
 import { topUp } from './sortInStrategies'
 
 const inTagShuffle = (sortIn: SortInStrategy): Ellipser<{}, string[]> => (tag: TagData, internals: Internals<{}>) => {
@@ -102,6 +101,8 @@ const multipleChoicePublicApi = (
     })
 }
 
-export const multipleChoiceShowRecipe = multipleChoicePublicApi(choose(id), choose(id))
-export const multipleChoiceHideRecipe = multipleChoicePublicApi(choose(id2), choose(id2))
-export const multipleChoiceRevealRecipe = multipleChoicePublicApi(choose(id2), choose(id))
+export const [
+    multipleChoiceShowRecipe,
+    multipleChoiceHideRecipe,
+    multipleChoiceRevealRecipe,
+] = generateFlashcardRecipes(multipleChoicePublicApi)

@@ -8,10 +8,6 @@ parent: Clozes
 
 {% include toc-doc.md %}
 
-{% assign cloze = site.data.snippets.cloze %}
-{% assign setups = site.data.setups %}
-{% assign buttons = site.data.buttons %}
-
 ---
 ## Blanking
 

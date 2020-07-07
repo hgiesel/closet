@@ -1,9 +1,8 @@
 import type { TagData, Internals, Ellipser, WeakSeparator, Recipe, InactiveBehavior, ActiveBehavior } from './types'
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
 
-import { makeFlashcardTemplate, choose, ellipsis, directApply } from './flashcardTemplate'
+import { makeFlashcardTemplate, ellipsis, directApply, generateFlashcardRecipes } from './flashcardTemplate'
 import { Stylizer } from './stylizer'
-import { id, id2 } from './utils'
 
 const wrapWithBrackets = (v: string) => `[${v}]`
 const inactive = new Stylizer()
@@ -74,6 +73,8 @@ const clozePublicApi = (
     })
 }
 
-export const clozeShowRecipe = clozePublicApi(choose(id), choose(id))
-export const clozeHideRecipe = clozePublicApi(choose(id2), choose(id2))
-export const clozeRevealRecipe = clozePublicApi(choose(id2), choose(id))
+export const [
+    clozeShowRecipe,
+    clozeHideRecipe,
+    clozeRevealRecipe,
+] = generateFlashcardRecipes(clozePublicApi)

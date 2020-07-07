@@ -1,6 +1,7 @@
-import type { TagData, Internals, Registrar, Stylizer, Ellipser, ActiveBehavior, InactiveBehavior, InactiveAdapter, DataOptions, WeakFilterResult } from './types'
+import type { TagData, Internals, Registrar, Recipe, Stylizer, Ellipser, ActiveBehavior, InactiveBehavior, InactiveAdapter, DataOptions, WeakFilterResult } from './types'
 import type { Decider } from './deciders'
 
+import { id, id2 } from './utils'
 import { isActiveAll, isBackAll } from './deciders'
 import { inactiveAdapterAll } from './inactiveAdapter'
 import { sumFour } from './sum'
@@ -87,7 +88,7 @@ export const makeFlashcardTemplate = (
     registrar.register(tagname, flashcardFilter, dataOptions)
 }
 
-export const choose = <U extends object>(choice: (x: Ellipser<FlashcardPreset, string[]>, y: Ellipser<FlashcardPreset, string[]>) => Ellipser<FlashcardPreset, string[]>): InactiveBehavior<FlashcardPreset, FlashcardPreset> => (
+const choose = <U extends object>(choice: (x: Ellipser<FlashcardPreset, string[]>, y: Ellipser<FlashcardPreset, string[]>) => Ellipser<FlashcardPreset, string[]>): InactiveBehavior<FlashcardPreset, FlashcardPreset> => (
     stylizer: Stylizer,
     contexter: Ellipser<FlashcardPreset, string[]>,
     ellipser: Ellipser<FlashcardPreset, string[]>,
@@ -97,6 +98,16 @@ export const choose = <U extends object>(choice: (x: Ellipser<FlashcardPreset, s
     return Array.isArray(result)
         ? stylizer.stylize(result)
         : result
+}
+
+export const generateFlashcardRecipes = (publicApi: (front: InactiveBehavior<FlashcardPreset, FlashcardPreset>, back: InactiveBehavior<FlashcardPreset, FlashcardPreset>) => Recipe<FlashcardPreset>) => {
+    const chooseFirst = choose(id)
+    const chooseSecond = choose(id2)
+    return [
+        publicApi(chooseFirst, chooseFirst),
+        publicApi(chooseSecond, chooseSecond),
+        publicApi(chooseSecond, chooseFirst),
+    ]
 }
 
 export const ellipsis = () => ['[...]']

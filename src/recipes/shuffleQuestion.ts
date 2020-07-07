@@ -2,13 +2,11 @@ import type { TagData, Internals, Ellipser, WeakSeparator, Recipe, InactiveBehav
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
 import type { SortInStrategy } from './sortInStrategies'
 
-import { makeFlashcardTemplate, choose, ellipsis, directApply } from './flashcardTemplate'
+import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis, directApply } from './flashcardTemplate'
 
 import { Stylizer } from './stylizer'
 import { sequencer } from './sequencer'
 import { topUp } from './sortInStrategies'
-
-import { id, id2 } from './utils'
 
 const acrossTagShuffle = (sortIn: SortInStrategy): Ellipser<{}, string[]> => (tag: TagData, internals: Internals<{}>) => {
     return sequencer(
@@ -92,6 +90,8 @@ const shuffleQuestPublicApi = (
     })
 }
 
-export const shuffleShowRecipe = shuffleQuestPublicApi(choose(id), choose(id))
-export const shuffleHideRecipe = shuffleQuestPublicApi(choose(id2), choose(id2))
-export const shuffleRevealRecipe = shuffleQuestPublicApi(choose(id2), choose(id))
+export const [
+    shuffleShowRecipe,
+    shuffleHideRecipe,
+    shuffleRevealRecipe,
+] = generateFlashcardRecipes(shuffleQuestPublicApi)

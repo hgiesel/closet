@@ -20,8 +20,12 @@ const hintEllipser: Eval<FlashcardPreset, string[]> = (
     return [tag.values[1] ?? '...']
 }
 
-const firstValue: Eval<FlashcardPreset, string> = (tag: TagData): string => tag.values[0]
-const firstValueAsList = (tag: TagData, internals: Internals<{}>) => [firstValue(tag, internals)]
+const firstValue: WeakFilter<{}> = (tag: TagData, { ready }: Internals<FlashcardPreset>) => ({
+    ready: ready,
+    result: tag.values[0],
+})
+
+const firstValueAsList: Eval<{}, string[]> = (tag: TagData) => [tag.values[0]]
 
 const clozePublicApi = (
     frontInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,

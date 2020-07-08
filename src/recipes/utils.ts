@@ -79,9 +79,3 @@ export const sortWithIndices = <T>(items: T[], indices: number[]): T[] => {
 
     return result
 }
-
-export const toNumbers = (vs: string[]) => {
-    return vs
-        .map((v: string) => Number(v))
-        .filter((v: number) => !isNaN(v))
-}

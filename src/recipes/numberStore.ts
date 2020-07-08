@@ -26,42 +26,45 @@ export const incrementRecipe = ({
     storeId = 'numerical',
     separator = { sep: ',' },
     assignmentSeparator = { sep: '=', trim: true },
-} = {}) => (registrar: Registrar<{}>) => {
-    registrar.register(tagname, numStoreFilterTemplate(
+} = {}) => (registrar: Registrar<{}>) => registrar.register(
+    tagname,
+    numStoreFilterTemplate(
         storeId,
         0,
-        (at, val) => (numberMap) => {
-            numberMap.increment(at, Number(val))
-        }
-    ), { separators: [separator, assignmentSeparator] })
-}
+        (at, val) => (numberMap) => numberMap.increment(at, Number(val))
+    ), {
+        separators: [separator, assignmentSeparator],
+    },
+)
 
 export const decrementRecipe = ({
     tagname = 'dec',
     storeId = 'numerical',
     separator = { sep: ',' },
     assignmentSeparator = { sep: '=', trim: true },
-} = {}) => (registrar: Registrar<{}>) => {
-    registrar.register(tagname, numStoreFilterTemplate(
+} = {}) => (registrar: Registrar<{}>) => registrar.register(
+    tagname,
+    numStoreFilterTemplate(
         storeId,
         0,
-        (at, val) => (numberMap) => {
-            numberMap.decrement(at, Number(val))
-        }
-    ), { separators: [separator, assignmentSeparator] })
-}
+        (at, val) => (numberMap) => numberMap.decrement(at, Number(val)),
+    ), {
+        separators: [separator, assignmentSeparator],
+    }
+)
 
 export const setNumberRecipe = ({
     tagname = 'set',
     storeId = 'numerical',
     separator = { sep: ',' },
     assignmentSeparator = { sep: '=', trim: true },
-} = {}) => (registrar: Registrar<{}>) => {
-    registrar.register(tagname, numStoreFilterTemplate(
+} = {}) => (registrar: Registrar<{}>) => registrar.register(
+    tagname,
+    numStoreFilterTemplate(
         storeId,
         0,
-        (at, val) => (numberMap) => {
-            numberMap.setNumber(at, Number(val))
-        }
-    ), { separators: [separator, assignmentSeparator] })
-}
+        (at, val) => (numberMap) => numberMap.setNumber(at, Number(val)),
+    ), {
+        separators: [separator, assignmentSeparator],
+    },
+)

@@ -1,13 +1,8 @@
 import type { TagData, Registrar, Internals } from './types'
 
-import {
-    toNumbers,
-    sortWithIndices,
-} from './utils'
-
-import {
-    topUp,
-} from './sortInStrategies'
+import { sortWithIndices } from './utils'
+import { topUp } from './sortInStrategies'
+import { ValueStore } from './valueStore'
 
 export const orderingRecipe = ({
     tagname = 'ord',
@@ -24,7 +19,7 @@ export const orderingRecipe = ({
 
         const ordOccupiedKey = `${tag.key}:ord:occupied`
 
-        const toBeOrdered = toNumbers(tag.values)
+        const toBeOrdered = tag.values
             .filter((v: number) => !cache.get<number[]>(ordOccupiedKey, []).includes(v))
 
         cache.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])

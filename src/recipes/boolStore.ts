@@ -26,40 +26,45 @@ export const activateRecipe = ({
     tagname = 'on',
     storeId = 'active',
     separator = { sep: ',' },
-} = {}) => (registrar: Registrar<{}>) => {
-    registrar.register(tagname, boolStoreFilterTemplate(
+} = {}) => (registrar: Registrar<{}>) => registrar.register(
+    tagname,
+    boolStoreFilterTemplate(
         storeId,
         false,
         (val) => (activateMap) => {
             activateMap.on(val)
         }
-    ), { separators: [separator, innerSeparator] })
-}
+    ), {
+        separators: [separator, innerSeparator],
+    },
+)
 
 export const deactivateRecipe = ({
     tagname = 'off',
     storeId = 'active',
     separator = { sep: ',' },
-} = {}) => (registrar: Registrar<{}>) => {
-    registrar.register(tagname, boolStoreFilterTemplate(
+} = {}) => (registrar: Registrar<{}>) => registrar.register(
+    tagname,
+    boolStoreFilterTemplate(
         storeId,
         false,
-        (val) => (activateMap) => {
-            activateMap.off(val)
-        }
-    ), { separators: [separator, innerSeparator] })
-}
+        (val) => (activateMap) => activateMap.off(val)
+    ), {
+        separators: [separator, innerSeparator],
+    }
+)
 
 export const toggleRecipe = ({
     tagname = 'toggle',
     storeId = 'active',
     separator = { sep: ',' },
-} = {}) => (registrar: Registrar<{}>) => {
-    registrar.register(tagname, boolStoreFilterTemplate(
+} = {}) => (registrar: Registrar<{}>) => registrar.register(
+    tagname,
+    boolStoreFilterTemplate(
         storeId,
         false,
-        (val) => (activateMap) => {
-            activateMap.toggle(val)
-        }
-    ), { separators: [separator, innerSeparator] })
-}
+        (val) => (activateMap) => activateMap.toggle(val)
+    ), {
+        separators: [separator, innerSeparator],
+    }
+)

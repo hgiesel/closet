@@ -66,21 +66,13 @@ export const makeFlashcardTemplate = (
     registrar.register(tagname, flashcardFilter, dataOptions)
 }
 
-const choose = <U extends object>(choice: <T>(x: T, y: T) => T): InactiveBehavior<FlashcardPreset, FlashcardPreset> => (
-    contexter: WeakFilter<FlashcardPreset>,
-    ellipser: WeakFilter<FlashcardPreset>,
-) => (tag: TagData, internals: Internals<U>): WeakFilterResult => choice(contexter, ellipser)(tag, internals)
-
-export const generateFlashcardRecipes = (publicApi: (front: InactiveBehavior<FlashcardPreset, FlashcardPreset>, back: InactiveBehavior<FlashcardPreset, FlashcardPreset>) => Recipe<FlashcardPreset>) => {
-    const chooseFirst = choose(id)
-    const chooseSecond = choose(id2)
-
-    return [
-        publicApi(chooseFirst, chooseFirst),
-        publicApi(chooseSecond, chooseSecond),
-        publicApi(chooseSecond, chooseFirst),
-    ]
-}
+export const generateFlashcardRecipes = (
+    publicApi: (front: InactiveBehavior<FlashcardPreset, FlashcardPreset>, back: InactiveBehavior<FlashcardPreset, FlashcardPreset>) => Recipe<FlashcardPreset>
+) => [
+    publicApi(id, id),
+    publicApi(id2, id2),
+    publicApi(id2, id),
+]
 
 export const toListStylize = (
     stylizer: Stylizer,

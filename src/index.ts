@@ -1,6 +1,7 @@
 import { Status, ProcessorOutput } from './template/evaluate'
+import { MetaFilterManager } from './filterManager'
 
-import type { MetaFilterManager, ManagerInfo } from './filterManager'
+import type { ManagerInfo } from './filterManager'
 import type { Filter as FilterType, WeakFilter as WeakFilterType, FilterResult, FilterApi } from './filterManager/filters'
 import type { RegistrarApi } from './filterManager/registrar'
 import type { DeferredEntry as DefEntry } from './filterManager/deferred'

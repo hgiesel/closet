@@ -41,7 +41,13 @@ const blueHighlight: Stylizer = new Stylizer({
 
 const valuesInOrder: Eval<FlashcardPreset, string[]> = (tag: TagData) => tag.values
 
-const shuffleQuestPublicApi = (
+const doShuffle = (stylizer: Stylizer, sortIn: SortInStrategy) => shuffleAndStylize(stylizer, acrossTagShuffle(sortIn))
+const simplyShow = (stylizer: Stylizer, _sortIn: SortInStrategy) => toListStylize(stylizer, justValues)
+
+const oneSidedShufflePublicApi = (
+    frontActive: (stylizer: Stylizer, sortIn: SortInStrategy) => WeakFilter<FlashcardPreset>,
+    backActive: (stylizer: Stylizer, sortIn: SortInStrategy) => WeakFilter<FlashcardPreset>,
+) => (
     frontInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
     backInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
 ): Recipe<FlashcardPreset> => (options: {
@@ -58,8 +64,7 @@ const shuffleQuestPublicApi = (
     flashcardTemplate?: FlashcardTemplate,
 } = {}) => {
     const {
-        tagname = 'c',
-
+        tagname = 'shuf',
         sortInStrategy = topUp,
 
         inactiveStylizer = inactive,
@@ -74,10 +79,8 @@ const shuffleQuestPublicApi = (
 
     const clozeSeparators = { separators: [separator] }
 
-    const acrossTagShuffleWithStrategy = acrossTagShuffle(sortInStrategy)
-
-    const front = shuffleAndStylize(activeStylizer, acrossTagShuffleWithStrategy)
-    const back = toListStylize(activeStylizer, justValues)
+    const front = frontActive(activeStylizer, sortInStrategy)
+    const back = backActive(activeStylizer, sortInStrategy)
 
     const trueContexter = toListStylize(inactiveStylizer, contexter)
 
@@ -89,4 +92,16 @@ export const [
     shuffleShowRecipe,
     shuffleHideRecipe,
     shuffleRevealRecipe,
-] = generateFlashcardRecipes(shuffleQuestPublicApi)
+] = generateFlashcardRecipes(oneSidedShufflePublicApi(doShuffle, doShuffle))
+
+export const [
+    sortShowRecipe,
+    sortHideRecipe,
+    sortRevealRecipe,
+] = generateFlashcardRecipes(oneSidedShufflePublicApi(doShuffle, simplyShow))
+
+export const [
+    jumbleShowRecipe,
+    jumbleHideRecipe,
+    jumbleRevealRecipe,
+] = generateFlashcardRecipes(oneSidedShufflePublicApi(simplyShow, doShuffle))

@@ -17,7 +17,7 @@ export const orderingRecipe = ({
 } = {}) => (registrar: Registrar<{}>) => {
     const ordFilter = (tag: TagData, { deferred, cache, memory }: Internals<{}>) => {
         /**
-         * ordOccupiedKey in cache: 
+         * ordOccupiedKey in cache:
          * - shuffled nums which are already used
          * - cannot belong to multiple ords at once
          */

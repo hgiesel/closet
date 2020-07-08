@@ -1,6 +1,6 @@
 name: Assign shuffles in ordered list
 code: |
-  Step 1: [[shuf4::Combine the onion, celery, carrot, and [[mc3::olive::canola||sunflower]] oil]].
-  Step 2: [[shuf4::Add the meat and cook, stirring frequently]].
-  Step 3: [[shuf4::Add the [[c1::tomato]] paste]].
-  Step 4: [[shuf4::Cook on low for [[c2::8::more than 4]] hours]].
+  Step [[jumb4::1]]: [[shuf4::Combine the onion, celery, carrot, and [[mc3::olive::canola||sunflower]] oil]].
+  Step [[jumb4::2]]: [[shuf4::Add the meat and cook, stirring frequently]].
+  Step [[jumb4::3]]: [[shuf4::Add the [[c1::tomato]] paste]].
+  Step [[jumb4::4]]: [[shuf4::Cook on low for [[c2::8::more than 4]] hours]].

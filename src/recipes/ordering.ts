@@ -2,70 +2,76 @@ import type { TagData, Registrar, Internals } from './types'
 
 import { sortWithIndices } from './utils'
 import { topUp } from './sortInStrategies'
-import { ValueStore } from './valueStore'
 
 export const orderingRecipe = ({
     tagname = 'ord',
-    shuffleTagname = 'mix',
+
     separator = ',',
+    cmdSeparator = '::',
+
     sortInStrategy = topUp,
 } = {}) => (registrar: Registrar<{}>) => {
     const ordFilter = (tag: TagData, { deferred, cache, memory }: Internals<{}>) => {
         /**
+         * @param tag.values must contain lists of sequence ids (!), not tagnames
+         *
          * ordOccupiedKey in cache:
          * - shuffled nums which are already used
          * - cannot belong to multiple ords at once
          */
 
-        const ordOccupiedKey = `${tag.key}:ord:occupied`
+        for (const [idx, cmd] of tag.values.entries()) {
+            const ordOccupiedKey = `${tag.key}:ord:occupied:${idx}`
 
-        const toBeOrdered = tag.values
-            .filter((v: number) => !cache.get<number[]>(ordOccupiedKey, []).includes(v))
+            const toBeOrdered = cmd
+                .filter((v: string) => !cache.get<string[]>(ordOccupiedKey, []).includes(v))
 
-        cache.fold(ordOccupiedKey, (v: number[]) => v.concat(toBeOrdered), [])
+            cache.fold(ordOccupiedKey, (v: string[]) => v.concat(toBeOrdered), [])
 
-        const shuffleKeys = new Set(toBeOrdered.map((v: number) => `${shuffleTagname}${v}`))
-        const ordKey = `${tag.key}:${tag.fullOccur}:ord`
+            const shuffleKeys = new Set(toBeOrdered)
+            const ordKey = `${tag.key}:${tag.fullOccur}:ord:${idx}`
 
-        deferred.register(ordKey, () => {
-            for (const sk of shuffleKeys) {
-                deferred.block(`${sk}:shuffle`)
+            deferred.register(ordKey, () => {
+                for (const sk of shuffleKeys) {
+                    deferred.block(`${sk}:shuffle`)
 
-                const waitingSet = cache.get<Set<string>>(`${sk}:waitingSet`, new Set())
-                const shuffleKey = `${sk}:shuffle`
+                    const waitingSet = cache.get<Set<string>>(`${sk}:waitingSet`, new Set())
+                    const shuffleKey = `${sk}:shuffle`
 
-                if (waitingSet.size !== 0) {
-                    continue
+                    if (waitingSet.size !== 0) {
+                        continue
+                    }
+
+                    const shuffleItems = cache.get<string[]>(shuffleKey, [])
+                    const toppedUpIndices = sortInStrategy(
+                        cache.get<number[]>(ordKey, memory.get<number[]>(shuffleKey, [])),
+                        shuffleItems.length,
+                    )
+
+                    // order mix items
+                    cache.fold(shuffleKey, (vs: string[]) => sortWithIndices(vs, toppedUpIndices), [])
+
+                    // remove mixKey from ord pool
+                    shuffleKeys.delete(shuffleKey)
+
+                    // possibly update with longer sort order
+                    cache.set(ordKey, toppedUpIndices)
+                    memory.set(shuffleKey, toppedUpIndices)
                 }
 
-                const shuffleItems = cache.get<string[]>(shuffleKey, [])
-                const toppedUpIndices = sortInStrategy(
-                    cache.get<number[]>(ordKey, memory.get<number[]>(shuffleKey, [])),
-                    shuffleItems.length,
-                )
+                // need to remove ord deferred because it is persistent
+                if (shuffleKeys.size === 0) {
+                    deferred.unregister(ordKey)
+                }
+            }, {
+                priority: 35 /* must be higher than sequencers 15 */,
+                persistent: true,
+            })
 
-                // order mix items
-                cache.fold(shuffleKey, (vs: string[]) => sortWithIndices(vs, toppedUpIndices), [])
-
-                // remove mixKey from ord pool
-                shuffleKeys.delete(shuffleKey)
-
-                // possibly update with longer sort order
-                cache.set(ordKey, toppedUpIndices)
-                memory.set(shuffleKey, toppedUpIndices)
-            }
-
-            // need to remove ord deferred because it is persistent
-            if (shuffleKeys.size === 0) {
-                deferred.unregister(ordKey)
-            }
-        }, {
-            priority: 35 /* must be higher than sequencers 15 */,
-            persistent: true,
-        })
+        }
 
         return { ready: true }
     }
 
-    registrar.register(tagname, ordFilter, { separators: [separator] })
+    registrar.register(tagname, ordFilter, { separators: [cmdSeparator, separator] })
 }

@@ -1,0 +1,5 @@
+name: Assign shuffles
+code: |
+  Shades of red: [[shuf0::pink::maroon::burgundy::fuchsia]]
+  Shades of green: [[shuf0::teal::olive::mint::lime]]
+  Shades of blue: [[shuf0::sapphire::savoy::ultramarine]]

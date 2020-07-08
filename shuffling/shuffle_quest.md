@@ -17,4 +17,4 @@ Simple shuffling also exists as a flashcard type, which you can use to test your
 
 It's especially useful when combining with other flashcard types.
 
-{% include codeDisplay.md content=shuffling.assign_shuffle_ol setups="shuffle_quest,default_cloze,default_multiple_choice" buttons=buttons.fourCards %}
+{% include codeDisplay.md content=shuffling.assign_shuffle_ol setups="shuffle_order,shuffle_quest,default_cloze,default_multiple_choice" buttons=buttons.fourCards %}

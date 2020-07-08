@@ -4,7 +4,7 @@ import type { SortInStrategy } from './sortInStrategies'
 
 import { Stylizer } from './stylizer'
 import { sequencer } from './sequencer'
-import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './flashcardTemplate'
+import { makeFlashcardTemplate, generateFlashcardRecipes, toListStylize, ellipsis } from './flashcardTemplate'
 import { topUp } from './sortInStrategies'
 
 type ValuePlusCategory = [string, number]
@@ -24,7 +24,7 @@ const inTagShuffle = (sortIn: SortInStrategy): Eval<{}, ValuePlusCategory[] | vo
     }
 }
 
-const firstCategory: WeakFilter<{}> = (tag: TagData) => tag.values[0]
+const firstCategory: Eval<FlashcardPreset, string[]> = (tag: TagData) => tag.values[0]
 
 const shuffleAndStylize = (
     stylizer: Stylizer,
@@ -40,7 +40,10 @@ const shuffleAndStylize = (
         : { ready: false }
 }
 
-const orangeCommaSeparated = new Stylizer({
+const inactive = new Stylizer()
+
+
+const orangeCommaSeparated = inactive.toStylizer({
     processor: (v: string) => `( ${v} )`,
     mapper: (v: string) => {
         return `<span style="color: orange;">${v}</span>`
@@ -62,7 +65,8 @@ const multipleChoicePublicApi = (
     frontStylizer?: Stylizer,
     backStylizer?: Stylizer,
 
-    contexter?: WeakFilter<FlashcardPreset>,
+    inactiveStylizer?: Stylizer,
+    contexter?: Eval<FlashcardPreset, string[]>,
     ellipser?: WeakFilter<FlashcardPreset>,
 
     sortInStrategy?: SortInStrategy,
@@ -81,6 +85,7 @@ const multipleChoicePublicApi = (
         categorySeparator = { sep: '::' },
         valueSeparator = { sep: '||' },
 
+        inactiveStylizer = inactive,
         contexter = firstCategory,
         ellipser = ellipsis,
 
@@ -95,7 +100,9 @@ const multipleChoicePublicApi = (
     const multipleChoiceSeparators = { separators: [categorySeparator, valueSeparator] }
     const multipleChoiceRecipe = flashcardTemplate(frontInactive, backInactive)
 
-    return multipleChoiceRecipe(tagname, front, back, contexter, ellipser, multipleChoiceSeparators)
+    const trueContexter = toListStylize(inactiveStylizer, contexter)
+
+    return multipleChoiceRecipe(tagname, front, back, trueContexter, ellipser, multipleChoiceSeparators)
 }
 
 export const [

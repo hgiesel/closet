@@ -32,19 +32,25 @@ code: |
   })
 
   const obscureAndClick = (t) => {
-    return `<span class="cl--obscure cl--obscure-hint cl--obscure-clickable">${t.values[0]}</span>`
+    return [`<span class="cl--obscure cl--obscure-hint cl--obscure-clickable">${t.values[0]}</span>`]
   }
 
   const obscureAndClickFix = (t) => {
-    return `<span class="cl--obscure cl--obscure-fix cl--obscure-clickable"><span>${t.values[0]}</span></span>`
+    return [`<span class="cl--obscure cl--obscure-fix cl--obscure-clickable"><span>${t.values[0]}</span></span>`]
   }
+
+  const frontStylizer = new Closet.Stylizer({
+    processor: v => `<span style="color: cornflowerblue">${v}</span>`,
+  })
 
   filterManager.addRecipe(wrappedClozeShow({
     tagname: 'c',
-    activeEllipser: obscureAndClick,
+    frontEllipser: obscureAndClick,
+    frontStylizer: frontStylizer,
   }))
 
   filterManager.addRecipe(wrappedClozeShow({
     tagname: 'cx',
-    activeEllipser: obscureAndClickFix,
+    frontEllipser: obscureAndClickFix,
+    frontStylizer: frontStylizer,
   }))

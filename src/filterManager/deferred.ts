@@ -3,7 +3,7 @@ import { PriorityQueue } from './priorityQueue'
 
 export type Deferred<T> = (entry: DeferredEntry<T>, internals: T) => void
 
-interface DeferredEntry<T> {
+export interface DeferredEntry<T> {
     keyword: string,
     procedure: Deferred<T>
     priority: number

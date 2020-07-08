@@ -2,6 +2,7 @@ import type { Registrar, TagData, Internals } from '../types'
 
 import { SVG, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
+import { getImages } from './utils'
 
 const makeOcclusionLeftClick = (draw: SVG, event: MouseEvent) => {
     event.preventDefault()
@@ -101,21 +102,6 @@ export const wrapImage = (draw: SVG) => {
     draw.raw.addEventListener('contextmenu', occlusionContextMenu)
 }
 
-const imageSrcPattern = /<img[^>]*?src="(.+?)"[^>]*>/g
-const getImages = (txt: string) => {
-    const result = []
-    let match: RegExpExecArray | null
-
-    do {
-        match = imageSrcPattern.exec(txt)
-        if (match) {
-            result.push(match[1])
-        }
-    } while (match)
-
-    return result
-}
-
 export const occlusionMakerRecipe = ({
     tagname = 'makeOcclusions',
 } = {}) => (registrar: Registrar<{}>) => {
@@ -140,36 +126,4 @@ export const occlusionMakerRecipe = ({
     }
 
     registrar.register(tagname, occlusionMakerFilter)
-}
-
-export const rectRecipe = ({
-    tagname = 'rect',
-    separator = { sep: ',' },
-} = {}) => (registrar: Registrar<{}>) => {
-    const occlusionMakerFilter = ({ values }: TagData, { cache, aftermath }: Internals<{}>) => {
-        const [x = 0, y = 0, width = 50, height = width] = values
-
-        cache.over('occlusionRenderRect', (rectList: [number, number, number, number][]) => rectList.push([x, y, width, height]), [])
-
-        aftermath.registerIfNotExists('occlusionRenderRect', (_entry, { template }) => {
-            const images = (template.textFragments as any).flatMap(getImages)
-            const rects = cache.get('occlusionRenderRect', [])
-            const maybeElement = document.querySelector(`img[src="${images[0]}"]`) as HTMLImageElement
-
-            if (maybeElement) {
-                const draw = SVG.wrapImage(maybeElement)
-
-                for (const rect of rects) {
-                    const svgRect = Rect.make()
-
-                    ;[svgRect.x, svgRect.y, svgRect.width, svgRect.height] = rect
-                    draw.append(svgRect)
-                }
-            }
-        })
-
-        return { ready: true }
-    }
-
-    registrar.register(tagname, occlusionMakerFilter, { separators: [separator] })
 }

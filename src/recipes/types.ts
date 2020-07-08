@@ -1,10 +1,15 @@
 import type { TagData } from '../template/tags'
 import type { Internals, Registrar, WeakFilter } from '..'
 
-export type { Registrar, Filters, AftermathInternals, DeferredInternals, Internals } from '..'
-export type { DataOptions, WeakFilter, WeakFilterResult } from '..'
-export type { DeferredApi, Deferred } from '../filterManager/deferred'
+export type {
+    Registrar, Filters,
+    WeakFilter, WeakFilterResult,
+    Internals, DeferredInternals, AftermathInternals,
+    DeferredEntry, AftermathEntry,
+    DataOptions,
+} from '..'
 
+export type { DeferredApi, Deferred } from '../filterManager/deferred'
 export type { TagData, Separator, WeakSeparator } from '../template/tags'
 
 export type Recipe<T extends object> = (options?: object) => (filters: Registrar<T>) => void

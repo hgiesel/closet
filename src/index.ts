@@ -1,16 +1,19 @@
 import { Status, ProcessorOutput } from './template/evaluate'
 
-import { MetaFilterManager, ManagerInfo } from './filterManager'
-import { Filter as FilterType, WeakFilter as WeakFilterType, FilterResult, FilterApi } from './filterManager/filters'
-import { RegistrarApi } from './filterManager/registrar'
+import type { MetaFilterManager, ManagerInfo } from './filterManager'
+import type { Filter as FilterType, WeakFilter as WeakFilterType, FilterResult, FilterApi } from './filterManager/filters'
+import type { RegistrarApi } from './filterManager/registrar'
+import type { DeferredEntry as DefEntry } from './filterManager/deferred'
 
-import { TagRenderer, TemplateInfo, IterationInfo, ResultInfo } from './template'
-import { TagAccessor, TagProcessor, RoundInfo, DataOptions } from './template/evaluate'
-import { TagData } from './template/tags'
+import type { TagRenderer, TemplateInfo, IterationInfo, ResultInfo } from './template'
+import type { TagAccessor, TagProcessor, RoundInfo, DataOptions } from './template/evaluate'
+import type { TagData } from './template/tags'
 
 export type Internals<P extends object> = ManagerInfo<TemplateInfo, IterationInfo, RoundInfo, DataOptions, P> & TemplateInfo & IterationInfo & RoundInfo
 export type DeferredInternals<P extends object> = ManagerInfo<TemplateInfo, IterationInfo, RoundInfo, DataOptions, P> & TemplateInfo & IterationInfo
 export type AftermathInternals<P extends object> = ManagerInfo<TemplateInfo, IterationInfo, RoundInfo, DataOptions, P> & TemplateInfo
+export type DeferredEntry<P extends object> = DefEntry<DeferredInternals<P>>
+export type AftermathEntry<P extends object> = DefEntry<AftermathInternals<P>>
 
 export type Registrar<P extends object> = RegistrarApi<Internals<P>, DataOptions>
 export type Filters<P extends object> = FilterApi<Internals<P>>

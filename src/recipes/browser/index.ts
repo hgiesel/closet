@@ -6,7 +6,8 @@ export const browser = {
     wrapImage: wrapImage,
 }
 
-import { occlusionMakerRecipe, rectRecipe } from './mysvg'
+import { occlusionMakerRecipe } from './mysvg'
+import { rectRecipe } from './rect'
 
 export const browserRecipes = {
     makeOcclusions: occlusionMakerRecipe,

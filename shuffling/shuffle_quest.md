@@ -1,6 +1,6 @@
 ---
 layout: doc
-title: Shuffle and guess correct order
+title: Guess correct order
 nav_order: 3
 permalink: /shuffling/shuffling-quest
 parent: Shuffling

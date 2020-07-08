@@ -144,9 +144,7 @@ const copyTemplateTextAsLink = () => {
         ? `?${joinedQueries}`
         : '')
 
-    navigator.clipboard.writeText(
-        `${window.location.protocol}//${window.location.host}${link}`
-    )
+    navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}${link}`)
         .then(() => console.info('Successfully copied to clipboard'))
     window.location.replace(link)
 }

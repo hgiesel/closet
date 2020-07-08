@@ -77,9 +77,8 @@ export const generateFlashcardRecipes = (
 export const toListStylize = (
     stylizer: Stylizer,
     toList: Eval<FlashcardPreset, string[]>,
-): WeakFilter<FlashcardPreset> => (tag: TagData, internals: Internals<FlashcardPreset>) => ({
-    result: stylizer.stylize(toList(tag, internals)),
-    ready: internals.ready,
-})
+): WeakFilter<FlashcardPreset> => (tag: TagData, internals: Internals<FlashcardPreset>) => internals.ready
+    ? stylizer.stylize(toList(tag, internals))
+    : { ready: false }
 
 export const ellipsis = constant('[...]')

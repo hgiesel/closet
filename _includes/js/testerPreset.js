@@ -42,6 +42,7 @@ const codeCM = CodeMirror.fromTextArea(codeTA, {
     mode: 'closet',
     viewportMargin: Infinity,
     matchBrackets: true,
+    lineNumbers: true,
     placeholder: 'Your template text...',
 })
 
@@ -60,6 +61,9 @@ const presetCM = CodeMirror.fromTextArea(presetTA, {
     matchBrackets: true,
     placeholder: 'Define your preset options in JSON here...',
 })
+
+globalThis.codeCM = codeCM
+globalThis.presetCM = presetCM
 
 if (sparams.has('preset')) {
     let presetValue = null

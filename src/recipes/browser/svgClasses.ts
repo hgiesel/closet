@@ -18,12 +18,10 @@ const svgCss = `
 
 .occlusion-container > img {
   position: relative;
-  z-index: 3;
 }
 
 .occlusion-container > svg {
   position: absolute;
-  z-index: 4;
   top: 0;
 }`
 

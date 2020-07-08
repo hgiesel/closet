@@ -26,7 +26,6 @@ const templateErrorMessage = '<i>Run failed: There is a syntax error in the temp
 const presetErrorMessage = '<i>Error parsing preset JSON: Please fix syntax error or remove entirely</i>'
 const presetMustBeObjectMessage = '<i>Error with preset JSON: preset must be an object</i>'
 
-
 ///////////////////////////// setups
 // registerSetup and setupMap is declared in tester.html
 const getActiveSetups = () => {

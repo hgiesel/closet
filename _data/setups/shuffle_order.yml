@@ -1,7 +1,0 @@
-name: "Shuffle and Order"
-code: |
-  filterManager.addRecipe(Closet.recipes.shuffle({ tagname: 'mix' }))
-  filterManager.addRecipe(Closet.recipes.order({
-    tagname: 'ord', 
-    shuffleTagname: 'mix',
-  }))

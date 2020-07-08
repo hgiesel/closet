@@ -51,8 +51,3 @@ code: |
     tagname: 'mix',
     stylizer: withSlash
   }))
-
-  filterManager.addRecipe(Closet.recipes.order({
-    tagname: 'ord',
-    shuffleTagname: 'mix'
-  }))

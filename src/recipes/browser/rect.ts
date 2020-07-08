@@ -1,4 +1,8 @@
-import type { Registrar, TagData, Internals, AftermathEntry, AftermathInternals } from '../types'
+import type { TagData, Internals, AftermathEntry, AftermathInternals, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from '../types'
+import type { FlashcardTemplate, FlashcardPreset } from '../flashcardTemplate'
+
+import { makeFlashcardTemplate, generateFlashcardRecipes } from '../flashcardTemplate'
+import { constant } from '../utils'
 
 import { SVG, Rect } from './svgClasses'
 import { getImages } from './utils'
@@ -11,28 +15,74 @@ const renderRects = (entry: AftermathEntry<{}>, { template, cache }: AftermathIn
     if (maybeElement) {
         const draw = SVG.wrapImage(maybeElement)
 
-        for (const rect of rects) {
+        for (const [x, y, width, height, options] of rects) {
             const svgRect = Rect.make()
 
-            ;[svgRect.x, svgRect.y, svgRect.width, svgRect.height] = rect
+            svgRect.x = x
+            svgRect.y = y
+            svgRect.width = width
+            svgRect.height = height
+
+            for (const prop in options) {
+                svgRect[prop] = options[prop]
+            }
+
             draw.append(svgRect)
         }
     }
 }
 
-export const rectRecipe = ({
-    tagname = 'rect',
-    separator = { sep: ',' },
-} = {}) => (registrar: Registrar<{}>) => {
-    const occlusionMakerFilter = ({ values }: TagData, { cache, aftermath }: Internals<{}>) => {
-        const [x = 0, y = 0, width = 50, height = width] = values
-        const keyword = 'occlusionRenderRect'
+const doNothing = constant({ ready: true })
+const keyword = 'occlusionRenderRect'
 
-        cache.over(keyword, (rectList: [number, number, number, number][]) => rectList.push([x, y, width, height]), [])
-        aftermath.registerIfNotExists(keyword, renderRects)
+const makeContextRects = ({ values }: TagData, { cache, aftermath }: Internals<{}>) => {
+    const [x = 0, y = 0, width = 50, height = width] = values
 
-        return { ready: true }
-    }
+    cache.over(keyword, (rectList: [number, number, number, number, object][]) => rectList.push([x, y, width, height, {}]), [])
+    aftermath.registerIfNotExists(keyword, renderRects)
 
-    registrar.register(tagname, occlusionMakerFilter, { separators: [separator] })
+    return { ready: true }
 }
+
+const makeActiveRects = ({ values }: TagData, { cache, aftermath }: Internals<{}>) => {
+    const [x = 0, y = 0, width = 50, height = width] = values
+
+    cache.over(keyword, (rectList: [number, number, number, number, object][]) => rectList.push([x, y, width, height, { fill: 'salmon', stroke: 'yellow' }]), [])
+    aftermath.registerIfNotExists(keyword, renderRects)
+
+    return { ready: true }
+}
+
+const rectPublicApi = (
+    frontInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
+    backInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
+): Recipe<FlashcardPreset> => (options: {
+    tagname?: string,
+
+    front?: WeakFilter<FlashcardPreset>,
+    back?: WeakFilter<FlashcardPreset>,
+
+    separator?: WeakSeparator,
+    flashcardTemplate?: FlashcardTemplate,
+} = {}) => {
+    const {
+        tagname = 'rect',
+
+        front = makeActiveRects,
+        back = doNothing,
+
+        separator = { sep: ',' },
+        flashcardTemplate = makeFlashcardTemplate(),
+    } = options
+
+    const rectSeparators = { separators: [separator] }
+    const rectRecipe = flashcardTemplate(frontInactive, backInactive)
+
+    return rectRecipe(tagname, front, back, doNothing, makeContextRects, rectSeparators)
+}
+
+export const [
+    rectShowRecipe,
+    rectHideRecipe,
+    rectRevealRecipe,
+] = generateFlashcardRecipes(rectPublicApi)

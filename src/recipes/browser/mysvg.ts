@@ -50,6 +50,8 @@ const makeOcclusionLeftClick = (draw: SVG, event: MouseEvent) => {
         let anchorY = downY
 
         const currentRect = Rect.make()
+        currentRect.labelText = 'rect1'
+
         draw.append(currentRect)
 
         currentRect.x = anchorX

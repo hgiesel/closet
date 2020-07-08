@@ -7,9 +7,11 @@ export const browser = {
 }
 
 import { occlusionMakerRecipe } from './mysvg'
-import { rectRecipe } from './rect'
+import { rectShowRecipe, rectHideRecipe, rectRevealRecipe } from './rect'
 
 export const browserRecipes = {
     makeOcclusions: occlusionMakerRecipe,
-    rect: rectRecipe,
+    rectShow: rectShowRecipe,
+    rectHide: rectHideRecipe,
+    rectReveal: rectRevealRecipe,
 }

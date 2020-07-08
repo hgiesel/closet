@@ -80,9 +80,9 @@ export class SVG {
 }
 
 export class Rect implements GettableSVG {
-    container: SVGElement
-    rect: SVGRectElement
-    label: SVGTextElement
+    readonly container: SVGElement
+    readonly rect: SVGRectElement
+    readonly label: SVGTextElement
 
     protected constructor(container, rect, label) {
         this.container = container
@@ -99,8 +99,6 @@ export class Rect implements GettableSVG {
         container.appendChild(label)
         container.classList.add('occlusion-rect')
         container.tabIndex = -1
-
-        label.innerHTML = 'rect1'
 
         const theRect = new Rect(container, rect, label)
 
@@ -187,4 +185,7 @@ export class Rect implements GettableSVG {
     get strokeOpacity() { return this.get('stroke-opacity') }
 
     /////////////////// on label
+
+    set labelText(txt: string) { this.label.innerHTML = txt }
+    get labelText(): string { return this.label.innerHTML }
 }

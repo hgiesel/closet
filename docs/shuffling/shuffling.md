@@ -22,7 +22,7 @@ Items to be shuffled must be separated by `||`.
 If you want to shuffle non-contiguous areas, you need to use _numbered_ tags.
 Instead of using `mix`, you should use `mix1`, `mix2`, etc.
 
-{% include codeDisplay.md content=shuffling.non_contiguous setups="default_shuffle" buttons=b %}
+{% include codeDisplay.md content=shuffling.non_contiguous setups="default_shuffle" buttons=buttons.frontBack %}
 
 When using numbered `mix` tags, they will preserve their original amount of items.
 

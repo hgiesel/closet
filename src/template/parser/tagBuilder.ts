@@ -3,10 +3,8 @@ import { TagData, TagInfo } from '../tags'
 export type TagBuilderSettings = [Map<string, number>, Map<string, number>]
 
 export class TagBuilder {
-    private tagCounter: Map<string, number>
-    private tagCounterFull: Map<string, number>
-
-    constructor() {}
+    private tagCounter: Map<string, number> = new Map()
+    private tagCounterFull: Map<string, number> = new Map()
 
     private getAndInc(key: string): number {
         const result = (this.tagCounter.get(key) ?? - 1) + 1

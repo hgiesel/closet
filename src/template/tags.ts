@@ -52,8 +52,8 @@ export class TagData {
     separators: Separator[] = []
     readonly valuesText: string | null
 
-    _fullOccur: number
-    _occur: number
+    _fullOccur: number = 0
+    _occur: number = 0
 
     constructor(
         fullKey: string,

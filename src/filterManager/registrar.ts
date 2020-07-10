@@ -1,18 +1,16 @@
-import { FilterApi, Readiable, WeakFilter } from './filters'
+import { Filterable, FilterApi, Readiable, WeakFilter } from './filters'
 import { Storage } from './storage'
 
-const defaultOptions = {}
-
-export class RegistrarApi<T extends Readiable, D extends object> {
-    private filters: FilterApi<T>
+export class RegistrarApi<F extends Filterable, T extends Readiable, D extends object> {
+    private filters: FilterApi<F,T>
     private options: Storage<Partial<D>>
 
-    constructor(filters: FilterApi<T>, options: Storage<Partial<D>>) {
+    constructor(filters: FilterApi<F,T>, options: Storage<Partial<D>>) {
         this.filters = filters
         this.options = options
     }
 
-    register(name: string, filter: WeakFilter<T>, options: Partial<D> = defaultOptions): void {
+    register(name: string, filter: WeakFilter<F, T>, options: Partial<D> = {}): void {
         this.filters.register(name, filter)
         this.options.set(name, options)
     }

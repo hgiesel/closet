@@ -21,7 +21,7 @@ export const debugRecipe = () => (registrar: Registrar<{}>) => {
         return { ready: true }
     })
 
-    registrar.register('memorytest', (({}, { memory }) => {
+    registrar.register('memorytest', (({}, { memory }: Internals<{}>) => {
         const memoryTestKey = 'base:memorytest'
         return String(memory.fold(memoryTestKey, (v: number) => ++v, 0))
     }))

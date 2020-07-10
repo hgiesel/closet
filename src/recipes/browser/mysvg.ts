@@ -88,7 +88,7 @@ export const wrapImage = (draw: SVG) => {
         event.preventDefault()
 
         const shapeText = Array.from(draw.svg.childNodes)
-            .map((v: SVGElement) => v.childNodes[0])
+            .map((v: SVGElement) => v.childNodes[0] as SVGRectElement)
             .map(Rect.wrap)
             .map(rectShapeToCmd)
             .map(rectCmdToText)

@@ -14,16 +14,16 @@ export const product = <T extends object, U extends object>(
         setTagnames: defaultTagnameSetter,
     },
 ): Recipe<T & U> => ({
-    tagname,
+    tagname = 'prod',
 
     optionsFirst = {},
     optionsSecond = {},
 }: {
-    tagname: string,
+    tagname?: string,
 
-    optionsFirst: RecipeOptions,
-    optionsSecond: RecipeOptions,
-}) => (registrar: Registrar<T & U>) => {
+    optionsFirst?: RecipeOptions,
+    optionsSecond?: RecipeOptions,
+} = {}) => (registrar: Registrar<T & U>) => {
     const tagnameTrue = `${tagname}:${wrapId}:fst`
     const tagnameFalse = `${tagname}:${wrapId}:snd`
 

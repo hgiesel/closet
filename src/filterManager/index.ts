@@ -22,27 +22,27 @@ import {
     RegistrarApi,
 } from './registrar'
 
-export interface ManagerInfo<T,I,R extends Readiable, D extends object, P extends object> {
-    filters: FilterApi<R>
+export interface ManagerInfo<F extends Filterable, T,I,R extends Readiable, X, D extends object, P extends object> {
+    filters: FilterApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R>
     options: Storage<Partial<D>>
-    registrar: RegistrarApi<R, Partial<D>>
+    registrar: RegistrarApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R, D>
 
     cache: Storage<unknown>
     memory: Storage<unknown>
     environment: Storage<unknown>
 
-    deferred: DeferredApi<ManagerInfo<T,I,R,D,P> & T & I>
-    aftermath: DeferredApi<ManagerInfo<T,I,R,D,P> & T>
+    deferred: DeferredApi<ManagerInfo<F,T,I,R,X,D,P> & T & I>
+    aftermath: DeferredApi<ManagerInfo<F,T,I,R,X,D,P> & T & X>
 
     preset: Partial<P>
 }
 
-interface FilterAccessor<R,D> {
-    getProcessor: (name: string) => FilterProcessor<R,D>
+interface FilterAccessor<F,T,D> {
+    getProcessor: (name: string) => FilterProcessor<F,T,D>
 }
 
-interface FilterProcessor<R,D> {
-    execute: (data: Filterable, r: R) => FilterResult
+interface FilterProcessor<F,T,D> {
+    execute: (data: F, r: T) => FilterResult
     getOptions: () => Partial<D>
 }
 
@@ -50,14 +50,14 @@ interface ClosetEnvironment {
     closetEnvironment: Storage<unknown>
 }
 
-export class MetaFilterManager<T,I,R extends Readiable, X extends object, D extends object, P extends object> {
-    protected readonly filters: FilterApi<R>
+export class MetaFilterManager<F extends Filterable,T,I,R extends Readiable, X extends object, D extends object, P extends object> {
+    protected readonly filters: FilterApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R>
     protected readonly options: Storage<Partial<D>>
 
-    readonly registrar: RegistrarApi<R, Partial<D>>
+    readonly registrar: RegistrarApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R, D>
 
-    protected readonly deferred: DeferredApi<ManagerInfo<T,I,R,D,P> & T & I>
-    protected readonly aftermath: DeferredApi<ManagerInfo<T,I,R,D,P> & T & X>
+    protected readonly deferred: DeferredApi<ManagerInfo<F,T,I,R,X,D,P> & T & I>
+    protected readonly aftermath: DeferredApi<ManagerInfo<F,T,I,R,X,D,P> & T & X>
 
     protected readonly cache: Storage<unknown>
     protected readonly memory: Storage<unknown>
@@ -86,7 +86,7 @@ export class MetaFilterManager<T,I,R extends Readiable, X extends object, D exte
         this.environment = (globalThis as typeof globalThis & ClosetEnvironment).closetEnvironment
     }
 
-    private getBaseInternals(t: T): ManagerInfo<T,I,R,D,P> & T {
+    protected getBaseInternals(t: T): ManagerInfo<F,T,I,R,X,D,P> & T {
         return Object.assign({}, {
             filters: this.filters,
             options: this.options,
@@ -103,23 +103,23 @@ export class MetaFilterManager<T,I,R extends Readiable, X extends object, D exte
         }, t)
     }
 
-    private getAftermathInternals(t: T, x: X): ManagerInfo<T,I,R,D,P> & T & X {
+    protected getAftermathInternals(t: T, x: X): ManagerInfo<F,T,I,R,X,D,P> & T & X {
         return Object.assign(this.getBaseInternals(t), x)
     }
 
-    private getDeferredInternals(t: T, i: I): ManagerInfo<T,I,R,D,P> & T & I {
+    protected getDeferredInternals(t: T, i: I): ManagerInfo<F,T,I,R,X,D,P> & T & I {
         return Object.assign(this.getBaseInternals(t), i)
     }
 
-    private getInternals(t: T, i: I, r: R): ManagerInfo<T,I,R,D,P> & T & I & R {
+    protected getInternals(t: T, i: I, r: R): ManagerInfo<F,T,I,R,X,D,P> & T & I & R {
         return Object.assign(this.getDeferredInternals(t, i), r)
     }
 
-    filterAccessor(t: T, i: I): FilterAccessor<R,D> {
+    filterAccessor(t: T, i: I): FilterAccessor<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R, D> {
         return {
-            getProcessor: (name: string): FilterProcessor<R,D> => {
+            getProcessor: (name: string): FilterProcessor<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R, D> => {
                 return {
-                    execute: (data: Filterable, r: R): FilterResult => this.filters.execute(name, data, this.getInternals(t, i, r)),
+                    execute: (data: F, r: R): FilterResult => this.filters.execute(name, data, this.getInternals(t, i, r)),
                     getOptions: () => this.options.get(name, {}),
                 }
             },
@@ -146,7 +146,7 @@ export class MetaFilterManager<T,I,R extends Readiable, X extends object, D exte
         this.deferred.clear()
     }
 
-    addRecipe(recipe: (registrar: RegistrarApi<R,D>) => void): void {
+    addRecipe(recipe: (registrar: RegistrarApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R, D>) => void): void {
         recipe(this.registrar)
     }
 

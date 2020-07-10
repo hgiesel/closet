@@ -10,18 +10,18 @@ import type { TagRenderer, TemplateInfo, IterationInfo, ResultInfo } from './tem
 import type { TagAccessor, TagProcessor, RoundInfo, DataOptions } from './template/evaluate'
 import type { TagData } from './template/tags'
 
-export type Internals<P extends object> = ManagerInfo<TemplateInfo, IterationInfo, RoundInfo, DataOptions, P> & TemplateInfo & IterationInfo & RoundInfo
-export type DeferredInternals<P extends object> = ManagerInfo<TemplateInfo, IterationInfo, RoundInfo, DataOptions, P> & TemplateInfo & IterationInfo
-export type AftermathInternals<P extends object> = ManagerInfo<TemplateInfo, IterationInfo, RoundInfo, DataOptions, P> & TemplateInfo
+export type Internals<P extends object> = ManagerInfo<TagData, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo & RoundInfo
+export type DeferredInternals<P extends object> = ManagerInfo<TagData, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo
+export type AftermathInternals<P extends object> = ManagerInfo<TagData, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo
 export type DeferredEntry<P extends object> = DefEntry<DeferredInternals<P>>
 export type AftermathEntry<P extends object> = DefEntry<AftermathInternals<P>>
 
-export type Registrar<P extends object> = RegistrarApi<Internals<P>, DataOptions>
-export type Filters<P extends object> = FilterApi<Internals<P>>
+export type Registrar<P extends object> = RegistrarApi<TagData, Internals<P>, DataOptions>
+export type Filters<P extends object> = FilterApi<TagData, Internals<P>>
 export type { DataOptions } from './template/evaluate'
 
-export type Filter<P extends object> = FilterType<Internals<P>>
-export type WeakFilter<P extends object> = WeakFilterType<Internals<P>>
+export type Filter<P extends object> = FilterType<TagData, Internals<P>>
+export type WeakFilter<P extends object> = WeakFilterType<TagData, Internals<P>>
 export type { FilterResult, WeakFilterResult } from './filterManager/filters'
 
 const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => {
@@ -53,7 +53,7 @@ const fillDataOptions = (partial: Partial<DataOptions>): DataOptions => {
 
 }
 
-export class FilterManager<P extends object> extends MetaFilterManager<TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> implements TagRenderer {
+export class FilterManager<P extends object> extends MetaFilterManager<TagData, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> implements TagRenderer {
     makeAccessor(template: TemplateInfo, iteration: IterationInfo): TagAccessor {
         const accessor = this.filterAccessor(template, iteration)
 
@@ -62,7 +62,7 @@ export class FilterManager<P extends object> extends MetaFilterManager<TemplateI
             const processor = accessor.getProcessor(name)
 
             return {
-                execute: (data: TagData, round: RoundInfo): ProcessorOutput => filterResultToProcessorOutput(processor.execute(data, round)),
+                execute: (data: TagData, round: RoundInfo): ProcessorOutput => filterResultToProcessorOutput(processor.execute(data, super.getInternals(template, iteration, round))),
                 getOptions: () => fillDataOptions(processor.getOptions()),
             }
         }

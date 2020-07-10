@@ -14,16 +14,16 @@ export const sum = <T extends object, U extends object>(
         setTagnames: defaultTagnameSetter,
     },
 ): Recipe<T & U> => ({
-    tagname,
+    tagname = 'sum',
 
     optionsFalse = {},
     optionsTrue = {},
 }: {
-    tagname: string,
+    tagname?: string,
 
-    optionsTrue: object,
-    optionsFalse: object,
-}) => (registrar: Registrar<T & U>) => {
+    optionsTrue?: object,
+    optionsFalse?: object,
+} = {}) => (registrar: Registrar<T & U>) => {
     const tagnameTrue = `${tagname}:${wrapId}:true`
     const tagnameFalse = `${tagname}:${wrapId}:false`
 
@@ -60,7 +60,7 @@ export const sumFour = <T extends object, U extends object, V extends object, W 
         setTagnames: defaultTagnameSetter,
     },
 ): Recipe<T & U & V & W> => ({
-    tagname,
+    tagname = 'sum',
 
     optionsZero = {},
     optionsOne = {},

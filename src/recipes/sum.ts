@@ -1,11 +1,18 @@
 import type { TagData, Registrar, Eval, Internals, Recipe, WrapOptions } from './types'
 
+import { defaultTagnameGetter, defaultTagnameSetter } from './wrappers'
+
 export const sum = <T extends object, U extends object>(
     recipeFalse: Recipe<T>,
     recipeTrue: Recipe<U>,
     predicate: Eval<T & U, boolean>, {
-        setTagnames = (options, newNames) => options['tagname'] = newNames[0],
-    }: WrapOptions = {},
+        wrapId,
+        setTagnames,
+    }: WrapOptions = {
+        wrapId: 'sum',
+        getTagnames: defaultTagnameGetter,
+        setTagnames: defaultTagnameSetter,
+    },
 ): Recipe<T & U> => ({
     tagname,
 
@@ -17,8 +24,8 @@ export const sum = <T extends object, U extends object>(
     optionsTrue: object,
     optionsFalse: object,
 }) => (registrar: Registrar<T & U>) => {
-    const tagnameTrue = `${tagname}:sum:true`
-    const tagnameFalse = `${tagname}:sum:false`
+    const tagnameTrue = `${tagname}:${wrapId}:true`
+    const tagnameFalse = `${tagname}:${wrapId}:false`
 
     setTagnames(optionsTrue, [tagnameTrue])
     setTagnames(optionsFalse, [tagnameFalse])
@@ -45,8 +52,13 @@ export const sumFour = <T extends object, U extends object, V extends object, W 
     recipeThree: Recipe<W>,
     predicateOne: Eval<T & U & V & W, boolean>,
     predicateTwo: Eval<T & U & V & W, boolean>, {
-        setTagnames = (options, newNames) => options['tagname'] = newNames[0],
-    }: WrapOptions = {},
+        wrapId,
+        setTagnames,
+    }: WrapOptions = {
+        wrapId: 'sumFour',
+        getTagnames: defaultTagnameGetter,
+        setTagnames: defaultTagnameSetter,
+    },
 ): Recipe<T & U & V & W> => ({
     tagname,
 
@@ -67,8 +79,8 @@ export const sumFour = <T extends object, U extends object, V extends object, W 
 
     setTagname: (options: object, newName: string) => void,
 }) => (registrar: Registrar<T & U & V & W>) => {
-    const tagnameZero = `${tagname}:sumFour:zero`
-    const tagnameTwo = `${tagname}:sumFour:two`
+    const tagnameZero = `${tagname}:${wrapId}:zero`
+    const tagnameTwo = `${tagname}:${wrapId}:two`
 
     setTagnames(optionsZero, [tagnameZero])
     setTagnames(optionsOne, [tagnameZero])

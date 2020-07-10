@@ -1,5 +1,19 @@
 import { interspliceChildNodes, ChildNodeSpan } from './browserTemplate'
 
+// https://github.com/SimonLammer/anki-persistence#usage
+export interface AnkiPersistence {
+    clear: () => void
+    getItem(key: string): unknown
+    getItem(): unknown
+    setItem(key: string, value: unknown): void
+    setItem(value: unknown): void
+    removeItem(key: string): void
+    removeItem(): void
+    isAvailable(): boolean
+}
+
+declare var Persistence: AnkiPersistence | undefined
+
 export const getCardNumber = (textNum: string): number => Number(textNum.match(/[0-9]*$/))
 
 export const preset = (cardType: string, tagsFull: string, side: 'front' | 'back') => ({
@@ -12,24 +26,12 @@ export const preset = (cardType: string, tagsFull: string, side: 'front' | 'back
     side: side,
 })
 
-// https://github.com/SimonLammer/anki-persistence#usage
-interface AnkiPersistence {
-    clear: () => void
-    getItem(key: string): unknown
-    getItem(): unknown
-    setItem(key: string, value: unknown): void
-    setItem(value: unknown): void
-    removeItem(key: string): void
-    removeItem(): void
-    isAvailable(): boolean
-}
-
 interface MemoryMap {
     map: Map<string, unknown>
     writeBack: () => void
 }
 
-const getPersistentMap = (persistence: AnkiPersistence, memoryKey: string): Map<string, unknown> => {
+const getPersistentMap = (persistence: AnkiPersistence | undefined, memoryKey: string): Map<string, unknown> => {
     if (persistence && persistence.isAvailable()) {
         const maybeMap = persistence.getItem(memoryKey) as Iterable<readonly [string, unknown]>
         return new Map(maybeMap)
@@ -38,7 +40,7 @@ const getPersistentMap = (persistence: AnkiPersistence, memoryKey: string): Map<
     return new Map()
 }
 
-const setPersistentMap = (persistence: AnkiPersistence, memoryKey: string, value: Map<string, unknown>): void => {
+const setPersistentMap = (persistence: AnkiPersistence | undefined, memoryKey: string, value: Map<string, unknown>): void => {
     if (persistence && persistence.isAvailable()) {
         const persistentData = Array.from(value.entries())
         persistence.setItem(memoryKey, persistentData)
@@ -46,7 +48,7 @@ const setPersistentMap = (persistence: AnkiPersistence, memoryKey: string, value
 }
 
 export const memoryMap = (memoryKey: string): MemoryMap => {
-    const persistence = globalThis.Persistence as AnkiPersistence
+    const persistence: AnkiPersistence | undefined = Persistence
     const map = getPersistentMap(persistence, memoryKey)
 
     return {

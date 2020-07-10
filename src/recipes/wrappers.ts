@@ -1,23 +1,28 @@
-import type { TagData, Registrar, Internals, Deferred, Recipe, WrapOptions, DeferredApi } from './types'
+import type { TagData, RecipeOptions, Registrar, Internals, Deferred, Recipe, WrapOptions, DeferredApi } from './types'
 
 interface WithInternalKeyword {
     keyInternal: string,
 }
 
-const defaultTagnameGetter = (o: object) => [o['tagname']]
-const defaultTagnameSetter = (o: object, newNames: string[]) => o['tagname'] = newNames[0]
+export const defaultTagnameGetter = (o: RecipeOptions) => o.hasOwnProperty('tagname') ? [o['tagname']] : []
+export const defaultTagnameSetter = (o: RecipeOptions, newNames: string[]) => o['tagname'] = newNames[0]
+
 const defaultWrapId = 'wrapped'
 
 export const wrap = <T extends object>(
     wrapped: (tag: TagData & WithInternalKeyword, internals: Internals<T>) => void,
 ) => (
     mainRecipe: Recipe<T>, {
-        wrapId = defaultWrapId,
-        getTagnames = defaultTagnameGetter,
-        setTagnames = defaultTagnameSetter,
-    }: WrapOptions = {},
+        wrapId,
+        getTagnames,
+        setTagnames,
+    }: WrapOptions = {
+        wrapId: defaultWrapId,
+        getTagnames: defaultTagnameGetter,
+        setTagnames: defaultTagnameSetter,
+    },
 ): Recipe<T> => (
-    options = {},
+    options: RecipeOptions = {},
 ) => (registrar: Registrar<T>): void => {
     const tagnames = getTagnames(options)
 
@@ -51,7 +56,11 @@ const wrapWithDeferredTemplate = <T extends object, D>(
 ) => (
     mainRecipe: Recipe<T>,
     action: Deferred<D>,
-    wrapOptions: WrapOptions = {},
+    wrapOptions: WrapOptions = {
+        wrapId: defaultWrapId,
+        getTagnames: defaultTagnameGetter,
+        setTagnames: defaultTagnameSetter,
+    },
 ): Recipe<T> => {
     return wrap((t, internals) => {
         getDeferredApi(internals).registerIfNotExists(t.keyInternal, action)

@@ -1,11 +1,18 @@
-import type { TagData, Registrar, WeakFilter, WeakFilterResult, Internals, Recipe, WrapOptions } from './types'
+import type { TagData, RecipeOptions, Registrar, WeakFilter, WeakFilterResult, Internals, Recipe, WrapOptions } from './types'
+
+import { defaultTagnameGetter, defaultTagnameSetter } from './wrappers'
 
 export const product = <T extends object, U extends object>(
     recipeFirst: Recipe<T>,
     recipeSecond: Recipe<U>,
     multiply: (fst: WeakFilterResult, snd: WeakFilterResult) => WeakFilter<T & U> = () => () => ({ ready: true }), {
-        setTagnames = (options, newNames) => options['tagname'] = newNames[0],
-    }: WrapOptions = {},
+        wrapId,
+        setTagnames,
+    }: WrapOptions = {
+        wrapId: 'product',
+        getTagnames: defaultTagnameGetter,
+        setTagnames: defaultTagnameSetter,
+    },
 ): Recipe<T & U> => ({
     tagname,
 
@@ -14,11 +21,11 @@ export const product = <T extends object, U extends object>(
 }: {
     tagname: string,
 
-    optionsFirst: object,
-    optionsSecond: object,
+    optionsFirst: RecipeOptions,
+    optionsSecond: RecipeOptions,
 }) => (registrar: Registrar<T & U>) => {
-    const tagnameTrue = `${tagname}:product:fst`
-    const tagnameFalse = `${tagname}:product:snd`
+    const tagnameTrue = `${tagname}:${wrapId}:fst`
+    const tagnameFalse = `${tagname}:${wrapId}:snd`
 
     setTagnames(optionsFirst, [tagnameTrue])
     setTagnames(optionsSecond, [tagnameFalse])

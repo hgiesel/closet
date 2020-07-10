@@ -17,9 +17,9 @@ export type Eval<T extends object, U> = (t: TagData, i: Internals<T>) => U
 export type { Stylizer } from './stylizer'
 
 export interface WrapOptions {
-    wrapId?: string
-    getTagnames?: (o: object) => string[]
-    setTagnames?: (o: object, newNames: string[]) => void
+    wrapId: string
+    getTagnames: (o: object) => string[]
+    setTagnames: (o: object, newNames: string[]) => void
 }
 
 export type InactiveBehavior<T extends object, U extends object> = (
@@ -28,3 +28,7 @@ export type InactiveBehavior<T extends object, U extends object> = (
 ) => WeakFilter<U>
 
 export type InactiveAdapter<T extends object, U extends object> = (behavior: InactiveBehavior<T,U>) => InactiveBehavior<T,U>
+
+export interface RecipeOptions {
+    [key: string]: any
+}

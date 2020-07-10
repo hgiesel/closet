@@ -13,7 +13,7 @@ export interface AnkiPersistence {
 }
 
 interface ClosetPersistence {
-    Persistence?: AnkiPersistence
+    Persistence: AnkiPersistence
 }
 
 export const getCardNumber = (textNum: string): number => Number(textNum.match(/[0-9]*$/))
@@ -50,7 +50,7 @@ const setPersistentMap = (persistence: AnkiPersistence | null, memoryKey: string
 }
 
 export const memoryMap = (memoryKey: string): MemoryMap => {
-    const persistence = (globalThis as typeof globalThis & ClosetPersistence).Persistence ?? null
+    const persistence = (globalThis as typeof globalThis & Partial<ClosetPersistence>).Persistence ?? null
     const map = getPersistentMap(persistence, memoryKey)
 
     return {

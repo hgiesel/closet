@@ -35,7 +35,7 @@ export const isActiveGetRange = ({ key, num, fullOccur }: TagData, { preset, cac
         case 0:
             return true
         default:
-            if (!preset.hasOwnProperty('cardNumber')) {
+            if (typeof preset.cardNumber !== 'number') {
                 return false
             }
 

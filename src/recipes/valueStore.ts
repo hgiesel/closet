@@ -65,20 +65,16 @@ export class ValueStore<T> {
     get(key: string | symbol, num: number | null | symbol, occur: number | symbol): T {
         const firstKey = this.getStoreKey(key, num, occur)
         if (this.map.has(firstKey)) {
-            return this.map.get(firstKey)
+            return this.map.get(firstKey) ?? this.defaultValue
         }
 
         const secondKey = this.getStoreKey(key, num, ValueStore.all)
         if (this.map.has(secondKey)) {
-            return this.map.get(secondKey)
+            return this.map.get(secondKey) ?? this.defaultValue
         }
 
         const thirdKey = this.getStoreKey(key, ValueStore.all, ValueStore.all)
-        if (this.map.has(thirdKey)) {
-            return this.map.get(thirdKey)
-        }
-
-        return this.defaultValue
+        return this.map.get(thirdKey) ?? this.defaultValue
     }
 
     set(key: string | symbol, num: number | null | symbol, occur: number | symbol, value: T): void {

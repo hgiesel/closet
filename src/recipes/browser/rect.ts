@@ -25,7 +25,7 @@ const renderRects = (entry: AftermathEntry<{}>, { template, cache }: AftermathIn
 
             for (const prop in options) {
                 const rectProperty = prop as RectProperty
-                svgRect.prop(rectProperty, options[rectProperty])
+                svgRect.prop(rectProperty, options[rectProperty] as string)
             }
 
             draw.append(svgRect)

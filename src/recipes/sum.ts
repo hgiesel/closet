@@ -38,8 +38,8 @@ export const sum = <T extends object, U extends object>(
         internals: Internals<T & U>,
     ) => {
         return predicate(tag, internals)
-            ? internals.filters.get(tagnameTrue)(tag, internals)
-            : internals.filters.get(tagnameFalse)(tag, internals)
+            ? internals.filters.getOrDefault(tagnameTrue)(tag, internals)
+            : internals.filters.getOrDefault(tagnameFalse)(tag, internals)
     }
 
     registrar.register(tagname, sumFilter, registrar.getOptions(tagnameTrue /* have to be same for True/False */))
@@ -107,8 +107,8 @@ export const sumFour = <T extends object, U extends object, V extends object, W 
         internals: Internals<T & U & V & W>,
     ) => {
         return predicateTwo(tag, internals)
-            ? internals.filters.get(tagnameTwo)(tag, internals)
-            : internals.filters.get(tagnameZero)(tag, internals)
+            ? internals.filters.getOrDefault(tagnameTwo)(tag, internals)
+            : internals.filters.getOrDefault(tagnameZero)(tag, internals)
     }
 
     registrar.register(tagname, sumFourFilter)

@@ -62,6 +62,11 @@ export class TagData {
         this.fullKey = fullKey
 
         const match = fullKey.match(keyPattern)
+
+        if (!match) {
+            throw new Error('Could not match key. This should never happen.')
+        }
+
         this.key = match[1]
         this.num = match[2].length === 0 ? null : Number(match[2])
 

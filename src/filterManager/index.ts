@@ -47,7 +47,7 @@ interface FilterProcessor<R,D> {
 }
 
 interface ClosetEnvironment {
-    closetEnvironment?: Storage<unknown>
+    closetEnvironment: Storage<unknown>
 }
 
 export class MetaFilterManager<T,I,R extends Readiable, X extends object, D extends object, P extends object> {
@@ -80,7 +80,7 @@ export class MetaFilterManager<T,I,R extends Readiable, X extends object, D exte
         this.memory = new Storage(memory)
 
         if (!globalThis.hasOwnProperty('closetEnvironment')) {
-            (globalThis as typeof globalThis & ClosetEnvironment).closetEnvironment = new Storage(new Map())
+            (globalThis as typeof globalThis & Partial<ClosetEnvironment>).closetEnvironment = new Storage(new Map())
         }
 
         this.environment = (globalThis as typeof globalThis & ClosetEnvironment).closetEnvironment

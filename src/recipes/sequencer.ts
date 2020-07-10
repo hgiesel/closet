@@ -37,7 +37,11 @@ export const sequencer = <T>(
 
         for (let x = 0; x < values.length; x++) {
             // pop off start, so the result is the same as in program logic
-            popped.push(possibleValues.shift())
+            const shiftedValue = possibleValues.shift()
+
+            if (shiftedValue) {
+                popped.push(shiftedValue)
+            }
         }
 
         return popped

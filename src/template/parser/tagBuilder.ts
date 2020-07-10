@@ -6,19 +6,17 @@ export class TagBuilder {
     private tagCounter: Map<string, number>
     private tagCounterFull: Map<string, number>
 
+    constructor() {}
+
     private getAndInc(key: string): number {
-        const result = this.tagCounter.has(key)
-            ? this.tagCounter.get(key) + 1
-            : 0
+        const result = (this.tagCounter.get(key) ?? - 1) + 1
 
         this.tagCounter.set(key, result)
         return result
     }
 
     private getAndIncFull(key: string): number {
-        const result = this.tagCounterFull.has(key)
-            ? this.tagCounterFull.get(key) + 1
-            : 0
+        const result = (this.tagCounterFull.get(key) ?? -1) + 1
 
         this.tagCounterFull.set(key, result)
         return result

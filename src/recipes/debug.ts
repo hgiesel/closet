@@ -10,11 +10,11 @@ export const debugRecipe = () => (registrar: Registrar<{}>) => {
 
     registrar.register('stopIteration', ({ values }: TagData, { filters }: Internals<{}>) => {
         const endAtIteration = Number(values)
-        const savedBase = filters.get('base')
+        const savedBase = filters.getOrDefault('base')
 
         filters.register('base', (tag: TagData, internals: Internals<{}>) => {
             return internals.iteration >= endAtIteration
-                ? tag.valuesText
+                ? tag.valuesText ?? ''
                 : savedBase(tag, internals)
         })
 

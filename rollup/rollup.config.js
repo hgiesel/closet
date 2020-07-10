@@ -24,7 +24,7 @@ export const typescriptOptions = {
     // strict: true,
     noImplicitAny: true,
     noImplicitThis: true,
-    // strictNullChecks: true,
+    strictNullChecks: true,
     alwaysStrict: true,
 
     downlevelIteration: true,

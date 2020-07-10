@@ -24,7 +24,7 @@ const wrapWithReady = (result: string): FilterResult => wrapWithBool(result, tru
 const wrapWithReadyBubbled = (result: string, ready: boolean): FilterResult => wrapWithBool(result, ready)
 
 const nullFilterResult: FilterResult = {
-    result: null,
+    result: '',
     ready: false,
     containsTags: false,
 }
@@ -72,15 +72,11 @@ export class FilterApi<T extends Readiable> {
     }
 
     has(name: string): boolean {
-        return name === 'raw' || name === 'base'
-            ? true
-            : this.filters.has(name)
+        return this.filters.has(name)
     }
 
     get(name: string): Filter<T> | null {
-        return this.filters.has(name)
-            ? this.filters.get(name)
-            : null
+        return this.filters.get(name) ?? null
     }
 
     getOrDefault(name: string): Filter<T> {

@@ -21,7 +21,7 @@ export class Storage<D> {
         return this.storage.has(name)
     }
 
-    get<T extends D>(name: string, defaultValue: T = null): T | null {
+    get<T extends D>(name: string, defaultValue: T): T {
         return this.has(name)
             ? this.storage.get(name)
             : defaultValue

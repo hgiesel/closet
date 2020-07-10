@@ -43,7 +43,7 @@ export const wrap = <T extends object>(
 
         wrapped(Object.assign({}, tag, { keyInternal: internalKeyword }), inter)
 
-        return inter.filters.get(internalKeyword)(tag, inter)
+        return inter.filters.getOrDefault(internalKeyword)(tag, inter)
     }
 
     for (const keyword of tagnames) {

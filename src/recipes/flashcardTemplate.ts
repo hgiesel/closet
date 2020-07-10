@@ -60,7 +60,7 @@ export const makeFlashcardTemplate = (
     flashcardRecipe({ tagname: internalFilter })(registrar)
 
     const flashcardFilter = (tag: TagData, inter: Internals<FlashcardPreset>) => {
-        return  inter.filters.get(internalFilter)(tag, inter)
+        return  inter.filters.getOrDefault(internalFilter)(tag, inter)
     }
 
     registrar.register(tagname, flashcardFilter, dataOptions)

@@ -38,8 +38,8 @@ export const product = <T extends object, U extends object>(
         internals: Internals<T & U>,
     ) => {
         return multiply(
-            internals.filters.get(tagnameTrue)(tag, internals),
-            internals.filters.get(tagnameFalse)(tag, internals),
+            internals.filters.getOrDefault(tagnameTrue)(tag, internals),
+            internals.filters.getOrDefault(tagnameFalse)(tag, internals),
         )(tag, internals)
     }
 

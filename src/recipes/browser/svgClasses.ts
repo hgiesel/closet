@@ -59,7 +59,7 @@ export class SVG {
     static wrapImage(image: HTMLImageElement): SVG {
         const container = document.createElement('div')
 
-        image.parentNode.replaceChild(container, image)
+        image.parentNode && image.parentNode.replaceChild(container, image)
         container.appendChild(image)
 
         return SVG.make(container)
@@ -167,13 +167,13 @@ export class Rect implements GettableSVG {
     get ry(): number | string { return Number(this.rect.getAttributeNS(null, 'ry')) }
 
     set fill(color: string) { this.rect.setAttributeNS(null, 'fill', color) }
-    get fill(): string { return this.rect.getAttributeNS(null, 'fill') }
+    get fill(): string { return this.rect.getAttributeNS(null, 'fill') ?? ''}
 
     set fillOpacity(i: number | string) { this.rect.setAttributeNS(null, 'fillOpacity', String(i)) }
     get fillOpacity(): number | string { return Number(this.rect.getAttributeNS(null, 'fillOpacity')) }
 
-    set stroke(color: string) { this.rect.setAttributeNS(null, 'stroke', color) }
-    get stroke(): string { return this.rect.getAttributeNS(null, 'stroke') }
+    set stroke(color: string) { this.rect.setAttributeNS(null, 'stroke', color) } 
+    get stroke(): string { return this.rect.getAttributeNS(null, 'stroke') ?? '' }
 
     set strokeOpacity(i: number | string) { this.rect.setAttributeNS(null, 'strokeOpacity', String(i)) }
     get strokeOpacity(): number | string { return Number(this.rect.getAttributeNS(null, 'strokeOpacity')) }

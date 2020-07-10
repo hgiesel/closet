@@ -55,7 +55,7 @@ export const flatMapViaStatusList = (parser: Parser, lst: TagInfo[], statusLst: 
             case Status.NotReady:
                 return [tagInfo]
             case Status.ContainsTags:
-                return parser.rawParse(tagInfo.data.valuesText, tagInfo.start)
+                return tagInfo.data.valuesText ? parser.rawParse(tagInfo.data.valuesText, tagInfo.start) : []
         }
     })
 }

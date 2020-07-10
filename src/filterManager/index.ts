@@ -13,7 +13,6 @@ import {
     FilterApi,
 } from './filters'
 
-
 import {
     DeferredApi,
 } from './deferred'

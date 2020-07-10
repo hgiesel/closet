@@ -12,7 +12,9 @@ export interface AnkiPersistence {
     isAvailable(): boolean
 }
 
-declare var Persistence: AnkiPersistence | undefined
+interface ClosetPersistence {
+    Persistence?: AnkiPersistence
+}
 
 export const getCardNumber = (textNum: string): number => Number(textNum.match(/[0-9]*$/))
 
@@ -31,7 +33,7 @@ interface MemoryMap {
     writeBack: () => void
 }
 
-const getPersistentMap = (persistence: AnkiPersistence | undefined, memoryKey: string): Map<string, unknown> => {
+const getPersistentMap = (persistence: AnkiPersistence | null, memoryKey: string): Map<string, unknown> => {
     if (persistence && persistence.isAvailable()) {
         const maybeMap = persistence.getItem(memoryKey) as Iterable<readonly [string, unknown]>
         return new Map(maybeMap)
@@ -40,7 +42,7 @@ const getPersistentMap = (persistence: AnkiPersistence | undefined, memoryKey: s
     return new Map()
 }
 
-const setPersistentMap = (persistence: AnkiPersistence | undefined, memoryKey: string, value: Map<string, unknown>): void => {
+const setPersistentMap = (persistence: AnkiPersistence | null, memoryKey: string, value: Map<string, unknown>): void => {
     if (persistence && persistence.isAvailable()) {
         const persistentData = Array.from(value.entries())
         persistence.setItem(memoryKey, persistentData)
@@ -48,7 +50,7 @@ const setPersistentMap = (persistence: AnkiPersistence | undefined, memoryKey: s
 }
 
 export const memoryMap = (memoryKey: string): MemoryMap => {
-    const persistence: AnkiPersistence | undefined = Persistence
+    const persistence = (globalThis as typeof globalThis & ClosetPersistence).Persistence ?? null
     const map = getPersistentMap(persistence, memoryKey)
 
     return {
@@ -60,11 +62,11 @@ export const memoryMap = (memoryKey: string): MemoryMap => {
 }
 
 export const getQaChildNodes = (): ChildNodeSpan[] | null => {
-    if (!globalThis.document) {
+    if (!window.document) {
         return null
     }
 
-    const qa = globalThis.document.getElementById('qa')
+    const qa = window.document.getElementById('qa')
 
     if (!qa) {
         return null

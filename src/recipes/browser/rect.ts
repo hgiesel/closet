@@ -4,12 +4,12 @@ import type { FlashcardTemplate, FlashcardPreset } from '../flashcardTemplate'
 import { makeFlashcardTemplate, generateFlashcardRecipes } from '../flashcardTemplate'
 import { constant } from '../utils'
 
-import { SVG, Rect } from './svgClasses'
+import { SVG, Rect, RectProperty, RectProperties } from './svgClasses'
 import { getImages } from './utils'
 
 const renderRects = (entry: AftermathEntry<{}>, { template, cache }: AftermathInternals<{}>) => {
     const images = (template.textFragments as any).flatMap(getImages)
-    const rects = cache.get(entry.keyword, [])
+    const rects = cache.get<[number, number, number, number, RectProperties][]>(entry.keyword, [])
     const maybeElement = document.querySelector(`img[src="${images[0]}"]`) as HTMLImageElement
 
     if (maybeElement) {
@@ -24,7 +24,8 @@ const renderRects = (entry: AftermathEntry<{}>, { template, cache }: AftermathIn
             svgRect.height = height
 
             for (const prop in options) {
-                svgRect[prop] = options[prop]
+                const rectProperty = prop as RectProperty
+                svgRect.prop(rectProperty, options[rectProperty])
             }
 
             draw.append(svgRect)

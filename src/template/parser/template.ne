@@ -6,8 +6,8 @@ import {
     TAG_OPEN,
     TAG_CLOSE,
     ARG_SEP,
+    joinText,
 } from '../utils'
-const joinText = ([vs]) => vs.map(v => v.value).join('')
 
 export const tagBuilder = new TagBuilder()
 export const tagInfoBuilder = new TagInfoBuilder()
@@ -18,7 +18,7 @@ export const tagInfoBuilder = new TagInfoBuilder()
 
 #################################
 
-start -> content %EOF {% ([[valuesRawRoot,firstLevelTags],eof]) => tagInfoBuilder.build(
+start -> content %EOF {% ([[valuesRawRoot, firstLevelTags], eof]: any) => tagInfoBuilder.build(
     0,
     eof.offset,
     tagBuilder.build('base', valuesRawRoot),
@@ -26,9 +26,9 @@ start -> content %EOF {% ([[valuesRawRoot,firstLevelTags],eof]) => tagInfoBuilde
 )
 %}
 
-content -> _ (tag _):* {% ([first, rest]) => {
-    const valuesRawRoot = first + rest.map(([tag, folBy]) => id(tag).join('') + folBy).join('') 
-    const firstLevelTags = rest.map(id).map(v => v[1])
+content -> _ (tag _):* {% ([first, rest]: any) => {
+    const valuesRawRoot = first + rest.map(([tag, folBy]: any) => id(tag).join('') + folBy).join('') 
+    const firstLevelTags = rest.map(id).map((v: any) => v[1])
 
     return [
         valuesRawRoot,
@@ -37,7 +37,7 @@ content -> _ (tag _):* {% ([first, rest]) => {
 }
 %}
 
-tag -> %tagopen inner %tagclose {% ([tagopen, [keyname, valuesRaw, innerTags], tagclose]) => {
+tag -> %tagopen inner %tagclose {% ([tagopen, [keyname, valuesRaw, innerTags], tagclose]: any) => {
     // NOTE empty string is also falsy!!!
     const hasValuesRaw = typeof valuesRaw === 'string'
 
@@ -57,16 +57,16 @@ tag -> %tagopen inner %tagclose {% ([tagopen, [keyname, valuesRaw, innerTags], t
             tagBuilder.build(keyname, hasValuesRaw
                 ? valuesRaw
                 : null),
-            innerTags.map(v => v[1]),
+            innerTags.map((v: any) => v[1]),
         ),
     ]
 }
 %}
 
-inner -> %keyname (%sep _values (tag _values):* ):? {% ([key,rest]) => {
+inner -> %keyname (%sep _values (tag _values):* ):? {% ([key,rest]: any) => {
     const keyName = key.value
     const valuesRaw = rest
-        ? rest[1] + rest[2].map(([tag, vtxt]) => id(tag).join('') + vtxt).join('')
+        ? rest[1] + rest[2].map(([tag, vtxt]: any) => id(tag).join('') + vtxt).join('')
         : null
 
     const innerTags = rest

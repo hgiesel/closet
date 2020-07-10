@@ -77,12 +77,15 @@ export class SVG {
     }
 }
 
+export type RectProperty = 'rx' | 'ry' | 'fill' | 'fillOpacity' | 'stroke' | 'strokeOpacity' | 'strokeWidth'
+export type RectProperties = Partial<Record<RectProperty, string>>
+
 export class Rect implements GettableSVG {
     readonly container: SVGElement
     readonly rect: SVGRectElement
     readonly label: SVGTextElement
 
-    protected constructor(container, rect, label) {
+    protected constructor(container: SVGElement, rect: SVGRectElement, label: SVGTextElement) {
         this.container = container
         this.rect = rect
         this.label = label
@@ -112,7 +115,7 @@ export class Rect implements GettableSVG {
     }
 
     static wrap(rect: SVGRectElement): Rect {
-        return new Rect(rect.parentElement, rect, rect.nextSibling)
+        return new Rect(rect.parentElement as unknown as SVGElement, rect, rect.nextSibling as SVGTextElement)
     }
 
     remove(): void {
@@ -123,18 +126,11 @@ export class Rect implements GettableSVG {
         return [this.container]
     }
 
-    attr(attr, i): void {
-        this.rect.setAttributeNS(null, attr, i)
+    prop(attr: RectProperty, value: string) {
+        this[attr] = value
     }
 
-    labelAttr(attr, i): void {
-        this.label.setAttributeNS(null, attr, i)
-    }
-
-    get(attr) {
-        const result = this.rect.getAttributeNS(null, attr)
-        return result
-    }
+    /////////////////// on both
 
     set width(i) {
         const stringified = String(Math.max(10, i))
@@ -164,26 +160,30 @@ export class Rect implements GettableSVG {
 
     /////////////////// on rect
 
-    set rx(i) { this.attr('rx', i) }
-    get rx() { return Number(this.get('rx')) }
+    set rx(i: number | string) { this.rect.setAttributeNS(null, 'rx', String(i)) }
+    get rx(): number | string { return Number(this.rect.getAttributeNS(null, 'rx')) }
 
-    set ry(i) { this.attr('ry', i) }
-    get ry() { return Number(this.get('ry')) }
+    set ry(i: number | string) { this.rect.setAttributeNS(null, 'ry', String(i)) }
+    get ry(): number | string { return Number(this.rect.getAttributeNS(null, 'ry')) }
 
-    set fill(color) { this.attr('fill', color) }
-    get fill() { return this.get('fill') }
+    set fill(color: string) { this.rect.setAttributeNS(null, 'fill', color) }
+    get fill(): string { return this.rect.getAttributeNS(null, 'fill') }
 
-    set stroke(color) { this.attr('stroke', color) }
-    get stroke() { return this.get('stroke') }
+    set fillOpacity(i: number | string) { this.rect.setAttributeNS(null, 'fillOpacity', String(i)) }
+    get fillOpacity(): number | string { return Number(this.rect.getAttributeNS(null, 'fillOpacity')) }
 
-    set strokeWidth(i) { this.attr('stroke-width', i) }
-    get strokeWidth() { return Number(this.get('stroke-width')) }
+    set stroke(color: string) { this.rect.setAttributeNS(null, 'stroke', color) }
+    get stroke(): string { return this.rect.getAttributeNS(null, 'stroke') }
 
-    set strokeOpacity(i) { this.attr('stroke-opacity', i) }
-    get strokeOpacity() { return this.get('stroke-opacity') }
+    set strokeOpacity(i: number | string) { this.rect.setAttributeNS(null, 'strokeOpacity', String(i)) }
+    get strokeOpacity(): number | string { return Number(this.rect.getAttributeNS(null, 'strokeOpacity')) }
+
+    set strokeWidth(i: number | string) { this.rect.setAttributeNS(null, 'strokeWidth', String(i)) }
+    get strokeWidth(): number | string { return Number(this.rect.getAttributeNS(null, 'strokeWidth')) }
 
     /////////////////// on label
 
     set labelText(txt: string) { this.label.innerHTML = txt }
     get labelText(): string { return this.label.innerHTML }
 }
+

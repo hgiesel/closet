@@ -46,6 +46,10 @@ interface FilterProcessor<R,D> {
     getOptions: () => Partial<D>
 }
 
+interface ClosetEnvironment {
+    closetEnvironment?: Storage<unknown>
+}
+
 export class MetaFilterManager<T,I,R extends Readiable, X extends object, D extends object, P extends object> {
     protected readonly filters: FilterApi<R>
     protected readonly options: Storage<Partial<D>>
@@ -75,11 +79,11 @@ export class MetaFilterManager<T,I,R extends Readiable, X extends object, D exte
         this.cache = new Storage(new Map())
         this.memory = new Storage(memory)
 
-        if (!globalThis.closetEnvironment) {
-            globalThis.closetEnvironment = new Storage(new Map())
+        if (!globalThis.hasOwnProperty('closetEnvironment')) {
+            (globalThis as typeof globalThis & ClosetEnvironment).closetEnvironment = new Storage(new Map())
         }
 
-        this.environment = globalThis.closetEnvironment
+        this.environment = (globalThis as typeof globalThis & ClosetEnvironment).closetEnvironment
     }
 
     private getBaseInternals(t: T): ManagerInfo<T,I,R,D,P> & T {

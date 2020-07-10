@@ -5,6 +5,8 @@ export const TAG_OPEN = '[['
 export const TAG_CLOSE = ']]'
 export const ARG_SEP = '::'
 
+export const joinText = ([vs]: { value: string }[][]) => vs.map(v => v.value).join('')
+
 export const calculateCoordinates = (
     tagStart: number,
     tagEnd: number,

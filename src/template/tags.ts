@@ -12,7 +12,7 @@ export interface Separator {
 
 export type WeakSeparator = Partial<Separator> | string
 
-const splitValues = (text: string, seps: Separator[]) => {
+const splitValues = (text: string, seps: Separator[]): any => {
     if (seps.length === 0) {
         return text
     }

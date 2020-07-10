@@ -18,8 +18,8 @@ import {
     TAG_OPEN,
     TAG_CLOSE,
     ARG_SEP,
+    joinText,
 } from '../utils'
-const joinText = ([vs]) => vs.map(v => v.value).join('')
 
 export const tagBuilder = new TagBuilder()
 export const tagInfoBuilder = new TagInfoBuilder()
@@ -53,7 +53,7 @@ interface Grammar {
 const grammar: Grammar = {
   Lexer: tokenizer,
   ParserRules: [
-    {"name": "start", "symbols": ["content", (tokenizer.has("EOF") ? {type: "EOF"} : EOF)], "postprocess":  ([[valuesRawRoot,firstLevelTags],eof]) => tagInfoBuilder.build(
+    {"name": "start", "symbols": ["content", (tokenizer.has("EOF") ? {type: "EOF"} : EOF)], "postprocess":  ([[valuesRawRoot, firstLevelTags], eof]: any) => tagInfoBuilder.build(
             0,
             eof.offset,
             tagBuilder.build('base', valuesRawRoot),
@@ -63,9 +63,9 @@ const grammar: Grammar = {
     {"name": "content$ebnf$1", "symbols": []},
     {"name": "content$ebnf$1$subexpression$1", "symbols": ["tag", "_"]},
     {"name": "content$ebnf$1", "symbols": ["content$ebnf$1", "content$ebnf$1$subexpression$1"], "postprocess": (d) => d[0].concat([d[1]])},
-    {"name": "content", "symbols": ["_", "content$ebnf$1"], "postprocess":  ([first, rest]) => {
-            const valuesRawRoot = first + rest.map(([tag, folBy]) => id(tag).join('') + folBy).join('') 
-            const firstLevelTags = rest.map(id).map(v => v[1])
+    {"name": "content", "symbols": ["_", "content$ebnf$1"], "postprocess":  ([first, rest]: any) => {
+            const valuesRawRoot = first + rest.map(([tag, folBy]: any) => id(tag).join('') + folBy).join('') 
+            const firstLevelTags = rest.map(id).map((v: any) => v[1])
         
             return [
                 valuesRawRoot,
@@ -73,7 +73,7 @@ const grammar: Grammar = {
             ]
         }
         },
-    {"name": "tag", "symbols": [(tokenizer.has("tagopen") ? {type: "tagopen"} : tagopen), "inner", (tokenizer.has("tagclose") ? {type: "tagclose"} : tagclose)], "postprocess":  ([tagopen, [keyname, valuesRaw, innerTags], tagclose]) => {
+    {"name": "tag", "symbols": [(tokenizer.has("tagopen") ? {type: "tagopen"} : tagopen), "inner", (tokenizer.has("tagclose") ? {type: "tagclose"} : tagclose)], "postprocess":  ([tagopen, [keyname, valuesRaw, innerTags], tagclose]: any) => {
             // NOTE empty string is also falsy!!!
             const hasValuesRaw = typeof valuesRaw === 'string'
         
@@ -93,7 +93,7 @@ const grammar: Grammar = {
                     tagBuilder.build(keyname, hasValuesRaw
                         ? valuesRaw
                         : null),
-                    innerTags.map(v => v[1]),
+                    innerTags.map((v: any) => v[1]),
                 ),
             ]
         }
@@ -104,10 +104,10 @@ const grammar: Grammar = {
     {"name": "inner$ebnf$1$subexpression$1", "symbols": [(tokenizer.has("sep") ? {type: "sep"} : sep), "_values", "inner$ebnf$1$subexpression$1$ebnf$1"]},
     {"name": "inner$ebnf$1", "symbols": ["inner$ebnf$1$subexpression$1"], "postprocess": id},
     {"name": "inner$ebnf$1", "symbols": [], "postprocess": () => null},
-    {"name": "inner", "symbols": [(tokenizer.has("keyname") ? {type: "keyname"} : keyname), "inner$ebnf$1"], "postprocess":  ([key,rest]) => {
+    {"name": "inner", "symbols": [(tokenizer.has("keyname") ? {type: "keyname"} : keyname), "inner$ebnf$1"], "postprocess":  ([key,rest]: any) => {
             const keyName = key.value
             const valuesRaw = rest
-                ? rest[1] + rest[2].map(([tag, vtxt]) => id(tag).join('') + vtxt).join('')
+                ? rest[1] + rest[2].map(([tag, vtxt]: any) => id(tag).join('') + vtxt).join('')
                 : null
         
             const innerTags = rest

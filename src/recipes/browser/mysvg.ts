@@ -95,7 +95,7 @@ export const wrapImage = (draw: SVG) => {
             .join('\n')
 
         navigator.clipboard.writeText(shapeText)
-        globalThis.codeCM.setValue(globalThis.codeCM.getValue().replace('[[makeOcclusions]]', shapeText))
+        ;(globalThis as any).codeCM.setValue((globalThis as any).codeCM.getValue().replace('[[makeOcclusions]]', shapeText))
 
         draw.raw.removeEventListener('mousedown', occlusionUi)
         draw.raw.removeEventListener('contextmenu', occlusionContextMenu)

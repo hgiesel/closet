@@ -13,8 +13,8 @@ parent: Flashcard Types
 
 This is also known as _overlapping clozes_.
 
-{% include codeDisplay.md content=flashcard.around_range setups="default_cloze,flashcard" buttons=sixCards %}
+{% include codeDisplay.md content=flashcard.around_range setups="default_cloze,flashcard" buttons=buttons.sixCards %}
 
 It is especially popular with remembering poems.
 
-{% include codeDisplay.md content=flashcard.top_bottom_range setups="default_cloze,flashcard" buttons=sixCards %}
+{% include codeDisplay.md content=flashcard.top_bottom_range setups="default_cloze,flashcard" buttons=buttons.sixCards %}

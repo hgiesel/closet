@@ -9,9 +9,9 @@ import { topUp } from './sortInStrategies'
 
 type ValuePlusCategory = [string, number]
 
-const inTagShuffle = (sortIn: SortInStrategy): Eval<{}, ValuePlusCategory[] | void> => (
+const inTagShuffle = (sortIn: SortInStrategy) => <T extends {}>(
     tag: TagData,
-    internals: Internals<{}>,
+    internals: Internals<T>,
 ): [string, number][] | void => {
     const flattedValuesWithIndex: [string, number][] = tag.values
         .flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
@@ -24,12 +24,12 @@ const inTagShuffle = (sortIn: SortInStrategy): Eval<{}, ValuePlusCategory[] | vo
     }
 }
 
-const firstCategory: Eval<FlashcardPreset, string[]> = (tag: TagData) => tag.values[0]
+const firstCategory = <T extends {}>(tag: TagData, _internals: Internals<T>) => tag.values[0]
 
-const shuffleAndStylize = (
+const shuffleAndStylize = <T extends {}>(
     stylizer: Stylizer,
-    ellipser: Eval<{}, ValuePlusCategory[] | void>,
-): WeakFilter<{}> => (tag: TagData, internals: Internals<FlashcardPreset>): WeakFilterResult => {
+    ellipser: Eval<T, ValuePlusCategory[] | void>,
+): WeakFilter<T> => (tag: TagData, internals: Internals<T>): WeakFilterResult => {
     const maybeValues = ellipser(tag, internals)
 
     return maybeValues
@@ -56,24 +56,24 @@ const greenAndRed = orangeCommaSeparated.toStylizer({
     },
 })
 
-const multipleChoicePublicApi = (
-    frontInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-    backInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-): Recipe<FlashcardPreset> => (options: {
+const multipleChoicePublicApi = <T extends FlashcardPreset>(
+    frontInactive: InactiveBehavior<T>,
+    backInactive: InactiveBehavior<T>,
+): Recipe<T> => (options: {
     tagname?: string,
 
     frontStylizer?: Stylizer,
     backStylizer?: Stylizer,
 
     inactiveStylizer?: Stylizer,
-    contexter?: Eval<FlashcardPreset, string[]>,
-    ellipser?: WeakFilter<FlashcardPreset>,
+    contexter?: Eval<T, string[]>,
+    ellipser?: WeakFilter<T>,
 
     sortInStrategy?: SortInStrategy,
     categorySeparator?: WeakSeparator,
     valueSeparator?: WeakSeparator,
 
-    flashcardTemplate?: FlashcardTemplate,
+    flashcardTemplate?: FlashcardTemplate<T>,
 } = {})  => {
     const {
         tagname = 'mc',
@@ -92,7 +92,7 @@ const multipleChoicePublicApi = (
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
-    const inTagShuffleWithStrategy = inTagShuffle(sortInStrategy)
+    const inTagShuffleWithStrategy = inTagShuffle(sortInStrategy) as Eval<T, [string, number][] | void>
 
     const front = shuffleAndStylize(frontStylizer, inTagShuffleWithStrategy)
     const back = shuffleAndStylize(backStylizer, inTagShuffleWithStrategy)

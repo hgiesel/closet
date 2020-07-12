@@ -1,5 +1,4 @@
 import type { TagData, Internals, Registrar, Recipe, Stylizer, Eval, InactiveBehavior, InactiveAdapter, DataOptions, WeakFilter, WeakFilterResult } from './types'
-import type { Decider } from './deciders'
 
 import { id, id2, constant } from './utils'
 import { isActiveAll, isBackAll } from './deciders'
@@ -7,18 +6,18 @@ import { inactiveAdapterAll } from './inactiveAdapter'
 import { sumFour } from './sum'
 import { simpleRecipe } from './simple'
 
-export type FlashcardTemplate = (
-    f2: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-    b2: InactiveBehavior<FlashcardPreset,FlashcardPreset>,
+export type FlashcardTemplate<T extends FlashcardPreset> = (
+    f2: InactiveBehavior<T>,
+    b2: InactiveBehavior<T>,
 ) => (
     tagname: string,
-    front: WeakFilter<FlashcardPreset>,
-    back: WeakFilter<FlashcardPreset>,
-    contexter: WeakFilter<FlashcardPreset>,
-    inactive: WeakFilter<FlashcardPreset>,
+    front: WeakFilter<T>,
+    back: WeakFilter<T>,
+    contexter: WeakFilter<T>,
+    inactive: WeakFilter<T>,
     dataOptions: Partial<DataOptions>,
 ) => (
-    registrar: Registrar<FlashcardPreset>
+    registrar: Registrar<T>
 ) => void
 
 export interface CardPreset {
@@ -31,21 +30,21 @@ export interface SidePreset {
 
 export type FlashcardPreset = CardPreset & SidePreset
 
-export const makeFlashcardTemplate = (
-    isActive: Decider<FlashcardPreset> = isActiveAll,
-    isBack: Decider<FlashcardPreset> = isBackAll,
-    inactiveAdapter: InactiveAdapter<FlashcardPreset, FlashcardPreset> = inactiveAdapterAll,
-): FlashcardTemplate => (
-    frontInactiveBehavior: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-    backInactiveBehavior: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
+export const makeFlashcardTemplate = <T extends FlashcardPreset>(
+    isActive: Eval<T, boolean> = isActiveAll,
+    isBack: Eval<T, boolean> = isBackAll,
+    inactiveAdapter: InactiveAdapter<T> = inactiveAdapterAll,
+): FlashcardTemplate<T> => (
+    frontInactiveBehavior: InactiveBehavior<T>,
+    backInactiveBehavior: InactiveBehavior<T>,
 ) => (
     tagname: string,
-    front: WeakFilter<FlashcardPreset>,
-    back: WeakFilter<FlashcardPreset>,
-    contexter: WeakFilter<FlashcardPreset>,
-    inactive: WeakFilter<FlashcardPreset>,
+    front: WeakFilter<T>,
+    back: WeakFilter<T>,
+    contexter: WeakFilter<T>,
+    inactive: WeakFilter<T>,
     dataOptions: Partial<DataOptions> = {},
-) => (registrar: Registrar<FlashcardPreset>) => {
+) => (registrar: Registrar<T>) => {
     const internalFilter = `${tagname}:internal`
 
     const flashcardRecipe = sumFour(
@@ -59,25 +58,25 @@ export const makeFlashcardTemplate = (
 
     flashcardRecipe({ tagname: internalFilter })(registrar)
 
-    const flashcardFilter = (tag: TagData, inter: Internals<FlashcardPreset>) => {
+    const flashcardFilter = (tag: TagData, inter: Internals<T>) => {
         return  inter.filters.getOrDefault(internalFilter)(tag, inter)
     }
 
     registrar.register(tagname, flashcardFilter, dataOptions)
 }
 
-export const generateFlashcardRecipes = (
-    publicApi: (front: InactiveBehavior<FlashcardPreset, FlashcardPreset>, back: InactiveBehavior<FlashcardPreset, FlashcardPreset>) => Recipe<FlashcardPreset>
+export const generateFlashcardRecipes = <T extends FlashcardPreset>(
+    publicApi: (front: InactiveBehavior<T>, back: InactiveBehavior<T>) => Recipe<T>
 ) => [
     publicApi(id, id),
     publicApi(id2, id2),
     publicApi(id2, id),
 ]
 
-export const toListStylize = (
+export const toListStylize = <T extends FlashcardPreset>(
     stylizer: Stylizer,
-    toList: Eval<FlashcardPreset, string[]>,
-): WeakFilter<FlashcardPreset> => (tag: TagData, internals: Internals<FlashcardPreset>) => internals.ready
+    toList: Eval<T, string[]>,
+): WeakFilter<T> => (tag: TagData, internals: Internals<T>) => internals.ready
     ? stylizer.stylize(toList(tag, internals))
     : { ready: false }
 

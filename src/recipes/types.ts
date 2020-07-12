@@ -13,7 +13,7 @@ export type { DeferredApi, Deferred } from '../filterManager/deferred'
 export type { TagData, Separator, WeakSeparator } from '../template/tags'
 
 export type Recipe<T extends object> = (options?: object) => (filters: Registrar<T>) => void
-export type Eval<T extends object, U> = (t: TagData, i: Internals<T>) => U
+export type Eval<T extends object, U> = <X extends T>(t: TagData, i: Internals<X>) => U
 export type { Stylizer } from './stylizer'
 
 export interface WrapOptions {
@@ -22,12 +22,12 @@ export interface WrapOptions {
     setTagnames: (o: object, newNames: string[]) => void
 }
 
-export type InactiveBehavior<T extends object, U extends object> = (
+export type InactiveBehavior<T extends object> = (
     contexter: WeakFilter<T>,
     ellipser: WeakFilter<T>,
-) => WeakFilter<U>
+) => WeakFilter<T>
 
-export type InactiveAdapter<T extends object, U extends object> = (behavior: InactiveBehavior<T,U>) => InactiveBehavior<T,U>
+export type InactiveAdapter<T extends object> = (behavior: InactiveBehavior<T>) => InactiveBehavior<T>
 
 export interface RecipeOptions {
     [key: string]: any

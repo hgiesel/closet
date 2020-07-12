@@ -8,22 +8,22 @@ import { Stylizer } from './stylizer'
 import { sequencer } from './sequencer'
 import { topUp } from './sortInStrategies'
 
-const acrossTagShuffle = (sortIn: SortInStrategy): Eval<{}, string[] | void> => (tag: TagData, internals: Internals<{}>) => {
-    return sequencer(
+const acrossTagShuffle = (sortIn: SortInStrategy) => <T extends {}>(tag: TagData, internals: Internals<T>): string[] | void => tag.values === null
+    ? []
+    : sequencer(
         `${tag.fullKey}:${tag.fullOccur}`,
         tag.fullKey,
-        tag.values,
+        tag.values as string[],
         sortIn,
         internals,
     )
-}
 
-const justValues: Eval<{}, string[]> = (tag: TagData) => tag.values
+const justValues = <T extends {}>(tag: TagData, _internals: Internals<T>) => tag.values
 
-const shuffleAndStylize = (
+const shuffleAndStylize = <T extends {}>(
     stylizer: Stylizer,
-    ellipser: Eval<{}, string[] | void>,
-) => (tag: TagData, internals: Internals<FlashcardPreset>): WeakFilterResult => {
+    ellipser: Eval<T, string[] | void>,
+) => (tag: TagData, internals: Internals<T>): WeakFilterResult => {
     const maybeValues = ellipser(tag, internals)
 
     return maybeValues
@@ -39,29 +39,29 @@ const blueHighlight: Stylizer = new Stylizer({
     processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-const valuesInOrder: Eval<FlashcardPreset, string[]> = (tag: TagData) => tag.values
+const valuesInOrder = <T extends {}>(tag: TagData, _internals: Internals<T>) => tag.values
 
-const doShuffle = (stylizer: Stylizer, sortIn: SortInStrategy) => shuffleAndStylize(stylizer, acrossTagShuffle(sortIn))
+const doShuffle = <T extends FlashcardPreset>(stylizer: Stylizer, sortIn: SortInStrategy) => shuffleAndStylize(stylizer, acrossTagShuffle(sortIn) as Eval<T, string[] | void>)
 const simplyShow = (stylizer: Stylizer, _sortIn: SortInStrategy) => toListStylize(stylizer, justValues)
 
-const oneSidedShufflePublicApi = (
-    frontActive: (stylizer: Stylizer, sortIn: SortInStrategy) => WeakFilter<FlashcardPreset>,
-    backActive: (stylizer: Stylizer, sortIn: SortInStrategy) => WeakFilter<FlashcardPreset>,
+const oneSidedShufflePublicApi = <T extends FlashcardPreset>(
+    frontActive: (stylizer: Stylizer, sortIn: SortInStrategy) => WeakFilter<T>,
+    backActive: (stylizer: Stylizer, sortIn: SortInStrategy) => WeakFilter<T>,
 ) => (
-    frontInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-    backInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-): Recipe<FlashcardPreset> => (options: {
+    frontInactive: InactiveBehavior<T>,
+    backInactive: InactiveBehavior<T>,
+): Recipe<T> => (options: {
     tagname?: string,
 
     inactiveStylizer?: Stylizer,
-    contexter?: Eval<FlashcardPreset, string[]>,
-    ellipser?: WeakFilter<FlashcardPreset>,
+    contexter?: Eval<T, string[]>,
+    ellipser?: WeakFilter<T>,
 
     activeStylizer?: Stylizer,
 
     sortInStrategy?: SortInStrategy,
     separator?: WeakSeparator,
-    flashcardTemplate?: FlashcardTemplate,
+    flashcardTemplate?: FlashcardTemplate<T>,
 } = {}) => {
     const {
         tagname = 'shuf',

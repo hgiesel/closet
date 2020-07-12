@@ -36,35 +36,35 @@ const renderRects = (entry: AftermathEntry<{}>, { template, cache }: AftermathIn
 const doNothing = constant({ ready: true })
 const keyword = 'occlusionRenderRect'
 
-const makeContextRects = ({ values }: TagData, { cache, aftermath }: Internals<{}>) => {
+const makeContextRects = <T extends {}>({ values }: TagData, { cache, aftermath }: Internals<T>) => {
     const [x = 0, y = 0, width = 50, height = width] = values
 
     cache.over(keyword, (rectList: [number, number, number, number, object][]) => rectList.push([x, y, width, height, {}]), [])
-    aftermath.registerIfNotExists(keyword, renderRects)
+    aftermath.registerIfNotExists(keyword, renderRects as any)
 
     return { ready: true }
 }
 
-const makeActiveRects = ({ values }: TagData, { cache, aftermath }: Internals<{}>) => {
+const makeActiveRects = <T extends {}>({ values }: TagData, { cache, aftermath }: Internals<T>) => {
     const [x = 0, y = 0, width = 50, height = width] = values
 
     cache.over(keyword, (rectList: [number, number, number, number, object][]) => rectList.push([x, y, width, height, { fill: 'salmon', stroke: 'yellow' }]), [])
-    aftermath.registerIfNotExists(keyword, renderRects)
+    aftermath.registerIfNotExists(keyword, renderRects as any)
 
     return { ready: true }
 }
 
-const rectPublicApi = (
-    frontInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-    backInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-): Recipe<FlashcardPreset> => (options: {
+const rectPublicApi = <T extends FlashcardPreset>(
+    frontInactive: InactiveBehavior<T>,
+    backInactive: InactiveBehavior<T>,
+): Recipe<T> => (options: {
     tagname?: string,
 
-    front?: WeakFilter<FlashcardPreset>,
-    back?: WeakFilter<FlashcardPreset>,
+    front?: WeakFilter<T>,
+    back?: WeakFilter<T>,
 
     separator?: WeakSeparator,
-    flashcardTemplate?: FlashcardTemplate,
+    flashcardTemplate?: FlashcardTemplate<T>,
 } = {}) => {
     const {
         tagname = 'rect',
@@ -79,7 +79,7 @@ const rectPublicApi = (
     const rectSeparators = { separators: [separator] }
     const rectRecipe = flashcardTemplate(frontInactive, backInactive)
 
-    return rectRecipe(tagname, front, back, doNothing, makeContextRects, rectSeparators)
+    return rectRecipe(tagname, front as any, back, doNothing, makeContextRects, rectSeparators)
 }
 
 export const [

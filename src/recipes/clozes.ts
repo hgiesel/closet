@@ -14,35 +14,36 @@ const blueWithBrackets = blueHighlight.toStylizer({
     mapper: wrapWithBrackets,
 })
 
-const hintEllipser: Eval<FlashcardPreset, string[]> = (
+const hintEllipser = <T extends {}>(
     tag: TagData,
+    _internals: Internals<T>,
 ) => {
     return [tag.values[1] ?? '...']
 }
 
-const firstValue: WeakFilter<{}> = (tag: TagData, { ready }: Internals<FlashcardPreset>) => ({
+const firstValue = <T extends object>(tag: TagData, { ready }: Internals<T>) => ({
     ready: ready,
     result: tag.values[0],
 })
 
-const firstValueAsList: Eval<{}, string[]> = (tag: TagData) => [tag.values[0]]
+const firstValueAsList = <T extends object>(tag: TagData, _internals: Internals<T>) => [tag.values[0]]
 
-const clozePublicApi = (
-    frontInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-    backInactive: InactiveBehavior<FlashcardPreset, FlashcardPreset>,
-): Recipe<FlashcardPreset> => (options: {
+const clozePublicApi = <T extends FlashcardPreset>(
+    frontInactive: InactiveBehavior<T>,
+    backInactive: InactiveBehavior<T>,
+): Recipe<T> => (options: {
     tagname?: string,
 
     frontStylizer?: Stylizer,
-    frontEllipser?: Eval<FlashcardPreset, string[]>,
+    frontEllipser?: Eval<T, string[]>,
 
     backStylizer?: Stylizer,
-    backEllipser?: Eval<FlashcardPreset, string[]>,
+    backEllipser?: Eval<T, string[]>,
 
-    inactiveEllipser?: WeakFilter<FlashcardPreset>,
+    inactiveEllipser?: WeakFilter<T>,
 
     separator?: WeakSeparator,
-    flashcardTemplate?: FlashcardTemplate,
+    flashcardTemplate?: FlashcardTemplate<T>,
 } = {}) => {
     const {
         tagname = 'c',

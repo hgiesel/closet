@@ -69,11 +69,11 @@ const makeOcclusionLeftClick = (draw: SVG, event: MouseEvent) => {
     }
 }
 
-const rectShapeToCmd = (rect: Rect) => {
+const rectShapeToCmd = (rect: Rect): [number, number, number, number] => {
     return [rect.x, rect.y, rect.width, rect.height]
 }
 
-const rectCmdToText = ([x, y, width, height]: [number, number, number, number]) => {
+const rectCmdToText = ([x, y, width, height]: [number, number, number, number]): string => {
     return `[[rect1::${x},${y},${width},${height}]]`
 }
 
@@ -88,7 +88,7 @@ export const wrapImage = (draw: SVG) => {
         event.preventDefault()
 
         const shapeText = Array.from(draw.svg.childNodes)
-            .map((v: SVGElement) => v.childNodes[0] as SVGRectElement)
+            .map((v: any /* SVGElement */) => v.childNodes[0] as any)
             .map(Rect.wrap)
             .map(rectShapeToCmd)
             .map(rectCmdToText)

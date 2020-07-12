@@ -2,10 +2,10 @@ import type { TagData, RecipeOptions, Registrar, WeakFilter, WeakFilterResult, I
 
 import { defaultTagnameGetter, defaultTagnameSetter } from './wrappers'
 
-export const product = <T extends object, U extends object>(
+export const product = <T extends {}>(
     recipeFirst: Recipe<T>,
-    recipeSecond: Recipe<U>,
-    multiply: (fst: WeakFilterResult, snd: WeakFilterResult) => WeakFilter<T & U> = () => () => ({ ready: true }), {
+    recipeSecond: Recipe<T>,
+    multiply: (fst: WeakFilterResult, snd: WeakFilterResult) => WeakFilter<T> = () => () => ({ ready: true }), {
         wrapId,
         setTagnames,
     }: WrapOptions = {
@@ -13,7 +13,7 @@ export const product = <T extends object, U extends object>(
         getTagnames: defaultTagnameGetter,
         setTagnames: defaultTagnameSetter,
     },
-): Recipe<T & U> => ({
+): Recipe<T> => ({
     tagname = 'prod',
 
     optionsFirst = {},
@@ -23,7 +23,7 @@ export const product = <T extends object, U extends object>(
 
     optionsFirst?: RecipeOptions,
     optionsSecond?: RecipeOptions,
-} = {}) => (registrar: Registrar<T & U>) => {
+} = {}) => (registrar: Registrar<T>) => {
     const tagnameTrue = `${tagname}:${wrapId}:fst`
     const tagnameFalse = `${tagname}:${wrapId}:snd`
 
@@ -35,7 +35,7 @@ export const product = <T extends object, U extends object>(
 
     const productFilter = (
         tag: TagData,
-        internals: Internals<T & U>,
+        internals: Internals<T>,
     ) => {
         return multiply(
             internals.filters.getOrDefault(tagnameTrue)(tag, internals),

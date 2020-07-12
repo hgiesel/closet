@@ -3,15 +3,15 @@ import type { Internals } from './types'
 import { sortWithIndices } from './utils'
 
 // TODO abstract to an object without dependence on Internals
-export const sequencer = <T>(
+export const sequencer = <V, T extends {}>(
     // identifies each unit (tag) receiving shuffled items
     unitId: string,
     // identifies each collection of items being shuffled
     sequenceId: string,
-    values: T[],
+    values: V[],
     strategy: (indices: number[], toLength: number) => number[],
-    { cache, memory, deferred, ready }: Internals<{}>,
-): T[] | void => {
+    { cache, memory, deferred, ready }: Internals<T>,
+): V[] | void => {
     const applyKey = `${unitId}:apply`
     // in cache: boolean whether ready for application
     // in deferred: sets apply key true, deletes unitId from waitingSet
@@ -32,8 +32,8 @@ export const sequencer = <T>(
                 return
             }
 
-        const popped: T[] = []
-        const possibleValues = cache.get(shuffleKey, []) as T[]
+        const popped: V[] = []
+        const possibleValues = cache.get(shuffleKey, []) as V[]
 
         for (let x = 0; x < values.length; x++) {
             // pop off start, so the result is the same as in program logic
@@ -73,7 +73,7 @@ export const sequencer = <T>(
         // will only go go beyong this point for the last set that becomes ready
         // because shuffling only needs to be done once
 
-        cache.fold(shuffleKey, <T>(vs: T[]) => {
+        cache.fold(shuffleKey, <V>(vs: V[]) => {
             const sortingIndices = memory.fold(shuffleKey, (vs: number[]) => {
                 return strategy(vs, cache.get(shuffleKey, []).length)
             }, [])

@@ -2,10 +2,10 @@ import type { TagData, Registrar, Eval, Internals, Recipe, WrapOptions } from '.
 
 import { defaultTagnameGetter, defaultTagnameSetter } from './wrappers'
 
-export const sum = <T extends object, U extends object>(
+export const sum = <T extends {}>(
     recipeFalse: Recipe<T>,
-    recipeTrue: Recipe<U>,
-    predicate: Eval<T & U, boolean>, {
+    recipeTrue: Recipe<T>,
+    predicate: Eval<T, boolean>, {
         wrapId,
         setTagnames,
     }: WrapOptions = {
@@ -13,7 +13,7 @@ export const sum = <T extends object, U extends object>(
         getTagnames: defaultTagnameGetter,
         setTagnames: defaultTagnameSetter,
     },
-): Recipe<T & U> => ({
+): Recipe<T> => ({
     tagname = 'sum',
 
     optionsFalse = {},
@@ -23,7 +23,7 @@ export const sum = <T extends object, U extends object>(
 
     optionsTrue?: object,
     optionsFalse?: object,
-} = {}) => (registrar: Registrar<T & U>) => {
+} = {}) => (registrar: Registrar<T>) => {
     const tagnameTrue = `${tagname}:${wrapId}:true`
     const tagnameFalse = `${tagname}:${wrapId}:false`
 
@@ -35,7 +35,7 @@ export const sum = <T extends object, U extends object>(
 
     const sumFilter = (
         tag: TagData,
-        internals: Internals<T & U>,
+        internals: Internals<T>,
     ) => {
         return predicate(tag, internals)
             ? internals.filters.getOrDefault(tagnameTrue)(tag, internals)
@@ -45,13 +45,13 @@ export const sum = <T extends object, U extends object>(
     registrar.register(tagname, sumFilter, registrar.getOptions(tagnameTrue /* have to be same for True/False */))
 }
 
-export const sumFour = <T extends object, U extends object, V extends object, W extends object>(
+export const sumFour = <T extends {}>(
     recipeZero: Recipe<T>,
-    recipeOne: Recipe<U>,
-    recipeTwo: Recipe<V>,
-    recipeThree: Recipe<W>,
-    predicateOne: Eval<T & U & V & W, boolean>,
-    predicateTwo: Eval<T & U & V & W, boolean>, {
+    recipeOne: Recipe<T>,
+    recipeTwo: Recipe<T>,
+    recipeThree: Recipe<T>,
+    predicateOne: Eval<T, boolean>,
+    predicateTwo: Eval<T, boolean>, {
         wrapId,
         setTagnames,
     }: WrapOptions = {
@@ -59,7 +59,7 @@ export const sumFour = <T extends object, U extends object, V extends object, W 
         getTagnames: defaultTagnameGetter,
         setTagnames: defaultTagnameSetter,
     },
-): Recipe<T & U & V & W> => ({
+): Recipe<T> => ({
     tagname = 'sum',
 
     optionsZero = {},
@@ -68,17 +68,15 @@ export const sumFour = <T extends object, U extends object, V extends object, W 
     optionsThree = {},
 
 }: {
-    tagname: string,
-    predicateOne: (t: TagData, inter: Internals<T & U & V & W>) => boolean,
-    predicateTwo: (t: TagData, inter: Internals<T & U & V & W>) => boolean,
+    tagname?: string,
 
-    optionsThree: object,
-    optionsTwo: object,
-    optionsOne: object,
-    optionsZero: object,
+    optionsThree?: object,
+    optionsTwo?: object,
+    optionsOne?: object,
+    optionsZero?: object,
 
-    setTagname: (options: object, newName: string) => void,
-}) => (registrar: Registrar<T & U & V & W>) => {
+    setTagname?: (options: object, newName: string) => void,
+} = {}) => (registrar: Registrar<T>) => {
     const tagnameZero = `${tagname}:${wrapId}:zero`
     const tagnameTwo = `${tagname}:${wrapId}:two`
 
@@ -104,7 +102,7 @@ export const sumFour = <T extends object, U extends object, V extends object, W 
 
     const sumFourFilter = (
         tag: TagData,
-        internals: Internals<T & U & V & W>,
+        internals: Internals<T>,
     ) => {
         return predicateTwo(tag, internals)
             ? internals.filters.getOrDefault(tagnameTwo)(tag, internals)

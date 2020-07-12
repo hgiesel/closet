@@ -24,7 +24,7 @@ const inTagShuffle = (sortIn: SortInStrategy) => <T extends {}>(
     }
 }
 
-const firstCategory = <T extends {}>(tag: TagData, _internals: Internals<T>) => tag.values[0]
+const firstCategory = <T extends {}>(tag: TagData, _internals: Internals<T>): string[] => tag.values[0]
 
 const shuffleAndStylize = <T extends {}>(
     stylizer: Stylizer,

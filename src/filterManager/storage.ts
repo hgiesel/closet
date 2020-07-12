@@ -1,6 +1,6 @@
 export interface StorageType<D> {
     has(k: string): boolean
-    get<T extends D>(k: string): T
+    get<T extends D>(k: string): T | undefined
     set<T extends D>(k: string, v: T): void
     delete(k: string): void
     clear(): void
@@ -27,9 +27,7 @@ export class Storage<D> {
     }
 
     get<T extends D>(name: string, defaultValue: T): T {
-        return this.has(name)
-            ? this.storage.get(name)
-            : defaultValue
+        return this.storage.get(name) ?? defaultValue
     }
 
     fold<T extends D>(name: string, f: (v: T) => T, mempty: T): T {
@@ -40,14 +38,10 @@ export class Storage<D> {
     }
 
     over<T extends D>(name: string, f: (v: T) => void, mempty: T): void {
-        if (!this.has(name)) {
-            f(mempty)
-            this.set(name, mempty)
-        }
+        const value = this.get(name, mempty)
+        this.set(name, value)
 
-        else {
-            f(this.get(name, mempty))
-        }
+        f(value)
     }
 
     delete(name: string): void {

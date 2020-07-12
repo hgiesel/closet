@@ -23,7 +23,7 @@ import {
 
 export interface ManagerInfo<F extends Filterable, T,I,R extends Readiable, X, D extends object, P extends object> {
     filters: FilterApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R>
-    options: Storage<D>
+    options: Storage<Partial<D>>
     registrar: RegistrarApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R, D>
 
     cache: Storage<unknown>

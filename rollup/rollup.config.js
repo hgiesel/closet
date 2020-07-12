@@ -21,16 +21,7 @@ export const stripOptions = {
 }
 
 export const typescriptOptions = {
-    // strict: true,
-
-    noImplicitAny: true,
-    noImplicitThis: true,
-    alwaysStrict: true,
-    strictBindCallApply: true,
-    strictNullChecks: true,
-    strictFunctionTypes: false,
-    strictPropertyInitialization: true,
-
+    strict: true,
     downlevelIteration: true,
     target: 'es5',
     lib: [

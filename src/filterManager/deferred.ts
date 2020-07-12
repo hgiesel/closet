@@ -1,4 +1,3 @@
-import type { Comparator } from './priorityQueue'
 import { PriorityQueue } from './priorityQueue'
 
 export type Deferred<T> = (entry: DeferredEntry<T>, internals: T) => void
@@ -21,7 +20,7 @@ const defaultDeferredOptions: DeferredOptions = {
 }
 
 // bigger number means higher priority, and higher priority means executed first
-const deferredComparator: Comparator = <T>(x: DeferredEntry<T>, y: DeferredEntry<T>): boolean => x.priority > y.priority
+const deferredComparator = <T>(x: DeferredEntry<T>, y: DeferredEntry<T>): boolean => x.priority > y.priority
 
 export class DeferredApi<T> {
     private readonly _deferred: Map<string, DeferredEntry<T>>

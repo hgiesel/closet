@@ -62,7 +62,7 @@ const wrapWithDeferredTemplate = <T extends object, D>(
         setTagnames: defaultTagnameSetter,
     },
 ): Recipe<T> => {
-    return wrap((t, internals) => {
+    return wrap((t, internals: Internals<T>) => {
         getDeferredApi(internals).registerIfNotExists(t.keyInternal, action)
     })(mainRecipe, wrapOptions)
 }

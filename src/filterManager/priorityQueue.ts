@@ -1,4 +1,4 @@
-export type Comparator = (a: unknown, b: unknown) => boolean
+export type Comparator<T> = (a: T, b: T) => boolean
 
 const top = 0
 const parent = (i: number): number => ((i + 1) >>> 1) - 1
@@ -7,9 +7,9 @@ const right = (i: number): number => (i + 1) << 1
 
 export class PriorityQueue<T> {
     private readonly _heap: T[]
-    private readonly _comparator: Comparator
+    private readonly _comparator: Comparator<T>
 
-    constructor(comparator: Comparator) {
+    constructor(comparator: Comparator<T>) {
         this._heap = []
         this._comparator = comparator
     }

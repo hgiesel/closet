@@ -7,6 +7,11 @@ export interface StorageType<D> {
 }
 
 export class Storage<D> {
+    /**
+     * @param D
+     * is useful for restriciting values available by options storage
+     * however is otherwise set to unknown (top type)
+     */
     private readonly storage: StorageType<D>
 
     constructor(v: StorageType<D>) {

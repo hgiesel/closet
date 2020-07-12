@@ -53,7 +53,7 @@ const fillDataOptions = (partial: Partial<DataOptions>): DataOptions => {
 
 }
 
-export class FilterManager<P extends object, Y extends P> extends MetaFilterManager<TagData, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P, Y> implements TagRenderer {
+export class FilterManager<P extends object> extends MetaFilterManager<TagData, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> implements TagRenderer {
     makeAccessor(template: TemplateInfo, iteration: IterationInfo): TagAccessor {
         const accessor = this.filterAccessor(template, iteration)
 

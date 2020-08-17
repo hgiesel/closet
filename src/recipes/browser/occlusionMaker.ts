@@ -16,7 +16,7 @@ const clickInsideShape = (draw: SVG, event: MouseEvent) => {
     const [downX, downY] = getOffsets(event)
     const resizeParameters = getResizeParameters(rect, downX, downY)
 
-    const action =  resizeParameters.includes(true)
+    const action = resizeParameters.includes(true)
         ? onMouseMoveResize(rect, ...resizeParameters)
         : onMouseMoveMove(rect, rect.x, rect.y, downX, downY)
 
@@ -65,7 +65,7 @@ const rectShapeToCmd = (rect: Rect): [string, number, number, number, number] =>
 }
 
 const rectCmdToText = ([labelText, x, y, width, height]: [string, number, number, number, number]): string => {
-    return `[[${labelText}::${x},${y},${width},${height}]]`
+    return `[[${labelText}::${x.toFixed()},${y.toFixed()},${width.toFixed()},${height.toFixed()}]]`
 }
 
 type OcclusionTextHandler = (occlusions: NodeListOf<SVGElement>, occlusionTexts: string[]) => void
@@ -117,8 +117,10 @@ export const occlusionMakerRecipe = (options: {
                 const maybeElement = document.querySelector(`img[src="${srcUrl}"]`) as HTMLImageElement
 
                 if (maybeElement) {
-                    const draw = SVG.wrapImage(maybeElement)
-                    wrapForOcclusion(draw, occlusionTextHandler)
+                    maybeElement.addEventListener('load', () => {
+                        const draw = SVG.wrapImage(maybeElement)
+                        wrapForOcclusion(draw, occlusionTextHandler)
+                    })
                 }
             }
         }, { priority: 100 /* before any other occlusion aftermath */ })

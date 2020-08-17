@@ -40,20 +40,35 @@ interface GettableSVG {
     getElements(): Element[]
 }
 
+// const scalingFactorX = event.target.width / event.target.naturalWidth
+// const scalingFactorY = event.target.height / event.target.naturalHeight
+
 export class SVG {
+    container: HTMLDivElement
+    image: HTMLImageElement
     svg: SVGElement
 
-    protected constructor(container: Element) {
-        this.svg = document.createElementNS(ns, 'svg')
-        this.svg.setAttributeNS(null, 'width', '100%')
-        this.svg.setAttributeNS(null, 'height', '100%')
+    scalingFactorX: number
+    scalingFactorY: number
 
-        container.appendChild(this.svg)
-        container.classList.add('occlusion-container')
+    protected constructor(container: HTMLDivElement, image: HTMLImageElement, svg: SVGElement) {
+        this.container = container
+        this.image = image
+        this.svg = svg
+
+        this.scalingFactorX = image.width / image.naturalWidth
+        this.scalingFactorY = image.height / image.naturalHeight
     }
 
-    static make(container: Element): SVG {
-        return new SVG(container)
+    static make(container: HTMLDivElement, image: HTMLImageElement): SVG {
+        const svg = document.createElementNS(ns, 'svg')
+        svg.setAttributeNS(null, 'width', '100%')
+        svg.setAttributeNS(null, 'height', '100%')
+
+        container.appendChild(svg)
+        container.classList.add('occlusion-container')
+
+        return new SVG(container, image, svg)
     }
 
     static wrapImage(image: HTMLImageElement): SVG {
@@ -62,9 +77,8 @@ export class SVG {
         image.parentNode && image.parentNode.replaceChild(container, image)
         container.appendChild(image)
 
-        return SVG.make(container)
+        return SVG.make(container, image)
     }
-
 
     get raw(): SVGElement {
         return this.svg
@@ -85,13 +99,26 @@ export class Rect implements GettableSVG {
     readonly rect: SVGRectElement
     readonly label: SVGTextElement
 
-    protected constructor(container: SVGElement, rect: SVGRectElement, label: SVGTextElement) {
+    readonly scalingFactorX: number
+    readonly scalingFactorY: number
+
+    protected constructor(
+        container: SVGElement,
+        rect: SVGRectElement,
+        label: SVGTextElement,
+        scalingFactorX: number,
+        scalingFactorY: number,
+    ) {
         this.container = container
         this.rect = rect
         this.label = label
+
+        this.scalingFactorX = scalingFactorX
+        this.scalingFactorY = scalingFactorY
+
     }
 
-    static make(): Rect {
+    static make(forSvg?: SVG): Rect {
         const container = document.createElementNS(ns, 'svg')
         const rect = document.createElementNS(ns, 'rect')
         const label = document.createElementNS(ns, 'text')
@@ -101,7 +128,10 @@ export class Rect implements GettableSVG {
         container.classList.add('occlusion-rect')
         container.tabIndex = -1
 
-        const theRect = new Rect(container, rect, label)
+        const scalingFactorX = forSvg ? forSvg.scalingFactorX : 1
+        const scalingFactorY = forSvg ? forSvg.scalingFactorY : 1
+
+        const theRect = new Rect(container, rect, label, scalingFactorX, scalingFactorY)
 
         theRect.x = 0
         theRect.y = 0
@@ -114,8 +144,17 @@ export class Rect implements GettableSVG {
         return theRect
     }
 
-    static wrap(rect: SVGRectElement): Rect {
-        return new Rect(rect.parentElement as unknown as SVGElement, rect, rect.nextSibling as SVGTextElement)
+    static wrap(rect: SVGRectElement, forSvg?: SVG): Rect {
+        const scalingFactorX = forSvg ? forSvg.scalingFactorX : 1
+        const scalingFactorY = forSvg ? forSvg.scalingFactorY : 1
+
+        return new Rect(
+            rect.parentElement as unknown as SVGElement,
+            rect,
+            rect.nextSibling as SVGTextElement,
+            scalingFactorX,
+            scalingFactorY,
+        )
     }
 
     remove(): void {
@@ -133,30 +172,34 @@ export class Rect implements GettableSVG {
     /////////////////// on both
 
     set width(i) {
-        const stringified = String(Math.max(10, i))
+        const stringified = String(Math.max(10, i) * this.scalingFactorX)
         this.rect.setAttributeNS(null, 'width', stringified)
         this.label.setAttributeNS(null, 'width', stringified)
     }
-    get width() { return Number(this.rect.getAttributeNS(null, 'width')) }
+    get width() { return Number(this.rect.getAttributeNS(null, 'width')) / this.scalingFactorX }
 
     set height(i) {
-        const stringified = String(Math.max(10, i))
+        const stringified = String(Math.max(10, i) * this.scalingFactorY)
         this.rect.setAttributeNS(null, 'height', stringified)
         this.label.setAttributeNS(null, 'height', stringified)
     }
-    get height() { return Number(this.rect.getAttributeNS(null, 'height')) }
+    get height() { return Number(this.rect.getAttributeNS(null, 'height')) / this.scalingFactorY }
 
     set x(i) {
-        this.rect.setAttributeNS(null, 'x', String(i))
-        this.label.setAttributeNS(null, 'x', String(i + this.width / 2))
+        const value = i * this.scalingFactorX
+
+        this.rect.setAttributeNS(null, 'x', String(value))
+        this.label.setAttributeNS(null, 'x', String(value + this.width / 2))
     }
-    get x() { return Number(this.rect.getAttributeNS(null, 'x')) }
+    get x() { return Number(this.rect.getAttributeNS(null, 'x')) / this.scalingFactorX }
 
     set y(i) {
-        this.rect.setAttributeNS(null, 'y', String(i))
-        this.label.setAttributeNS(null, 'y', String(i + this.height / 2))
+        const value = i * this.scalingFactorY
+
+        this.rect.setAttributeNS(null, 'y', String(value))
+        this.label.setAttributeNS(null, 'y', String(value + this.height / 2))
     }
-    get y() { return Number(this.rect.getAttributeNS(null, 'y')) }
+    get y() { return Number(this.rect.getAttributeNS(null, 'y')) / this.scalingFactorY }
 
     /////////////////// on rect
 

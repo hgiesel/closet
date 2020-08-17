@@ -11,15 +11,15 @@ const makeOcclusionLeftClick = (draw: SVG, event: MouseEvent) => {
 
     if (eventTarget.nodeName !== 'svg') {
         /* assumes its rect */
-        const rect = Rect.wrap(eventTarget)
+        const rect = Rect.wrap(eventTarget, draw)
 
         if (event.shiftKey) {
             rect.remove()
             return
         }
 
-        const downX = (event as any).layerX
-        const downY = (event as any).layerY
+        const downX = (event as any).pageX
+        const downY = (event as any).pageY
 
         const resizeParameters = getResizeParameters(rect, downX, downY)
 
@@ -43,13 +43,13 @@ const makeOcclusionLeftClick = (draw: SVG, event: MouseEvent) => {
     }
 
     else {
-        const downX = (event as any).layerX
-        const downY = (event as any).layerY
+        const downX = (event as any).pageX
+        const downY = (event as any).pageY
 
         let anchorX = downX
         let anchorY = downY
 
-        const currentRect = Rect.make()
+        const currentRect = Rect.make(draw)
         currentRect.labelText = 'rect1'
 
         draw.append(currentRect)
@@ -91,7 +91,7 @@ export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextH
 
         const shapeTexts = Array.from(draw.svg.childNodes)
             .map((v: any /* SVGElement */) => v.childNodes[0] as any)
-            .map(Rect.wrap)
+            .map(svgRect => Rect.wrap(svgRect, draw))
             .map(rectShapeToCmd)
             .map(rectCmdToText)
 

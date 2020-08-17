@@ -7,7 +7,7 @@ import { constant } from '../utils'
 import { SVG, Rect, RectProperty, RectProperties } from './svgClasses'
 import { getImages } from './utils'
 
-const renderRects = (entry: AftermathEntry<{}>, { template, cache }: AftermathInternals<{}>) => {
+const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache }: AftermathInternals<T>) => {
     const images = (template.textFragments as any).flatMap(getImages)
     const rects = cache.get<[number, number, number, number, RectProperties][]>(entry.keyword, [])
     const maybeElement = document.querySelector(`img[src="${images[0]}"]`) as HTMLImageElement
@@ -16,7 +16,7 @@ const renderRects = (entry: AftermathEntry<{}>, { template, cache }: AftermathIn
         const draw = SVG.wrapImage(maybeElement)
 
         for (const [x, y, width, height, options] of rects) {
-            const svgRect = Rect.make()
+            const svgRect = Rect.make(draw)
 
             svgRect.x = x
             svgRect.y = y

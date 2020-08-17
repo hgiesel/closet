@@ -49,8 +49,8 @@
     "@types/nearley": "^2.11.1",
     "eslint": "^6.6.0",
     "moo": "^0.5.1",
-    "nearley": "^2.19.4",
-    "typescript": "^3.9.6"
+    "nearley": "^2.19.5",
+    "typescript": "^3.9.7"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.1.0",

@@ -1,12 +1,10 @@
 import { appendStyleTag } from './utils'
-import { wrapImage } from './mysvg'
 
 export const browser = {
     appendStyleTag: appendStyleTag,
-    wrapImage: wrapImage,
 }
 
-import { occlusionMakerRecipe } from './mysvg'
+import { occlusionMakerRecipe } from './occlusionMaker'
 import { rectShowRecipe, rectHideRecipe, rectRevealRecipe } from './rect'
 
 export const browserRecipes = {

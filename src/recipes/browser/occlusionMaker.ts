@@ -69,15 +69,17 @@ const makeOcclusionLeftClick = (draw: SVG, event: MouseEvent) => {
     }
 }
 
-const rectShapeToCmd = (rect: Rect): [number, number, number, number] => {
-    return [rect.x, rect.y, rect.width, rect.height]
+const rectShapeToCmd = (rect: Rect): [string, number, number, number, number] => {
+    return [rect.labelText, rect.x, rect.y, rect.width, rect.height]
 }
 
-const rectCmdToText = ([x, y, width, height]: [number, number, number, number]): string => {
-    return `[[rect1::${x},${y},${width},${height}]]`
+const rectCmdToText = ([labelText, x, y, width, height]: [string, number, number, number, number]): string => {
+    return `[[${labelText}::${x},${y},${width},${height}]]`
 }
 
-export const wrapImage = (draw: SVG) => {
+type OcclusionTextHandler = (occlusions: NodeListOf<SVGElement>, occlusionTexts: string[]) => void
+
+export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextHandler) => {
     const occlusionUi = (event: MouseEvent) => {
         if (event.button === 0 /* left mouse button */) {
             makeOcclusionLeftClick(draw, event)
@@ -87,15 +89,13 @@ export const wrapImage = (draw: SVG) => {
     const occlusionContextMenu = (event: MouseEvent) => {
         event.preventDefault()
 
-        const shapeText = Array.from(draw.svg.childNodes)
+        const shapeTexts = Array.from(draw.svg.childNodes)
             .map((v: any /* SVGElement */) => v.childNodes[0] as any)
             .map(Rect.wrap)
             .map(rectShapeToCmd)
             .map(rectCmdToText)
-            .join('\n')
 
-        navigator.clipboard.writeText(shapeText)
-        ;(globalThis as any).codeCM.setValue((globalThis as any).codeCM.getValue().replace('[[makeOcclusions]]', shapeText))
+        occlusionTextHandler(draw.svg.childNodes as NodeListOf<SVGElement>, shapeTexts)
 
         draw.raw.removeEventListener('mousedown', occlusionUi)
         draw.raw.removeEventListener('contextmenu', occlusionContextMenu)
@@ -105,9 +105,16 @@ export const wrapImage = (draw: SVG) => {
     draw.raw.addEventListener('contextmenu', occlusionContextMenu)
 }
 
-export const occlusionMakerRecipe = ({
-    tagname = 'makeOcclusions',
-} = {}) => (registrar: Registrar<{}>) => {
+const defaultOcclusionTextHandler: OcclusionTextHandler = (_occs, texts) => navigator.clipboard.writeText(texts.join('\n'))
+
+export const occlusionMakerRecipe = (options: {
+    tagname?: string,
+    occlusionTextHandler?: OcclusionTextHandler,
+} = {})=> (registrar: Registrar<{}>) => {
+    const {
+        tagname = 'makeOcclusions',
+        occlusionTextHandler = defaultOcclusionTextHandler,
+    } = options
 
     const occlusionMakerFilter = (_tag: TagData, { template, aftermath }: Internals<{}>) => {
         const images = (template.textFragments as any).flatMap(getImages)
@@ -120,7 +127,7 @@ export const occlusionMakerRecipe = ({
 
                 if (maybeElement) {
                     const draw = SVG.wrapImage(maybeElement)
-                    wrapImage(draw)
+                    wrapForOcclusion(draw, occlusionTextHandler)
                 }
             }
         }, { priority: 100 /* before any other occlusion aftermath */ })

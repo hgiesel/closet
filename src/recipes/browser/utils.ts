@@ -21,10 +21,9 @@ export const getImages = (txt: string) => {
 }
 
 export const getOffsets = (event: MouseEvent): [number, number] => {
-    const boundingClientRect = (event.target as HTMLDivElement).getBoundingClientRect()
-
-    const downX = event.offsetX /* Webkit */ || event.clientX - boundingClientRect.left /* Firefox */
-    const downY = event.offsetY /* Webkit */ || event.clientY - boundingClientRect.top /* Firefox */
+    // layerX / layerY are deprecated, however offsetX/Y gives wrong values work on Firefox
+    const downX = (event as any).layerX || event.offsetX
+    const downY = (event as any).layerY || event.offsetY
 
     return [downX, downY]
 }

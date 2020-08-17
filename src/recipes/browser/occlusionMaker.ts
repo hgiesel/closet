@@ -16,24 +16,15 @@ const clickInsideShape = (draw: SVG, event: MouseEvent) => {
     const [downX, downY] = getOffsets(event)
     const resizeParameters = getResizeParameters(rect, downX, downY)
 
-    if (resizeParameters.includes(true)) {
-        const resizer = onMouseMoveResize(rect, ...resizeParameters)
+    const action =  resizeParameters.includes(true)
+        ? onMouseMoveResize(rect, ...resizeParameters)
+        : onMouseMoveMove(rect, rect.x, rect.y, downX, downY)
 
-        draw.raw.addEventListener('mousemove', resizer)
-        draw.raw.addEventListener('mouseup', (innerEvent: MouseEvent) => {
-            innerEvent.preventDefault()
-            draw.raw.removeEventListener('mousemove', resizer)
-        }, { once: true })
-    }
-    else {
-        const mover = onMouseMoveMove(rect, rect.x, rect.y, downX, downY)
-
-        draw.raw.addEventListener('mousemove', mover)
-        draw.raw.addEventListener('mouseup', () => {
-            draw.raw.removeEventListener('mousemove', mover)
-        }, { once: true })
-    }
-
+    draw.raw.addEventListener('mousemove', action)
+    draw.raw.addEventListener('mouseup', (innerEvent: MouseEvent) => {
+        innerEvent.preventDefault()
+        draw.raw.removeEventListener('mousemove', action)
+    }, { once: true })
 }
 
 const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
@@ -60,7 +51,7 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
 const makeOcclusionLeftClick = (draw: SVG, event: MouseEvent) => {
     event.preventDefault()
 
-    if ((event.target as any).nodeName !== 'svg') {
+    if ((event.target as Element).nodeName !== 'svg') {
         clickInsideShape(draw, event)
     }
 

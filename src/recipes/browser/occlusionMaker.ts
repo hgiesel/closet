@@ -4,68 +4,75 @@ import { SVG, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
 import { getImages } from './utils'
 
+const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
+    /* assumes its rect */
+    const rect = Rect.wrap(event.target as SVGRectElement)
+
+    if (event.shiftKey) {
+        rect.remove()
+        return
+    }
+
+    const downX = (event as any).pageX
+    const downY = (event as any).pageY
+
+    const resizeParameters = getResizeParameters(rect, downX, downY)
+
+    if (resizeParameters.includes(true)) {
+        const resizer = onMouseMoveResize(rect, ...resizeParameters)
+
+        draw.raw.addEventListener('mousemove', resizer)
+        draw.raw.addEventListener('mouseup', (innerEvent: MouseEvent) => {
+            innerEvent.preventDefault()
+            draw.raw.removeEventListener('mousemove', resizer)
+        }, { once: true })
+    }
+    else {
+        const mover = onMouseMoveMove(rect, rect.x, rect.y, downX, downY)
+
+        draw.raw.addEventListener('mousemove', mover)
+        draw.raw.addEventListener('mouseup', () => {
+            draw.raw.removeEventListener('mousemove', mover)
+        }, { once: true })
+    }
+
+}
+
+const clickInsideShape = (draw: SVG, event: MouseEvent) => {
+    const downX = (event as any).pageX
+    const downY = (event as any).pageY
+
+    let anchorX = downX
+    let anchorY = downY
+
+    const currentRect = Rect.make()
+    currentRect.labelText = 'rect1'
+
+    draw.append(currentRect)
+
+    currentRect.x = anchorX
+    currentRect.y = anchorY
+
+    const resizer = onMouseMoveResize(currentRect, true, true, true, true, downX, downY)
+
+    draw.raw.addEventListener('mousemove', resizer)
+    draw.raw.addEventListener('mouseup', () => {
+        draw.raw.removeEventListener('mousemove', resizer)
+
+        currentRect.rect.addEventListener('mousemove', adaptCursor)
+        currentRect.rect.addEventListener('dblclick', () => { console.log('dblclick') })
+    }, { once: true })
+}
+
 const makeOcclusionLeftClick = (draw: SVG, event: MouseEvent) => {
     event.preventDefault()
 
-    const eventTarget = event.target as any
-
-    if (eventTarget.nodeName !== 'svg') {
-        /* assumes its rect */
-        const rect = Rect.wrap(eventTarget, draw)
-
-        if (event.shiftKey) {
-            rect.remove()
-            return
-        }
-
-        const downX = (event as any).pageX
-        const downY = (event as any).pageY
-
-        const resizeParameters = getResizeParameters(rect, downX, downY)
-
-        if (resizeParameters.includes(true)) {
-            const resizer = onMouseMoveResize(rect, ...resizeParameters)
-
-            draw.raw.addEventListener('mousemove', resizer)
-            draw.raw.addEventListener('mouseup', (innerEvent: MouseEvent) => {
-                innerEvent.preventDefault()
-                draw.raw.removeEventListener('mousemove', resizer)
-            }, { once: true })
-        }
-        else {
-            const mover = onMouseMoveMove(rect, rect.x, rect.y, downX, downY)
-
-            draw.raw.addEventListener('mousemove', mover)
-            draw.raw.addEventListener('mouseup', () => {
-                draw.raw.removeEventListener('mousemove', mover)
-            }, { once: true })
-        }
+    if ((event.target as any).nodeName !== 'svg') {
+        clickOutsideShape(draw, event)
     }
 
     else {
-        const downX = (event as any).pageX
-        const downY = (event as any).pageY
-
-        let anchorX = downX
-        let anchorY = downY
-
-        const currentRect = Rect.make(draw)
-        currentRect.labelText = 'rect1'
-
-        draw.append(currentRect)
-
-        currentRect.x = anchorX
-        currentRect.y = anchorY
-
-        const resizer = onMouseMoveResize(currentRect, true, true, true, true, downX, downY)
-
-        draw.raw.addEventListener('mousemove', resizer)
-        draw.raw.addEventListener('mouseup', () => {
-            draw.raw.removeEventListener('mousemove', resizer)
-
-            currentRect.rect.addEventListener('mousemove', adaptCursor)
-            currentRect.rect.addEventListener('dblclick', () => { console.log('dblclick') })
-        }, { once: true })
+        clickInsideShape(draw, event)
     }
 }
 

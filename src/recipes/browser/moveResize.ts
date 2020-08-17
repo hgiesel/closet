@@ -1,8 +1,8 @@
 import { Rect } from './svgClasses'
 
 export const onMouseMoveResize = (currentShape: Rect, left: boolean, right: boolean, top: boolean, bottom: boolean, downX: number, downY: number) => (e: MouseEvent) => {
-    const moveX = (e as any).layerX
-    const moveY = (e as any).layerY
+    const moveX = (e as any).pageX
+    const moveY = (e as any).pageY
 
     if (left && moveX < downX) {
         currentShape.x = moveX
@@ -24,8 +24,8 @@ export const onMouseMoveResize = (currentShape: Rect, left: boolean, right: bool
 }
 
 export const onMouseMoveMove = (currentShape: Rect, startX: number, startY: number, downX: number, downY: number) => (e: MouseEvent): void => {
-    const moveX = (e as any).layerX
-    const moveY = (e as any).layerY
+    const moveX = (e as any).pageX
+    const moveY = (e as any).pageY
 
     const newX = startX + (moveX - downX)
     const newY = startY + (moveY - downY)
@@ -106,8 +106,8 @@ export const adaptCursor = (e: MouseEvent) => {
         rawElement.style.cursor = 'no-drop'
     }
     else {
-        const downX = (e as any).layerX
-        const downY = (e as any).layerY
+        const downX = (e as any).pageX
+        const downY = (e as any).pageY
 
         rawElement.style.cursor = getCursor(rect, downX, downY)
     }

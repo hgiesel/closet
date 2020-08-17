@@ -2,9 +2,9 @@ import type { Registrar, TagData, Internals } from '../types'
 
 import { SVG, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
-import { getImages } from './utils'
+import { getImages, getOffsets } from './utils'
 
-const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
+const clickInsideShape = (draw: SVG, event: MouseEvent) => {
     /* assumes its rect */
     const rect = Rect.wrap(event.target as SVGRectElement)
 
@@ -13,9 +13,7 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
         return
     }
 
-    const downX = (event as any).pageX
-    const downY = (event as any).pageY
-
+    const [downX, downY] = getOffsets(event)
     const resizeParameters = getResizeParameters(rect, downX, downY)
 
     if (resizeParameters.includes(true)) {
@@ -38,20 +36,15 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
 
 }
 
-const clickInsideShape = (draw: SVG, event: MouseEvent) => {
-    const downX = (event as any).pageX
-    const downY = (event as any).pageY
-
-    let anchorX = downX
-    let anchorY = downY
-
+const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
     const currentRect = Rect.make()
     currentRect.labelText = 'rect1'
 
-    draw.append(currentRect)
+    const [downX, downY] = getOffsets(event)
+    currentRect.x = downX
+    currentRect.y = downY
 
-    currentRect.x = anchorX
-    currentRect.y = anchorY
+    draw.append(currentRect)
 
     const resizer = onMouseMoveResize(currentRect, true, true, true, true, downX, downY)
 
@@ -68,11 +61,11 @@ const makeOcclusionLeftClick = (draw: SVG, event: MouseEvent) => {
     event.preventDefault()
 
     if ((event.target as any).nodeName !== 'svg') {
-        clickOutsideShape(draw, event)
+        clickInsideShape(draw, event)
     }
 
     else {
-        clickInsideShape(draw, event)
+        clickOutsideShape(draw, event)
     }
 }
 

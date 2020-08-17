@@ -1,8 +1,8 @@
 import { Rect } from './svgClasses'
+import { getOffsets } from './utils'
 
-export const onMouseMoveResize = (currentShape: Rect, left: boolean, right: boolean, top: boolean, bottom: boolean, downX: number, downY: number) => (e: MouseEvent) => {
-    const moveX = (e as any).pageX
-    const moveY = (e as any).pageY
+export const onMouseMoveResize = (currentShape: Rect, left: boolean, right: boolean, top: boolean, bottom: boolean, downX: number, downY: number) => (event: MouseEvent) => {
+    const [moveX, moveY] = getOffsets(event)
 
     if (left && moveX < downX) {
         currentShape.x = moveX
@@ -23,9 +23,8 @@ export const onMouseMoveResize = (currentShape: Rect, left: boolean, right: bool
     }
 }
 
-export const onMouseMoveMove = (currentShape: Rect, startX: number, startY: number, downX: number, downY: number) => (e: MouseEvent): void => {
-    const moveX = (e as any).pageX
-    const moveY = (e as any).pageY
+export const onMouseMoveMove = (currentShape: Rect, startX: number, startY: number, downX: number, downY: number) => (event: MouseEvent): void => {
+    const [moveX, moveY] = getOffsets(event)
 
     const newX = startX + (moveX - downX)
     const newY = startY + (moveY - downY)
@@ -98,26 +97,25 @@ const getCursor = perDirection<string>(
     () => 'move',
 )
 
-export const adaptCursor = (e: MouseEvent) => {
-    const rect = Rect.wrap(e.target as SVGRectElement)
+export const adaptCursor = (event: MouseEvent) => {
+    const rect = Rect.wrap(event.target as SVGRectElement)
     const rawElement = rect.rect
 
-    if (e.shiftKey) {
+    if (event.shiftKey) {
         rawElement.style.cursor = 'no-drop'
     }
     else {
-        const downX = (e as any).pageX
-        const downY = (e as any).pageY
+        const [downX, downY] = getOffsets(event)
 
         rawElement.style.cursor = getCursor(rect, downX, downY)
     }
 }
 
-export const adaptCursorKeydown = (e: KeyboardEvent) => {
-    const rect = Rect.wrap(e.target as SVGRectElement)
+export const adaptCursorKeydown = (event: KeyboardEvent) => {
+    const rect = Rect.wrap(event.target as SVGRectElement)
     const rawElement = rect.rect
 
-    if (e.shiftKey) {
+    if (event.shiftKey) {
         rawElement.style.cursor = 'no-drop'
     }
 }

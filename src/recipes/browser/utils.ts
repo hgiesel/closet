@@ -19,3 +19,12 @@ export const getImages = (txt: string) => {
 
     return result
 }
+
+export const getOffsets = (event: MouseEvent): [number, number] => {
+    const boundingClientRect = (event.target as HTMLDivElement).getBoundingClientRect()
+
+    const downX = event.offsetX /* Webkit */ || event.clientX - boundingClientRect.left /* Firefox */
+    const downY = event.offsetY /* Webkit */ || event.clientY - boundingClientRect.top /* Firefox */
+
+    return [downX, downY]
+}

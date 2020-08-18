@@ -1,0 +1,4 @@
+name: Create occlusions
+code: |
+  <img src="/assets/images/wikipedia.png" />
+  <!-- [[makeOcclusions]] -->

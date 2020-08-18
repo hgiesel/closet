@@ -7,6 +7,8 @@ import { constant } from '../utils'
 import { SVG, Rect, RectProperty, RectProperties } from './svgClasses'
 import { getImages } from './utils'
 
+export const rectKeyword = 'occlusionRenderRect'
+
 const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache }: AftermathInternals<T>) => {
     const images = (template.textFragments as any).flatMap(getImages)
     const rects = cache.get<[number, number, number, number, RectProperties][]>(entry.keyword, [])
@@ -34,22 +36,45 @@ const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache }
 }
 
 const doNothing = constant({ ready: true })
-const keyword = 'occlusionRenderRect'
 
-const makeContextRects = <T extends {}>({ values }: TagData, { cache, aftermath }: Internals<T>) => {
+const makeContextRects = <T extends {}>({ fullKey, values }: TagData, { cache, aftermath }: Internals<T>) => {
     const [x = 0, y = 0, width = 50, height = width] = values
 
-    cache.over(keyword, (rectList: [number, number, number, number, object][]) => rectList.push([x, y, width, height, {}]), [])
-    aftermath.registerIfNotExists(keyword, renderRects as any)
+    cache.over(
+        rectKeyword,
+        (rectList: [string, number, number, number, number, object][]) => rectList.push([
+            fullKey,
+            x,
+            y,
+            width,
+            height,
+            {}
+        ]),
+        [],
+    )
+
+    aftermath.registerIfNotExists(rectKeyword, renderRects as any)
 
     return { ready: true }
 }
 
-const makeActiveRects = <T extends {}>({ values }: TagData, { cache, aftermath }: Internals<T>) => {
+const makeActiveRects = <T extends {}>({ fullKey, values }: TagData, { cache, aftermath }: Internals<T>) => {
     const [x = 0, y = 0, width = 50, height = width] = values
 
-    cache.over(keyword, (rectList: [number, number, number, number, object][]) => rectList.push([x, y, width, height, { fill: 'salmon', stroke: 'yellow' }]), [])
-    aftermath.registerIfNotExists(keyword, renderRects as any)
+    cache.over(
+        rectKeyword,
+        (rectList: [string, number, number, number, number, object][]) => rectList.push([
+            fullKey,
+            x,
+            y,
+            width,
+            height,
+            { fill: 'salmon', stroke: 'yellow' }
+        ]),
+        [],
+    )
+
+    aftermath.registerIfNotExists(rectKeyword, renderRects as any)
 
     return { ready: true }
 }

@@ -5,6 +5,7 @@ import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } 
 import { appendStyleTag, getImages, getOffsets } from './utils'
 
 import { setupMenu, enableAsMenuTrigger, menuCss } from './menu'
+import { rectKeyword } from './rect'
 
 const clickInsideShape = (draw: SVG, event: MouseEvent) => {
     /* assumes its rect */
@@ -29,40 +30,45 @@ const clickInsideShape = (draw: SVG, event: MouseEvent) => {
     }, { once: true })
 }
 
-const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
-    const currentRect = Rect.make()
-    currentRect.labelText = 'rect1'
+const makeInteractiveShape = (draw: SVG, label: string, downX: number, downY: number, width: number, height: number, options: any) => {
+    const newRect = Rect.make()
+    newRect.labelText = label
+    newRect.x = downX
+    newRect.y = downY
+    newRect.width = width
+    newRect.height = height
 
-    const [downX, downY] = getOffsets(event)
-    currentRect.x = downX
-    currentRect.y = downY
+    draw.append(newRect)
 
-    draw.append(currentRect)
-
-    const resizer = onMouseMoveResize(currentRect, true, true, true, true, downX, downY)
+    const resizer = onMouseMoveResize(newRect, true, true, true, true, downX, downY)
 
     draw.raw.addEventListener('mousemove', resizer)
     draw.raw.addEventListener('mouseup', () => {
         draw.raw.removeEventListener('mousemove', resizer)
 
-        currentRect.rect.addEventListener('mousemove', adaptCursor)
+        newRect.rect.addEventListener('mousemove', adaptCursor)
 
         const shapeMenu = setupMenu('occlusion-shape-menu', [{
             label: 'Change Label',
             itemId: 'change-label',
             clickEvent: () => {
-                const newLabel = prompt('Specify the new label', currentRect.labelText)
+                const newLabel = prompt('Specify the new label', newRect.labelText)
                 if (typeof newLabel === 'string') {
-                    currentRect.labelText = newLabel
+                    newRect.labelText = newLabel
                 }
             },
         }, {
             label: 'Close Menu',
             itemId: 'close-occlusion-menu',
         }])
-        enableAsMenuTrigger(shapeMenu, currentRect.rect)
+        enableAsMenuTrigger(shapeMenu, newRect.rect)
 
     }, { once: true })
+}
+
+const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
+    const [downX, downY] = getOffsets(event)
+    makeInteractiveShape(draw, 'rect1', downX, downY, 0, 0, {})
 }
 
 const occlusionLeftClick = (draw: SVG, event: MouseEvent) => {
@@ -128,18 +134,25 @@ const defaultOcclusionTextHandler: OcclusionTextHandler = (_occs, texts) => navi
 export const occlusionMakerRecipe = (options: {
     tagname?: string,
     occlusionTextHandler?: OcclusionTextHandler,
+    shapeKeywords?: string[]
 } = {})=> (registrar: Registrar<{}>) => {
     const {
         tagname = 'makeOcclusions',
         occlusionTextHandler = defaultOcclusionTextHandler,
+        shapeKeywords = [rectKeyword],
     } = options
 
-    const occlusionMakerFilter = (_tag: TagData, { template, aftermath }: Internals<{}>) => {
+    const occlusionMakerFilter = (_tag: TagData, { template, cache, aftermath }: Internals<{}>) => {
         const images = (template.textFragments as any).flatMap(getImages)
 
         aftermath.registerIfNotExists('makeOcclusion', () => {
-            aftermath.block('occlusionRenderRect')
             appendStyleTag(menuCss)
+
+            const existingShapes: any[] = []
+            for (const kw of shapeKeywords) {
+                aftermath.block(kw)
+                existingShapes.concat(cache.get(kw, []))
+            }
 
             for (const srcUrl of images) {
                 const maybeElement = document.querySelector(`img[src="${srcUrl}"]`) as HTMLImageElement

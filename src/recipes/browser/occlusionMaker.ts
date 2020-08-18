@@ -133,8 +133,10 @@ export const occlusionMakerRecipe = (options: {
     occlusionTextHandler?: OcclusionTextHandler,
     shapeKeywords?: string[]
 } = {})=> (registrar: Registrar<{}>) => {
+    const keyword = 'makeOcclusions'
+
     const {
-        tagname = 'makeOcclusions',
+        tagname = keyword,
         occlusionTextHandler = defaultOcclusionTextHandler,
         shapeKeywords = [rectKeyword],
     } = options
@@ -142,7 +144,7 @@ export const occlusionMakerRecipe = (options: {
     const occlusionMakerFilter = (_tag: TagData, { template, cache, aftermath }: Internals<{}>) => {
         const images = (template.textFragments as any).flatMap(getImages)
 
-        aftermath.registerIfNotExists('makeOcclusion', () => {
+        aftermath.registerIfNotExists(keyword, () => {
             appendStyleTag(menuCss)
 
             const existingShapes: any[] = []
@@ -155,20 +157,22 @@ export const occlusionMakerRecipe = (options: {
                 aftermath.block(kw)
             }
 
+            const callback = (event: Event) => {
+                const draw = SVG.wrapImage(event.target as HTMLImageElement)
+
+                for (const [_active, labelTxt, x, y, width, height] of existingShapes) {
+                    const newRect = Rect.make(draw)
+                    newRect.labelText = labelTxt
+                    newRect.pos = [x, y, width, height]
+
+                    makeInteractive(draw, newRect)
+                }
+
+                wrapForOcclusion(draw, occlusionTextHandler)
+            }
+
             for (const srcUrl of images) {
-                imageLoadCallback(`img[src="${srcUrl}"]`, (event) => {
-                    const draw = SVG.wrapImage(event.target as HTMLImageElement)
-
-                    for (const [_active, labelTxt, x, y, width, height] of existingShapes) {
-                        const newRect = Rect.make(draw)
-                        newRect.labelText = labelTxt
-                        newRect.pos = [x, y, width, height]
-
-                        makeInteractive(draw, newRect)
-                    }
-
-                    wrapForOcclusion(draw, occlusionTextHandler)
-                })
+                imageLoadCallback(`img[src="${srcUrl}"]`, callback)
             }
         }, { priority: 100 /* before any other occlusion aftermath */ })
 

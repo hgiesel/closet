@@ -115,7 +115,6 @@ export class Rect implements GettableSVG {
 
         this.scalingFactorX = scalingFactorX
         this.scalingFactorY = scalingFactorY
-
     }
 
     static make(forSvg?: SVG): Rect {
@@ -186,18 +185,14 @@ export class Rect implements GettableSVG {
     get height() { return Number(this.rect.getAttributeNS(null, 'height')) / this.scalingFactorY }
 
     set x(i) {
-        const value = i * this.scalingFactorX
-
-        this.rect.setAttributeNS(null, 'x', String(value))
-        this.label.setAttributeNS(null, 'x', String(value + this.width / 2))
+        this.rect.setAttributeNS(null, 'x', String(i * this.scalingFactorX))
+        this.label.setAttributeNS(null, 'x', String((i + this.width / 2) * this.scalingFactorY))
     }
     get x() { return Number(this.rect.getAttributeNS(null, 'x')) / this.scalingFactorX }
 
     set y(i) {
-        const value = i * this.scalingFactorY
-
-        this.rect.setAttributeNS(null, 'y', String(value))
-        this.label.setAttributeNS(null, 'y', String(value + this.height / 2))
+        this.rect.setAttributeNS(null, 'y', String(i * this.scalingFactorY))
+        this.label.setAttributeNS(null, 'y', String((i + this.height / 2) * this.scalingFactorY))
     }
     get y() { return Number(this.rect.getAttributeNS(null, 'y')) / this.scalingFactorY }
 

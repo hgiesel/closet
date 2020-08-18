@@ -25,7 +25,7 @@ def setup_script():
     from pathlib import Path
     from os.path import dirname, realpath
 
-    filepath = Path(f'{dirname(realpath(__file__))}', 'web', f'{file_name}.js')
+    filepath = Path(f'{dirname(realpath(__file__))}', '..', 'web', f'{file_name}.js')
 
     with open(filepath, mode='r', encoding='utf-8') as file:
         script = file.read().strip()

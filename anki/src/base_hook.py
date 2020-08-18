@@ -1,3 +1,6 @@
+from pathlib import Path
+from os.path import dirname, realpath
+
 from aqt import mw
 from anki.hooks import addHook
 from aqt.utils import showInfo
@@ -22,10 +25,7 @@ def setup_script():
         showInfo('Closetjs requires Asset Manager to be installed.')
         return
 
-    from pathlib import Path
-    from os.path import dirname, realpath
-
-    filepath = Path(f'{dirname(realpath(__file__))}', '..', 'web', f'{file_name}.js')
+    filepath = Path(dirname(realpath(__file__)), '..', 'web', f'{file_name}.js')
 
     with open(filepath, mode='r', encoding='utf-8') as file:
         script = file.read().strip()

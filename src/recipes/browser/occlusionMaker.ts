@@ -59,8 +59,7 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
 
     const newRect = Rect.make()
     newRect.labelText = 'rect1'
-    newRect.x = downX
-    newRect.y = downY
+    newRect.pos = [downX, downY, 0, 0]
 
     makeInteractive(draw, newRect)
 
@@ -166,11 +165,7 @@ export const occlusionMakerRecipe = (options: {
                         for (const [_active, labelTxt, x, y, width, height] of existingShapes) {
                             const newRect = Rect.make(draw)
                             newRect.labelText = labelTxt
-
-                            newRect.x = x
-                            newRect.y = y
-                            newRect.width = width
-                            newRect.height = height
+                            newRect.pos = [x, y, width, height]
 
                             makeInteractive(draw, newRect)
                         }

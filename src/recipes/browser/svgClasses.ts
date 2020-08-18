@@ -170,31 +170,41 @@ export class Rect implements GettableSVG {
 
     /////////////////// on both
 
-    set width(i) {
+    set pos([x, y, width, height]: [number, number, number, number]) {
+        this.width = width
+        this.height = height
+
+        this.x = x
+        this.y = y
+    }
+
+    set width(i: number) {
         const stringified = String(Math.max(10, i) * this.scalingFactorX)
         this.rect.setAttributeNS(null, 'width', stringified)
         this.label.setAttributeNS(null, 'width', stringified)
     }
-    get width() { return Number(this.rect.getAttributeNS(null, 'width')) / this.scalingFactorX }
+    get width(): number { return Number(this.rect.getAttributeNS(null, 'width')) / this.scalingFactorX }
 
-    set height(i) {
+    set height(i: number) {
         const stringified = String(Math.max(10, i) * this.scalingFactorY)
         this.rect.setAttributeNS(null, 'height', stringified)
         this.label.setAttributeNS(null, 'height', stringified)
     }
-    get height() { return Number(this.rect.getAttributeNS(null, 'height')) / this.scalingFactorY }
+    get height(): number { return Number(this.rect.getAttributeNS(null, 'height')) / this.scalingFactorY }
 
-    set x(i) {
-        this.rect.setAttributeNS(null, 'x', String(i * this.scalingFactorX))
-        this.label.setAttributeNS(null, 'x', String((i + this.width / 2) * this.scalingFactorY))
+    set x(i: number) {
+        const scaledX = i * this.scalingFactorX
+        this.rect.setAttributeNS(null, 'x', String(scaledX))
+        this.label.setAttributeNS(null, 'x', String((scaledX + this.width / 2 * this.scalingFactorX)))
     }
-    get x() { return Number(this.rect.getAttributeNS(null, 'x')) / this.scalingFactorX }
+    get x(): number { return Number(this.rect.getAttributeNS(null, 'x')) / this.scalingFactorX }
 
-    set y(i) {
-        this.rect.setAttributeNS(null, 'y', String(i * this.scalingFactorY))
-        this.label.setAttributeNS(null, 'y', String((i + this.height / 2) * this.scalingFactorY))
+    set y(i: number) {
+        const scaledY = i * this.scalingFactorY
+        this.rect.setAttributeNS(null, 'y', String(scaledY))
+        this.label.setAttributeNS(null, 'y', String((scaledY + this.height / 2 * this.scalingFactorY)))
     }
-    get y() { return Number(this.rect.getAttributeNS(null, 'y')) / this.scalingFactorY }
+    get y(): number { return Number(this.rect.getAttributeNS(null, 'y')) / this.scalingFactorY }
 
     /////////////////// on rect
 

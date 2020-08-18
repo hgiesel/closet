@@ -32,6 +32,12 @@ export const imageLoadCallback = (query: string, callback: (event: Event) => voi
     const maybeElement = document.querySelector(query) as HTMLImageElement
 
     if (maybeElement) {
-        maybeElement.addEventListener('load', callback)
+        if (maybeElement.complete) {
+            callback({ target: maybeElement } as any)
+        }
+
+        else {
+            maybeElement.addEventListener('load', callback)
+        }
     }
 }

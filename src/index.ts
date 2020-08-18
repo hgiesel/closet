@@ -73,7 +73,6 @@ export class FilterManager<P extends object> extends MetaFilterManager<TagData, 
     }
 
     finishRun(template: TemplateInfo, result: ResultInfo): void {
-        // this.aftermath.register('the:final', f, opt)
         this.executeAftermath(template, result)
         this.reset()
     }

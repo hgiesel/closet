@@ -62,7 +62,7 @@ export const sequencer = <V, T extends {}>(
         cache.set(applyKey, true)
         cache.over(waitingSetKey, (set: Set<string>) => set.delete(unitId), new Set())
     }, {
-        priority: 15,
+        priority: 65 /* is higher than ordering 35 */,
     })
 
     // needs to be executed once per fullKey

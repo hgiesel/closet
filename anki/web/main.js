@@ -4,9 +4,7 @@ function userLogic() {
 $$userCode
 }
 
-onShownHook.push((a, b) => {
-    console.log('test', a, b)
-
+onShownHook.push(() => {
     for (const [elements, memoryMap, filterManager] of userLogic()) {
         Closet.BrowserTemplate
             .makeFromNodes(elements)

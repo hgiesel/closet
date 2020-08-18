@@ -24,7 +24,7 @@ const production = !process.env.ROLLUP_WATCH
 export default {
     input: 'index.ts',
     output: {
-        file: 'anki/src/web/closet.js',
+        file: 'anki/web/closet.js',
         format: 'iife', // immediately-invoked function expression — suitable for <script> tags
         name: 'Closet',
         sourcemap: false,

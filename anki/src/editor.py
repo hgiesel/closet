@@ -1,11 +1,26 @@
 from pathlib import Path
 from os.path import dirname, realpath
 
-from aqt.gui_hooks import editor_did_init_buttons
+from aqt import mw
+from aqt.editor import Editor
 
+from aqt.gui_hooks import (
+    webview_will_set_content,
+    editor_did_init_buttons,
+)
+
+addon_package = mw.addonManager.addonFromModule(__name__)
+mw.addonManager.setWebExports(__name__, r"web/.*(css|js)")
+
+def include_closet_code(webcontent, context):
+    if not isinstance(context, Editor):
+        return
+
+    webcontent.js.append(f'/_addons/{addon_package}/web/closet.js')
+    webcontent.js.append(f'/_addons/{addon_package}/web/editor.js')
 
 def put_editor_in_occlusion_mode(editor):
-    editor.web.eval('console.log("hi there")')
+    editor.web.eval('EditorCloset.occlusionMode()')
 
 def add_occlusion_button(buttons, editor):
     file_path = dirname(realpath(__file__))
@@ -22,4 +37,5 @@ def add_occlusion_button(buttons, editor):
     buttons.append(occlusion_button)
 
 def init_editor():
+    webview_will_set_content.append(include_closet_code)
     editor_did_init_buttons.append(add_occlusion_button)

@@ -14,13 +14,13 @@ else
   declare addon_id='anki_closet'
 fi
 
+cd "$DIR"
+
+npm run build-anki
+
 cd "$DIR/anki"
 
-if [[ -f "$DIR/$addon_id.ankiaddon" ]]; then
-  rm  "$DIR/$addon_id.ankiaddon"
-fi
-
-zip -r "$DIR/$addon_id.ankiaddon" \
+zip -r "$DIR/build/$addon_id.ankiaddon" \
   ""*".py" \
   "manifest.json" \
   "src/"*".py" \

@@ -2,7 +2,9 @@ import type { Registrar, TagData, Internals } from '../types'
 
 import { SVG, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
-import { getImages, getOffsets } from './utils'
+import { appendStyleTag, getImages, getOffsets } from './utils'
+
+import { setupMenu, enableAsMenuTrigger, menuCss } from './menu'
 
 const clickInsideShape = (draw: SVG, event: MouseEvent) => {
     /* assumes its rect */
@@ -71,13 +73,15 @@ const rectCmdToText = ([labelText, x, y, width, height]: [string, number, number
 type OcclusionTextHandler = (occlusions: NodeListOf<SVGElement>, occlusionTexts: string[]) => void
 
 export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextHandler) => {
-    const occlusionUi = (event: MouseEvent) => {
+    const occlusionClick = (event: MouseEvent) => {
         if (event.button === 0 /* left mouse button */) {
             makeOcclusionLeftClick(draw, event)
         }
     }
 
-    const occlusionContextMenu = (event: MouseEvent) => {
+    draw.raw.addEventListener('mousedown', occlusionClick)
+
+    const finishEvent = (event: MouseEvent) => {
         event.preventDefault()
 
         const shapeTexts = Array.from(draw.svg.childNodes)
@@ -88,15 +92,45 @@ export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextH
 
         occlusionTextHandler(draw.svg.childNodes as NodeListOf<SVGElement>, shapeTexts)
 
-        draw.raw.removeEventListener('mousedown', occlusionUi)
-        draw.raw.removeEventListener('contextmenu', occlusionContextMenu)
+        draw.raw.removeEventListener('mousedown', occlusionClick)
     }
 
-    draw.raw.addEventListener('mousedown', occlusionUi)
-    draw.raw.addEventListener('contextmenu', occlusionContextMenu)
+    const occlusionMenu = setupMenu('occlusion-menu', [{
+        label: 'Finish',
+        itemId: 'occlusion-finish',
+        clickEvent: finishEvent,
+    }, {
+        label: 'Close Menu',
+        itemId: 'close-occlusion-menu',
+    }])
+
+    enableAsMenuTrigger(occlusionMenu, draw.raw)
 }
 
 const defaultOcclusionTextHandler: OcclusionTextHandler = (_occs, texts) => navigator.clipboard.writeText(texts.join('\n'))
+
+// const setupOcclusionMakerMenus = () => {
+//     const occlusionMenu = constructMenu('occlusion-menu', [{
+//         label: 'Finish',
+//         itemId: 'occlusion-finish',
+//     }])
+
+//     const occlusionItemMenu = constructMenu('occlusion-item-menu', [{
+//         label: 'Change Label',
+//         itemId: 'occlusion-change-label',
+//     }])
+
+//     document.body.insertAdjacentElement('beforeend', occlusionMenu)
+//     document.body.insertAdjacentElement('beforeend', occlusionItemMenu)
+
+//     initializeMenu(occlusionMenu)
+//     initializeMenu(occlusionItemMenu)
+
+//     return [
+//         occlusionMenu,
+//         occlusionItemMenu,
+//     ]
+// }
 
 export const occlusionMakerRecipe = (options: {
     tagname?: string,
@@ -112,6 +146,8 @@ export const occlusionMakerRecipe = (options: {
 
         aftermath.registerIfNotExists('makeOcclusion', () => {
             aftermath.block('occlusionRenderRect')
+
+            appendStyleTag(menuCss)
 
             for (const srcUrl of images) {
                 const maybeElement = document.querySelector(`img[src="${srcUrl}"]`) as HTMLImageElement

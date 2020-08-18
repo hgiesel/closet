@@ -1,4 +1,4 @@
-name: First occlusion example
+name: Bones occlusion example
 code: |
   <img src="/assets/images/cranial-bones.png" />
   <!-- [[recth1::326,78,587,144]]

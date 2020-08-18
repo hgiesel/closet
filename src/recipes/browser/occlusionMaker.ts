@@ -2,7 +2,7 @@ import type { Registrar, TagData, Internals } from '../types'
 
 import { SVG, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
-import { appendStyleTag, getImages, getOffsets } from './utils'
+import { appendStyleTag, getImages, getOffsets, imageLoadCallback } from './utils'
 
 import { setupMenu, enableAsMenuTrigger, menuCss } from './menu'
 import { rectKeyword } from './rect'
@@ -156,23 +156,19 @@ export const occlusionMakerRecipe = (options: {
             }
 
             for (const srcUrl of images) {
-                const maybeElement = document.querySelector(`img[src="${srcUrl}"]`) as HTMLImageElement
+                imageLoadCallback(`img[src="${srcUrl}"]`, (event) => {
+                    const draw = SVG.wrapImage(event.target as HTMLImageElement)
 
-                if (maybeElement) {
-                    maybeElement.addEventListener('load', () => {
-                        const draw = SVG.wrapImage(maybeElement)
+                    for (const [_active, labelTxt, x, y, width, height] of existingShapes) {
+                        const newRect = Rect.make(draw)
+                        newRect.labelText = labelTxt
+                        newRect.pos = [x, y, width, height]
 
-                        for (const [_active, labelTxt, x, y, width, height] of existingShapes) {
-                            const newRect = Rect.make(draw)
-                            newRect.labelText = labelTxt
-                            newRect.pos = [x, y, width, height]
+                        makeInteractive(draw, newRect)
+                    }
 
-                            makeInteractive(draw, newRect)
-                        }
-
-                        wrapForOcclusion(draw, occlusionTextHandler)
-                    })
-                }
+                    wrapForOcclusion(draw, occlusionTextHandler)
+                })
             }
         }, { priority: 100 /* before any other occlusion aftermath */ })
 

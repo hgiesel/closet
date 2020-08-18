@@ -40,9 +40,6 @@ interface GettableSVG {
     getElements(): Element[]
 }
 
-// const scalingFactorX = event.target.width / event.target.naturalWidth
-// const scalingFactorY = event.target.height / event.target.naturalHeight
-
 export class SVG {
     container: HTMLDivElement
     image: HTMLImageElement

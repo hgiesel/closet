@@ -27,3 +27,11 @@ export const getOffsets = (event: MouseEvent): [number, number] => {
 
     return [downX, downY]
 }
+
+export const imageLoadCallback = (query: string, callback: (event: Event) => void) => {
+    const maybeElement = document.querySelector(query) as HTMLImageElement
+
+    if (maybeElement) {
+        maybeElement.addEventListener('load', callback)
+    }
+}

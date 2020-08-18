@@ -4,17 +4,16 @@ import type { FlashcardTemplate, FlashcardPreset } from '../flashcardTemplate'
 import { makeFlashcardTemplate, generateFlashcardRecipes } from '../flashcardTemplate'
 
 import { SVG, Rect, RectProperty, RectProperties } from './svgClasses'
-import { getImages } from './utils'
+import { getImages, imageLoadCallback } from './utils'
 
 export const rectKeyword = 'occlusionRenderRect'
 
 const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache }: AftermathInternals<T>) => {
     const images = (template.textFragments as any).flatMap(getImages)
     const rects = cache.get<[boolean, string, number, number, number, number, RectProperties][]>(entry.keyword, [])
-    const maybeElement = document.querySelector(`img[src="${images[0]}"]`) as HTMLImageElement
 
-    if (maybeElement) {
-        const draw = SVG.wrapImage(maybeElement)
+    imageLoadCallback(`img[src="${images[0]}"]`, (event) => {
+        const draw = SVG.wrapImage(event.target as HTMLImageElement)
 
         for (const [active,, x, y, width, height, options] of rects) {
             if (!active) {
@@ -22,7 +21,6 @@ const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache }
             }
 
             const svgRect = Rect.make(draw)
-
             svgRect.x = x
             svgRect.y = y
             svgRect.width = width
@@ -35,7 +33,7 @@ const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache }
 
             draw.append(svgRect)
         }
-    }
+    })
 }
 
 const inactiveRect = <T extends {}>({ fullKey, values }: TagData, { cache }: Internals<T>) => {
@@ -46,11 +44,11 @@ const inactiveRect = <T extends {}>({ fullKey, values }: TagData, { cache }: Int
         (rectList: [boolean, string, number, number, number, number, object][]) => rectList.push([
             false,
             fullKey,
-            x,
-            y,
-            width,
-            height,
-            {}
+            Number(x),
+            Number(y),
+            Number(width),
+            Number(height),
+            {},
         ]),
         [],
     )
@@ -66,11 +64,11 @@ const makeContextRects = <T extends {}>({ fullKey, values }: TagData, { cache, a
         (rectList: [boolean, string, number, number, number, number, object][]) => rectList.push([
             true,
             fullKey,
-            x,
-            y,
-            width,
-            height,
-            {}
+            Number(x),
+            Number(y),
+            Number(width),
+            Number(height),
+            {},
         ]),
         [],
     )
@@ -88,11 +86,11 @@ const makeActiveRects = <T extends {}>({ fullKey, values }: TagData, { cache, af
         (rectList: [boolean, string, number, number, number, number, object][]) => rectList.push([
             true,
             fullKey,
-            x,
-            y,
-            width,
-            height,
-            { fill: 'salmon', stroke: 'yellow' }
+            Number(x),
+            Number(y),
+            Number(width),
+            Number(height),
+            { fill: 'salmon', stroke: 'yellow' },
         ]),
         [],
     )

@@ -46,11 +46,26 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
         draw.raw.removeEventListener('mousemove', resizer)
 
         currentRect.rect.addEventListener('mousemove', adaptCursor)
-        currentRect.rect.addEventListener('dblclick', () => { console.log('dblclick') })
+
+        const shapeMenu = setupMenu('occlusion-shape-menu', [{
+            label: 'Change Label',
+            itemId: 'change-label',
+            clickEvent: () => {
+                const newLabel = prompt('Specify the new label', currentRect.labelText)
+                if (typeof newLabel === 'string') {
+                    currentRect.labelText = newLabel
+                }
+            },
+        }, {
+            label: 'Close Menu',
+            itemId: 'close-occlusion-menu',
+        }])
+        enableAsMenuTrigger(shapeMenu, currentRect.rect)
+
     }, { once: true })
 }
 
-const makeOcclusionLeftClick = (draw: SVG, event: MouseEvent) => {
+const occlusionLeftClick = (draw: SVG, event: MouseEvent) => {
     event.preventDefault()
 
     if ((event.target as Element).nodeName !== 'svg') {
@@ -73,9 +88,10 @@ const rectCmdToText = ([labelText, x, y, width, height]: [string, number, number
 type OcclusionTextHandler = (occlusions: NodeListOf<SVGElement>, occlusionTexts: string[]) => void
 
 export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextHandler) => {
+
     const occlusionClick = (event: MouseEvent) => {
         if (event.button === 0 /* left mouse button */) {
-            makeOcclusionLeftClick(draw, event)
+            occlusionLeftClick(draw, event)
         }
     }
 
@@ -109,29 +125,6 @@ export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextH
 
 const defaultOcclusionTextHandler: OcclusionTextHandler = (_occs, texts) => navigator.clipboard.writeText(texts.join('\n'))
 
-// const setupOcclusionMakerMenus = () => {
-//     const occlusionMenu = constructMenu('occlusion-menu', [{
-//         label: 'Finish',
-//         itemId: 'occlusion-finish',
-//     }])
-
-//     const occlusionItemMenu = constructMenu('occlusion-item-menu', [{
-//         label: 'Change Label',
-//         itemId: 'occlusion-change-label',
-//     }])
-
-//     document.body.insertAdjacentElement('beforeend', occlusionMenu)
-//     document.body.insertAdjacentElement('beforeend', occlusionItemMenu)
-
-//     initializeMenu(occlusionMenu)
-//     initializeMenu(occlusionItemMenu)
-
-//     return [
-//         occlusionMenu,
-//         occlusionItemMenu,
-//     ]
-// }
-
 export const occlusionMakerRecipe = (options: {
     tagname?: string,
     occlusionTextHandler?: OcclusionTextHandler,
@@ -146,7 +139,6 @@ export const occlusionMakerRecipe = (options: {
 
         aftermath.registerIfNotExists('makeOcclusion', () => {
             aftermath.block('occlusionRenderRect')
-
             appendStyleTag(menuCss)
 
             for (const srcUrl of images) {

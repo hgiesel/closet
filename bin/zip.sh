@@ -11,6 +11,6 @@ cd "$DIR/anki"
 zip -r "$DIR/build/$addon_id.ankiaddon" \
   ""*".py" \
   "manifest.json" \
-  "src/"*".py" \
-  "web/"*".js" \
+  "src/"* \
+  "web/"* \
   "icons/"*

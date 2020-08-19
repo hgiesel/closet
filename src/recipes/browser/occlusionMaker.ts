@@ -23,10 +23,10 @@ const clickInsideShape = (draw: SVG, event: MouseEvent) => {
         ? onMouseMoveResize(rect, ...resizeParameters)
         : onMouseMoveMove(rect, rect.x, rect.y, downX, downY)
 
-    draw.raw.addEventListener('mousemove', action)
-    draw.raw.addEventListener('mouseup', (innerEvent: MouseEvent) => {
+    draw.svg.addEventListener('mousemove', action)
+    draw.svg.addEventListener('mouseup', (innerEvent: MouseEvent) => {
         innerEvent.preventDefault()
-        draw.raw.removeEventListener('mousemove', action)
+        draw.svg.removeEventListener('mousemove', action)
     }, { once: true })
 }
 
@@ -64,8 +64,8 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
     makeInteractive(draw, newRect)
 
     const resizer = onMouseMoveResize(newRect, true, true, true, true, downX, downY)
-    draw.raw.addEventListener('mousemove', resizer)
-    draw.raw.addEventListener('mouseup', () => draw.raw.removeEventListener('mousemove', resizer))
+    draw.svg.addEventListener('mousemove', resizer)
+    draw.svg.addEventListener('mouseup', () => draw.svg.removeEventListener('mousemove', resizer))
 }
 
 const occlusionLeftClick = (draw: SVG, event: MouseEvent) => {
@@ -98,7 +98,7 @@ export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextH
         }
     }
 
-    draw.raw.addEventListener('mousedown', occlusionClick)
+    draw.svg.addEventListener('mousedown', occlusionClick)
 
     const acceptEvent = (event: MouseEvent) => {
         event.preventDefault()
@@ -121,7 +121,7 @@ export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextH
         itemId: 'close-occlusion-menu',
     }])
 
-    enableAsMenuTrigger(occlusionMenu, draw.raw)
+    enableAsMenuTrigger(occlusionMenu, draw.svg)
 }
 
 const defaultOcclusionTextHandler: OcclusionTextHandler = (_occs, texts) => navigator.clipboard.writeText(texts.join('\n'))

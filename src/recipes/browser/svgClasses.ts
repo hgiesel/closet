@@ -61,8 +61,10 @@ export class SVG {
         this.constrainedFactorX = this.image.width / this.image.naturalWidth
         this.constrainedFactorY = this.image.height / this.image.naturalHeight
 
-        this.zoomX = this.svg.clientWidth / this.image.naturalWidth
-        this.zoomY = this.svg.clientHeight / this.image.naturalHeight
+        this.zoomX = this.svg.clientWidth / this.image.width
+        this.zoomY = this.svg.clientHeight / this.image.height
+
+        console.log('factors', this.constrainedFactorX, this.constrainedFactorY, this.zoomX, this.zoomY)
     }
 
     static make(container: HTMLDivElement, image: HTMLImageElement): SVG {
@@ -87,10 +89,6 @@ export class SVG {
         new ResizeObserver(() => wrapped.resize()).observe(image)
 
         return wrapped
-    }
-
-    get raw(): SVGElement {
-        return this.svg
     }
 
     get scaleFactors(): [number, number] {

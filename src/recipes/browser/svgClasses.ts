@@ -42,8 +42,10 @@ export class SVG {
     readonly image: HTMLImageElement
     readonly svg: SVGElement
 
-    protected scalingFactorX: number = 1
-    protected scalingFactorY: number = 1
+    protected constrainedFactorX: number = 1
+    protected constrainedFactorY: number = 1
+    protected zoomX: number = 1
+    protected zoomY: number = 1
 
     protected elements: GettableSVG[] = []
 
@@ -56,8 +58,11 @@ export class SVG {
     }
 
     protected setScaleFactors() {
-        this.scalingFactorX = this.image.width / this.image.naturalWidth
-        this.scalingFactorY = this.image.height / this.image.naturalHeight
+        this.constrainedFactorX = this.image.width / this.image.naturalWidth
+        this.constrainedFactorY = this.image.height / this.image.naturalHeight
+
+        this.zoomX = this.svg.clientWidth / this.image.naturalWidth
+        this.zoomY = this.svg.clientHeight / this.image.naturalHeight
     }
 
     static make(container: HTMLDivElement, image: HTMLImageElement): SVG {
@@ -89,7 +94,10 @@ export class SVG {
     }
 
     get scaleFactors(): [number, number] {
-        return [this.scalingFactorX, this.scalingFactorY]
+        return [
+            this.constrainedFactorX * this.zoomX,
+            this.constrainedFactorY * this.zoomY,
+        ]
     }
 
     resize(): void {

@@ -1,12 +1,10 @@
 name: Cell occlusion example with flashcard features
 code: |
-  <img src="/assets/images/cell.png" />
-  <!-- [[on::rect2]]
-  [[rect1::182,60,157,46]]
-  [[rect2::190,114,141,54]]
-  [[rect3::87,190,258,60]]
-  [[rect4::52,271,315,41]]
-  [[rect5::448,114,195,41]]
-  [[rect6::633,30,187,41]]
-  [[rect7::866,11,176,54]]
-  [[rect8::1233,95,323,54]] -->
+  <img src="/assets/images/wikipedia.png" />
+  <!-- [[on::recth1]] [[ctxt::recth*=1]]
+  [[recth1::582,303,703,114]]
+  [[recth2::189,817,510,214]]
+  [[recth3::1056,828,503,200]]
+  [[recth4::114,1367,321,268]]
+  [[recth5::746,1352,332,282]]
+  [[recth6::1488,1335,328,310]] -->

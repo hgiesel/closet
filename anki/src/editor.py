@@ -24,8 +24,7 @@ def without_occlusion_code(txt):
 
         return re.sub(occlusion_container_pattern, rawImage, txt)
 
-    # nothing was found, falsy
-    return None
+    return txt
 
 def include_closet_code(webcontent, context):
     if not isinstance(context, Editor):
@@ -42,25 +41,23 @@ def accept_copy_to_clipoard(handled, message, context):
         return (True, None)
 
     if message.startswith('clearOcclusionMode') and isinstance(context, Editor):
-        for index, (name, item) in enumerate(context.note.items()):
-            if repl := without_occlusion_code(item):
-                js = (
-                    f'document.querySelector("#f{index}").innerHTML = "{repl}";'
-                    f'pycmd("key:{index}:{context.note.id}:{repl}");'
-                )
+        _, field_index, txt = message.split(':', 2)
+        repl = without_occlusion_code(txt)
 
-                context.web.eval(js)
+        context.web.eval(f'pycmd("key:{field_index}:{context.note.id}:{repl}");')
+
+        return (True, repl)
 
     return handled
 
-def put_editor_in_occlusion_mode(editor):
-    editor.web.eval('EditorCloset.occlusionMode()')
+def toggle_occlusion_mode(editor):
+    editor.web.eval('EditorCloset.toggleOcclusionMode()')
 
 def add_occlusion_button(buttons, editor):
     file_path = dirname(realpath(__file__))
     icon_path = Path(file_path, '..', 'icons', 'occlude.png')
 
-    editor._links['occlude'] = put_editor_in_occlusion_mode
+    editor._links['occlude'] = toggle_occlusion_mode
 
     occlusion_button = editor._addButton(
         str(icon_path.absolute()),
@@ -71,10 +68,7 @@ def add_occlusion_button(buttons, editor):
     buttons.append(occlusion_button)
 
 def remove_occlusion_code(txt, editor):
-    if repl := without_occlusion_code(txt):
-        return repl
-
-    return txt
+    return without_occlusion_code(txt)
 
 def init_editor():
     webview_will_set_content.append(include_closet_code)

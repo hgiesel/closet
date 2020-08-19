@@ -13,6 +13,10 @@ var EditorCloset = {
         filterManager.setPreset({})
         filterManager.addRecipe(EditorCloset.editorOcclusion)
 
+        filterManager.addRecipe(Closet.browserRecipes.rectShow({ tagname: 'rect' })),
+        filterManager.addRecipe(Closet.browserRecipes.rectHide({ tagname: 'recth' })),
+        filterManager.addRecipe(Closet.browserRecipes.rectReveal({ tagname: 'rectr' })),
+
         Closet.BrowserTemplate
             .makeFromNodes(elements)
             .render(filterManager)

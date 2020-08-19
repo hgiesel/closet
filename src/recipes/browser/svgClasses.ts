@@ -34,23 +34,30 @@ appendStyleTag(svgCss)
 
 interface GettableSVG {
     getElements(): Element[]
+    resize(forSVG: SVG): void
 }
 
 export class SVG {
-    container: HTMLDivElement
-    image: HTMLImageElement
-    svg: SVGElement
+    readonly container: HTMLDivElement
+    readonly image: HTMLImageElement
+    readonly svg: SVGElement
 
-    scalingFactorX: number
-    scalingFactorY: number
+    protected scalingFactorX: number = 1
+    protected scalingFactorY: number = 1
+
+    protected elements: GettableSVG[] = []
 
     protected constructor(container: HTMLDivElement, image: HTMLImageElement, svg: SVGElement) {
         this.container = container
         this.image = image
         this.svg = svg
 
-        this.scalingFactorX = image.width / image.naturalWidth
-        this.scalingFactorY = image.height / image.naturalHeight
+        this.setScaleFactors()
+    }
+
+    protected setScaleFactors() {
+        this.scalingFactorX = this.image.width / this.image.naturalWidth
+        this.scalingFactorY = this.image.height / this.image.naturalHeight
     }
 
     static make(container: HTMLDivElement, image: HTMLImageElement): SVG {
@@ -77,7 +84,21 @@ export class SVG {
         return this.svg
     }
 
+    get scaleFactors(): [number, number] {
+        return [this.scalingFactorX, this.scalingFactorY]
+    }
+
+    resize(): void {
+        this.setScaleFactors()
+
+        for (const elem of this.elements) {
+            elem.resize(this)
+        }
+    }
+
     append(element: GettableSVG): void {
+        this.elements.push(element)
+
         for (const elem of element.getElements()) {
             this.svg.appendChild(elem)
         }
@@ -110,7 +131,7 @@ export class Rect implements GettableSVG {
         this.scalingFactorY = scalingFactorY
     }
 
-    static make(forSvg?: SVG): Rect {
+    static make(forSVG?: SVG): Rect {
         const container = document.createElementNS(ns, 'svg')
         const rect = document.createElementNS(ns, 'rect')
         const label = document.createElementNS(ns, 'text')
@@ -118,10 +139,14 @@ export class Rect implements GettableSVG {
         container.appendChild(rect)
         container.appendChild(label)
         container.classList.add('closet__occlusion-shape')
+        container.classList.add('closet__occlusion_rect')
+
         container.tabIndex = -1
 
-        const scalingFactorX = forSvg ? forSvg.scalingFactorX : 1
-        const scalingFactorY = forSvg ? forSvg.scalingFactorY : 1
+        const [
+            scalingFactorX,
+            scalingFactorY,
+        ] = forSVG ? forSVG.scaleFactors : [1, 1]
 
         const theRect = new Rect(container, rect, label, scalingFactorX, scalingFactorY)
 
@@ -136,9 +161,11 @@ export class Rect implements GettableSVG {
         return theRect
     }
 
-    static wrap(rect: SVGRectElement, forSvg?: SVG): Rect {
-        const scalingFactorX = forSvg ? forSvg.scalingFactorX : 1
-        const scalingFactorY = forSvg ? forSvg.scalingFactorY : 1
+    static wrap(rect: SVGRectElement, forSVG?: SVG): Rect {
+        const [
+            scalingFactorX,
+            scalingFactorY,
+        ] = forSVG ? forSVG.scaleFactors : [1, 1]
 
         return new Rect(
             rect.parentElement as unknown as SVGElement,
@@ -149,6 +176,10 @@ export class Rect implements GettableSVG {
         )
     }
 
+    prop(attr: RectProperty, value: string) {
+        this[attr] = value
+    }
+
     remove(): void {
         this.container.remove()
     }
@@ -157,15 +188,12 @@ export class Rect implements GettableSVG {
         return [this.container]
     }
 
-    prop(attr: RectProperty, value: string) {
-        this[attr] = value
-    }
-
     resize(forSVG: SVG) {
         const savePos = this.pos
+        const scaleFactors = forSVG.scaleFactors
 
-        this.scalingFactorX = forSVG.scalingFactorX
-        this.scalingFactorY = forSVG.scalingFactorY
+        this.scalingFactorX = scaleFactors[0]
+        this.scalingFactorY = scaleFactors[1]
 
         this.pos = savePos
     }

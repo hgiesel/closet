@@ -2,12 +2,12 @@ import { appendStyleTag } from './utils'
 
 const ns = 'http://www.w3.org/2000/svg'
 const svgCss = `
-.occlusion-container {
+.closet__occlusion-container {
   display: inline-block;
   position: relative;
 }
 
-.occlusion-container > * {
+.closet__occlusion-container > * {
   display: block;
 
   max-width: 100%
@@ -16,11 +16,11 @@ const svgCss = `
   margin-right: auto;
 }
 
-.occlusion-container > img {
+.closet__occlusion-container > img {
   position: relative;
 }
 
-.occlusion-container > svg {
+.closet__occlusion-container > svg {
   position: absolute;
   top: 0;
 }`
@@ -63,7 +63,7 @@ export class SVG {
         svg.setAttributeNS(null, 'height', '100%')
 
         container.appendChild(svg)
-        container.classList.add('occlusion-container')
+        container.classList.add('closet__occlusion-container')
 
         return new SVG(container, image, svg)
     }

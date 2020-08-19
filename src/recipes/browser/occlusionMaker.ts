@@ -128,7 +128,7 @@ const defaultOcclusionTextHandler: OcclusionTextHandler = (_occs, texts) => navi
 
 const occlusionCss = `
 .closet__occlusion-container {
-  outline: 2px dotted hotpink;
+  outline: 3px dotted hotpink;
 }`
 
 export const occlusionMakerRecipe = (options: {

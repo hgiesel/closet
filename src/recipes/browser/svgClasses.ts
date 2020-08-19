@@ -92,8 +92,8 @@ export class Rect implements GettableSVG {
     readonly rect: SVGRectElement
     readonly label: SVGTextElement
 
-    readonly scalingFactorX: number
-    readonly scalingFactorY: number
+    protected scalingFactorX: number
+    protected scalingFactorY: number
 
     protected constructor(
         container: SVGElement,
@@ -161,7 +161,25 @@ export class Rect implements GettableSVG {
         this[attr] = value
     }
 
+    resize(forSVG: SVG) {
+        const savePos = this.pos
+
+        this.scalingFactorX = forSVG.scalingFactorX
+        this.scalingFactorY = forSVG.scalingFactorY
+
+        this.pos = savePos
+    }
+
     /////////////////// on both
+
+    get pos(): [number, number, number, number] {
+        return [
+            this.x,
+            this.y,
+            this.width,
+            this.height,
+        ]
+    }
 
     set pos([x, y, width, height]: [number, number, number, number]) {
         this.width = width

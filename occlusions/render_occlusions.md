@@ -25,4 +25,4 @@ Similar to clozes, there are three subtypes of occlusions:
 To be more exact, occlusions also react to the flashcard interface.
 This means, they can be used with the flashcard specific commands.
 
-{% include codeDisplay.md content=occlusions.cell_flashcard setups="occlusions,flashcard" buttons=buttons.fourCards %}
+{% include codeDisplay.md content=occlusions.cell_flashcard setups="occlusions,flashcard" buttons=buttons.sixCards %}

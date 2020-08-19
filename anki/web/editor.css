@@ -1,0 +1,9 @@
+/**
+ * Anki sets max-width to 95%
+ * This makes it impossible to use a relative container
+ * to apply the svg overlay
+ **/
+
+img {
+  max-width: 100%;
+}

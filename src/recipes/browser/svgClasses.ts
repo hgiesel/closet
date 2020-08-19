@@ -77,7 +77,11 @@ export class SVG {
         image.parentNode && image.parentNode.replaceChild(container, image)
         container.appendChild(image)
 
-        return SVG.make(container, image)
+        const wrapped = SVG.make(container, image)
+        // @ts-ignore
+        new ResizeObserver(() => wrapped.resize()).observe(image)
+
+        return wrapped
     }
 
     get raw(): SVGElement {

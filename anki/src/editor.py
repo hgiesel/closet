@@ -43,8 +43,9 @@ def accept_copy_to_clipoard(handled, message, context):
     if message.startswith('clearOcclusionMode') and isinstance(context, Editor):
         _, field_index, txt = message.split(':', 2)
         repl = without_occlusion_code(txt)
+        repl_escaped = repl.replace(r'"', r'\"')
 
-        context.web.eval(f'pycmd("key:{field_index}:{context.note.id}:{repl}");')
+        context.web.eval(f'pycmd("key:{field_index}:{context.note.id}:{repl_escaped}")')
 
         return (True, repl)
 

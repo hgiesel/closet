@@ -1,3 +1,6 @@
 = Closet homepage
 
-Live link:https://hgiesel.github.io/closet/[here].
+Live link:https://closetengine.com[here].
+
+Note to myself: Don't keep `.gitignore` files in here.
+It does not behave well with the deploy script.

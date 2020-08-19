@@ -22,3 +22,11 @@ dist/**/*
 # test suite compile
 test/browser/dist/**/*
 !test/browser/dist/README.md
+
+# docs
+## compiled images
+docs/favicon.ico
+docs/assets/images/*logo.png
+## compiled closet
+docs/assets/js/*.js
+docs/assets/js/*.js.map

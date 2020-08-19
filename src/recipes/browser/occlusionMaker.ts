@@ -100,7 +100,7 @@ export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextH
 
     draw.raw.addEventListener('mousedown', occlusionClick)
 
-    const finishEvent = (event: MouseEvent) => {
+    const acceptEvent = (event: MouseEvent) => {
         event.preventDefault()
 
         const shapeTexts = Array.from(draw.svg.childNodes)
@@ -110,14 +110,12 @@ export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextH
             .map(rectCmdToText)
 
         occlusionTextHandler(draw.svg.childNodes as NodeListOf<SVGElement>, shapeTexts)
-
-        draw.raw.removeEventListener('mousedown', occlusionClick)
     }
 
     const occlusionMenu = setupMenu('occlusion-menu', [{
-        label: 'Finish',
-        itemId: 'occlusion-finish',
-        clickEvent: finishEvent,
+        label: 'Accept occlusions',
+        itemId: 'occlusion-accept',
+        clickEvent: acceptEvent,
     }, {
         label: 'Close Menu',
         itemId: 'close-occlusion-menu',

@@ -14,10 +14,7 @@ var initCloset = () => {
     }
 }
 
-if (globalThis.hasOwnProperty('onShownHook')) {
-    onShownHook.push(initCloset)
-}
-else if (['complete', 'loaded', 'interactive'].includes(document.readyState)) {
+if (['complete', 'loaded', 'interactive'].includes(document.readyState)) {
     initCloset()
 }
 else {

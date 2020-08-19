@@ -63,8 +63,6 @@ export class SVG {
 
         this.zoomX = this.svg.clientWidth / this.image.width
         this.zoomY = this.svg.clientHeight / this.image.height
-
-        console.log('factors', this.constrainedFactorX, this.constrainedFactorY, this.zoomX, this.zoomY)
     }
 
     static make(container: HTMLDivElement, image: HTMLImageElement): SVG {

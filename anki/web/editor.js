@@ -47,8 +47,8 @@ var EditorCloset = {
                 Closet.BrowserTemplate
                 .makeFromNodes(elements)
                 .render(filterManager)
-        }
 
-        EditorCloset.occlusionMode = !EditorCloset.occlusionMode
+            EditorCloset.occlusionMode = true
+        }
     },
 }

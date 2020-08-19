@@ -22,18 +22,15 @@ const svgCss = `
 .closet__occlusion-container > svg {
   position: absolute;
   top: 0;
-}`
+}
 
-appendStyleTag(svgCss)
-
-const occlusionRectCss = `
-.occlusion-rect > text {
+.closet__occlusion-shape > text {
   text-anchor: middle;
   dominant-baseline: central;
   pointer-events: none;
 }`
 
-appendStyleTag(occlusionRectCss)
+appendStyleTag(svgCss)
 
 interface GettableSVG {
     getElements(): Element[]
@@ -120,7 +117,7 @@ export class Rect implements GettableSVG {
 
         container.appendChild(rect)
         container.appendChild(label)
-        container.classList.add('occlusion-rect')
+        container.classList.add('closet__occlusion-shape')
         container.tabIndex = -1
 
         const scalingFactorX = forSvg ? forSvg.scalingFactorX : 1

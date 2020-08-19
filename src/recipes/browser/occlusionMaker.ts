@@ -126,6 +126,11 @@ export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextH
 
 const defaultOcclusionTextHandler: OcclusionTextHandler = (_occs, texts) => navigator.clipboard.writeText(texts.join('\n'))
 
+const occlusionCss = `
+.closet__occlusion-container {
+  outline: 2px dotted hotpink;
+}`
+
 export const occlusionMakerRecipe = (options: {
     tagname?: string,
     occlusionTextHandler?: OcclusionTextHandler,
@@ -144,6 +149,7 @@ export const occlusionMakerRecipe = (options: {
 
         aftermath.registerIfNotExists(keyword, () => {
             appendStyleTag(menuCss)
+            appendStyleTag(occlusionCss)
 
             const existingShapes: any[] = []
             for (const kw of shapeKeywords) {

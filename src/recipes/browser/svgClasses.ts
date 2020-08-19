@@ -47,11 +47,16 @@ export class SVG {
     protected zoomY: number = 1
 
     protected elements: GettableSVG[] = []
+    protected resizer: any /* ResizeObserver */
 
     protected constructor(container: HTMLDivElement, image: HTMLImageElement, svg: SVGElement) {
         this.container = container
         this.image = image
         this.svg = svg
+
+        // @ts-ignore
+        this.resizer = new ResizeObserver(() => this.resize())
+        this.resizer.observe(image)
 
         this.setScaleFactors()
     }
@@ -64,7 +69,12 @@ export class SVG {
         this.zoomY = this.svg.clientHeight / this.image.height
     }
 
-    static make(container: HTMLDivElement, image: HTMLImageElement): SVG {
+    static wrapImage(image: HTMLImageElement): SVG {
+        const container = document.createElement('div')
+
+        image.parentNode && image.parentNode.replaceChild(container, image)
+        container.appendChild(image)
+
         const svg = document.createElementNS(ns, 'svg')
         svg.setAttributeNS(null, 'width', '100%')
         svg.setAttributeNS(null, 'height', '100%')
@@ -72,20 +82,8 @@ export class SVG {
         container.appendChild(svg)
         container.classList.add('closet__occlusion-container')
 
+
         return new SVG(container, image, svg)
-    }
-
-    static wrapImage(image: HTMLImageElement): SVG {
-        const container = document.createElement('div')
-
-        image.parentNode && image.parentNode.replaceChild(container, image)
-        container.appendChild(image)
-
-        const wrapped = SVG.make(container, image)
-        // @ts-ignore
-        new ResizeObserver(() => wrapped.resize()).observe(image)
-
-        return wrapped
     }
 
     get scaleFactors(): [number, number] {
@@ -97,6 +95,12 @@ export class SVG {
 
     resize(): void {
         this.setScaleFactors()
+
+        if (this.scaleFactors.includes(0)) {
+            // image is not displayed anymore
+            this.resizer.disconnect()
+            return
+        }
 
         for (const elem of this.elements) {
             elem.resize(this)

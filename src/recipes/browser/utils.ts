@@ -56,10 +56,6 @@ export const svgCss = `
   margin-right: auto;
 }
 
-.closet__occlusion-container > img {
-  position: relative;
-}
-
 .closet__occlusion-container > svg {
   position: absolute;
   top: 0;

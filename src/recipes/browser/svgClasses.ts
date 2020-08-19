@@ -10,7 +10,7 @@ const svgCss = `
 .closet__occlusion-container > * {
   display: block;
 
-  max-width: 100%
+  max-width: 100%;
   height: auto;
   margin-left: auto;
   margin-right: auto;

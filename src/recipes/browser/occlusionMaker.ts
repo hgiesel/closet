@@ -2,7 +2,7 @@ import type { Registrar, TagData, Internals } from '../types'
 
 import { SVG, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
-import { appendStyleTag, getImages, getOffsets, imageLoadCallback } from './utils'
+import { appendStyleTag, getImages, getOffsets, imageLoadCallback, svgKeyword, svgCss } from './utils'
 
 import { setupMenu, enableAsMenuTrigger, menuCss } from './menu'
 import { rectKeyword } from './rect'
@@ -131,6 +131,8 @@ const occlusionCss = `
   outline: 3px dotted hotpink;
 }`
 
+const occlusionMakerCssKeyword = 'occlusionMakerCss'
+
 export const occlusionMakerRecipe = (options: {
     tagname?: string,
     occlusionTextHandler?: OcclusionTextHandler,
@@ -144,12 +146,18 @@ export const occlusionMakerRecipe = (options: {
         shapeKeywords = [rectKeyword],
     } = options
 
-    const occlusionMakerFilter = (_tag: TagData, { template, cache, aftermath }: Internals<{}>) => {
+    const occlusionMakerFilter = (_tag: TagData, { template, cache, aftermath, environment }: Internals<{}>) => {
         const images = (template.textFragments as any).flatMap(getImages)
 
         aftermath.registerIfNotExists(keyword, () => {
-            appendStyleTag(menuCss)
-            appendStyleTag(occlusionCss)
+            if (!environment.post(occlusionMakerCssKeyword, () => true, false)) {
+                appendStyleTag(menuCss)
+                appendStyleTag(occlusionCss)
+            }
+
+            if (!environment.post(svgKeyword, () => true, false)) {
+                appendStyleTag(svgCss)
+            }
 
             const existingShapes: any[] = []
             for (const kw of shapeKeywords) {

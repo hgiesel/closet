@@ -4,13 +4,17 @@ import type { FlashcardTemplate, FlashcardPreset } from '../flashcardTemplate'
 import { makeFlashcardTemplate, generateFlashcardRecipes } from '../flashcardTemplate'
 
 import { SVG, Rect, RectProperty, RectProperties } from './svgClasses'
-import { getImages, imageLoadCallback } from './utils'
+import { appendStyleTag, getImages, imageLoadCallback, svgKeyword, svgCss } from './utils'
 
 export const rectKeyword = 'occlusionRenderRect'
 
-const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache }: AftermathInternals<T>) => {
+const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache, environment }: AftermathInternals<T>) => {
     const images = (template.textFragments as any).flatMap(getImages)
     const rects = cache.get<[boolean, string, number, number, number, number, RectProperties][]>(entry.keyword, [])
+
+    if (!environment.post(svgKeyword, () => true, false)) {
+        appendStyleTag(svgCss)
+    }
 
     imageLoadCallback(`img[src="${images[0]}"]`, (event) => {
         const draw = SVG.wrapImage(event.target as HTMLImageElement)

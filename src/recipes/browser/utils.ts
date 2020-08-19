@@ -41,3 +41,32 @@ export const imageLoadCallback = (query: string, callback: (event: Event) => voi
         }
     }
 }
+
+export const svgKeyword = 'occlusionSvgCss'
+export const svgCss = `
+.closet__occlusion-container {
+  display: inline-block;
+  position: relative;
+}
+
+.closet__occlusion-container > * {
+  display: block;
+
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.closet__occlusion-container > img {
+  position: relative;
+}
+
+.closet__occlusion-container > svg {
+  position: absolute;
+  top: 0;
+}
+
+.closet__occlusion-shape > text {
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}`

@@ -37,6 +37,13 @@ export class Storage<D> {
         return result
     }
 
+    post<T extends D>(name: string, f: (v: T) => T, mempty: T): T {
+        const result = this.get(name, mempty)
+        this.set(name, f(result))
+
+        return result
+    }
+
     over<T extends D>(name: string, f: (v: T) => void, mempty: T): void {
         const value = this.get(name, mempty)
         this.set(name, value)

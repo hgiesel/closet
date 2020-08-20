@@ -1,0 +1,12 @@
+# {{ page.title }}
+{: .no_toc }
+
+{% assign setups = site.data.setups %}
+{% assign buttons = site.data.buttons %}
+
+{% assign mc = site.data.snippets.multiple_choice %}
+{% assign generation = site.data.snippets.generation %}
+{% assign cloze = site.data.snippets.cloze %}
+{% assign flashcard = site.data.snippets.flashcard %}
+{% assign shuffling = site.data.snippets.shuffling %}
+{% assign occlusions = site.data.snippets.occlusions %}

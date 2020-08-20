@@ -33,7 +33,9 @@
 #ul-fm {
     position: absolute;
     display: none;
-    width: 150%;
+
+    width: max-content;
+    padding-left: 0;
 
     input[name="fm-list"] {
         display: none;

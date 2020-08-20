@@ -9,14 +9,13 @@
     <label for="memoize-checkbox" class="memoize-label btn btn-purple btn-outline">Reuse Memory</label>
 
     <div id="btn-group-fm">
-      <button id="btn-fm" class="btn btn-purple btn-outline" type="button">Filter Manager</button>
+      <button id="btn-fm" class="btn btn-purple btn-outline" type="button">Setups</button>
 
       <form>
         <ul id="ul-fm">
           {% for setup in site.data.setups %}
-          {% assign setupId = setup[1].name | slugify %}
+          {% assign setupId = setup[0] | slugify %}
           {% assign s = setup[1] %}
-
           <input type="checkbox" id="input-{{ setupId }}" name="fm-list" value="{{ setupId }}" />
 
           <li>

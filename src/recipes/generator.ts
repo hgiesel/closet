@@ -27,24 +27,21 @@ const numberGenerator = (
   }
 }
 
-const intGenerator = numberGenerator(
-    (min, max, extra) => String((Math.floor(Math.random() * max) + min) * extra)
-)
+const intAlgorithm: NumberGenAlgorithm = (min, max, extra) => String((Math.floor(Math.random() * max) + min) * extra)
+const realAlgorithm: NumberGenAlgorithm = (min, max, extra) => (Math.random() * (max - min) + min).toFixed(extra)
 
-const realGenerator = numberGenerator((min, max, extra) => (
-    Math.random() * (max - min) + min).toFixed(extra)
-)
-
-export const generateTemplate = (generator: NumberGen) => ({
+export const generateTemplate = (algorithm: NumberGenAlgorithm, defaultExtra: number) => ({
     tagname = 'gen',
     uniqueConstraintId = 'uniq',
+    separator = { sep: ',' },
 } = {}) => <T extends {}>(registrar: Registrar<T>) => {
+    const generator = numberGenerator(algorithm)
     const uniqConstraintPrefix = `gen:${uniqueConstraintId}`
 
     const generateFilter = ({ values, fullOccur, num }: TagData, { memory }: Internals<T>) => {
-        const [min = 0, max = 100, extra = 1] = values.length === 1
-            ? [0, values[0], 1]
-            : values
+        const [min = 1, max = 100, extra = defaultExtra] = values.length === 1
+            ? [1, Number(values[0]), defaultExtra]
+            : values.map(Number)
 
         const uniqueConstraintId = Number.isInteger(num)
             ? `${uniqConstraintPrefix}:${num}`
@@ -53,13 +50,23 @@ export const generateTemplate = (generator: NumberGen) => ({
         const generateId = `gen:${tagname}:${fullOccur}`
 
         const result = memory.lazy(generateId, (): string => {
+            console.log(
+                min,
+                max,
+                extra,
+                Number.isInteger(num)
+                    ? memory.get(uniqueConstraintId, [])
+                    : [],
+                true,
+            )
+
             const gen = generator(
                 min,
                 max,
                 extra,
                 Number.isInteger(num)
-                ? memory.get(uniqueConstraintId, [])
-                : [],
+                    ? memory.get(uniqueConstraintId, [])
+                    : [],
                 true,
             )
 
@@ -71,8 +78,8 @@ export const generateTemplate = (generator: NumberGen) => ({
         return { result: result, ready: true }
     }
 
-    registrar.register(tagname, generateFilter)
+    registrar.register(tagname, generateFilter, { separators: [separator] })
 }
 
-export const generateIntegerRecipe = generateTemplate(intGenerator)
-export const generateRealRecipe = generateTemplate(realGenerator)
+export const generateIntegerRecipe = generateTemplate(intAlgorithm, 1)
+export const generateRealRecipe = generateTemplate(realAlgorithm, 2)

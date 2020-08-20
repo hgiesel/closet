@@ -45,6 +45,7 @@ export class Storage<D> {
     }
 
     lazy<T extends D>(name: string, f: () => T): T {
+        // @ts-ignore
         return this.get(name, null) || this.fold(name, f, null)
     }
 

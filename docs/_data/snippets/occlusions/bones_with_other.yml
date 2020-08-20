@@ -1,13 +1,14 @@
 name: Bones occlusion with other example
 code: |
   <img src="/assets/images/cranial-bones.png" />
-  <!-- [[recth1::326,78,587,144]]
+  <!--
+  [[recth1::326,78,587,144]]
   [[recth2::117,283,574,274]]
   [[recth3::78,666,500,265]]
   [[recth4::1656,48,617,165]]
   [[recth5::1973,391,495,252]]
-  [[recth6::1952,1179,509,283]] -->
-
+  [[recth6::1952,1179,509,283]]
+  -->
   [[mix1::[[c1::Frontal bone]]: vertically oriented [[c1::squamous]] part, and the horizontally oriented [[c1::orbital]] part.]]
   [[mix1::[[c2::Sphenoid bone]]: in front of the [[c2::basilar]] part of the [[c2::occipital]] bone]]
   [[mix1::[[c3::Ethmoid bone]]: separates the [[c3::nasal cavity]]from the brain.]]

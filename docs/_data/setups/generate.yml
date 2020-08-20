@@ -1,0 +1,4 @@
+name: Generators
+code: |
+  filterManager.addRecipe(Closet.recipes.generateInteger({ tagname: 'gen' }))
+  filterManager.addRecipe(Closet.recipes.generateReal({ tagname: 'genr' }))

@@ -9,15 +9,26 @@ import { topUp } from './sortInStrategies'
 
 type ValuePlusCategory = [string, number]
 
-const inTagShuffle = (sortIn: SortInStrategy) => <T extends {}>(
+const flattedValuesWithIndex = <T extends {}>(
     tag: TagData,
-    internals: Internals<T>,
-): [string, number][] | void => {
-    const flattedValuesWithIndex: [string, number][] = tag.values
+    _internals: Internals<T>,
+): ValuePlusCategory[] => {
+    const flattedValuesWithIndex: ValuePlusCategory[] = tag
+        .values
         .flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
 
+    return flattedValuesWithIndex
+}
+
+const doNotMixAmong = <T extends {}, V extends [...any[]]>(
+    sortIn: SortInStrategy,
+    values: V[],
+): Eval<T, V[] | void> => (
+    tag: TagData,
+    internals: Internals<T>,
+): V[] | void => {
     const uid = `${tag.fullKey}:${tag.fullOccur}`
-    const maybeValues = sequencer(uid, uid, flattedValuesWithIndex, sortIn, internals)
+    const maybeValues = sequencer(uid, uid, values, sortIn, internals)
 
     if (maybeValues) {
         return maybeValues
@@ -26,22 +37,21 @@ const inTagShuffle = (sortIn: SortInStrategy) => <T extends {}>(
 
 const firstCategory = <T extends {}>(tag: TagData, _internals: Internals<T>): string[] => tag.values[0]
 
-const shuffleAndStylize = <T extends {}>(
+const shuffleAndStylize = <T extends {}, V extends [...any[]]>(
     stylizer: Stylizer,
-    ellipser: Eval<T, ValuePlusCategory[] | void>,
+    ellipser: Eval<T, V[] | void>,
 ): WeakFilter<T> => (tag: TagData, internals: Internals<T>): WeakFilterResult => {
     const maybeValues = ellipser(tag, internals)
 
     return maybeValues
         ? stylizer.stylize(
-            maybeValues.map((v: ValuePlusCategory) => v[0]),
-            [maybeValues.map((v: ValuePlusCategory) => v[1])],
+            maybeValues.map((v: V) => v[0]),
+            [maybeValues.map((v: V) => v[1])],
         )
         : { ready: false }
 }
 
 const inactive = new Stylizer()
-
 
 const orangeCommaSeparated = inactive.toStylizer({
     processor: (v: string) => `( ${v} )`,
@@ -59,7 +69,7 @@ const greenAndRed = orangeCommaSeparated.toStylizer({
 const multipleChoicePublicApi = <T extends FlashcardPreset>(
     frontInactive: InactiveBehavior<T>,
     backInactive: InactiveBehavior<T>,
-): Recipe<T> => (options: {
+): Recipe<T> => <V extends [...any[]]>(options: {
     tagname?: string,
 
     frontStylizer?: Stylizer,
@@ -68,6 +78,9 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
     inactiveStylizer?: Stylizer,
     contexter?: Eval<T, string[]>,
     ellipser?: WeakFilter<T>,
+
+    getValues?: Eval<T, V[]>,
+    sequence?: (sortIn: SortInStrategy, values: V[]) => Eval<T, V[] | void>
 
     sortInStrategy?: SortInStrategy,
     categorySeparator?: WeakSeparator,
@@ -81,18 +94,24 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
         frontStylizer = orangeCommaSeparated,
         backStylizer = greenAndRed,
 
-        sortInStrategy = topUp,
-        categorySeparator = { sep: '::' },
-        valueSeparator = { sep: '||' },
-
         inactiveStylizer = inactive,
         contexter = firstCategory,
         ellipser = ellipsis,
 
+        getValues = flattedValuesWithIndex,
+        sequence = doNotMixAmong,
+
+        sortInStrategy = topUp,
+        categorySeparator = { sep: '::' },
+        valueSeparator = { sep: '||' },
+
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
-    const inTagShuffleWithStrategy = inTagShuffle(sortInStrategy) as Eval<T, [string, number][] | void>
+    const inTagShuffleWithStrategy: Eval<T, V[] | void> = (tag: TagData, internals: Internals<T>) => sequence(
+        sortInStrategy,
+        (getValues as Eval<T, V[]>)(tag, internals),
+    )(tag, internals)
 
     const front = shuffleAndStylize(frontStylizer, inTagShuffleWithStrategy)
     const back = shuffleAndStylize(backStylizer, inTagShuffleWithStrategy)

@@ -1,16 +1,17 @@
 import type { Registrar, WeakFilter, TagData, Internals } from './types'
 
 type NumberGenAlgorithm = (min: number, max: number, extra: number) => string
+type NumberGen = (min: number, max: number, extra: number, banDomain: string[], filter: boolean) => Generator<string, void, unknown>
 
 const maxTries = 10_000
 const numberGenerator = (
     algorithm: NumberGenAlgorithm,
-) => function*(
+): NumberGen => function*(
     min: number,
     max: number,
     extra: number,
-    banDomain = [],
-    filter = false,
+    banDomain: string[],
+    filter: boolean,
 ): Generator<string, void, unknown> {
   let tries = 0
 
@@ -34,14 +35,13 @@ const realGenerator = numberGenerator((min, max, extra) => (
     Math.random() * (max - min) + min).toFixed(extra)
 )
 
-export const generateRecipe = <T extends {}>({
+export const generateTemplate = (generator: NumberGen) => ({
     tagname = 'gen',
     uniqueConstraintId = 'uniq',
-} = {}) => (registrar: Registrar<T>) => {
-
+} = {}) => <T extends {}>(registrar: Registrar<T>) => {
     const uniqConstraintPrefix = `gen:${uniqueConstraintId}`
 
-    const generateFilter: WeakFilter<T> = ({ values, fullOccur, num }: TagData, { memory }: Internals<{}>) => {
+    const generateFilter = ({ values, fullOccur, num }: TagData, { memory }: Internals<T>) => {
         const [min = 0, max = 100, extra = 1] = values.length === 1
             ? [0, values[0], 1]
             : values
@@ -53,13 +53,14 @@ export const generateRecipe = <T extends {}>({
         const generateId = `gen:${tagname}:${fullOccur}`
 
         const result = memory.lazy(generateId, (): string => {
-            const gen = intGenerator(
+            const gen = generator(
                 min,
                 max,
                 extra,
                 Number.isInteger(num)
                 ? memory.get(uniqueConstraintId, [])
                 : [],
+                true,
             )
 
             const generated = gen.next()
@@ -72,3 +73,6 @@ export const generateRecipe = <T extends {}>({
 
     registrar.register(tagname, generateFilter)
 }
+
+export const generateIntegerRecipe = generateTemplate(intGenerator)
+export const generateRealRecipe = generateTemplate(realGenerator)

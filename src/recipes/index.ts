@@ -9,6 +9,7 @@ import { orderingRecipe } from './ordering'
 import { clozeShowRecipe, clozeHideRecipe, clozeRevealRecipe } from './clozes'
 import { multipleChoiceShowRecipe, multipleChoiceHideRecipe, multipleChoiceRevealRecipe } from './multipleChoice'
 import { shuffleShowRecipe, shuffleHideRecipe, shuffleRevealRecipe, sortShowRecipe, sortHideRecipe, sortRevealRecipe, jumbleShowRecipe, jumbleHideRecipe, jumbleRevealRecipe } from './shuffleQuestion'
+import { generateIntegerRecipe, generateRealRecipe } from './generator'
 
 import { styleRecipe, processRecipe } from './stylizing'
 
@@ -32,6 +33,9 @@ export const recipes: Recipes = {
     jumbleShow: jumbleShowRecipe,
     jumbleHide: jumbleHideRecipe,
     jumbleReveal: jumbleRevealRecipe,
+
+    generateInteger: generateIntegerRecipe,
+    generateReal: generateRealRecipe,
 
     clozeShow: clozeShowRecipe,
     clozeHide: clozeHideRecipe,

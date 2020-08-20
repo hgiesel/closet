@@ -1,0 +1,4 @@
+name: Number generation
+code: |
+  Number between 0 and 10: [[gen::0,10]]
+  Real number between 0 and 10: [[genr::0,10]]

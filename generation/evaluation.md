@@ -6,4 +6,9 @@ permalink: /generation/evaluation
 parent: Generation
 ---
 
-foo
+{% include toc-doc.md %}
+
+---
+## Evaluation of value lists
+
+...still in work...

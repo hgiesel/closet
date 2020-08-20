@@ -6,4 +6,9 @@ permalink: /generation/random
 parent: Generation
 ---
 
-foo
+{% include toc-doc.md %}
+
+---
+## Generation of random numbers
+
+{% include codeDisplay.md content=generation.simple setups="generate" buttons=buttons.frontBack %}

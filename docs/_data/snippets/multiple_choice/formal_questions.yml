@@ -1,0 +1,12 @@
+name: Formal questions
+code: |
+  Which of the following are valid HTML input types?
+  [[mc1::checkbox||color::radiobutton]]
+
+  Which of these is a true statement about the parietal bone?
+  [[mc2::each bone is roughly quadrilateral in form]]
+  [[mc2::::has two surfaces, four borders, and six angles]]
+  [[mc2::::it is named from the Latin paries (-ietis), rock]]
+
+  Which one of these is NOT a part of the brain?
+  [[mc3::Dendritic spine::Ventral horn||Basal ganglia||Prefrontal cortex]]

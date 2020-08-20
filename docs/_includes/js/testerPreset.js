@@ -92,7 +92,8 @@ if (sparams.has('setups')) {
     const setupIds = sparams.get('setups').split(',')
 
     for (const sid of setupIds) {
-        const activeInput = document.querySelector(`input#input-${sid}`)
+        const query = `input#input-${sid}`
+        const activeInput = document.querySelector(query)
 
         if (activeInput) {
             activeInput.checked = true

@@ -44,6 +44,10 @@ export class Storage<D> {
         return result
     }
 
+    lazy<T extends D>(name: string, f: () => T): T {
+        return this.get(name, null) || this.fold(name, f, null)
+    }
+
     over<T extends D>(name: string, f: (v: T) => void, mempty: T): void {
         const value = this.get(name, mempty)
         this.set(name, value)

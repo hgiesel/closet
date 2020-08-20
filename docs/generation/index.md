@@ -6,4 +6,6 @@ permalink: /generation
 has_children: true
 ---
 
-foo
+# Value Generation
+
+This includes the generation of integers and real numbers, as well as values from value lists.

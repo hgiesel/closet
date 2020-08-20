@@ -6,4 +6,9 @@ permalink: /generation/picking
 parent: Generation
 ---
 
-foo
+{% include toc-doc.md %}
+
+---
+## Picking from value lists
+
+...still in work...

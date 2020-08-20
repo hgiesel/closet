@@ -1,6 +1,6 @@
 frontBack: 'Frontside, q, {"side": "front"}; Backside, a, {"side": "back"}'
 
-twoCards: 'Frontside 1, q1, {side: "front",cardNumber: 1}; Backside 1, a1, {side: "back",cardNumber: 1}; Frontside 2, q2, {side: "front",cardNumber: "c2"}; Backside 2, a2, {side: "back",cardNumber: 2}'
+twoCards: 'Frontside 1, q1, {side: "front",cardNumber: 1}; Backside 1, a1, {side: "back",cardNumber: 1}; Frontside 2, q2, {side: "front",cardNumber: 2}; Backside 2, a2, {side: "back",cardNumber: 2}'
 threeCards: 'Front 1, q1, {side: "front",cardNumber: 1}; Back 1, a1, {side: "back",cardNumber: 1}; Front 2, q2, {side: "front",cardNumber: 2}; Back 2, a2, {side: "back",cardNumber: 2}; Front 3, q3, {side: "front",cardNumber: 3}; Back 3, a3, {side: "back",cardNumber: 3}'
 
 fourCards: 'F1, q1, {side: "front",cardNumber: 1}; B1, a1, {side: "back",cardNumber: 1}; F2, q2, {side: "front",cardNumber: 2}; B2, a2, {side: "back",cardNumber: 2}; F3, q3, {side: "front",cardNumber: 3}; B3, a3, {side: "back",cardNumber: 3}; F4, q4, {side: "front",cardNumber: 4}; B4, a4, {side: "back",cardNumber: 4}'

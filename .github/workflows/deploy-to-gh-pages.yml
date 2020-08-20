@@ -31,7 +31,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: ./docs
-          keep_files: true
           enable_jekyll: true
 
           user_name: Henrik Giesel

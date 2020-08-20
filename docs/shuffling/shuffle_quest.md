@@ -1,6 +1,6 @@
 ---
 layout: doc
-title: Guess correct order
+title: Shuffling as flashcard types
 nav_order: 3
 permalink: /shuffling/shuffling-quest
 parent: Shuffling
@@ -9,12 +9,29 @@ parent: Shuffling
 {% include toc-doc.md %}
 
 ---
-## Inline Shuffling
+## Shuffling as a flashcard type
 
-Simple shuffling also exists as a flashcard type, which you can use to test yourself.
+Shuffling can also be applied as a [flashcard type](../flashcard), which you can use to test yourself.
 
-{% include codeDisplay.md content=shuffling.assign_shuffle setups="shuffle_quest" buttons=buttons.frontBack %}
+{% include codeDisplay.md content=shuffling.assign_shuffle setups="shuffle_quest" buttons=buttons.twoCards %}
 
-It's especially useful when combining with other flashcard types.
+Notice that `sort1` is only activated for card 1, `sort2` is only activated for card 2.
+This makes them similar to how [clozes](../clozes) behave, for example.
+
+---
+## Overview of `shuffle`, `sort`, and `jumble`
+
+Altogether there are three different kinds of these "shuffling as flashcard" types:
+- `shuffle`: cards will be shuffled on both sides
+  - recipes are `shuffleShow`, `shuffleHide`, `shuffleReveal`
+- `sort`: cards will be shuffled on the front, but not on the back
+  - recipes are `sortShow`, `sortHide`, `sortReveal`
+- `jumble`: cards will be shuffled on the back, but not the front
+  - recipes are `jumbleShow`, `jumbleHide`, `jumbleReveal`
+
+---
+## Combining with other flashcard types
+
+You can also combine it with other flashcard types:
 
 {% include codeDisplay.md content=shuffling.assign_shuffle_ol setups="shuffle_quest,default_cloze,default_multiple_choice,order" buttons=buttons.fourCards %}

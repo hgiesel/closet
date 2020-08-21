@@ -22,6 +22,7 @@ const flattedValuesWithIndex = <T extends {}>(
 
 const firstCategory = <T extends {}>(tag: TagData, _internals: Internals<T>): string[] => tag.values[0]
 
+const transpose = <T>(array: T[][]): T[][]  => array[0].map((_, index) => array.map(value => value[index]))
 const shuffleAndStylize = <T extends {}, V extends [...any[]]>(
     stylizer: Stylizer,
     ellipser: Eval<T, V[] | void>,
@@ -29,10 +30,8 @@ const shuffleAndStylize = <T extends {}, V extends [...any[]]>(
     const maybeValues = ellipser(tag, internals)
 
     return maybeValues
-        ? stylizer.stylize(
-            maybeValues.map((v: V) => v[0]),
-            [maybeValues.map((v: V) => v[1])],
-        )
+    // @ts-ignore
+        ? stylizer.stylize(...transpose(maybeValues))
         : { ready: false }
 }
 

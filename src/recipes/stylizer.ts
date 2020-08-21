@@ -30,7 +30,7 @@ export class Stylizer {
         })
     }
 
-    stylize(input: string[], args: unknown[][] = []): string {
+    stylize(input: string[], ...args: unknown[][]): string {
         return this.processor(input
             .flatMap((v: string, i: number, l: string[]) => this.mapper(v, i, ...args.map(arg => arg[i]), l))
             .join(this.separator)

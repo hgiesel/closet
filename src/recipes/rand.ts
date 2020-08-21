@@ -52,9 +52,9 @@ const realGenerator = function*(
     }
 }
 
-export const randRecipe = (
+export const randRecipe = <T extends {}>(
     keyword: string,
-) => (registrar: Registrar<{}>) => {
+) => (registrar: Registrar<T>) => {
     const intFilter = (tag: TagData) => {
         const [
             min = 1,

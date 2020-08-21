@@ -39,11 +39,11 @@ export const activateRecipe = ({
     },
 )
 
-export const deactivateRecipe = ({
+export const deactivateRecipe = <T extends {}>({
     tagname = 'off',
     storeId = 'active',
     separator = { sep: ',' },
-} = {}) => (registrar: Registrar<{}>) => registrar.register(
+} = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     boolStoreFilterTemplate(
         storeId,
@@ -54,11 +54,11 @@ export const deactivateRecipe = ({
     }
 )
 
-export const toggleRecipe = ({
+export const toggleRecipe = <T extends {}>({
     tagname = 'toggle',
     storeId = 'active',
     separator = { sep: ',' },
-} = {}) => (registrar: Registrar<{}>) => registrar.register(
+} = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     boolStoreFilterTemplate(
         storeId,

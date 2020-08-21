@@ -3,7 +3,7 @@ import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'
 import type { SortInStrategy } from './sortInStrategies'
 
 import { Stylizer } from './stylizer'
-import { sequencer } from './sequencer'
+import { withinTag, acrossTag } from './sequencer'
 import { makeFlashcardTemplate, generateFlashcardRecipes, toListStylize, ellipsis } from './flashcardTemplate'
 import { topUp } from './sortInStrategies'
 
@@ -18,21 +18,6 @@ const flattedValuesWithIndex = <T extends {}>(
         .flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
 
     return flattedValuesWithIndex
-}
-
-const doNotMixAmong = <T extends {}, V extends [...any[]]>(
-    sortIn: SortInStrategy,
-    values: V[],
-): Eval<T, V[] | void> => (
-    tag: TagData,
-    internals: Internals<T>,
-): V[] | void => {
-    const uid = `${tag.fullKey}:${tag.fullOccur}`
-    const maybeValues = sequencer(uid, uid, values, sortIn, internals)
-
-    if (maybeValues) {
-        return maybeValues
-    }
 }
 
 const firstCategory = <T extends {}>(tag: TagData, _internals: Internals<T>): string[] => tag.values[0]
@@ -80,7 +65,7 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
     ellipser?: WeakFilter<T>,
 
     getValues?: Eval<T, V[]>,
-    sequence?: (sortIn: SortInStrategy, values: V[]) => Eval<T, V[] | void>
+    sequence?: (getValues: Eval<T, V[]>, sortIn: SortInStrategy) => Eval<T, V[] | void>
 
     sortInStrategy?: SortInStrategy,
     categorySeparator?: WeakSeparator,
@@ -99,7 +84,7 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
         ellipser = ellipsis,
 
         getValues = flattedValuesWithIndex,
-        sequence = doNotMixAmong,
+        sequence = acrossTag,
 
         sortInStrategy = topUp,
         categorySeparator = { sep: '::' },
@@ -108,10 +93,7 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
-    const inTagShuffleWithStrategy: Eval<T, V[] | void> = (tag: TagData, internals: Internals<T>) => sequence(
-        sortInStrategy,
-        (getValues as Eval<T, V[]>)(tag, internals),
-    )(tag, internals)
+    const inTagShuffleWithStrategy: Eval<T, V[] | void> = sequence(getValues as any, sortInStrategy) as Eval<T, V[]>
 
     const front = shuffleAndStylize(frontStylizer, inTagShuffleWithStrategy)
     const back = shuffleAndStylize(backStylizer, inTagShuffleWithStrategy)

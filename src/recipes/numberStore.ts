@@ -21,12 +21,12 @@ class NumberStore extends ValueStore<number> {
 
 const numStoreFilterTemplate = valueStoreTemplate(NumberStore)
 
-export const incrementRecipe = ({
+export const incrementRecipe = <T extends {}>({
     tagname = 'inc',
     storeId = 'numerical',
     separator = { sep: ',' },
     assignmentSeparator = { sep: '=', trim: true },
-} = {}) => (registrar: Registrar<{}>) => registrar.register(
+} = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     numStoreFilterTemplate(
         storeId,
@@ -37,12 +37,12 @@ export const incrementRecipe = ({
     },
 )
 
-export const decrementRecipe = ({
+export const decrementRecipe = <T extends {}>({
     tagname = 'dec',
     storeId = 'numerical',
     separator = { sep: ',' },
     assignmentSeparator = { sep: '=', trim: true },
-} = {}) => (registrar: Registrar<{}>) => registrar.register(
+} = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     numStoreFilterTemplate(
         storeId,
@@ -53,12 +53,12 @@ export const decrementRecipe = ({
     }
 )
 
-export const setNumberRecipe = ({
+export const setNumberRecipe = <T extends {}>({
     tagname = 'set',
     storeId = 'numerical',
     separator = { sep: ',' },
     assignmentSeparator = { sep: '=', trim: true },
-} = {}) => (registrar: Registrar<{}>) => registrar.register(
+} = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     numStoreFilterTemplate(
         storeId,

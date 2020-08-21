@@ -30,7 +30,7 @@ const matcher = (argTag: TagData) => (match: string, p1: string) => {
     }
 }
 
-export const defRecipe = () => (registrar: Registrar<{}>) => {
+export const defRecipe = () => <T extends {}>(registrar: Registrar<T>) => {
     const innerOptions = { separators: [{ sep: '::' }] }
 
     const defFilter = (tag: TagData): WeakFilterResult => {

@@ -1,4 +1,5 @@
-import type { Internals } from './types'
+import type { TagData, Internals, Eval } from './types'
+import type { SortInStrategy } from './sortInStrategies'
 
 import { sortWithIndices } from './utils'
 
@@ -12,6 +13,11 @@ export const sequencer = <V, T extends {}>(
     strategy: (indices: number[], toLength: number) => number[],
     { cache, memory, deferred, ready }: Internals<T>,
 ): V[] | void => {
+    if (values.length === 0) {
+        // empty sequence cannot be shuffled + does not contribute to other parts
+        return values
+    }
+
     const applyKey = `${unitId}:apply`
     // in cache: boolean whether ready for application
     // in deferred: sets apply key true, deletes unitId from waitingSet
@@ -82,3 +88,22 @@ export const sequencer = <V, T extends {}>(
         }, [])
     })
 }
+
+const sequenceTemplate = <T extends {}>(
+    makeKeywords: Eval<T, [string, string]>,
+) => <V extends [...any[]]>(
+    getValues: Eval<T, V[]>,
+    sortIn: SortInStrategy,
+): Eval<T, V[] | void> => (
+    tag: TagData,
+    internals: Internals<T>,
+): V[] | void => {
+    const [uid, sequenceId] = makeKeywords(tag, internals)
+    return sequencer(uid, sequenceId, getValues(tag, internals), sortIn, internals)
+}
+
+const within = <T extends {}>({ fullKey, fullOccur }: TagData, _internals: Internals<T>): [string, string] => [`${fullKey}:${fullOccur}`, `${fullKey}:${fullOccur}`]
+export const withinTag = sequenceTemplate(within)
+
+const across = <T extends {}>({ fullKey, fullOccur }: TagData, _internals: Internals<T>): [string, string] => [`${fullKey}:${fullOccur}`, fullKey]
+export const acrossTag = sequenceTemplate(across)

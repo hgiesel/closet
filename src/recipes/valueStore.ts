@@ -92,7 +92,7 @@ export const valueStoreTemplate = <T extends ValueStore<U>, U>(
     storeId: string,
     defaultValue: U,
     operation: (...vals: string[]) => (a: T) => void,
-) => (tag: TagData, { cache }: Internals<{}>) => {
+) => <TT extends {}>(tag: TagData, { cache }: Internals<TT>) => {
     const commands = tag.values
 
     commands.forEach((cmd: string) => {

@@ -133,11 +133,11 @@ const occlusionCss = `
 
 const occlusionMakerCssKeyword = 'occlusionMakerCss'
 
-export const occlusionMakerRecipe = (options: {
+export const occlusionMakerRecipe = <T extends {}>(options: {
     tagname?: string,
     occlusionTextHandler?: OcclusionTextHandler,
     shapeKeywords?: string[]
-} = {})=> (registrar: Registrar<{}>) => {
+} = {})=> (registrar: Registrar<T>) => {
     const keyword = 'makeOcclusions'
 
     const {
@@ -146,7 +146,7 @@ export const occlusionMakerRecipe = (options: {
         shapeKeywords = [rectKeyword],
     } = options
 
-    const occlusionMakerFilter = (_tag: TagData, { template, cache, aftermath, environment }: Internals<{}>) => {
+    const occlusionMakerFilter = (_tag: TagData, { template, cache, aftermath, environment }: Internals<T>) => {
         const images = (template.textFragments as any).flatMap(getImages)
 
         aftermath.registerIfNotExists(keyword, () => {

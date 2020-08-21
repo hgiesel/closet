@@ -14,13 +14,9 @@ type ValuePlusCategory = [string, number]
 const valuesWithIndex = <T extends {}>(
     tag: TagData,
     _internals: Internals<T>,
-): ValuePlusCategory[] => {
-    const flattedValuesWithIndex: ValuePlusCategory[] = tag
-        .values
-        .flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
-
-    return flattedValuesWithIndex
-}
+): ValuePlusCategory[] => tag.values
+    ? tag.values.flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
+    : []
 
 const firstCategory = <T extends {}>(tag: TagData, _internals: Internals<T>): string[] => tag.values[0]
 

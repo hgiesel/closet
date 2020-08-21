@@ -1,5 +1,22 @@
 name: Multiple choice with input
 code: |
+  const countRightAnswers = (tag, internals) => {
+    const keyword = `${tag.fullKey}:rightAnswers`
+    internals.cache.fold(
+      keyword,
+      v => v + (tag.values
+        ? tag.values[0].length
+        : 0),
+      0,
+    )
+
+    return tag.values
+      ? tag.values.flatMap((v, i) => v.map((w) => [w, i]))
+      : []
+    }
+
+
   filterManager.addRecipe(Closet.recipes.multipleChoiceShow({
     tagname: 'mc',
+    getValues: countRightAnswers,
   }))

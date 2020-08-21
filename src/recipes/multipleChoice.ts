@@ -93,10 +93,11 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
-    const inTagShuffleWithStrategy: Eval<T, V[] | void> = sequence(getValues as any, sortInStrategy) as Eval<T, V[]>
+    // @ts-ignore
+    const shuffler: Eval<T, V[] | void> = sequence(getValues, sortInStrategy)
 
-    const front = shuffleAndStylize(frontStylizer, inTagShuffleWithStrategy)
-    const back = shuffleAndStylize(backStylizer, inTagShuffleWithStrategy)
+    const front = shuffleAndStylize(frontStylizer, shuffler)
+    const back = shuffleAndStylize(backStylizer, shuffler)
 
     const multipleChoiceSeparators = { separators: [categorySeparator, valueSeparator] }
     const multipleChoiceRecipe = flashcardTemplate(frontInactive, backInactive)

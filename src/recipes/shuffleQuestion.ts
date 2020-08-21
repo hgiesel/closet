@@ -5,26 +5,16 @@ import type { SortInStrategy } from './sortInStrategies'
 import { makeFlashcardTemplate, generateFlashcardRecipes, toListStylize, ellipsis } from './flashcardTemplate'
 
 import { Stylizer } from './stylizer'
-import { sequencer } from './sequencer'
+import { withinTag } from './sequencer'
 import { topUp } from './sortInStrategies'
-
-const acrossTagShuffle = (sortIn: SortInStrategy) => <T extends {}>(tag: TagData, internals: Internals<T>): string[] | void => tag.values === null
-    ? []
-    : sequencer(
-        `${tag.fullKey}:${tag.fullOccur}`,
-        tag.fullKey,
-        tag.values as string[],
-        sortIn,
-        internals,
-    )
 
 const justValues = <T extends {}>(tag: TagData, _internals: Internals<T>) => tag.values
 
 const shuffleAndStylize = <T extends {}>(
     stylizer: Stylizer,
-    ellipser: Eval<T, string[] | void>,
+    shuffler: Eval<T, string[] | void>,
 ) => (tag: TagData, internals: Internals<T>): WeakFilterResult => {
-    const maybeValues = ellipser(tag, internals)
+    const maybeValues = shuffler(tag, internals)
 
     return maybeValues
         ? stylizer.stylize(maybeValues)
@@ -41,23 +31,24 @@ const blueHighlight: Stylizer = new Stylizer({
 
 const valuesInOrder = <T extends {}>(tag: TagData, _internals: Internals<T>) => tag.values
 
-const doShuffle = <T extends FlashcardPreset>(stylizer: Stylizer, sortIn: SortInStrategy) => shuffleAndStylize(stylizer, acrossTagShuffle(sortIn) as Eval<T, string[] | void>)
-const simplyShow = (stylizer: Stylizer, _sortIn: SortInStrategy) => toListStylize(stylizer, justValues)
+const simplyShow = <T extends {}>(stylizer: Stylizer, _shuffler: Eval<T, string[] | void>) => toListStylize(stylizer, justValues)
 
 const oneSidedShufflePublicApi = <T extends FlashcardPreset>(
-    frontActive: (stylizer: Stylizer, sortIn: SortInStrategy) => WeakFilter<T>,
-    backActive: (stylizer: Stylizer, sortIn: SortInStrategy) => WeakFilter<T>,
+    frontActive: (stylizer: Stylizer, shuffler: Eval<T, string[] | void>) => WeakFilter<T>,
+    backActive: (stylizer: Stylizer, shuffler: Eval<T, string[] | void>) => WeakFilter<T>,
 ) => (
     frontInactive: InactiveBehavior<T>,
     backInactive: InactiveBehavior<T>,
 ): Recipe<T> => (options: {
     tagname?: string,
 
+    activeStylizer?: Stylizer,
     inactiveStylizer?: Stylizer,
+
     contexter?: Eval<T, string[]>,
     ellipser?: WeakFilter<T>,
 
-    activeStylizer?: Stylizer,
+    sequence?: <V extends [...any[]]>(getValues: Eval<T, V[]>, sortIn: SortInStrategy) => Eval<T, V[] | void>,
 
     sortInStrategy?: SortInStrategy,
     separator?: WeakSeparator,
@@ -67,11 +58,13 @@ const oneSidedShufflePublicApi = <T extends FlashcardPreset>(
         tagname = 'shuf',
         sortInStrategy = topUp,
 
+        activeStylizer = blueHighlight,
         inactiveStylizer = inactive,
+
         contexter = valuesInOrder,
         ellipser = ellipsis,
 
-        activeStylizer = blueHighlight,
+        sequence = withinTag,
 
         separator = { sep: '::' },
         flashcardTemplate = makeFlashcardTemplate(),
@@ -79,8 +72,11 @@ const oneSidedShufflePublicApi = <T extends FlashcardPreset>(
 
     const clozeSeparators = { separators: [separator] }
 
-    const front = frontActive(activeStylizer, sortInStrategy)
-    const back = backActive(activeStylizer, sortInStrategy)
+    // @ts-ignore
+    const shuffler: Eval<T, any[]> = sequence(contexter, sortInStrategy)
+
+    const front = frontActive(activeStylizer, shuffler)
+    const back = backActive(activeStylizer, shuffler)
 
     const trueContexter = toListStylize(inactiveStylizer, contexter)
 
@@ -92,16 +88,16 @@ export const [
     shuffleShowRecipe,
     shuffleHideRecipe,
     shuffleRevealRecipe,
-] = generateFlashcardRecipes(oneSidedShufflePublicApi(doShuffle, doShuffle))
+] = generateFlashcardRecipes(oneSidedShufflePublicApi(shuffleAndStylize, shuffleAndStylize))
 
 export const [
     sortShowRecipe,
     sortHideRecipe,
     sortRevealRecipe,
-] = generateFlashcardRecipes(oneSidedShufflePublicApi(doShuffle, simplyShow))
+] = generateFlashcardRecipes(oneSidedShufflePublicApi(shuffleAndStylize, simplyShow))
 
 export const [
     jumbleShowRecipe,
     jumbleHideRecipe,
     jumbleRevealRecipe,
-] = generateFlashcardRecipes(oneSidedShufflePublicApi(simplyShow, doShuffle))
+] = generateFlashcardRecipes(oneSidedShufflePublicApi(simplyShow, shuffleAndStylize))

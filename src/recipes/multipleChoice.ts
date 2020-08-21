@@ -3,7 +3,7 @@ import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'
 import type { SortInStrategy } from './sortInStrategies'
 
 import { Stylizer } from './stylizer'
-import { withinTag, acrossTag } from './sequencer'
+import { withinTag } from './sequencer'
 import { makeFlashcardTemplate, generateFlashcardRecipes, toListStylize, ellipsis } from './flashcardTemplate'
 import { topUp } from './sortInStrategies'
 

@@ -7,7 +7,7 @@ import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './fla
 import { listStylize, listStylizeMaybe } from './styleList'
 
 import { Stylizer } from './stylizer'
-import { withinTag } from './sequencer'
+import { acrossTag } from './sequencer'
 import { topUp } from './sortInStrategies'
 
 const justValues = <T extends {}>(tag: TagData, _internals: Internals<T>) => tag.values
@@ -47,7 +47,6 @@ const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList
 } = {}) => {
     const {
         tagname = 'shuf',
-        sortInStrategy = topUp,
 
         activeStylizer = blueHighlight,
         inactiveStylizer = inactive,
@@ -55,7 +54,8 @@ const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList
         contexter = valuesInOrder,
         ellipser = ellipsis,
 
-        sequence = withinTag,
+        sequence = acrossTag,
+        sortInStrategy = topUp,
 
         separator = { sep: '::' },
         flashcardTemplate = makeFlashcardTemplate(),

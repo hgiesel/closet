@@ -4,14 +4,14 @@ import type { SortInStrategy } from './sortInStrategies'
 import type { StyleList } from './styleList'
 
 import { Stylizer } from './stylizer'
-import { withinTag } from './sequencer'
+import { acrossTag } from './sequencer'
 import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './flashcardTemplate'
 import { listStylize, listStylizeMaybe } from './styleList'
 import { topUp } from './sortInStrategies'
 
 type ValuePlusCategory = [string, number]
 
-const flattedValuesWithIndex = <T extends {}>(
+const valuesWithIndex = <T extends {}>(
     tag: TagData,
     _internals: Internals<T>,
 ): ValuePlusCategory[] => {
@@ -71,10 +71,11 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
         contexter = firstCategory,
         ellipser = ellipsis,
 
-        getValues = flattedValuesWithIndex,
-        sequence = withinTag,
+        getValues = valuesWithIndex,
 
+        sequence = acrossTag,
         sortInStrategy = topUp,
+
         categorySeparator = { sep: '::' },
         valueSeparator = { sep: '||' },
 

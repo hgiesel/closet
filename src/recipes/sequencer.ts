@@ -4,23 +4,23 @@ import type { SortInStrategy } from './sortInStrategies'
 import { sortWithIndices } from './utils'
 
 // TODO abstract to an object without dependence on Internals
-export const sequencer = <V, T extends {}>(
+export const sequencer = <T extends {}, V>(
     // identifies each unit (tag) receiving shuffled items
     unitId: string,
     // identifies each collection of items being shuffled
     sequenceId: string,
-    values: V[],
     strategy: (indices: number[], toLength: number) => number[],
-    { cache, memory, deferred, ready }: Internals<T>,
+    getValues: Eval<T, V[]>,
+): Eval<T, V[] | void> => (
+    tag: TagData,
+    internals: Internals<T>,
 ): V[] | void => {
-    if (values.length === 0) {
-        // empty sequence cannot be shuffled + does not contribute to other parts
-        return values
-    }
-
     const applyKey = `${unitId}:apply`
     // in cache: boolean whether ready for application
     // in deferred: sets apply key true, deletes unitId from waitingSet
+
+    const lengthKey = `${unitId}:length`
+    // in cache: number of values the unit contributed to the sequence
 
     const waitingSetKey = `${sequenceId}:waitingSet`
     // in cache: Set with all tags (contains unitId) who wait for their inner sets to be ready
@@ -31,17 +31,19 @@ export const sequencer = <V, T extends {}>(
     // in deferred: tries to shuffle cache[shuffleKey], stops if waitingSet is not empty
 
     /////////// APPLY LOGIC
-    if (cache.get(applyKey, false)) {
-        const waitingSet = cache.get(waitingSetKey, new Set()) as Set<string>
+    if (internals.cache.get(applyKey, false)) {
+        const waitingSet = internals.cache.get(waitingSetKey, new Set()) as Set<string>
             if (waitingSet.size > 0) {
                 // continue waiting for other tags with same fullKey
                 return
             }
 
         const popped: V[] = []
-        const possibleValues = cache.get(shuffleKey, []) as V[]
 
-        for (let x = 0; x < values.length; x++) {
+        const possibleValues = internals.cache.get(shuffleKey, []) as V[]
+        const valueLength = internals.cache.get(lengthKey, 0)
+
+        for (let x = 0; x < valueLength; x++) {
             // pop off start, so the result is the same as in program logic
             const shiftedValue = possibleValues.shift()
 
@@ -54,34 +56,43 @@ export const sequencer = <V, T extends {}>(
     }
 
     /////////// ADD TO SHUFFLE KEY LOGIC
-    if (!ready) {
+    if (!internals.ready) {
         // add to waitingSet
-        cache.over(waitingSetKey, (s: Set<string>) => s.add(unitId), new Set())
+        internals.cache.over(waitingSetKey, (s: Set<string>) => s.add(unitId), new Set())
         return
     }
 
-    cache.fold(shuffleKey, (v: unknown[]) => v.concat(values), [])
+    // each unit should only continue past this point once
+    const values = getValues(tag, internals)
+
+    if (values.length === 0) {
+        // no need to shuffle an empty unit
+        return values
+    }
+
+    internals.cache.fold(shuffleKey, (v: V[]) => v.concat(values), [])
+    internals.cache.set(lengthKey, values.length)
 
     /////////// TRY TO SHUFFLE FROM DEFERRED LOGIC
     // needs to be executed per individual tag, because of applyKey
-    deferred.registerIfNotExists(applyKey, () => {
-        cache.set(applyKey, true)
-        cache.over(waitingSetKey, (set: Set<string>) => set.delete(unitId), new Set())
+    internals.deferred.registerIfNotExists(applyKey, () => {
+        internals.cache.set(applyKey, true)
+        internals.cache.over(waitingSetKey, (set: Set<string>) => set.delete(unitId), new Set())
     }, {
         priority: 65 /* is higher than ordering 35 */,
     })
 
     // needs to be executed once per fullKey
-    deferred.registerIfNotExists(shuffleKey, () => {
-        if (cache.get(waitingSetKey, new Set()).size > 0) {
+    internals.deferred.registerIfNotExists(shuffleKey, () => {
+        if (internals.cache.get(waitingSetKey, new Set()).size > 0) {
             return
         }
         // will only go go beyong this point for the last set that becomes ready
         // because shuffling only needs to be done once
 
-        cache.fold(shuffleKey, <V>(vs: V[]) => {
-            const sortingIndices = memory.fold(shuffleKey, (vs: number[]) => {
-                return strategy(vs, cache.get(shuffleKey, []).length)
+        internals.cache.fold(shuffleKey, <V>(vs: V[]) => {
+            const sortingIndices = internals.memory.fold(shuffleKey, (vs: number[]) => {
+                return strategy(vs, internals.cache.get(shuffleKey, []).length)
             }, [])
 
             return sortWithIndices(vs, sortingIndices)
@@ -99,7 +110,7 @@ const sequenceTemplate = <T extends {}>(
     internals: Internals<T>,
 ): V[] | void => {
     const [uid, sequenceId] = makeKeywords(tag, internals)
-    return sequencer(uid, sequenceId, getValues(tag, internals), sortIn, internals)
+    return sequencer(uid, sequenceId, sortIn, getValues)(tag, internals)
 }
 
 const within = <T extends {}>({ fullKey, fullOccur }: TagData, _internals: Internals<T>): [string, string] => [`${fullKey}:${fullOccur}`, `${fullKey}:${fullOccur}`]

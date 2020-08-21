@@ -16,10 +16,9 @@ export const shufflingRecipe = ({
         const maybeValues = sequencer(
             unitId,
             sequenceId,
-            tag.values as string[],
             sortInStrategy,
-            internals,
-        )
+            ({ values }: TagData, _interals: Internals<T>): string[] => values ?? [],
+        )(tag, internals)
 
         if (maybeValues) {
             return stylizer.stylize(maybeValues)

@@ -73,11 +73,4 @@ export const generateFlashcardRecipes = <T extends FlashcardPreset>(
     publicApi(id2, id),
 ]
 
-export const toListStylize = <T extends FlashcardPreset>(
-    stylizer: Stylizer,
-    toList: Eval<T, string[]>,
-): WeakFilter<T> => (tag: TagData, internals: Internals<T>) => internals.ready
-    ? stylizer.stylize(toList(tag, internals))
-    : { ready: false }
-
 export const ellipsis = constant('[...]')

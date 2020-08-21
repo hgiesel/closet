@@ -1,7 +1,9 @@
 import type { TagData, Internals, Eval, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from './types'
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
+import type { StyleList } from './styleList'
 
-import { makeFlashcardTemplate, ellipsis, toListStylize, generateFlashcardRecipes } from './flashcardTemplate'
+import { makeFlashcardTemplate, ellipsis, generateFlashcardRecipes } from './flashcardTemplate'
+import { listStylize } from './styleList'
 import { Stylizer } from './stylizer'
 
 const wrapWithBrackets = (v: string) => `[${v}]`
@@ -35,10 +37,10 @@ const clozePublicApi = <T extends FlashcardPreset>(
     tagname?: string,
 
     frontStylizer?: Stylizer,
-    frontEllipser?: Eval<T, string[]>,
+    frontEllipser?: Eval<T, StyleList>,
 
     backStylizer?: Stylizer,
-    backEllipser?: Eval<T, string[]>,
+    backEllipser?: Eval<T, StyleList>,
 
     inactiveEllipser?: WeakFilter<T>,
 
@@ -60,8 +62,8 @@ const clozePublicApi = <T extends FlashcardPreset>(
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
-    const front = toListStylize(frontStylizer, frontEllipser)
-    const back = toListStylize(backStylizer, backEllipser)
+    const front = listStylize(frontStylizer, frontEllipser)
+    const back = listStylize(backStylizer, backEllipser)
 
     const clozeSeparators = { separators: [separator] }
     const clozeRecipe = flashcardTemplate(frontInactive, backInactive)

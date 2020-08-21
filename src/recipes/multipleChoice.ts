@@ -1,10 +1,12 @@
-import type { TagData, Recipe, Eval, Internals, InactiveBehavior, WeakFilter, WeakFilterResult, WeakSeparator } from './types'
+import type { TagData, Recipe, Eval, Internals, InactiveBehavior, WeakFilter, WeakSeparator } from './types'
 import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'
 import type { SortInStrategy } from './sortInStrategies'
+import type { StyleList } from './styleList'
 
 import { Stylizer } from './stylizer'
 import { withinTag } from './sequencer'
-import { makeFlashcardTemplate, generateFlashcardRecipes, toListStylize, ellipsis } from './flashcardTemplate'
+import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './flashcardTemplate'
+import { listStylize, listStylizeMaybe } from './styleList'
 import { topUp } from './sortInStrategies'
 
 type ValuePlusCategory = [string, number]
@@ -21,19 +23,6 @@ const flattedValuesWithIndex = <T extends {}>(
 }
 
 const firstCategory = <T extends {}>(tag: TagData, _internals: Internals<T>): string[] => tag.values[0]
-
-const transpose = <T>(array: T[][]): T[][]  => array[0].map((_, index) => array.map(value => value[index]))
-const shuffleAndStylize = <T extends {}, V extends [...any[]]>(
-    stylizer: Stylizer,
-    ellipser: Eval<T, V[] | void>,
-): WeakFilter<T> => (tag: TagData, internals: Internals<T>): WeakFilterResult => {
-    const maybeValues = ellipser(tag, internals)
-
-    return maybeValues
-    // @ts-ignore
-        ? stylizer.stylize(...transpose(maybeValues))
-        : { ready: false }
-}
 
 const inactive = new Stylizer()
 
@@ -53,18 +42,18 @@ const greenAndRed = orangeCommaSeparated.toStylizer({
 const multipleChoicePublicApi = <T extends FlashcardPreset>(
     frontInactive: InactiveBehavior<T>,
     backInactive: InactiveBehavior<T>,
-): Recipe<T> => <V extends [...any[]]>(options: {
+): Recipe<T> => <V extends StyleList>(options: {
     tagname?: string,
 
     frontStylizer?: Stylizer,
     backStylizer?: Stylizer,
 
     inactiveStylizer?: Stylizer,
-    contexter?: Eval<T, string[]>,
+    contexter?: Eval<T, V>,
     ellipser?: WeakFilter<T>,
 
-    getValues?: Eval<T, V[]>,
-    sequence?: (getValues: Eval<T, V[]>, sortIn: SortInStrategy) => Eval<T, V[] | void>
+    getValues?: Eval<T, V>,
+    sequence?: (getValues: Eval<T, V>, sortIn: SortInStrategy) => Eval<T, V | void>
 
     sortInStrategy?: SortInStrategy,
     categorySeparator?: WeakSeparator,
@@ -93,15 +82,15 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
     } = options
 
     // @ts-ignore
-    const shuffler: Eval<T, V[] | void> = sequence(getValues, sortInStrategy)
+    const shuffler: Eval<T, V | void> = sequence(getValues, sortInStrategy)
 
-    const front = shuffleAndStylize(frontStylizer, shuffler)
-    const back = shuffleAndStylize(backStylizer, shuffler)
+    const front = listStylizeMaybe(frontStylizer, shuffler)
+    const back = listStylizeMaybe(backStylizer, shuffler)
 
     const multipleChoiceSeparators = { separators: [categorySeparator, valueSeparator] }
     const multipleChoiceRecipe = flashcardTemplate(frontInactive, backInactive)
 
-    const trueContexter = toListStylize(inactiveStylizer, contexter)
+    const trueContexter = listStylize(inactiveStylizer, contexter)
 
     return multipleChoiceRecipe(tagname, front, back, trueContexter, ellipser, multipleChoiceSeparators)
 }

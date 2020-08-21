@@ -2,10 +2,18 @@ import type { TagData } from '../template/tags'
 import type { Internals, Registrar, WeakFilter } from '..'
 
 export type {
-    Registrar, Filters,
-    WeakFilter, WeakFilterResult,
-    Internals, DeferredInternals, AftermathInternals,
-    DeferredEntry, AftermathEntry,
+    Registrar,
+    Filters,
+
+    Filter,
+    WeakFilter,
+    WeakFilterResult,
+
+    Internals,
+    DeferredInternals,
+    AftermathInternals,
+    DeferredEntry,
+    AftermathEntry,
     DataOptions,
 } from '..'
 

@@ -81,3 +81,12 @@ export const wrappers = {
 ////////////////////////////////////
 
 export * as deciders from './deciders'
+
+////////////////////////////////////
+
+import { withinTag, acrossTag } from './sequencer'
+
+export const sequencers = {
+    withinTag: withinTag,
+    acrossTag: acrossTag,
+}

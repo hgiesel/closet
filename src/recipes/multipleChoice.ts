@@ -84,7 +84,7 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
         ellipser = ellipsis,
 
         getValues = flattedValuesWithIndex,
-        sequence = acrossTag,
+        sequence = withinTag,
 
         sortInStrategy = topUp,
         categorySeparator = { sep: '::' },

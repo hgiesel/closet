@@ -1,5 +1,84 @@
 name: Multiple choice with input
 code: |
-  filterManager.addRecipe(Closet.recipes.multipleChoiceShow({
+  const countRightAnswers = (tag, internals) => {
+    const rightAnswerKeyword = `${tag.fullKey}:rightAnswers`
+    const increaseByRightAnswers = (v) => v + (tag.values
+      ? tag.values[0].length
+      : 0)
+
+    internals.cache.fold(rightAnswerKeyword, increaseByRightAnswers, 0)
+
+    return tag.values
+      ? tag.values.flatMap((v, i) => v.map((w) => [
+        w,
+        i,
+        tag.fullKey,
+        tag.fullOccur,
+        internals.cache,
+        internals.aftermath,
+      ]))
+      : []
+  }
+
+  const refreshInputChecked = (elementId, aftermath) => {
+    const oldInput = document.getElementById(elementId)
+    if (oldInput && oldInput.checked) {
+      aftermath.register(`${elementId}:recheck`, () => {
+        const newInput = document.getElementById(elementId)
+
+        if (newInput) {
+          newInput.checked = true
+        }
+      })
+    }
+  }
+
+  const createInputElement = (classLabel) => (value, index, type, fullKey, fullOccur, cache, aftermath) => {
+    const rightAnswerKeyword = `${fullKey}:rightAnswers`
+    const rightAnswerCount = cache.get(rightAnswerKeyword, 0)
+
+    const elementId = `${fullKey}-${fullOccur}-${index}`
+    const inputType = rightAnswerCount === 1 ? 'radio' : 'checkbox'
+
+    refreshInputChecked(elementId, aftermath)
+    const className = type === 0 ? `class="${classLabel}" ` : ''
+
+    return `
+      <input type="${inputType}" id="${elementId}" name="${fullKey}" />
+      <label ${className} for="${elementId}">${value}</label>
+    `
+  }
+
+  const front = new Closet.Stylizer({
+    separator: '<br />',
+    mapper: createInputElement('')
+  })
+
+  const backClassName = 'closet-mc-right-answer'
+
+  const back = new Closet.Stylizer({
+    separator: '<br />',
+    mapper: createInputElement(backClassName),
+  })
+
+  const inputMultipleChoiceStyle = `
+  .${backClassName} {
+    color: lime;
+  }`
+
+  const addHighlightCSS = (entry, internals) => {
+    const keyword = 'inputMultipleChoice'
+
+    if (!internals.environment.post(keyword, () => true, false)) {
+      Closet.browser.appendStyleTag(inputMultipleChoiceStyle)
+    }
+  }
+
+  const wrappedMultipleChoiceShow = Closet.wrappers.aftermath(Closet.recipes.multipleChoiceShow, addHighlightCSS)
+
+  filterManager.addRecipe(wrappedMultipleChoiceShow({
     tagname: 'mc',
+    getValues: countRightAnswers,
+    frontStylizer: front,
+    backStylizer: back,
   }))

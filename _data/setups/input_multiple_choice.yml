@@ -1,0 +1,5 @@
+name: Multiple choice with input
+code: |
+  filterManager.addRecipe(Closet.recipes.multipleChoiceShow({
+    tagname: 'mc',
+  }))

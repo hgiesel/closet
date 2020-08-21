@@ -1,7 +1,7 @@
 ---
 layout: doc
 title: Assigning categories
-nav_order: 2
+nav_order: 3
 permalink: multiple-choice/categories
 parent: Multiple Choice
 ---

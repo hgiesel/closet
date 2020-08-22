@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 declare DIR="$(cd "$(dirname "$0")/.." && pwd -P)"
-declare addon_id='TemplateOverload'
+declare addon_id='ClosetForAnki'
 
 cd "$DIR"
 

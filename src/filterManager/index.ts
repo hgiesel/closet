@@ -45,10 +45,6 @@ interface FilterProcessor<F,T,D> {
     getOptions: () => Partial<D>
 }
 
-interface ClosetEnvironment {
-    closetEnvironment: Storage<unknown>
-}
-
 export class MetaFilterManager<
     F extends Filterable,
     T,
@@ -72,25 +68,29 @@ export class MetaFilterManager<
 
     protected preset: P
 
-    constructor(memory: StorageType<unknown> = new Map(), preset: P) {
+    protected constructor(
+        preset: P,
+        filters: FilterApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R>,
+        options: Storage<Partial<D>>,
+        deferred: DeferredApi<ManagerInfo<F,T,I,R,X,D,P> & T & I>,
+        aftermath: DeferredApi<ManagerInfo<F,T,I,R,X,D,P> & T & X>,
+        cache: Storage<unknown>,
+        memory: Storage<unknown>,
+        environment: Storage<unknown>,
+    ) {
         this.preset = preset
 
-        this.filters = new FilterApi()
-        this.options = new Storage(new Map())
+        this.filters = filters
+        this.options = options
 
-        this.registrar = new RegistrarApi(this.filters, this.options)
+        this.registrar = new RegistrarApi(filters, options)
 
-        this.deferred = new DeferredApi()
-        this.aftermath = new DeferredApi()
+        this.deferred = deferred
+        this.aftermath = aftermath
 
-        this.cache = new Storage(new Map())
-        this.memory = new Storage(memory)
-
-        if (!globalThis.hasOwnProperty('closetEnvironment')) {
-            (globalThis as typeof globalThis & Partial<ClosetEnvironment>).closetEnvironment = new Storage(new Map())
-        }
-
-        this.environment = (globalThis as typeof globalThis & ClosetEnvironment).closetEnvironment
+        this.cache = cache
+        this.memory = memory
+        this.environment = environment
     }
 
     protected getBaseInternals(t: T): ManagerInfo<F,T,I,R,X,D,P> & T {
@@ -143,6 +143,10 @@ export class MetaFilterManager<
         this.aftermath.executeEach(aftermathInternals)
     }
 
+    switchPreset(preset: P) {
+        this.preset = preset
+    }
+
     clear() {
         this.memory.clear()
         this.aftermath.clear()
@@ -155,9 +159,5 @@ export class MetaFilterManager<
 
     addRecipe(recipe: (registrar: RegistrarApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R, D>) => void): void {
         recipe(this.registrar)
-    }
-
-    setPreset(preset: P) {
-        this.preset = preset
     }
 }

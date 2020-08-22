@@ -36,8 +36,7 @@ var EditorCloset = {
         else {
             const elements = ['[[makeOcclusions]]'].concat(...document.body.querySelectorAll('.field'))
 
-            const filterManager = new Closet.FilterManager()
-            filterManager.setPreset({})
+            const filterManager = Closet.FilterManager.make()
             filterManager.addRecipe(EditorCloset.editorOcclusion)
 
             filterManager.addRecipe(Closet.browserRecipes.rectShow({ tagname: 'rect' })),

@@ -1,8 +1,11 @@
 import { Status, ProcessorOutput } from './template/evaluate'
 import { MetaFilterManager } from './filterManager'
+import { FilterApi } from './filterManager/filters'
+import { Storage, StorageType } from './filterManager/storage'
+import { DeferredApi } from './filterManager/deferred'
 
 import type { ManagerInfo } from './filterManager'
-import type { Filter as FilterType, WeakFilter as WeakFilterType, FilterResult, FilterApi } from './filterManager/filters'
+import type { Filter as FilterType, WeakFilter as WeakFilterType, FilterResult } from './filterManager/filters'
 import type { RegistrarApi } from './filterManager/registrar'
 import type { DeferredEntry as DefEntry } from './filterManager/deferred'
 
@@ -22,7 +25,7 @@ export type { DataOptions } from './template/evaluate'
 
 export type Filter<P extends object> = FilterType<TagData, Internals<P>>
 export type WeakFilter<P extends object> = WeakFilterType<TagData, Internals<P>>
-export type { FilterResult, WeakFilterResult } from './filterManager/filters'
+export type { FilterResult, WeakFilterResult, FilterApi } from './filterManager/filters'
 
 const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => {
     if (!filterResult.ready) {
@@ -53,7 +56,29 @@ const fillDataOptions = (partial: Partial<DataOptions>): DataOptions => {
 
 }
 
+const closetEnvironmentName = '_closetEnvironment'
+interface ClosetEnvironment {
+    [closetEnvironmentName]: StorageType<unknown>
+}
+
 export class FilterManager<P extends object> extends MetaFilterManager<TagData, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> implements TagRenderer {
+    static make(preset: object = {}, memory: StorageType<unknown> = new Map()) {
+        const environment = !globalThis.hasOwnProperty(closetEnvironmentName)
+            ? (globalThis as typeof globalThis & Partial<ClosetEnvironment>)[closetEnvironmentName] = new Map()
+            : (globalThis as typeof globalThis & Partial<ClosetEnvironment>)[closetEnvironmentName]
+
+        return new FilterManager(
+            preset,
+            new FilterApi() as any,
+            new Storage(new Map()),
+            new DeferredApi() as any,
+            new DeferredApi() as any,
+            new Storage(new Map()),
+            new Storage(memory),
+            new Storage(environment as StorageType<unknown>),
+        )
+    }
+
     makeAccessor(template: TemplateInfo, iteration: IterationInfo): TagAccessor {
         const accessor = this.filterAccessor(template, iteration)
 

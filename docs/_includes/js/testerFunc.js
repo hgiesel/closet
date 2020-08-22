@@ -76,9 +76,7 @@ const processTemplateText = () => {
     }
 
     /////////////////////////////
-    const filterManager = new Closet.FilterManager(memory)
-    filterManager.setPreset(preset)
-
+    const filterManager = Closet.FilterManager.make(preset, memory)
     const setups = getActiveSetups()
 
     for (const s of setups) {

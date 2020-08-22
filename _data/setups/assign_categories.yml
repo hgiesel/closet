@@ -1,6 +1,6 @@
 name: Assign categories
 code: |
-  const baseStylizer = new Closet.Stylizer({
+  const baseStylizer = Closet.Stylizer.make({
     separator: '・',
     processor: (v) => `《${v}》`,
   })

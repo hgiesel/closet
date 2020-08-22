@@ -11,7 +11,7 @@ code: |
   const cw = colorWheel()
   cw.next()
 
-  const colorfulWithMiddleDot = new Closet.Stylizer({
+  const colorfulWithMiddleDot = Closet.Stylizer.make({
     separator: '・',
     mapper: v => (
       `<span style="color: ${cw.next().value};">${v}</span>`
@@ -19,15 +19,15 @@ code: |
     processor: v => `〈${v}〉`,
   })
 
-  const withMiddleDot = new Closet.Stylizer({
+  const withMiddleDot = Closet.Stylizer.make({
     separator: '・',
   })
 
-  const withSlash = new Closet.Stylizer({
+  const withSlash = Closet.Stylizer.make({
     separator: ' / ',
   })
 
-  const withVs = new Closet.Stylizer({
+  const withVs = Closet.Stylizer.make({
     separator: ' vs ',
     mapper: (v, i) => `${i}: ${v}`
   })

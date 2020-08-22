@@ -12,11 +12,11 @@ import { topUp } from './sortInStrategies'
 
 const justValues = <T extends {}>(tag: TagData, _internals: Internals<T>) => tag.values
 
-const inactive: Stylizer = new Stylizer({
+const inactive: Stylizer = Stylizer.make({
     separator: ', ',
 })
 
-const blueHighlight: Stylizer = new Stylizer({
+const blueHighlight: Stylizer = Stylizer.make({
     processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 

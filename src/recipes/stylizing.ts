@@ -5,7 +5,7 @@ import { id } from './utils'
 
 export const styleRecipe = <T extends {}>({
     tagname = 's',
-    stylizer = new Stylizer(),
+    stylizer = Stylizer.make(),
     separator = '::',
 } = {}) => (registrar: Registrar<T>) => {
     const styleFilter = (tag: TagData) => {

@@ -1,7 +1,7 @@
 name: Obscuring clozes
 code: |
   const firstValue = (tag) => [tag.values[0]]
-  const obscureYellow = new Closet.Stylizer({
+  const obscureYellow = Closet.Stylizer.make({
     processor: v => `<span style="color: yellow; filter: blur(0.2rem);">${v}</span>`,
   })
 

@@ -20,7 +20,7 @@ const valuesWithIndex = <T extends {}>(
 
 const firstCategory = <T extends {}>(tag: TagData, _internals: Internals<T>): string[] => tag.values[0]
 
-const inactive = new Stylizer()
+const inactive = Stylizer.make()
 
 const orangeCommaSeparated = inactive.toStylizer({
     processor: (v: string) => `( ${v} )`,

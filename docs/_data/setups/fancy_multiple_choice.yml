@@ -71,12 +71,12 @@ code: |
 
   filterManager.addRecipe(wrappedMultipleChoiceShow({
     tagname: 'mc',
-    frontStylizer: new Closet.Stylizer({
+    frontStylizer: Closet.Stylizer.make({
       mapper: wrapItem,
       separator: '',
       processor: (v) => `<div class="cl--container">${v}</div>`,
     }),
-    backStylizer: new Closet.Stylizer({
+    backStylizer: Closet.Stylizer.make({
       mapper: wrapItem,
       separator: '',
       processor: (v) => `<div class="cl--container cl--reveal">${v}</div>`,

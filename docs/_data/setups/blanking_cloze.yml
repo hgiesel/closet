@@ -6,7 +6,7 @@ code: |
 
   const blankOptions = {
     frontEllipser: blank,
-    frontStylizer: new Closet.Stylizer({
+    frontStylizer: Closet.Stylizer.make({
       process: v => `<span style="color: cornflowerblue">${v}</span>`,
       separator: '',
     }),

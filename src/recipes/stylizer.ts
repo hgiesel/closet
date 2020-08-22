@@ -4,18 +4,22 @@ type StringFunction = (v: string) => string
 type StringPlusFunction = (v: string, i: number, ...a: any[]) => string
 
 export class Stylizer {
-    readonly separator: string
-    readonly mapper: StringPlusFunction
-    readonly processor: StringFunction
+    protected readonly separator: string
+    protected readonly mapper: StringPlusFunction
+    protected readonly processor: StringFunction
 
-    constructor({
+    protected constructor(separator: string, mapper: StringPlusFunction, processor: StringFunction) {
+        this.separator = separator
+        this.mapper = mapper
+        this.processor = processor
+    }
+
+    static make({
         separator = ', ',
         mapper = id as StringPlusFunction,
         processor = id as StringFunction,
     } = {}) {
-        this.separator = separator
-        this.mapper = mapper
-        this.processor = processor
+        return new Stylizer(separator, mapper, processor)
     }
 
     toStylizer({
@@ -23,11 +27,7 @@ export class Stylizer {
         mapper = this.mapper,
         processor = this.processor,
     } = {}): Stylizer {
-        return new Stylizer({
-            separator: separator,
-            mapper: mapper,
-            processor: processor,
-        })
+        return new Stylizer(separator, mapper, processor)
     }
 
     stylize(input: string[], ...args: unknown[][]): string {

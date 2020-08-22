@@ -49,14 +49,14 @@ code: |
     `
   }
 
-  const front = new Closet.Stylizer({
+  const front = Closet.Stylizer.make({
     separator: '<br />',
     mapper: createInputElement('')
   })
 
   const backClassName = 'closet-mc-right-answer'
 
-  const back = new Closet.Stylizer({
+  const back = Closet.Stylizer.make({
     separator: '<br />',
     mapper: createInputElement(backClassName),
   })

@@ -8,7 +8,7 @@ import { Stylizer } from './stylizer'
 
 const wrapWithBrackets = (v: string) => `[${v}]`
 
-const blueHighlight: Stylizer = new Stylizer({
+const blueHighlight: Stylizer = Stylizer.make({
     processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 

@@ -6,7 +6,7 @@ import { topUp } from './sortInStrategies'
 
 export const shufflingRecipe = ({
     tagname = 'mix',
-    stylizer = new Stylizer(),
+    stylizer = Stylizer.make(),
     sortInStrategy = topUp,
 } = {}) => <T extends {}>(registrar: Registrar<T>) => {
     const shuffleFilter = (tag: TagData, internals: Internals<T>) => {

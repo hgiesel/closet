@@ -39,7 +39,7 @@ code: |
     return [`<span class="cl--obscure cl--obscure-fix cl--obscure-clickable"><span>${t.values[0]}</span></span>`]
   }
 
-  const frontStylizer = new Closet.Stylizer({
+  const frontStylizer = Closet.Stylizer.make({
     processor: v => `<span style="color: cornflowerblue">${v}</span>`,
   })
 

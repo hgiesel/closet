@@ -21,16 +21,9 @@ jobs:
           npm install
           npm run-script build-anki
           npm run-script zip
-          npm run-script zip-ankiweb
 
       - name: Upload to GitHub
         uses: actions/upload-artifact@v2
         with:
-          name: Anki add-on for Ankiweb
-          path: 0.ankiaddon
-
-      - name: Upload to GitHub
-        uses: actions/upload-artifact@v2
-        with:
-          name: Anki add-on for personal use
-          path: anki_closet.ankiaddon
+          name: Addons
+          path: build/ClosetForAnki.ankiaddon

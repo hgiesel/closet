@@ -40,9 +40,7 @@
     "dev-docs": "run-p serve-docs watch-docs",
     "dev-anki": "run-s watch-anki",
     "zip": "run-s build-anki zip-sub",
-    "zip-ankiweb": "run-s build-anki zip-ankiweb-sub",
     "zip-sub": "bin/zip.sh",
-    "zip-ankiweb-sub": "bin/zip.sh -a",
     "mocha": "mocha"
   },
   "dependencies": {

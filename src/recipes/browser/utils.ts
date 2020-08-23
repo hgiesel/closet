@@ -44,6 +44,10 @@ export const imageLoadCallback = (query: string, callback: (event: Event) => voi
 
 export const svgKeyword = 'occlusionSvgCss'
 export const svgCss = `
+img {
+  max-width: 100% !important;
+}
+
 .closet__occlusion-container {
   display: inline-block;
   position: relative;

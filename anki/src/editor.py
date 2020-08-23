@@ -27,8 +27,6 @@ def without_occlusion_code(txt):
     return txt
 
 def include_closet_code(webcontent, context):
-    webcontent.css.append(f'/_addons/{addon_package}/web/editor.css')
-
     if not isinstance(context, Editor):
         return
 

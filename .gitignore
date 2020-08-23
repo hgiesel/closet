@@ -30,3 +30,6 @@ docs/assets/images/*logo.png
 ## compiled closet
 docs/assets/js/*.js
 docs/assets/js/*.js.map
+
+# anki
+anki/meta.json

@@ -33,3 +33,4 @@ docs/assets/js/*.js.map
 
 # anki
 anki/meta.json
+__pycache__

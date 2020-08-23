@@ -1,4 +1,4 @@
-import type { TagPath, TagRenderer } from './template'
+import type { TagRenderer } from './template'
 import type { TagInfo } from './template/tags'
 
 import { Template } from './template'
@@ -22,7 +22,7 @@ const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): st
 
         case Node.ELEMENT_NODE:
             const elementNode = input as Element
-            return elementNode.outerHTML
+            return elementNode.innerHTML
 
         case ChildNodeSpan.CHILD_NODE_SPAN:
             const span = input as ChildNodeSpan

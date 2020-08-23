@@ -72,11 +72,12 @@ export const getQaChildNodes = (): ChildNodeSpan[] | null => {
         return null
     }
 
-
     return interspliceChildNodes(qa, {
         type: 'predicate',
         value: (v: any) => (
-            v.tagName !== 'STYLE' && v.tagName !== 'SCRIPT' && v.id !== 'anki-am'
+            v.tagName !== 'STYLE' &&
+            v.tagName !== 'SCRIPT' &&
+            v.id !== 'anki-am' /* anki asset manager support */
         )
     })
 }

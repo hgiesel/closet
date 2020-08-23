@@ -10,7 +10,7 @@ const parseIndexArgument = (idx: number, min: number, max: number): number => {
     : min + idx
 }
 
-const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): string => {
+const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string, takeOuter: boolean): string => {
     if (typeof(input) === 'string') {
         return input
     }
@@ -22,7 +22,9 @@ const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string): st
 
         case Node.ELEMENT_NODE:
             const elementNode = input as Element
-            return elementNode.innerHTML
+            return takeOuter
+                ? elementNode.outerHTML
+                : elementNode.innerHTML
 
         case ChildNodeSpan.CHILD_NODE_SPAN:
             const span = input as ChildNodeSpan
@@ -220,7 +222,9 @@ export class ChildNodeSpan {
     }
 
     spanAsStrings(): string[] {
-        return this.span().map(getText)
+        return this
+            .span()
+            .map(elem => getText(elem, true))
     }
 
     replaceSpan(newText: string): void {
@@ -286,11 +290,11 @@ export class BrowserTemplate extends Template {
     }
 
     static makeFromNode = (input: Element | Text | ChildNodeSpan | string): BrowserTemplate => {
-        return new BrowserTemplate([getText(input)], 1, null, [input])
+        return new BrowserTemplate([getText(input, false)], 1, null, [input])
     }
 
     static makeFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>): BrowserTemplate => {
-        return new BrowserTemplate(inputs.map(getText), 2, null, inputs)
+        return new BrowserTemplate(inputs.map(input => getText(input, false)), 2, null, inputs)
     }
 
     renderToNodes(tagRenderer: TagRenderer): void {

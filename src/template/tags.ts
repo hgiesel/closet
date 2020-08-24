@@ -188,3 +188,66 @@ export class TagInfo {
         this._innerTags = innerTags
     }
 }
+
+interface ASTNode {
+    toString(): string
+}
+
+export class TagNode implements ASTNode {
+    readonly fullKey: string
+    readonly key: string
+    readonly num: number | null
+
+    separators: Separator[] = []
+
+    _fullOccur: number = 0
+    _occur: number = 0
+
+    innerNodes: ASTNode[]
+
+    constructor(
+        fullKey: string,
+        innerNodes: ASTNode[],
+    ) {
+        this.fullKey = fullKey
+
+        const match = fullKey.match(keyPattern)
+
+        if (!match) {
+            throw new Error('Could not match key. This should never happen.')
+        }
+
+        this.key = match[1]
+        this.num = match[2].length === 0 ? null : Number(match[2])
+
+        this.innerNodes = innerNodes
+    }
+
+    get valuesText(): string {
+        return this.innerNodes.map(node => node.toString()).join('')
+    }
+
+    toString(): string {
+        return `${TAG_OPEN}${this.fullKey}${ARG_SEP}${this.valuesText}${TAG_CLOSE}`
+    }
+}
+
+export class TextNode implements ASTNode {
+    readonly text: string
+
+    constructor(
+        text: string,
+    ) {
+        this.text = text
+    }
+
+    toString() {
+        return this.text
+    }
+}
+
+export class DocSeparatorNode implements ASTNode {
+    toString() {
+        return ''
+    }
+}

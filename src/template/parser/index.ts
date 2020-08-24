@@ -17,7 +17,11 @@ const coreParse = (text: string): TagInfo[] => {
     const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
 
     try {
-        return parser.feed(text + '$').results
+        console.time('parse')
+        const result = parser.feed(text + '$').results
+        console.timeEnd('parse')
+        console.log(result[0]._innerTags)
+        return result
     }
     catch (e) {
         console.error(`Error parsing text:`, e)

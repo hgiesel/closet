@@ -1,8 +1,8 @@
-import { Status, ProcessorOutput } from './template/evaluate'
 import { MetaFilterManager } from './filterManager'
 import { FilterApi } from './filterManager/filters'
 import { Storage, StorageType } from './filterManager/storage'
 import { DeferredApi } from './filterManager/deferred'
+import { Status } from './template/tags'
 
 import type { ManagerInfo } from './filterManager'
 import type { Filter as FilterType, WeakFilter as WeakFilterType, FilterResult } from './filterManager/filters'
@@ -10,21 +10,20 @@ import type { RegistrarApi } from './filterManager/registrar'
 import type { DeferredEntry as DefEntry } from './filterManager/deferred'
 
 import type { TagRenderer, TemplateInfo, IterationInfo, ResultInfo } from './template'
-import type { TagAccessor, TagProcessor, RoundInfo, DataOptions } from './template/evaluate'
-import type { TagData } from './template/tags'
+import type { TagNode, TagAccessor, TagProcessor, RoundInfo, DataOptions, ProcessorOutput } from './template/tags'
 
-export type Internals<P extends object> = ManagerInfo<TagData, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo & RoundInfo
-export type DeferredInternals<P extends object> = ManagerInfo<TagData, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo
-export type AftermathInternals<P extends object> = ManagerInfo<TagData, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo
+export type Internals<P extends object> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo & RoundInfo
+export type DeferredInternals<P extends object> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo
+export type AftermathInternals<P extends object> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo
 export type DeferredEntry<P extends object> = DefEntry<DeferredInternals<P>>
 export type AftermathEntry<P extends object> = DefEntry<AftermathInternals<P>>
 
-export type Registrar<P extends object> = RegistrarApi<TagData, Internals<P>, DataOptions>
-export type Filters<P extends object> = FilterApi<TagData, Internals<P>>
-export type { DataOptions } from './template/evaluate'
+export type Registrar<P extends object> = RegistrarApi<TagNode, Internals<P>, DataOptions>
+export type Filters<P extends object> = FilterApi<TagNode, Internals<P>>
+export type { DataOptions } from './template/tags'
 
-export type Filter<P extends object> = FilterType<TagData, Internals<P>>
-export type WeakFilter<P extends object> = WeakFilterType<TagData, Internals<P>>
+export type Filter<P extends object> = FilterType<TagNode, Internals<P>>
+export type WeakFilter<P extends object> = WeakFilterType<TagNode, Internals<P>>
 export type { FilterResult, WeakFilterResult, FilterApi } from './filterManager/filters'
 
 const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => {
@@ -61,7 +60,7 @@ interface ClosetEnvironment {
     [closetEnvironmentName]: StorageType<unknown>
 }
 
-export class FilterManager<P extends object> extends MetaFilterManager<TagData, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> implements TagRenderer {
+export class FilterManager<P extends object> extends MetaFilterManager<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> implements TagRenderer {
     static make(preset: object = {}, memory: StorageType<unknown> = new Map()) {
         const environment = !globalThis.hasOwnProperty(closetEnvironmentName)
             ? (globalThis as typeof globalThis & Partial<ClosetEnvironment>)[closetEnvironmentName] = new Map()
@@ -83,11 +82,10 @@ export class FilterManager<P extends object> extends MetaFilterManager<TagData, 
         const accessor = this.filterAccessor(template, iteration)
 
         return (name: string): TagProcessor => {
-
             const processor = accessor.getProcessor(name)
 
             return {
-                execute: (data: TagData, round: RoundInfo): ProcessorOutput => filterResultToProcessorOutput(processor.execute(data, super.getInternals(template, iteration, round))),
+                execute: (data: TagNode, round: RoundInfo): ProcessorOutput => filterResultToProcessorOutput(processor.execute(data, super.getInternals(template, iteration, round))),
                 getOptions: () => fillDataOptions(processor.getOptions()),
             }
         }

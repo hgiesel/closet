@@ -1,4 +1,4 @@
-import type { TagData, Internals, Eval } from './types'
+import type { TagNode, Internals, Eval } from './types'
 import type { CardPreset, SidePreset } from './flashcardTemplate'
 
 import { constantGet, StoreGetter } from './valueStore'
@@ -7,7 +7,7 @@ export const isActiveWithinRange = (cardNumber: number, num: number, bottomRange
     return cardNumber - bottomRange <= num && num <= cardNumber + topRange
 }
 
-export const isActive = <T extends CardPreset>({ num }: TagData, { preset }: Internals<T>): boolean => {
+export const isActive = <T extends CardPreset>({ num }: TagNode, { preset }: Internals<T>): boolean => {
     switch (num) {
         case null:
             return false
@@ -22,7 +22,7 @@ export const isActive = <T extends CardPreset>({ num }: TagData, { preset }: Int
     }
 }
 
-export const isActiveGetRange = <T extends CardPreset>({ key, num, fullOccur }: TagData, { preset, cache }: Internals<T>): boolean => {
+export const isActiveGetRange = <T extends CardPreset>({ key, num, fullOccur }: TagNode, { preset, cache }: Internals<T>): boolean => {
     const bottomRangeKeyword = 'flashcardActiveBottom'
     const topRangeKeyword = 'flashcardActiveTop'
     const constantZero = constantGet(0)
@@ -47,7 +47,7 @@ export const isActiveGetRange = <T extends CardPreset>({ key, num, fullOccur }: 
     }
 }
 
-export const isActiveOverwritten = <T extends CardPreset>(tag: TagData, internals: Internals<T>): boolean => {
+export const isActiveOverwritten = <T extends CardPreset>(tag: TagNode, internals: Internals<T>): boolean => {
     const activeKeyword = 'flashcardActive'
 
     const activeOverwrite = internals.cache.get<StoreGetter<boolean>>(activeKeyword, constantGet(false))
@@ -56,11 +56,11 @@ export const isActiveOverwritten = <T extends CardPreset>(tag: TagData, internal
     return activeOverwrite
 }
 
-export const isActiveAll = <T extends CardPreset>(tag: TagData, internals: Internals<T>): boolean => isActiveOverwritten(tag, internals) || isActiveGetRange(tag, internals)
+export const isActiveAll = <T extends CardPreset>(tag: TagNode, internals: Internals<T>): boolean => isActiveOverwritten(tag, internals) || isActiveGetRange(tag, internals)
 
 //////////////////////////////////////////
 
-export const isBack = <T extends SidePreset>(_t: TagData, { preset }: Internals<T>) => {
+export const isBack = <T extends SidePreset>(_t: TagNode, { preset }: Internals<T>) => {
     return preset.side === 'back'
 }
 

@@ -1,4 +1,4 @@
-import { TagData, Internals } from './types'
+import { TagNode, Internals } from './types'
 
 export type StoreGetter<T> = { get: (key: string, num: number | null, occur: number) => T }
 
@@ -92,7 +92,7 @@ export const valueStoreTemplate = <T extends ValueStore<U>, U>(
     storeId: string,
     defaultValue: U,
     operation: (...vals: string[]) => (a: T) => void,
-) => <TT extends {}>(tag: TagData, { cache }: Internals<TT>) => {
+) => <TT extends {}>(tag: TagNode, { cache }: Internals<TT>) => {
     const commands = tag.values
 
     commands.forEach((cmd: string) => {

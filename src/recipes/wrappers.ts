@@ -1,4 +1,4 @@
-import type { TagData, RecipeOptions, Registrar, Internals, Deferred, Recipe, WrapOptions, DeferredApi } from './types'
+import type { TagNode, RecipeOptions, Registrar, Internals, Deferred, Recipe, WrapOptions, DeferredApi } from './types'
 
 interface WithInternalKeyword {
     keyInternal: string,
@@ -10,7 +10,7 @@ export const defaultTagnameSetter = (o: RecipeOptions, newNames: string[]) => o[
 const defaultWrapId = 'wrapped'
 
 export const wrap = <T extends object>(
-    wrapped: (tag: TagData & WithInternalKeyword, internals: Internals<T>) => void,
+    wrapped: (tag: TagNode & WithInternalKeyword, internals: Internals<T>) => void,
 ) => (
     mainRecipe: Recipe<T>, {
         wrapId,
@@ -38,7 +38,7 @@ export const wrap = <T extends object>(
     setTagnames(options, alteredTagnames)
     mainRecipe(options)(registrar)
 
-    const wrapFilter = (tag: TagData, inter: Internals<T>) => {
+    const wrapFilter = (tag: TagNode, inter: Internals<T>) => {
         const internalKeyword = keywordMap.get(tag.key)
 
         wrapped(Object.assign({}, tag, { keyInternal: internalKeyword }), inter)

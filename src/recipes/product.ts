@@ -1,4 +1,4 @@
-import type { TagData, RecipeOptions, Registrar, WeakFilter, WeakFilterResult, Internals, Recipe, WrapOptions } from './types'
+import type { TagNode, RecipeOptions, Registrar, WeakFilter, WeakFilterResult, Internals, Recipe, WrapOptions } from './types'
 
 import { defaultTagnameGetter, defaultTagnameSetter } from './wrappers'
 
@@ -34,7 +34,7 @@ export const product = <T extends {}>(
     recipeSecond(optionsSecond)(registrar)
 
     const productFilter = (
-        tag: TagData,
+        tag: TagNode,
         internals: Internals<T>,
     ) => {
         return multiply(

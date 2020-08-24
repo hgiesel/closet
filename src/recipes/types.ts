@@ -1,4 +1,4 @@
-import type { TagData } from '../template/tags'
+import type { TagNode } from '../template/tags'
 import type { Internals, Registrar, WeakFilter } from '..'
 
 export type {
@@ -18,10 +18,10 @@ export type {
 } from '..'
 
 export type { DeferredApi, Deferred } from '../filterManager/deferred'
-export type { TagData, Separator, WeakSeparator } from '../template/tags'
+export type { TagNode, Separator, WeakSeparator } from '../template/tags'
 
 export type Recipe<T extends {}> = (options?: {}) => (filters: Registrar<T>) => void
-export type Eval<T extends {}, U> = (t: TagData, i: Internals<T>) => U
+export type Eval<T extends {}, U> = (t: TagNode, i: Internals<T>) => U
 export type { Stylizer } from './stylizer'
 
 export interface WrapOptions {

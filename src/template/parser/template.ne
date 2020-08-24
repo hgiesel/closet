@@ -1,6 +1,7 @@
 @{%
 import { tokenizer } from './tokenizer'
 import { TagBuilder } from './tagBuilder'
+import { TextNode } from '../tags'
 
 export const tagBuilder = new TagBuilder()
 %}
@@ -16,11 +17,7 @@ content -> node:* {% id %}
 node -> text {% id %}
       | tag {% id %}
 
-text -> %text {% ([match]) => ({
-    type: 'text',
-    value: match.value,
-})
-%}
+text -> %text {% ([match]) => new TextNode(match.value) %}
 
 tag -> %tagopen %keyname inner %tagclose {% ([,name,nodes]) => tagBuilder.build(
     name.value,

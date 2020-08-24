@@ -1,4 +1,4 @@
-import type { Registrar, TagData, Internals } from '../types'
+import type { Registrar, TagNode, Internals } from '../types'
 
 import { SVG, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
@@ -146,7 +146,7 @@ export const occlusionMakerRecipe = <T extends {}>(options: {
         shapeKeywords = [rectKeyword],
     } = options
 
-    const occlusionMakerFilter = (_tag: TagData, { template, cache, aftermath, environment }: Internals<T>) => {
+    const occlusionMakerFilter = (_tag: TagNode, { template, cache, aftermath, environment }: Internals<T>) => {
         const images = (template.textFragments as any).flatMap(getImages)
 
         aftermath.registerIfNotExists(keyword, () => {

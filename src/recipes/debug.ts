@@ -1,18 +1,18 @@
-import type { Registrar, TagData, Internals } from './types'
+import type { Registrar, TagNode, Internals } from './types'
 
 export const debugRecipe = () => <T extends {}>(registrar: Registrar<T>) => {
-    const pathFilter = (_t: TagData, { path }: Internals<T>) => path.join(':')
+    const pathFilter = (_t: TagNode, { path }: Internals<T>) => path.join(':')
 
     registrar.register('tagpath', pathFilter)
     registrar.register('never', (() => {}))
     registrar.register('empty', (() => ''))
-    registrar.register('key', (({ key }: TagData) => key))
+    registrar.register('key', (({ key }: TagNode) => key))
 
-    registrar.register('stopIteration', ({ values }: TagData, { filters }: Internals<T>) => {
+    registrar.register('stopIteration', ({ values }: TagNode, { filters }: Internals<T>) => {
         const endAtIteration = Number(values)
         const savedBase = filters.getOrDefault('base')
 
-        filters.register('base', (tag: TagData, internals: Internals<T>) => {
+        filters.register('base', (tag: TagNode, internals: Internals<T>) => {
             return internals.iteration >= endAtIteration
                 ? tag.valuesText ?? ''
                 : savedBase(tag, internals)

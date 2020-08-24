@@ -1,4 +1,4 @@
-import type { TagData, Registrar } from './types'
+import type { TagNode, Registrar } from './types'
 
 import { Stylizer } from './stylizer'
 import { id } from './utils'
@@ -8,7 +8,7 @@ export const styleRecipe = <T extends {}>({
     stylizer = Stylizer.make(),
     separator = '::',
 } = {}) => (registrar: Registrar<T>) => {
-    const styleFilter = (tag: TagData) => {
+    const styleFilter = (tag: TagNode) => {
         return stylizer.stylize(tag.values)
     }
 
@@ -19,7 +19,7 @@ export const processRecipe = <T extends {}>({
     tagname = 's',
     processor = id,
 } = {}) => (registrar: Registrar<T>) => {
-    const processorFilter = (tag: TagData) => {
+    const processorFilter = (tag: TagNode) => {
         return processor(tag.values)
     }
 

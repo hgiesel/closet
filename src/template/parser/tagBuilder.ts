@@ -1,33 +1,43 @@
-import { TagData } from '../tags'
+import { ASTNode, TagNode } from '../tags'
 
 export type TagBuilderSettings = [Map<string, number>, Map<string, number>]
 
+const keyPattern = /^(.+?)([0-9]*)$/u
+
+const getAndInc = (map: Map<string, number>, key: string): number => {
+    const result = (map.get(key) ?? -1) + 1
+
+    map.set(key, result)
+    return result
+}
+
 export class TagBuilder {
-    protected tagCounter: Map<string, number> = new Map()
-    protected tagCounterFull: Map<string, number> = new Map()
+    protected tagCounter: Map<string, number> | null = null
+    protected tagCounterFull: Map<string, number> | null = null
 
-    protected getAndInc(key: string): number {
-        const result = (this.tagCounter.get(key) ?? - 1) + 1
-
-        this.tagCounter.set(key, result)
-        return result
+    protected increment(fullKey: string, key: string): [number, number] {
+        return [
+            getAndInc(this.tagCounterFull as Map<string, number>, fullKey),
+            getAndInc(this.tagCounter as Map<string, number>, key),
+        ]
     }
 
-    protected getAndIncFull(key: string): number {
-        const result = (this.tagCounterFull.get(key) ?? -1) + 1
+    build(fullKey: string, innerNodes: ASTNode[]): TagNode {
+        const match = fullKey.match(keyPattern)
 
-        this.tagCounterFull.set(key, result)
-        return result
-    }
+        if (!match) {
+            throw new Error('Could not match key. This should never happen.')
+        }
 
-    build(fullKey: string, innerNodes: string | null): TagData {
-        const result = new TagData(fullKey, innerNodes)
+        const key = match[1]
+        const num = match[2].length === 0 ? null : Number(match[2])
 
-        const fullOccur = this.getAndIncFull(result.fullKey)
-        const occur = this.getAndInc(result.key)
+        const [
+            fullOccur,
+            occur,
+        ] = this.increment(fullKey, key)
 
-        result.setOccur(fullOccur, occur)
-        return result
+        return new TagNode(fullKey, key, num, fullOccur, occur, innerNodes)
     }
 
     push(settings: TagBuilderSettings): void {

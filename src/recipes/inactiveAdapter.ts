@@ -1,4 +1,4 @@
-import type { InactiveAdapter, InactiveBehavior, TagData, Internals, WeakFilter, WeakFilterResult } from './types'
+import type { InactiveAdapter, InactiveBehavior, TagNode, Internals, WeakFilter, WeakFilterResult } from './types'
 import type { CardPreset } from './flashcardTemplate'
 
 import { StoreGetter, constantGet } from './valueStore'
@@ -12,7 +12,7 @@ export const inactiveAdapter = <T extends CardPreset>(
     contexter: WeakFilter<T>,
     ellipser: WeakFilter<T>,
 ) => (
-    tag: TagData,
+    tag: TagNode,
     internals: Internals<T>,
 ) => behavior(contexter, ellipser)(tag, internals)
 
@@ -23,7 +23,7 @@ export const inactiveAdapterOverwritten = <T extends CardPreset>(
 ) => (
     contexter: WeakFilter<T>,
     ellipser: WeakFilter<T>,
-) => (tag: TagData, internals: Internals<T>): WeakFilterResult => {
+) => (tag: TagNode, internals: Internals<T>): WeakFilterResult => {
     const showKeyword = 'flashcardShow'
     const hideKeyword = 'flashcardHide'
 
@@ -51,7 +51,7 @@ export const inactiveAdapterWithinRange = <T extends CardPreset>(
 ) => (
     contexter: WeakFilter<T>,
     ellipser: WeakFilter<T>,
-) => (tag: TagData, internals: Internals<T>): WeakFilterResult => {
+) => (tag: TagNode, internals: Internals<T>): WeakFilterResult => {
     if (!internals.preset.hasOwnProperty('cardNumber')) {
         return adapter(behavior)(contexter, ellipser)(tag, internals)
     }
@@ -80,7 +80,7 @@ export const inactiveAdapterWithinRange = <T extends CardPreset>(
     return adapter(behavior)(contexter, ellipser)(tag, internals)
 }
 
-export const inactiveAdapterGetRange = <T extends CardPreset>(tag: TagData, { cache, preset }: Internals<T>): [number, number, number, number] => {
+export const inactiveAdapterGetRange = <T extends CardPreset>(tag: TagNode, { cache, preset }: Internals<T>): [number, number, number, number] => {
     const showBottomKeyword = 'flashcardShowBottom'
     const showTopKeyword = 'flashcardShowTop'
 

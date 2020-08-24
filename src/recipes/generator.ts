@@ -1,4 +1,4 @@
-import type { Registrar, WeakFilter, TagData, Internals } from './types'
+import type { Registrar, WeakFilter, TagNode, Internals } from './types'
 
 type NumberGenAlgorithm = (min: number, max: number, extra: number) => string
 type NumberGen = (min: number, max: number, extra: number, banDomain: string[], filter: boolean) => Generator<string, void, unknown>
@@ -38,7 +38,7 @@ export const generateTemplate = (algorithm: NumberGenAlgorithm, defaultExtra: nu
     const generator = numberGenerator(algorithm)
     const uniqConstraintPrefix = `gen:${uniqueConstraintId}`
 
-    const generateFilter = ({ values, fullOccur, num }: TagData, { memory }: Internals<T>) => {
+    const generateFilter = ({ values, fullOccur, num }: TagNode, { memory }: Internals<T>) => {
         const [min = 1, max = 100, extra = defaultExtra] = values.length === 1
             ? [1, Number(values[0]), defaultExtra]
             : values.map(Number)

@@ -1,4 +1,4 @@
-import type { TagData, Internals, AftermathEntry, AftermathInternals, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from '../types'
+import type { TagNode, Internals, AftermathEntry, AftermathInternals, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from '../types'
 import type { FlashcardTemplate, FlashcardPreset } from '../flashcardTemplate'
 
 import { makeFlashcardTemplate, generateFlashcardRecipes } from '../flashcardTemplate'
@@ -40,7 +40,7 @@ const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache, 
     })
 }
 
-const inactiveRect = <T extends {}>({ fullKey, values }: TagData, { cache }: Internals<T>) => {
+const inactiveRect = <T extends {}>({ fullKey, values }: TagNode, { cache }: Internals<T>) => {
     const [x = 0, y = 0, width = 50, height = width] = values
 
     cache.over(
@@ -60,7 +60,7 @@ const inactiveRect = <T extends {}>({ fullKey, values }: TagData, { cache }: Int
     return { ready: true }
 }
 
-const makeContextRects = <T extends {}>({ fullKey, values }: TagData, { cache, aftermath }: Internals<T>) => {
+const makeContextRects = <T extends {}>({ fullKey, values }: TagNode, { cache, aftermath }: Internals<T>) => {
     const [x = 0, y = 0, width = 50, height = width] = values
 
     cache.over(
@@ -82,7 +82,7 @@ const makeContextRects = <T extends {}>({ fullKey, values }: TagData, { cache, a
     return { ready: true }
 }
 
-const makeActiveRects = <T extends {}>({ fullKey, values }: TagData, { cache, aftermath }: Internals<T>) => {
+const makeActiveRects = <T extends {}>({ fullKey, values }: TagNode, { cache, aftermath }: Internals<T>) => {
     const [x = 0, y = 0, width = 50, height = width] = values
 
     cache.over(

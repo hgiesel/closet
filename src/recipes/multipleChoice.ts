@@ -1,4 +1,4 @@
-import type { TagData, Recipe, Eval, Internals, InactiveBehavior, WeakFilter, WeakSeparator } from './types'
+import type { TagNode, Recipe, Eval, Internals, InactiveBehavior, WeakFilter, WeakSeparator } from './types'
 import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'
 import type { SortInStrategy } from './sortInStrategies'
 import type { StyleList } from './styleList'
@@ -12,13 +12,13 @@ import { topUp } from './sortInStrategies'
 type ValuePlusCategory = [string, number]
 
 const valuesWithIndex = <T extends {}>(
-    tag: TagData,
+    tag: TagNode,
     _internals: Internals<T>,
 ): ValuePlusCategory[] => tag.values
     ? tag.values.flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
     : []
 
-const firstCategory = <T extends {}>(tag: TagData, _internals: Internals<T>): string[] => tag.values[0]
+const firstCategory = <T extends {}>(tag: TagNode, _internals: Internals<T>): string[] => tag.values[0]
 
 const inactive = Stylizer.make()
 

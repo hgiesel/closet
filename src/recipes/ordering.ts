@@ -1,4 +1,4 @@
-import type { TagData, Registrar, Internals } from './types'
+import type { TagNode, Registrar, Internals } from './types'
 
 import { sortWithIndices } from './utils'
 import { topUp } from './sortInStrategies'
@@ -11,7 +11,7 @@ export const orderingRecipe = ({
 
     sortInStrategy = topUp,
 } = {}) => <T extends {}>(registrar: Registrar<T>) => {
-    const ordFilter = (tag: TagData, { deferred, cache, memory }: Internals<T>) => {
+    const ordFilter = (tag: TagNode, { deferred, cache, memory }: Internals<T>) => {
         /**
          * @param tag.values must contain lists of sequence ids (!), not tagnames
          *

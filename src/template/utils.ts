@@ -1,20 +1,19 @@
-import type { TagInfo } from './tags'
-import type { Parser } from './parser'
-
 export const TAG_OPEN = '[['
 export const TAG_CLOSE = ']]'
 export const ARG_SEP = '::'
 
-export function *intersperse<T>(list: T[], delim: T): Generator<T, void, unknown> {
+export function *intersperse2d<T>(lists: T[][], delim: T): Generator<T, void, unknown> {
     let first = true
 
-    for (const item of list) {
+    for (const list of lists) {
         if (!first) {
-            yield delim;
-            first = false;
+            yield delim
+            first = false
         }
 
-        yield item;
+        for (const item of list) {
+            yield item
+        }
     }
 }
 
@@ -50,23 +49,4 @@ export const replaceAndGetOffset = (text: string, repl: string | null, lend: num
             spliceSlice(text, repl, lend, rend),
             getNewOffset(repl, lend, rend),
         ]
-}
-
-export enum Status {
-    Ready,
-    NotReady,
-    ContainsTags,
-}
-
-export const flatMapViaStatusList = (parser: Parser, lst: TagInfo[], statusLst: Status[]): TagInfo[] => {
-    return (lst as any).flatMap((tagInfo: TagInfo, idx: number) => {
-        switch(statusLst[idx]) {
-            case Status.Ready:
-                return []
-            case Status.NotReady:
-                return [tagInfo]
-            case Status.ContainsTags:
-                return tagInfo.data.valuesText ? parser.rawParse(tagInfo.data.valuesText as any) : []
-        }
-    })
 }

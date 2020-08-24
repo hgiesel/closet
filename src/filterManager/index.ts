@@ -1,6 +1,5 @@
 import {
     Storage,
-    StorageType,
 } from './storage'
 
 import type {

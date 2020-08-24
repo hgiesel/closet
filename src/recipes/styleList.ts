@@ -1,4 +1,4 @@
-import type { Stylizer, Eval, TagData, Internals, WeakFilter } from './types'
+import type { Stylizer, Eval, TagNode, Internals, WeakFilter } from './types'
 
 const transpose = <T>(array: (T | T[])[]): T[][] => Array.isArray(array[0])
     ? array[0].map((_, index) => array.map((value: any /* T[] */) => value[index]))
@@ -9,7 +9,7 @@ export type StyleList = (string | [string, ...any[]])[]
 export const listStylize = <T extends {}>(
     stylizer: Stylizer,
     toList: Eval<T, StyleList>,
-): WeakFilter<T> => (tag: TagData, internals: Internals<T>) => internals.ready
+): WeakFilter<T> => (tag: TagNode, internals: Internals<T>) => internals.ready
     // @ts-ignore
     ? stylizer.stylize(...transpose(toList(tag, internals)))
     : { ready: false }
@@ -17,7 +17,7 @@ export const listStylize = <T extends {}>(
 export const listStylizeMaybe = <T extends {}>(
     stylizer: Stylizer,
     toListMaybe: Eval<T, StyleList | void>,
-): WeakFilter<T> => (tag: TagData, internals: Internals<T>) => {
+): WeakFilter<T> => (tag: TagNode, internals: Internals<T>) => {
     if (!internals.ready) {
         return { ready: false }
     }

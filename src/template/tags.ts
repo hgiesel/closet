@@ -4,11 +4,16 @@ import {
     ARG_SEP,
 } from './utils'
 
+import type { TagPath } from '.'
+import type { Parser } from './parser'
+
 export interface Separator {
     sep: string
     max: number
     trim: boolean
 }
+
+import { Filterable } from '../filterManager/filters'
 
 export type WeakSeparator = Partial<Separator> | string
 
@@ -42,183 +47,73 @@ const splitValues = (text: string, seps: Separator[]): any => {
         : splits.map(v => splitValues(v, nextSeps))
 }
 
-const keyPattern = /^(.+?)([0-9]*)$/u
+const weakSeparatorToSeparator = (v: WeakSeparator): Separator => typeof v === 'string'
+    ? { sep: v, max: Infinity, trim: false }
+    : { sep: v.sep ?? '::', max: v.max ?? Infinity, trim: v.trim ?? false }
 
-export class TagData {
-    readonly fullKey: string
-    readonly key: string
-    readonly num: number | null
 
-    separators: Separator[] = []
-    readonly valuesText: string | null
 
-    _fullOccur: number = 0
-    _occur: number = 0
-
-    constructor(
-        fullKey: string,
-        valuesText: string | null,
-    ) {
-        this.fullKey = fullKey
-
-        const match = fullKey.match(keyPattern)
-
-        if (!match) {
-            throw new Error('Could not match key. This should never happen.')
-        }
-
-        this.key = match[1]
-        this.num = match[2].length === 0 ? null : Number(match[2])
-
-        this.valuesText = valuesText
-    }
-
-    setSeparators(seps: Array<WeakSeparator>) {
-        this.separators = seps.map((v: string | Partial<Separator>): Separator => typeof v === 'string'
-            ? { sep: v, max: Infinity, trim: false }
-            : { sep: v.sep ?? '::', max: v.max ?? Infinity, trim: v.trim ?? false })
-    }
-
-    hasValues(): boolean {
-        return this.valuesText === null
-    }
-
-    get values() {
-        return this.valuesText === null
-            ? null
-            : splitValues(this.valuesText, this.separators)
-    }
-
-    get fullOccur() {
-        return this._fullOccur
-    }
-
-    get occur() {
-        return this._occur
-    }
-
-    setOccur(fullOccur: number, occur: number) {
-        this._fullOccur = fullOccur
-        this._occur = occur
-    }
-
-    shadow(newValuesText: string | null): TagData {
-        const result = new TagData(
-            this.fullKey,
-            newValuesText,
-        )
-
-        result.setOccur(this.fullOccur, this.occur)
-        return result
-    }
-
-    shadowFromText(text: string, lend: number, rend: number): TagData {
-        return this.shadow(text.slice(lend, rend))
-    }
-
-    shadowFromTextWithoutDelimiters(text: string, lend: number, rend: number): TagData {
-        return this.hasValues()
-            ? this.shadow(null)
-            : this.shadowFromText(
-                text,
-                lend + (TAG_OPEN.length + this.fullKey.length + ARG_SEP.length),
-                rend - (TAG_CLOSE.length),
-            )
-    }
-
-    getDefaultRepresentation(): string {
-        return this.valuesText === null
-            ? `${TAG_OPEN}${this.fullKey}${TAG_CLOSE}`
-            : `${TAG_OPEN}${this.fullKey}${ARG_SEP}${this.valuesText}${TAG_CLOSE}`
-    }
-
-    getRawRepresentation(): string {
-        return this.valuesText ?? ''
-    }
-
-    getFilterKey(): string {
-        return this.key
-    }
+export interface RoundInfo {
+    path: number[]
+    depth: number
+    ready: boolean
+    capture: boolean
 }
 
-export class TagInfo {
-    private _start: number
-    private _end: number
-
-    private _data: TagData
-    private _innerTags: TagInfo[]
-
-    constructor(
-        start: number,
-        end: number,
-        data: TagData,
-        innerTags: TagInfo[],
-    ) {
-        this._start = start
-        this._end = end
-        this._data = data
-        this._innerTags = innerTags
-    }
-
-    get start() {
-        return this._start
-    }
-
-    get end() {
-        return this._end
-    }
-
-    get data() {
-        return this._data
-    }
-
-    get innerTags() {
-        return this._innerTags
-    }
-
-    update(
-        start: number,
-        end: number,
-        data: TagData,
-        innerTags: TagInfo[],
-    ) {
-        this._start = start
-        this._end = end
-        this._data = data
-        this._innerTags = innerTags
-    }
+export enum Status {
+    Ready,
+    NotReady,
+    ContainsTags,
 }
+
+export interface ProcessorOutput {
+    result: string | null
+    status: Status
+}
+
+export interface DataOptions {
+    separators: Array<string | Partial<Separator>>
+    capture: boolean
+}
+
+export type TagAccessor = (name: string) => TagProcessor
+
+export interface TagProcessor {
+    execute: (data: TagNode, round: RoundInfo) => ProcessorOutput
+    getOptions: () => DataOptions
+}
+
+export const nodesAreReady = (accu: boolean, node: ASTNode): boolean => accu && node.isReady()
 
 export interface ASTNode {
-    toString(): string
+    toString(): string | null
+    isReady(): boolean
+    evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode
 }
 
-export class TagNode implements ASTNode {
+export class TagNode implements ASTNode, Filterable {
     readonly fullKey: string
     readonly key: string
     readonly num: number | null
+    readonly fullOccur: number
+    readonly occur: number
+    readonly innerNodes: ASTNode[]
 
-    separators: Separator[] = []
-
-    _fullOccur: number = 0
-    _occur: number = 0
-
-    innerNodes: ASTNode[]
+    protected _separators: Separator[] = []
 
     constructor(
         fullKey: string,
+        key: string,
+        num: number | null,
+        fullOccur: number,
+        occur: number,
         innerNodes: ASTNode[],
     ) {
         this.fullKey = fullKey
-
-        const match = fullKey.match(keyPattern)
-
-        if (!match) {
-            throw new Error('Could not match key. This should never happen.')
-        }
-
-        this.key = match[1]
-        this.num = match[2].length === 0 ? null : Number(match[2])
+        this.key = key
+        this.num = num
+        this.fullOccur = fullOccur
+        this.occur = occur
 
         this.innerNodes = innerNodes
     }
@@ -227,8 +122,64 @@ export class TagNode implements ASTNode {
         return this.innerNodes.map(node => node.toString()).join('')
     }
 
+    get values() {
+        return splitValues(this.valuesText, this._separators)
+    }
+
+    set separators(seps: WeakSeparator[]) {
+        this.separators = seps.map(weakSeparatorToSeparator)
+    }
+
+    get separator(): Separator[] {
+        return this.separators as Separator[]
+    }
+
     toString(): string {
         return `${TAG_OPEN}${this.fullKey}${ARG_SEP}${this.valuesText}${TAG_CLOSE}`
+    }
+
+    isReady() {
+        return false
+    }
+
+    getDefaultRepresentation() {
+        return this.toString()
+    }
+
+    getRawRepresentation() {
+        return this.valuesText
+    }
+
+    evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode {
+        const tagProcessor = tagAccessor(this.key)
+        const depth = tagPath.length
+
+        const useCapture = tagProcessor.getOptions().capture
+        const newNodes = useCapture
+            ? this.innerNodes
+            : this.innerNodes.map((node, index) => node.evaluate(parser, tagAccessor, [...tagPath, index]))
+
+        const allReady = newNodes.reduce(nodesAreReady, true)
+        this.separators = tagProcessor.getOptions().separators
+
+        const roundInfo: RoundInfo = {
+            path: tagPath,
+            depth: depth,
+            ready: allReady,
+            capture: useCapture,
+        }
+
+        const filterOutput = tagProcessor.execute(this, roundInfo)
+
+        switch (filterOutput.status) {
+            case Status.NotReady:
+                return this
+            case Status.Ready:
+                return new TextNode(filterOutput.result as string)
+            case Status.ContainsTags:
+                this.innerNodes.splice(0, this.innerNodes.length, ...parser.rawParse(filterOutput.result as string))
+                return this
+        }
     }
 }
 
@@ -244,10 +195,28 @@ export class TextNode implements ASTNode {
     toString() {
         return this.text
     }
+
+    isReady() {
+        // should never happen
+        return true
+    }
+
+    evaluate() {
+        return this
+    }
 }
 
 export class DocSeparatorNode implements ASTNode {
     toString() {
-        return ''
+        return null
+    }
+
+    isReady() {
+        // should never happen
+        return true
+    }
+
+    evaluate() {
+        return this
     }
 }

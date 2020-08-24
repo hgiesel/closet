@@ -1,9 +1,9 @@
-import type { Registrar, TagData, WeakFilterResult } from './types'
+import type { Registrar, TagNode, WeakFilterResult } from './types'
 
 const paramPattern = /%(.)/gu
 const defOptions = { separators: [{ sep: '::', max: 2 }], capture: true }
 
-const matcher = (argTag: TagData) => (match: string, p1: string) => {
+const matcher = (argTag: TagNode) => (match: string, p1: string) => {
     const num = Number(p1)
     if (Number.isNaN(num)) {
         switch (p1) {
@@ -33,13 +33,13 @@ const matcher = (argTag: TagData) => (match: string, p1: string) => {
 export const defRecipe = () => <T extends {}>(registrar: Registrar<T>) => {
     const innerOptions = { separators: [{ sep: '::' }] }
 
-    const defFilter = (tag: TagData): WeakFilterResult => {
+    const defFilter = (tag: TagNode): WeakFilterResult => {
         const [
             definedTag,
             template,
         ] = tag.values
 
-        const innerFilter = (tag: TagData) => {
+        const innerFilter = (tag: TagNode) => {
             const result = template.replace(paramPattern, matcher(tag))
 
             return {

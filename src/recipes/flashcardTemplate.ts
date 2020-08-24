@@ -1,4 +1,4 @@
-import type { TagData, Internals, Registrar, Recipe, Stylizer, Eval, InactiveBehavior, InactiveAdapter, DataOptions, WeakFilter, WeakFilterResult } from './types'
+import type { TagNode, Internals, Registrar, Recipe, Stylizer, Eval, InactiveBehavior, InactiveAdapter, DataOptions, WeakFilter, WeakFilterResult } from './types'
 
 import { id, id2, constant } from './utils'
 import { isActiveAll, isBackAll } from './deciders'
@@ -58,7 +58,7 @@ export const makeFlashcardTemplate = <T extends FlashcardPreset>(
 
     flashcardRecipe({ tagname: internalFilter })(registrar)
 
-    const flashcardFilter = (tag: TagData, inter: Internals<T>) => {
+    const flashcardFilter = (tag: TagNode, inter: Internals<T>) => {
         return  inter.filters.getOrDefault(internalFilter)(tag, inter)
     }
 

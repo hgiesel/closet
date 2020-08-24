@@ -1,4 +1,4 @@
-import type { TagData, Internals, Eval, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from './types'
+import type { TagNode, Internals, Eval, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from './types'
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
 import type { StyleList } from './styleList'
 
@@ -17,18 +17,18 @@ const blueWithBrackets = blueHighlight.toStylizer({
 })
 
 const hintEllipser = <T extends {}>(
-    tag: TagData,
+    tag: TagNode,
     _internals: Internals<T>,
 ) => {
     return [tag.values[1] ?? '...']
 }
 
-const firstValue = <T extends object>(tag: TagData, { ready }: Internals<T>) => ({
+const firstValue = <T extends object>(tag: TagNode, { ready }: Internals<T>) => ({
     ready: ready,
     result: tag.values[0],
 })
 
-const firstValueAsList = <T extends object>(tag: TagData, _internals: Internals<T>) => [tag.values[0]]
+const firstValueAsList = <T extends object>(tag: TagNode, _internals: Internals<T>) => [tag.values[0]]
 
 const clozePublicApi = <T extends FlashcardPreset>(
     frontInactive: InactiveBehavior<T>,

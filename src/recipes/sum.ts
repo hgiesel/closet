@@ -1,4 +1,4 @@
-import type { TagData, Registrar, Eval, Internals, Recipe, WrapOptions } from './types'
+import type { TagNode, Registrar, Eval, Internals, Recipe, WrapOptions } from './types'
 
 import { defaultTagnameGetter, defaultTagnameSetter } from './wrappers'
 
@@ -34,7 +34,7 @@ export const sum = <T extends {}>(
     recipeFalse(optionsFalse)(registrar)
 
     const sumFilter = (
-        tag: TagData,
+        tag: TagNode,
         internals: Internals<T>,
     ) => {
         return predicate(tag, internals)
@@ -101,7 +101,7 @@ export const sumFour = <T extends {}>(
     })(registrar)
 
     const sumFourFilter = (
-        tag: TagData,
+        tag: TagNode,
         internals: Internals<T>,
     ) => {
         return predicateTwo(tag, internals)

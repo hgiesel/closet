@@ -5,7 +5,7 @@ import type { TagBuilderSettings } from './tagBuilder'
 import type { ASTNode } from '../tags'
 
 import { TextNode, DocSeparatorNode } from '../tags'
-import { intersperse } from '../utils'
+import { intersperse2d } from '../utils'
 import { tagBuilder } from './template'
 
 const coreParse = (text: string): ASTNode[][] => {
@@ -33,7 +33,7 @@ const mainParse = (text: string): ASTNode[] => {
     return parsed[0]
 }
 
-const fragmentsParse = (textFragments: string[]): ASTNode[] => [...intersperse(
+const fragmentsParse = (textFragments: string[]): ASTNode[] => [...intersperse2d(
     textFragments.map(mainParse),
     new DocSeparatorNode(),
 )]

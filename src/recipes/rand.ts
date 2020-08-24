@@ -1,4 +1,4 @@
-import type { TagData, Registrar } from './types'
+import type { TagNode, Registrar } from './types'
 
 import { toNumbers } from './utils'
 
@@ -55,7 +55,7 @@ const realGenerator = function*(
 export const randRecipe = <T extends {}>(
     keyword: string,
 ) => (registrar: Registrar<T>) => {
-    const intFilter = (tag: TagData) => {
+    const intFilter = (tag: TagNode) => {
         const [
             min = 1,
             max = null,
@@ -68,7 +68,7 @@ export const randRecipe = <T extends {}>(
             : String((min + Math.floor(Math.random() * max - min)) * multiple)
     }
 
-    const realFilter = (tag: TagData) => {
+    const realFilter = (tag: TagNode) => {
         const [
             min = 1,
             max = null,

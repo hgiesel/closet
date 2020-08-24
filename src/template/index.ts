@@ -1,8 +1,7 @@
-import type { ASTNode, TagInfo, TagData } from './tags'
-import type { TagAccessor } from './evaluate'
+import type { ASTNode, TagAccessor } from './tags'
 
+import { nodesAreReady } from './tags'
 import { Parser } from './parser'
-import { evaluateTemplate } from './evaluate'
 
 export interface TemplateInfo {
     template: Template
@@ -11,7 +10,6 @@ export interface TemplateInfo {
 
 export interface IterationInfo {
     iteration: number
-    baseDepth: number
 }
 
 export interface ResultInfo {
@@ -29,17 +27,24 @@ export type TagPath = number[]
 
 const MAX_ITERATIONS = 50
 
-const splitTextFromIntervals = (text: string, intervals: [number, number][]): string[] => {
-    const result: string[] = []
+const stringifyToFragments = (nodes: ASTNode[]): string[] => {
+    const result = []
+    let currentString = ''
 
-    for (const [ivlStart, ivlEnd] of intervals) {
-        result.push(text.slice(ivlStart, ivlEnd))
+    for (const node of nodes) {
+        const stringified = node.toString()
+
+        if (stringified) {
+            currentString += stringified
+        }
+        else {
+            result.push(currentString)
+            currentString = ''
+        }
     }
 
     return result
 }
-
-
 
 export class Template {
     readonly textFragments: string[]
@@ -63,45 +68,29 @@ export class Template {
     }
 
     render(tagRenderer: TagRenderer, cb?: (t: string[]) => void) {
-        let ready = false
-        let text = this.textFragments.join('')
-        let baseStack: [number, number][] = []
-
         const templateInfo: TemplateInfo = {
             template: this,
             parser: this.parser,
         }
 
+        let nodes = this.nodes
+        let ready = false
+
         for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
             console.groupCollapsed(`Iteration ${i}`)
             const iterationInfo: IterationInfo = {
                 iteration: i,
-                baseDepth: 0,
             }
 
+            const tagAccessor = tagRenderer.makeAccessor(templateInfo, iterationInfo)
 
-            const [
-                newText,
-                /* finalOffset */,
-                newReady,
-                newBaseStack,
-            ] = ['', 5, false, []]/* evaluateTemplate(
-                text,
-                this.nodes,
-                this.baseDepth,
-                tagRenderer.makeAccessor(templateInfo, iterationInfo),
-                this.parser,
-            )*/
-
-            text = newText
-            ready = newReady
-            baseStack = newBaseStack
-
+            nodes = nodes.map((node, index) => node.evaluate(this.parser, tagAccessor, [index]))
+            ready = nodes.reduce(nodesAreReady, true)
             tagRenderer.finishIteration(templateInfo, iterationInfo)
             console.groupEnd()
         }
 
-        const result = splitTextFromIntervals(text, baseStack)
+        const result = stringifyToFragments(nodes)
 
         if (cb) {
             cb(result)

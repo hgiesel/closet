@@ -27,21 +27,24 @@ export type TagPath = number[]
 
 const MAX_ITERATIONS = 50
 
-const stringifyToFragments = (nodes: ASTNode[]): string[] => {
+const stringifyNodes = (nodes: ASTNode[]): string[] => {
     const result = []
     let currentString = ''
 
     for (const node of nodes) {
         const stringified = node.toString()
 
-        if (stringified) {
+        if (typeof stringified === 'string') {
             currentString += stringified
         }
+
         else {
             result.push(currentString)
             currentString = ''
         }
     }
+
+    result.push(currentString)
 
     return result
 }
@@ -86,11 +89,12 @@ export class Template {
 
             nodes = nodes.map((node, index) => node.evaluate(this.parser, tagAccessor, [index]))
             ready = nodes.reduce(nodesAreReady, true)
+
             tagRenderer.finishIteration(templateInfo, iterationInfo)
             console.groupEnd()
         }
 
-        const result = stringifyToFragments(nodes)
+        const result = stringifyNodes(nodes)
 
         if (cb) {
             cb(result)

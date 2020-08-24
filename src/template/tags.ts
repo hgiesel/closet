@@ -127,7 +127,7 @@ export class TagNode implements ASTNode, Filterable {
     }
 
     set separators(seps: WeakSeparator[]) {
-        this.separators = seps.map(weakSeparatorToSeparator)
+        this._separators = seps.map(weakSeparatorToSeparator)
     }
 
     get separator(): Separator[] {

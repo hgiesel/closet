@@ -18,7 +18,8 @@ export type {
 } from '..'
 
 export type { DeferredApi, Deferred } from '../filterManager/deferred'
-export type { TagNode, Separator, WeakSeparator } from '../template/tags'
+export type { TagNode } from '../template/tags'
+export type { Separator, WeakSeparator } from '../template/separator'
 
 export type Recipe<T extends {}> = (options?: {}) => (filters: Registrar<T>) => void
 export type Eval<T extends {}, U> = (t: TagNode, i: Internals<T>) => U

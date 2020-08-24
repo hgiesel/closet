@@ -1,4 +1,4 @@
-import type { TagInfo, TagData } from './tags'
+import type { ASTNode, TagInfo, TagData } from './tags'
 import type { TagAccessor } from './evaluate'
 
 import { Parser } from './parser'
@@ -39,43 +39,27 @@ const splitTextFromIntervals = (text: string, intervals: [number, number][]): st
     return result
 }
 
+
+
 export class Template {
     readonly textFragments: string[]
-    readonly baseDepth: number
     readonly parser: Parser
 
-    readonly rootTag: TagInfo
+    readonly nodes: ASTNode[]
 
-    protected constructor(text: string[], baseDepth: number, preparsed: TagInfo | null) {
-        this.textFragments = text
-        this.baseDepth = baseDepth
+    protected constructor(fragments: string[], preparsed: ASTNode[] | null) {
+        this.textFragments = fragments
         this.parser = new Parser()
 
-        this.rootTag = preparsed ?? this.parser.parse(text, baseDepth)
+        this.nodes = preparsed ?? this.parser.parse(fragments)
     }
 
     static make(text: string) {
-        return new Template([text], 1, null)
+        return new Template([text], null)
     }
 
     static makeFromFragments(texts: string[]) {
-        return new Template(texts, 2, null)
-    }
-
-    traverse (path: TagPath): TagInfo | null {
-        let currentPos = this.rootTag
-
-        for (const p of path) {
-            if (currentPos.innerTags[p]) {
-                currentPos = currentPos.innerTags[p]
-            }
-
-            else {
-                return null
-            }
-        }
-
-        return currentPos
+        return new Template(texts, null)
     }
 
     render(tagRenderer: TagRenderer, cb?: (t: string[]) => void) {
@@ -92,21 +76,22 @@ export class Template {
             console.groupCollapsed(`Iteration ${i}`)
             const iterationInfo: IterationInfo = {
                 iteration: i,
-                baseDepth: this.baseDepth,
+                baseDepth: 0,
             }
+
 
             const [
                 newText,
                 /* finalOffset */,
                 newReady,
                 newBaseStack,
-            ] = evaluateTemplate(
+            ] = ['', 5, false, []]/* evaluateTemplate(
                 text,
-                this.rootTag,
+                this.nodes,
                 this.baseDepth,
                 tagRenderer.makeAccessor(templateInfo, iterationInfo),
                 this.parser,
-            )
+            )*/
 
             text = newText
             ready = newReady
@@ -125,37 +110,5 @@ export class Template {
         tagRenderer.finishRun(templateInfo, { result: result })
 
         return result
-    }
-
-    exists(path: TagPath): boolean {
-        const resultTag = this.traverse(path)
-
-        return resultTag
-            ? true
-            : false
-    }
-
-    getInfo(path: TagPath): TagInfo | null {
-        return this.traverse(path)
-    }
-
-    getData(path: TagPath): TagData | null {
-        const maybeTagInfo = this.traverse(path)
-
-        if (maybeTagInfo) {
-            return maybeTagInfo.data
-        }
-
-        return null
-    }
-
-    getOffsets(path: TagPath): [number, number] | null {
-        const maybeTagInfo = this.traverse(path)
-
-        if (maybeTagInfo) {
-            return [0, maybeTagInfo.start]
-        }
-
-        return null
     }
 }

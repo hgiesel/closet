@@ -189,7 +189,7 @@ export class TagInfo {
     }
 }
 
-interface ASTNode {
+export interface ASTNode {
     toString(): string
 }
 

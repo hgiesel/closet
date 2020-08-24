@@ -1,5 +1,5 @@
 import type { TagRenderer } from './template'
-import type { TagInfo } from './template/tags'
+import type { TagInfo, ASTNode } from './template/tags'
 
 import { Template } from './template'
 
@@ -284,17 +284,17 @@ export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate)
 export class BrowserTemplate extends Template {
     inputs: Array<Element | Text | ChildNodeSpan | string>
 
-    protected constructor(text: string[], baseDepth: number, preparsed: TagInfo | null, inputs: Array<Element | Text | ChildNodeSpan | string>) {
-        super(text, baseDepth, preparsed)
+    protected constructor(text: string[], preparsed: ASTNode[] | null, inputs: Array<Element | Text | ChildNodeSpan | string>) {
+        super(text, preparsed)
         this.inputs = inputs
     }
 
     static makeFromNode = (input: Element | Text | ChildNodeSpan | string): BrowserTemplate => {
-        return new BrowserTemplate([getText(input, false)], 1, null, [input])
+        return new BrowserTemplate([getText(input, false)], null, [input])
     }
 
     static makeFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>): BrowserTemplate => {
-        return new BrowserTemplate(inputs.map(input => getText(input, false)), 2, null, inputs)
+        return new BrowserTemplate(inputs.map(input => getText(input, false)), null, inputs)
     }
 
     renderToNodes(tagRenderer: TagRenderer): void {

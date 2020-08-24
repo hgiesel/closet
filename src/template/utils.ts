@@ -5,7 +5,18 @@ export const TAG_OPEN = '[['
 export const TAG_CLOSE = ']]'
 export const ARG_SEP = '::'
 
-export const joinText = ([vs]: { value: string }[][]) => vs.map(v => v.value).join('')
+export function *intersperse<T>(list: T[], delim: T): Generator<T, void, unknown> {
+    let first = true
+
+    for (const item of list) {
+        if (!first) {
+            yield delim;
+            first = false;
+        }
+
+        yield item;
+    }
+}
 
 export const calculateCoordinates = (
     tagStart: number,
@@ -55,7 +66,7 @@ export const flatMapViaStatusList = (parser: Parser, lst: TagInfo[], statusLst: 
             case Status.NotReady:
                 return [tagInfo]
             case Status.ContainsTags:
-                return tagInfo.data.valuesText ? parser.rawParse(tagInfo.data.valuesText, tagInfo.start) : []
+                return tagInfo.data.valuesText ? parser.rawParse(tagInfo.data.valuesText as any) : []
         }
     })
 }

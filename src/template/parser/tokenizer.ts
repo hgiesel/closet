@@ -14,7 +14,7 @@ export const tokenizer = moo.states({
             push: 'key',
         },
         text: {
-            match: /[\s\S]+?(?=\[\[|\$)/u,
+            match: /[\s\S]+?(?=\[\[|$)/u,
             lineBreaks: true,
         },
     },
@@ -42,7 +42,7 @@ export const tokenizer = moo.states({
             match: TAG_CLOSE,
             pop: 1,
         },
-        valuestext: {
+        text: {
             match: /[\s\S]+?(?=\[\[|\]\])/u,
             lineBreaks: true,
         },

@@ -3,6 +3,8 @@ export { BrowserTemplate } from './src/browserTemplate'
 
 export { FilterManager } from './src'
 
+export { Parser } from './src/template/parser'
+
 export {
     keyPattern,
     unicodeLetterPattern,

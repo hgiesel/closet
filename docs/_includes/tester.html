@@ -39,7 +39,7 @@
         }
 
         {% for setup in site.data.setups %}
-        {% assign setupId = setup[1].name | slugify %}
+        {% assign setupId = setup[0] | slugify %}
         {% assign s = setup[1] %}
 
         registerSetup(

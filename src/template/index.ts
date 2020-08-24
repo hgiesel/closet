@@ -70,7 +70,7 @@ export class Template {
         return new Template(texts, null)
     }
 
-    render(tagRenderer: TagRenderer, cb?: (t: string[]) => void) {
+    render(tagRenderer: TagRenderer, cb?: (t: string[]) => void): string[] {
         const templateInfo: TemplateInfo = {
             template: this,
             parser: this.parser,

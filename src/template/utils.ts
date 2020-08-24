@@ -6,9 +6,11 @@ export function *intersperse2d<T>(lists: T[][], delim: T): Generator<T, void, un
     let first = true
 
     for (const list of lists) {
-        if (!first) {
-            yield delim
+        if (first) {
             first = false
+        }
+        else {
+            yield delim
         }
 
         for (const item of list) {

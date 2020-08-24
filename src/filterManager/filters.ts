@@ -31,7 +31,6 @@ const nullFilterResult: FilterResult = {
 
 const withStandardizedFilterResult = <F, T>(wf: WeakFilter<F, T>): Filter<F, T> => (tag: F, internals: T): FilterResult => {
     const input = wf(tag, internals)
-    console.log('weakfilterresult', (tag as any).fullKey, input)
 
     switch (typeof input) {
         case 'string':

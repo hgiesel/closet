@@ -161,11 +161,20 @@ export class TagNode implements ASTNode, Filterable {
         const depth = tagPath.length
 
         const useCapture = tagProcessor.getOptions().capture
-        const newNodes = useCapture
-            ? this.innerNodes
-            : this.innerNodes.map((node, index) => node.evaluate(parser, tagAccessor, [...tagPath, index]))
 
-        const allReady = newNodes.reduce(nodesAreReady, true)
+        if (!useCapture) {
+            this.innerNodes.splice(
+                0,
+                this.innerNodes.length,
+                ...this.innerNodes.map((node, index) => node.evaluate(
+                    parser,
+                    tagAccessor,
+                    [...tagPath, index],
+                )),
+            )
+        }
+
+        const allReady = this.innerNodes.reduce(nodesAreReady, true)
         this.separators = tagProcessor.getOptions().separators
 
         const roundInfo: RoundInfo = {

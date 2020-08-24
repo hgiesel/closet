@@ -26,34 +26,22 @@ export type Filter<P extends object> = FilterType<TagNode, Internals<P>>
 export type WeakFilter<P extends object> = WeakFilterType<TagNode, Internals<P>>
 export type { FilterResult, WeakFilterResult, FilterApi } from './filterManager/filters'
 
-const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => {
-    if (!filterResult.ready) {
-        return {
-            result: null,
-            status: Status.NotReady,
-        }
-    }
-
-    if (filterResult.containsTags) {
-        return {
-            result: filterResult.result,
-            status: Status.ContainsTags,
-        }
-    }
-
-    return {
+const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => filterResult.ready
+    ? {
+        status: filterResult.containsTags
+            ? Status.ContainsTags
+            : Status.Ready,
         result: filterResult.result,
-        status: Status.Ready,
     }
-}
-
-const fillDataOptions = (partial: Partial<DataOptions>): DataOptions => {
-    return {
-        separators: partial.separators ?? [],
-        capture: partial.capture ?? false,
+    : {
+        status: Status.NotReady,
+        result: null,
     }
 
-}
+const fillDataOptions = (partial: Partial<DataOptions>): DataOptions => ({
+    separators: partial.separators ?? [],
+    capture: partial.capture ?? false,
+})
 
 const closetEnvironmentName = '_closetEnvironment'
 interface ClosetEnvironment {

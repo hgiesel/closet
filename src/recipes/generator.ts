@@ -50,16 +50,6 @@ export const generateTemplate = (algorithm: NumberGenAlgorithm, defaultExtra: nu
         const generateId = `gen:${tagname}:${fullOccur}`
 
         const result = memory.lazy(generateId, (): string => {
-            console.log(
-                min,
-                max,
-                extra,
-                Number.isInteger(num)
-                    ? memory.get(uniqueConstraintId, [])
-                    : [],
-                true,
-            )
-
             const gen = generator(
                 min,
                 max,
@@ -75,7 +65,7 @@ export const generateTemplate = (algorithm: NumberGenAlgorithm, defaultExtra: nu
             return generated.value || ''
         })
 
-        return { result: result, ready: true }
+        return { ready: true, result: result }
     }
 
     registrar.register(tagname, generateFilter, { separators: [separator] })

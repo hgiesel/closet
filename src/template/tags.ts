@@ -7,13 +7,15 @@ import {
 import type { TagPath } from '.'
 import type { Parser } from './parser'
 
+import { Filterable } from '../filterManager/filters'
+
+/////
+
 export interface Separator {
     sep: string
     max: number
     trim: boolean
 }
-
-import { Filterable } from '../filterManager/filters'
 
 export type WeakSeparator = Partial<Separator> | string
 
@@ -51,6 +53,8 @@ const weakSeparatorToSeparator = (v: WeakSeparator): Separator => typeof v === '
     ? { sep: v, max: Infinity, trim: false }
     : { sep: v.sep ?? '::', max: v.max ?? Infinity, trim: v.trim ?? false }
 
+/////
+
 
 
 export interface RoundInfo {
@@ -84,6 +88,8 @@ export interface TagProcessor {
 }
 
 export const nodesAreReady = (accu: boolean, node: ASTNode): boolean => accu && node.isReady()
+
+/////////
 
 export interface ASTNode {
     toString(): string | null

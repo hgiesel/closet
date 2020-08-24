@@ -18,7 +18,7 @@ const coreParse = (text: string): TagInfo[] => {
 
     try {
         console.time('parse')
-        const result = parser.feed(text + '$').results
+        const result = parser.feed(text).results
         console.timeEnd('parse')
         console.log(result[0]._innerTags)
         return result

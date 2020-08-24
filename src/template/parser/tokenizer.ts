@@ -13,11 +13,8 @@ export const tokenizer = moo.states({
             match: TAG_OPEN,
             push: 'key',
         },
-        EOF: {
-            match: /\$$/u,
-        },
         text: {
-            match: /[\s\S]+?(?=\[\[|\$$)/u,
+            match: /[\s\S]+?(?=\[\[|\$)/u,
             lineBreaks: true,
         },
     },

@@ -1,7 +1,9 @@
-import type { ASTNode, TagAccessor } from './tags'
+import type { ASTNode } from './tags'
+import type { TagAccessor } from './types'
 
 import { nodesAreReady } from './tags'
 import { Parser } from './parser'
+
 
 export interface TemplateInfo {
     template: Template
@@ -22,8 +24,6 @@ export interface TagRenderer {
     finishIteration: (t: TemplateInfo, i: IterationInfo) => void
     finishRun: (t: TemplateInfo, x: ResultInfo) => void
 }
-
-export type TagPath = number[]
 
 const MAX_ITERATIONS = 50
 

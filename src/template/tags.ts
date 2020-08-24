@@ -1,6 +1,7 @@
-import type { TagPath } from '.'
+import type { Filterable } from '../filterManager/filters'
 import type { Separator, WeakSeparator } from './separator'
 import type { Parser } from './parser'
+import type { TagAccessor, TagPath, RoundInfo } from './types'
 
 import {
     TAG_OPEN,
@@ -8,40 +9,9 @@ import {
     ARG_SEP,
 } from './utils'
 
-import { Filterable } from '../filterManager/filters'
 import { splitValues, weakSeparatorToSeparator } from './separator'
+import { Status } from './types'
 
-export interface RoundInfo {
-    path: number[]
-    depth: number
-    ready: boolean
-    capture: boolean
-}
-
-export enum Status {
-    Ready,
-    NotReady,
-    ContainsTags,
-}
-
-export interface ProcessorOutput {
-    result: string | null
-    status: Status
-}
-
-export interface DataOptions {
-    separators: Array<string | Partial<Separator>>
-    capture: boolean
-}
-
-export type TagAccessor = (name: string) => TagProcessor
-
-export interface TagProcessor {
-    execute: (data: TagNode, round: RoundInfo) => ProcessorOutput
-    getOptions: () => DataOptions
-}
-
-/////////
 
 export interface ASTNode {
     toString(): string | null

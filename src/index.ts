@@ -2,7 +2,7 @@ import { MetaFilterManager } from './filterManager'
 import { FilterApi } from './filterManager/filters'
 import { Storage, StorageType } from './filterManager/storage'
 import { DeferredApi } from './filterManager/deferred'
-import { Status } from './template/tags'
+import { Status } from './template/types'
 
 import type { ManagerInfo } from './filterManager'
 import type { Filter as FilterType, WeakFilter as WeakFilterType, FilterResult } from './filterManager/filters'
@@ -10,7 +10,9 @@ import type { RegistrarApi } from './filterManager/registrar'
 import type { DeferredEntry as DefEntry } from './filterManager/deferred'
 
 import type { TagRenderer, TemplateInfo, IterationInfo, ResultInfo } from './template'
-import type { TagNode, TagAccessor, TagProcessor, RoundInfo, DataOptions, ProcessorOutput } from './template/tags'
+import type { TagNode } from './template/tags'
+import type { TagAccessor, TagProcessor, RoundInfo, DataOptions, ProcessorOutput } from './template/types'
+
 
 export type Internals<P extends object> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo & RoundInfo
 export type DeferredInternals<P extends object> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo
@@ -20,7 +22,7 @@ export type AftermathEntry<P extends object> = DefEntry<AftermathInternals<P>>
 
 export type Registrar<P extends object> = RegistrarApi<TagNode, Internals<P>, DataOptions>
 export type Filters<P extends object> = FilterApi<TagNode, Internals<P>>
-export type { DataOptions } from './template/tags'
+export type { DataOptions } from './template/types'
 
 export type Filter<P extends object> = FilterType<TagNode, Internals<P>>
 export type WeakFilter<P extends object> = WeakFilterType<TagNode, Internals<P>>

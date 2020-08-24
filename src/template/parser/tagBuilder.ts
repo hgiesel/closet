@@ -1,5 +1,6 @@
 import { ASTNode, TagNode } from '../tags'
 
+
 export type TagBuilderSettings = [Map<string, number>, Map<string, number>]
 
 const keyPattern = /^(.+?)([0-9]*)$/u

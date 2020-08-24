@@ -112,7 +112,7 @@ export class TagNode implements ASTNode, Filterable {
 
     evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode {
         const tagProcessor = tagAccessor(this.key)
-        const depth = tagPath.length
+        const depth = tagPath.length - 1
 
         const useCapture = tagProcessor.getOptions().capture
 

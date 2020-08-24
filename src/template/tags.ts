@@ -41,8 +41,6 @@ export interface TagProcessor {
     getOptions: () => DataOptions
 }
 
-export const nodesAreReady = (accu: boolean, node: ASTNode): boolean => accu && node.isReady()
-
 /////////
 
 export interface ASTNode {
@@ -50,6 +48,8 @@ export interface ASTNode {
     isReady(): boolean
     evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode
 }
+
+export const nodesAreReady = (accu: boolean, node: ASTNode): boolean => accu && node.isReady()
 
 export class TagNode implements ASTNode, Filterable {
     readonly fullKey: string

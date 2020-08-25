@@ -7,6 +7,7 @@ export { Parser } from './src/template/parser'
 
 export {
     keyPattern,
+    keySeparationPattern,
     unicodeLetterPattern,
     unicodeNumberPattern,
     unicodeAlphanumericPattern,

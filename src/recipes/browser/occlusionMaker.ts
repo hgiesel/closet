@@ -140,7 +140,7 @@ const occlusionMakerCssKeyword = 'occlusionMakerCss'
 export const occlusionMakerRecipe = <T extends {}>(options: {
     tagname?: string,
     occlusionTextHandler?: OcclusionTextHandler,
-    shapeKeywords?: string[]
+    shapeKeywords?: string[],
 } = {})=> (registrar: Registrar<T>) => {
     const keyword = 'makeOcclusions'
 
@@ -150,33 +150,35 @@ export const occlusionMakerRecipe = <T extends {}>(options: {
         shapeKeywords = [rectKeyword],
     } = options
 
-    const occlusionMakerFilter = (_tag: TagNode, { template, cache, aftermath, environment }: Internals<T>) => {
-        const images = (template.textFragments as any).flatMap(getImages)
+    const occlusionMakerFilter = (tag: TagNode, internals: Internals<T>) => {
+        const images = internals.template.textFragments.flatMap(getImages)
 
-        aftermath.registerIfNotExists(keyword, () => {
-            if (!environment.post(occlusionMakerCssKeyword, () => true, false)) {
+        internals.aftermath.registerIfNotExists(keyword, () => {
+            if (!internals.environment.post(occlusionMakerCssKeyword, () => true, false)) {
                 appendStyleTag(menuCss)
                 appendStyleTag(occlusionCss)
             }
 
-            if (!environment.post(svgKeyword, () => true, false)) {
+            if (!internals.environment.post(svgKeyword, () => true, false)) {
                 appendStyleTag(svgCss)
             }
 
             const existingShapes: any[] = []
             for (const kw of shapeKeywords) {
                 // get shapes for editing
-                const otherShapes = cache.get(kw, [])
+                const otherShapes = internals.cache.get(kw, [])
                 existingShapes.push(...otherShapes)
 
                 // block aftermath render action
-                aftermath.block(kw)
+                internals.aftermath.block(kw)
             }
 
             const callback = (event: Event) => {
                 const draw = SVG.wrapImage(event.target as HTMLImageElement)
 
-                for (const [_active, labelTxt, x, y, width, height] of existingShapes) {
+                // existingShapesCallback(draw, existingShapes)(tag, internals)
+
+                for (const [_type, _active, labelTxt, x, y, width, height] of existingShapes) {
                     const newRect = Rect.make(draw)
                     newRect.labelText = labelTxt
                     newRect.pos = [x, y, width, height]

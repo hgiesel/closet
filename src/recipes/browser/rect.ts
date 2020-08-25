@@ -8,9 +8,11 @@ import { appendStyleTag, getImages, imageLoadCallback, svgKeyword, svgCss } from
 
 export const rectKeyword = 'occlusionRenderRect'
 
+type RectDefinition = ['rect', boolean, string, number, number, number, number, RectProperties]
+
 const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache, environment }: AftermathInternals<T>) => {
     const images = (template.textFragments as any).flatMap(getImages)
-    const rects = cache.get<[boolean, string, number, number, number, number, RectProperties][]>(entry.keyword, [])
+    const rects = cache.get<RectDefinition[]>(entry.keyword, [])
 
     if (!environment.post(svgKeyword, () => true, false)) {
         appendStyleTag(svgCss)
@@ -19,7 +21,7 @@ const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache, 
     imageLoadCallback(`img[src="${images[0]}"]`, (event) => {
         const draw = SVG.wrapImage(event.target as HTMLImageElement)
 
-        for (const [active,, x, y, width, height, options] of rects) {
+        for (const [/* type */, active,, x, y, width, height, options] of rects) {
             if (!active) {
                 continue
             }
@@ -29,6 +31,7 @@ const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache, 
             svgRect.y = y
             svgRect.width = width
             svgRect.height = height
+            console.log('options', options)
 
             for (const prop in options) {
                 const rectProperty = prop as RectProperty
@@ -40,19 +43,30 @@ const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache, 
     })
 }
 
+const processProps = (rest: string[], overwriteProps = {}): RectProperties => {
+    const propObject: RectProperties = {}
+
+    rest
+        .map((propString: string) => (propString.split('=')) as [RectProperty, string])
+        .forEach(([name, value]: [RectProperty, string]) => propObject[name] = value)
+
+    return Object.assign(propObject, overwriteProps)
+}
+
 const inactiveRect = <T extends {}>({ fullKey, values }: TagNode, { cache }: Internals<T>) => {
-    const [x = 0, y = 0, width = 50, height = width] = values
+    const [x = 0, y = 0, width = 50, height = width, ...rest] = values
 
     cache.over(
         rectKeyword,
-        (rectList: [boolean, string, number, number, number, number, object][]) => rectList.push([
+        (rectList: RectDefinition[]) => rectList.push([
+            'rect',
             false,
             fullKey,
             Number(x),
             Number(y),
             Number(width),
             Number(height),
-            {},
+            processProps(rest),
         ]),
         [],
     )
@@ -61,18 +75,19 @@ const inactiveRect = <T extends {}>({ fullKey, values }: TagNode, { cache }: Int
 }
 
 const makeContextRects = <T extends {}>({ fullKey, values }: TagNode, { cache, aftermath }: Internals<T>) => {
-    const [x = 0, y = 0, width = 50, height = width] = values
+    const [x = 0, y = 0, width = 50, height = width, ...rest] = values
 
     cache.over(
         rectKeyword,
-        (rectList: [boolean, string, number, number, number, number, object][]) => rectList.push([
+        (rectList: RectDefinition[]) => rectList.push([
+            'rect',
             true,
             fullKey,
             Number(x),
             Number(y),
             Number(width),
             Number(height),
-            {},
+            processProps(rest),
         ]),
         [],
     )
@@ -83,18 +98,20 @@ const makeContextRects = <T extends {}>({ fullKey, values }: TagNode, { cache, a
 }
 
 const makeActiveRects = <T extends {}>({ fullKey, values }: TagNode, { cache, aftermath }: Internals<T>) => {
-    const [x = 0, y = 0, width = 50, height = width] = values
+    const [x = 0, y = 0, width = 50, height = width, ...rest] = values
+    const activeProps = { fill: 'salmon', stroke: 'yellow' }
 
     cache.over(
         rectKeyword,
-        (rectList: [boolean, string, number, number, number, number, object][]) => rectList.push([
+        (rectList: RectDefinition[]) => rectList.push([
+            'rect',
             true,
             fullKey,
             Number(x),
             Number(y),
             Number(width),
             Number(height),
-            { fill: 'salmon', stroke: 'yellow' },
+            processProps(rest, activeProps)
         ]),
         [],
     )

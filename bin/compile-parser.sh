@@ -7,4 +7,4 @@ if ! type nearleyc &> /dev/null; then
 fi
 
 nearleyc "$DIR/template.ne" > "$DIR/template.ts"
-nearleyc "$DIR/tagSelector.ne" > "$DIR/tagSelector.ts"
+nearleyc "$DIR/tagSelector/grammar.ne" > "$DIR/tagSelector/grammar.ts"

@@ -1,4 +1,5 @@
 import { ASTNode, TagNode } from '../tags'
+import { parseTagSelector } from './tagSelector'
 
 
 // NOTE this pattern is also when parsing tag arguments
@@ -26,6 +27,8 @@ export class TagBuilder {
 
     build(fullKey: string, innerNodes: ASTNode[]): TagNode {
         const match = fullKey.match(keySeparationPattern)
+
+        console.log(parseTagSelector(fullKey))
 
         if (!match) {
             throw new Error('Could not match key. This should never happen.')

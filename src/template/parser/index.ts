@@ -8,8 +8,10 @@ import { TextNode, DocSeparatorNode } from '../tags'
 import { intersperse2d } from '../utils'
 import { tagBuilder } from './template'
 
+const templateGrammar = nearley.Grammar.fromCompiled(grammar)
+
 const coreParse = (text: string): ASTNode[][] => {
-    const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar))
+    const parser = new nearley.Parser(templateGrammar)
 
     try {
         const result = parser.feed(text).results

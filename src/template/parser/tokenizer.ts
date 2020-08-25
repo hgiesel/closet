@@ -6,7 +6,7 @@ import {
     ARG_SEP,
 } from '../utils'
 
-export const keyPattern = /[\w/%]+/u
+export const keyPattern = /[a-zA-Z_\/](?:[\w\/]|%\w)*/u
 const outerTextPattern = /[\s\S]+?(?=\[\[|$)/u
 const innerTextPattern = /[\s\S]+?(?=\[\[|\]\])/u
 
@@ -50,44 +50,6 @@ export const templateTokenizer = moo.states({
             match: innerTextPattern,
             lineBreaks: true,
         },
-    },
-})
-
-export const tagSelectorTokenizer = moo.compile({
-    str: {
-        match: /\w\\/u,
-    },
-
-    escapeseq: {
-        match: /%\w/u,
-    },
-
-    star: {
-        match: '*',
-    },
-
-    num: {
-        match: /\d+/u
-    },
-
-    groupOpen: {
-        match: '{',
-    },
-
-    groupAlternative: {
-        match: ',',
-    },
-
-    multiplierSeq: {
-        match: '*n+',
-    },
-
-    groupClose: {
-        match: '}',
-    },
-
-    occurSep: {
-        match: ':',
     },
 })
 

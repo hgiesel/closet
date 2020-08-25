@@ -42,17 +42,19 @@ code: |
     contexter: theContexter,
   }
 
-  filterManager.addRecipe(Closet.recipes.multipleChoiceShow({
-    tagname: 'mc',
-    ...assignCategorySettings,
-  }))
+  filterManager.install(
+    Closet.recipes.multipleChoiceShow({
+      tagname: 'mc',
+      ...assignCategorySettings,
+    }),
 
-  filterManager.addRecipe(Closet.recipes.multipleChoiceHide({
-    tagname: 'mch',
-    ...assignCategorySettings,
-  }))
+    Closet.recipes.multipleChoiceHide({
+      tagname: 'mch',
+      ...assignCategorySettings,
+    }),
 
-  filterManager.addRecipe(Closet.recipes.multipleChoiceReveal({
-    tagname: 'mcr',
-    ...assignCategorySettings,
-  }))
+    Closet.recipes.multipleChoiceReveal({
+      tagname: 'mcr',
+      ...assignCategorySettings,
+    }),
+  )

@@ -1,12 +1,8 @@
 name: Default Multiple Choice
 code: |
-  const defaultMcRecipes = [
+  filterManager.install( 
     Closet.recipes.multipleChoiceShow({ tagname: 'mc' }),
     Closet.recipes.multipleChoiceHide({ tagname: 'mch' }),
     Closet.recipes.multipleChoiceReveal({ tagname: 'mcr' }),
-  ]
-
-  for (const recipe of defaultMcRecipes) {
-    filterManager.addRecipe(recipe)
-  }
+  )
 

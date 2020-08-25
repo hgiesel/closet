@@ -1,11 +1,7 @@
 name: "Default cloze"
 code: |
-  const defaultClozeRecipes = [
+  filterManager.install(
     Closet.recipes.clozeShow({ tagname: 'c' }),
     Closet.recipes.clozeHide({ tagname: 'ch' }),
     Closet.recipes.clozeReveal({ tagname: 'cr' }),
-  ]
-
-  for (const recipe of defaultClozeRecipes) {
-    filterManager.addRecipe(recipe)
-  }
+  )

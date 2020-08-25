@@ -238,7 +238,7 @@ code: |
 
   const removeFormatting = (v) => v.replace(/<.*?>/g, '')
 
-  filterManager.addRecipe(wrappedSideSensitive({ 
+  filterManager.install(wrappedSideSensitive({ 
     tagname: 'tf',
     optionsFalse: { processor: removeFormatting },
   }))
@@ -246,7 +246,7 @@ code: |
   const coloredSymbolsStylizer = splitAndMap(v => colored(true)(numberToMark(v)))
   const dropNumbersStylizer = removeTone
 
-  filterManager.addRecipe(sideSensitiveStyler({ 
+  filterManager.install(sideSensitiveStyler({ 
     tagname: 'ts',
     optionsFalse: { processor: dropNumbersStylizer },
     optionsTrue: { processor: coloredSymbolsStylizer },
@@ -255,7 +255,7 @@ code: |
   const simpleBopomofoStylizer = splitAndMap(toBopomofo(true))
   const coloredBopomofoStylizer = splitAndMap(v => colored(true)(toBopomofo(false)(v)))
 
-  filterManager.addRecipe(sideSensitiveStyler({ 
+  filterManager.install(sideSensitiveStyler({ 
     tagname: 'bpmf',
     optionsFalse: { processor: simpleBopomofoStylizer },
     optionsTrue: { processor: coloredBopomofoStylizer },

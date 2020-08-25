@@ -10,17 +10,19 @@ code: |
     frontStylizer: obscureYellow,
   }
 
-  filterManager.addRecipe(Closet.recipes.clozeShow({
-    tagname: 'c',
-    ...obscureOptions,
-  }))
+  filterManager.install(
+    Closet.recipes.clozeShow({
+      tagname: 'c',
+      ...obscureOptions,
+    }),
 
-  filterManager.addRecipe(Closet.recipes.clozeHide({
-    tagname: 'ch',
-    ...obscureOptions,
-  }))
+    Closet.recipes.clozeHide({
+      tagname: 'ch',
+      ...obscureOptions,
+    }),
 
-  filterManager.addRecipe(Closet.recipes.clozeReveal({
-    tagname: 'cr',
-    ...obscureOptions,
-  }))
+    Closet.recipes.clozeReveal({
+      tagname: 'cr',
+      ...obscureOptions,
+    }),
+  )

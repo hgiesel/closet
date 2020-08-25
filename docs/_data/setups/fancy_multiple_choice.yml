@@ -69,7 +69,7 @@ code: |
 
   const wrapItem = (v, _i, cat) => `<div class="cl--card"><div class="cl--child cl--category-${cat}"><h3>${v}</h3></div></div>`
 
-  filterManager.addRecipe(wrappedMultipleChoiceShow({
+  filterManager.install(wrappedMultipleChoiceShow({
     tagname: 'mc',
     frontStylizer: Closet.Stylizer.make({
       mapper: wrapItem,

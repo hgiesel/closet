@@ -37,13 +37,14 @@ var EditorCloset = {
             const elements = ['[[makeOcclusions]]'].concat(...document.body.querySelectorAll('.field'))
 
             const filterManager = Closet.FilterManager.make()
-            filterManager.addRecipe(EditorCloset.editorOcclusion)
+            filterManager.install(
+                EditorCloset.editorOcclusion,
+                Closet.browserRecipes.rectShow({ tagname: 'rect' }),
+                Closet.browserRecipes.rectHide({ tagname: 'recth' }),
+                Closet.browserRecipes.rectReveal({ tagname: 'rectr' }),
+            )
 
-            filterManager.addRecipe(Closet.browserRecipes.rectShow({ tagname: 'rect' })),
-                filterManager.addRecipe(Closet.browserRecipes.rectHide({ tagname: 'recth' })),
-                filterManager.addRecipe(Closet.browserRecipes.rectReveal({ tagname: 'rectr' })),
-
-                Closet.BrowserTemplate
+            Closet.BrowserTemplate
                 .makeFromNodes(elements)
                 .render(filterManager)
 

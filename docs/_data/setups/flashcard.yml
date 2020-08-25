@@ -1,6 +1,6 @@
 name: "Flashcard features"
 code: |
-  const flashcardRecipes = [
+  filterManager.install(
     Closet.recipes.activate({ tagname: 'on', storeId: 'flashcardActive' }),
     Closet.recipes.deactivate({ tagname: 'off', storeId: 'flashcardActive' }),
     Closet.recipes.toggle({ tagname: 'toggle', storeId: 'flashcardActive' }),
@@ -25,8 +25,4 @@ code: |
       optionsFirst: { storeId: 'flashcardShowTop' },
       optionsSecond: { storeId: 'flashcardShowBottom' },
     }),
-  ]
-
-  for (const recipe of flashcardRecipes) {
-    filterManager.addRecipe(recipe)
-  }
+  )

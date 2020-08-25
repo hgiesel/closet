@@ -43,14 +43,16 @@ code: |
     processor: v => `<span style="color: cornflowerblue">${v}</span>`,
   })
 
-  filterManager.addRecipe(wrappedClozeShow({
-    tagname: 'c',
-    frontEllipser: obscureAndClick,
-    frontStylizer: frontStylizer,
-  }))
+  filterManager.install(
+    wrappedClozeShow({
+      tagname: 'c',
+      frontEllipser: obscureAndClick,
+      frontStylizer: frontStylizer,
+    }),
 
-  filterManager.addRecipe(wrappedClozeShow({
-    tagname: 'cx',
-    frontEllipser: obscureAndClickFix,
-    frontStylizer: frontStylizer,
-  }))
+    wrappedClozeShow({
+      tagname: 'cx',
+      frontEllipser: obscureAndClickFix,
+      frontStylizer: frontStylizer,
+    }),
+  )

@@ -1,5 +1,7 @@
 name: "Shuffle Quest"
 code: |
-  filterManager.addRecipe(Closet.recipes.shuffleShow({ tagname: 'shuf' }))
-  filterManager.addRecipe(Closet.recipes.sortShow({ tagname: 'sort' }))
-  filterManager.addRecipe(Closet.recipes.jumbleShow({ tagname: 'jumb' }))
+  filterManager.install(
+    Closet.recipes.shuffleShow({ tagname: 'shuf' }),
+    Closet.recipes.sortShow({ tagname: 'sort' }),
+    Closet.recipes.jumbleShow({ tagname: 'jumb' }),
+  )

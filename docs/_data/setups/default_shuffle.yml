@@ -1,3 +1,3 @@
 name: "Default Shuffle"
 code: |
-  filterManager.addRecipe(Closet.recipes.shuffle({ tagname: 'mix' }))
+  filterManager.install(Closet.recipes.shuffle({ tagname: 'mix' }))

@@ -156,7 +156,9 @@ export class MetaFilterManager<
         this.deferred.clear()
     }
 
-    addRecipe(recipe: (registrar: RegistrarApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R, D>) => void): void {
-        recipe(this.registrar)
+    install(...recipes: Array<(registrar: RegistrarApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R, D>) => void>): void {
+        for (const recipe of recipes) {
+            recipe(this.registrar)
+        }
     }
 }

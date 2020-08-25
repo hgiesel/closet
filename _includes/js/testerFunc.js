@@ -31,14 +31,9 @@ const presetMustBeObjectMessage = '<i>Error with preset JSON: preset must be an 
 const getActiveSetups = () => {
     const activeSetups = document.querySelectorAll('input[name="fm-list"]:checked')
 
-    const results = []
-    for (const as of activeSetups) {
-        if (setups.has(as.value)) {
-            results.push(setups.get(as.value))
-        }
-    }
-
-    return results
+    return Array.from(activeSetups)
+        .filter(as => setups.has(as.value))
+        .map(as => setups.get(as.value))
 }
 
 ///////////////////////////// render button

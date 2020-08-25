@@ -1,5 +1,6 @@
 import { interspliceChildNodes, ChildNodeSpan } from './browserTemplate'
 
+
 // https://github.com/SimonLammer/anki-persistence#usage
 export interface AnkiPersistence {
     clear: () => void

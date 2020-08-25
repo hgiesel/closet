@@ -3,6 +3,7 @@ import type { ASTNode } from './template/tags'
 
 import { Template } from './template'
 
+
 // negative result implies invalid idx
 const parseIndexArgument = (idx: number, min: number, max: number): number => {
   return idx < 0

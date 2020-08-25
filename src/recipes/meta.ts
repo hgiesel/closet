@@ -3,30 +3,27 @@ import type { Registrar, TagNode, WeakFilterResult } from './types'
 const paramPattern = /%(.)/gu
 const defOptions = { separators: [{ sep: '::', max: 2 }], capture: true }
 
-const matcher = (argTag: TagNode) => (match: string, p1: string) => {
-    const num = Number(p1)
-    if (Number.isNaN(num)) {
-        switch (p1) {
-            case '%':
-                return p1
-            case 'n':
-                return typeof argTag.num === 'number'
-                    ? String(argTag.num)
-                    : ''
-            case 'k':
-                return argTag.key
-            case 'f':
-                return argTag.fullKey
+const matcher = (tag: TagNode) => (match: string, p1: string) => {
+    switch (p1) {
+        case '%':
+            return p1
 
-            default:
-                return match
-        }
-    }
+        case 'n':
+            return typeof tag.num === 'number'
+                ? String(tag.num)
+                : ''
 
-    if (num >= 0) {
-        return argTag.valuesText
-            ? argTag.values[num] ?? ''
-            : ''
+        case 'k':
+            return tag.key
+        case 'f':
+            return tag.fullKey
+
+        default:
+            const num = Number(p1)
+
+            return Number.isNaN(num)
+                ? match
+                : tag.values[num] ?? ''
     }
 }
 

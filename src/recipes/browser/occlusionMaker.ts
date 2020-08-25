@@ -1,6 +1,7 @@
 import type { Registrar, TagNode, Internals } from '../types'
+import { id } from '../utils'
 
-import { SVG, Rect } from './svgClasses'
+import { SVG, Shape, ShapeDefinition, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
 import { appendStyleTag, getImages, getHighestNum, getOffsets, imageLoadCallback, svgKeyword, svgCss } from './utils'
 
@@ -84,18 +85,10 @@ const occlusionLeftClick = (draw: SVG, event: MouseEvent) => {
     }
 }
 
-const rectShapeToCmd = (rect: Rect): [string, number, number, number, number] => {
-    return [rect.labelText, rect.x, rect.y, rect.width, rect.height]
-}
+type ShapeHandler = (shapes: Shape[]) => void
+type ShapeFilter = (shapes: ShapeDefinition[]) => ShapeDefinition[]
 
-const rectCmdToText = ([labelText, x, y, width, height]: [string, number, number, number, number]): string => {
-    return `[[${labelText}::${x.toFixed()},${y.toFixed()},${width.toFixed()},${height.toFixed()}]]`
-}
-
-type OcclusionTextHandler = (occlusions: NodeListOf<SVGElement>, occlusionTexts: string[]) => void
-
-export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextHandler) => {
-
+export const wrapForOcclusion = (draw: SVG, acceptHandler: ShapeHandler) => {
     const occlusionClick = (event: MouseEvent) => {
         if (event.button === 0 /* left mouse button */) {
             occlusionLeftClick(draw, event)
@@ -106,14 +99,7 @@ export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextH
 
     const acceptEvent = (event: MouseEvent) => {
         event.preventDefault()
-
-        const shapeTexts = Array.from(draw.svg.childNodes)
-            .map((v: any /* SVGElement */) => v.childNodes[0] as any)
-            .map(svgRect => Rect.wrap(svgRect, draw))
-            .map(rectShapeToCmd)
-            .map(rectCmdToText)
-
-        occlusionTextHandler(draw.svg.childNodes as NodeListOf<SVGElement>, shapeTexts)
+        acceptHandler(draw.getElements())
     }
 
     const occlusionMenu = setupMenu('occlusion-menu', [{
@@ -128,7 +114,10 @@ export const wrapForOcclusion = (draw: SVG, occlusionTextHandler: OcclusionTextH
     enableAsMenuTrigger(occlusionMenu, draw.svg)
 }
 
-const defaultOcclusionTextHandler: OcclusionTextHandler = (_occs, texts) => navigator.clipboard.writeText(texts.join('\n'))
+const defaultAcceptHandler: ShapeHandler = (shapes) => navigator.clipboard.writeText(shapes
+    .map(shape => shape.toText())
+    .join('\n')
+)
 
 const occlusionCss = `
 .closet__occlusion-container {
@@ -139,14 +128,16 @@ const occlusionMakerCssKeyword = 'occlusionMakerCss'
 
 export const occlusionMakerRecipe = <T extends {}>(options: {
     tagname?: string,
-    occlusionTextHandler?: OcclusionTextHandler,
+    acceptHandler?: ShapeHandler,
+    existingShapesFilter?: ShapeFilter,
     shapeKeywords?: string[],
 } = {})=> (registrar: Registrar<T>) => {
     const keyword = 'makeOcclusions'
 
     const {
         tagname = keyword,
-        occlusionTextHandler = defaultOcclusionTextHandler,
+        acceptHandler = defaultAcceptHandler,
+        existingShapesFilter = id,
         shapeKeywords = [rectKeyword],
     } = options
 
@@ -176,17 +167,33 @@ export const occlusionMakerRecipe = <T extends {}>(options: {
             const callback = (event: Event) => {
                 const draw = SVG.wrapImage(event.target as HTMLImageElement)
 
-                // existingShapesCallback(draw, existingShapes)(tag, internals)
+                for (const [
+                    shapeType,
+                    /* active */,
+                    ...rest
+                ] of existingShapesFilter(existingShapes)) {
+                    switch (shapeType) {
+                        case 'rect':
+                            const [
+                                labelTxt,
+                                x,
+                                y,
+                                width,
+                                height,
+                            ] = rest
 
-                for (const [_type, _active, labelTxt, x, y, width, height] of existingShapes) {
-                    const newRect = Rect.make(draw)
-                    newRect.labelText = labelTxt
-                    newRect.pos = [x, y, width, height]
+                            const newRect = Rect.make(draw)
+                            newRect.labelText = labelTxt
+                            newRect.pos = [x, y, width, height]
 
-                    makeInteractive(draw, newRect)
+                            makeInteractive(draw, newRect)
+
+                        default:
+                            // nothing
+                    }
                 }
 
-                wrapForOcclusion(draw, occlusionTextHandler)
+                wrapForOcclusion(draw, acceptHandler)
             }
 
             for (const srcUrl of images) {

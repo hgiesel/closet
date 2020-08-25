@@ -3,12 +3,12 @@ import type { FlashcardTemplate, FlashcardPreset } from '../flashcardTemplate'
 
 import { makeFlashcardTemplate, generateFlashcardRecipes } from '../flashcardTemplate'
 
-import { SVG, Rect, RectProperty, RectProperties } from './svgClasses'
+import type { RectProperty, RectProperties, RectDefinition } from './svgClasses'
+import { SVG, Rect } from './svgClasses'
+
 import { appendStyleTag, getImages, imageLoadCallback, svgKeyword, svgCss } from './utils'
 
 export const rectKeyword = 'occlusionRenderRect'
-
-type RectDefinition = ['rect', boolean, string, number, number, number, number, RectProperties]
 
 const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache, environment }: AftermathInternals<T>) => {
     const images = (template.textFragments as any).flatMap(getImages)

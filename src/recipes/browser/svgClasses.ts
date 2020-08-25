@@ -1,9 +1,17 @@
 const ns = 'http://www.w3.org/2000/svg'
 
-interface GettableSVG {
+export type RectProperty = 'rx' | 'ry' | 'fill' | 'fillOpacity' | 'stroke' | 'strokeOpacity' | 'strokeWidth'
+export type RectProperties = Partial<Record<RectProperty, string>>
+export type RectDefinition = ['rect', boolean | undefined, string, number, number, number, number, RectProperties]
+
+export type ShapeDefinition = RectDefinition
+
+export interface Shape {
     getElements(): Element[]
     resize(forSVG: SVG): void
     getLabel(): string
+    toDefinition(): ShapeDefinition
+    toText(): string
 }
 
 export class SVG {
@@ -16,7 +24,7 @@ export class SVG {
     protected zoomX: number = 1
     protected zoomY: number = 1
 
-    protected elements: GettableSVG[] = []
+    protected elements: Shape[] = []
     protected resizer: any /* ResizeObserver */
 
     protected constructor(container: HTMLDivElement, image: HTMLImageElement, svg: SVGElement) {
@@ -77,7 +85,7 @@ export class SVG {
         }
     }
 
-    append(element: GettableSVG): void {
+    append(element: Shape): void {
         this.elements.push(element)
 
         for (const elem of element.getElements()) {
@@ -85,15 +93,16 @@ export class SVG {
         }
     }
 
+    getElements(): Shape[] {
+        return this.elements
+    }
+
     getLabels(): string[] {
-        return this.elements.map(element => element.getLabel())
+        return this.getElements().map(element => element.getLabel())
     }
 }
 
-export type RectProperty = 'rx' | 'ry' | 'fill' | 'fillOpacity' | 'stroke' | 'strokeOpacity' | 'strokeWidth'
-export type RectProperties = Partial<Record<RectProperty, string>>
-
-export class Rect implements GettableSVG {
+export class Rect implements Shape {
     readonly container: SVGElement
     readonly rect: SVGRectElement
     readonly label: SVGTextElement
@@ -181,6 +190,14 @@ export class Rect implements GettableSVG {
         this.scalingFactorY = scaleFactors[1]
 
         this.pos = savePos
+    }
+
+    toDefinition(): RectDefinition {
+        return ['rect', undefined, this.labelText, this.x, this.y, this.width, this.height, {}]
+    }
+
+    toText(): string {
+        return `[[${this.labelText}::${this.x.toFixed()},${this.y.toFixed()},${this.width.toFixed()},${this.height.toFixed()}]]`
     }
 
     /////////////////// on both

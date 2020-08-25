@@ -16,7 +16,7 @@ import { Status } from './types'
 export interface ASTNode {
     toString(): string | null
     isReady(): boolean
-    evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode
+    evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode[]
 }
 
 export const nodesAreReady = (accu: boolean, node: ASTNode): boolean => accu && node.isReady()
@@ -80,7 +80,7 @@ export class TagNode implements ASTNode, Filterable {
         return this.valuesText
     }
 
-    evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode {
+    evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode[] {
         const tagProcessor = tagAccessor(this.key)
         const depth = tagPath.length - 1
 
@@ -90,7 +90,7 @@ export class TagNode implements ASTNode, Filterable {
             this.innerNodes.splice(
                 0,
                 this.innerNodes.length,
-                ...this.innerNodes.map((node, index) => node.evaluate(
+                ...this.innerNodes.flatMap((node: ASTNode, index: number) => node.evaluate(
                     parser,
                     tagAccessor,
                     [...tagPath, index],
@@ -112,12 +112,11 @@ export class TagNode implements ASTNode, Filterable {
 
         switch (filterOutput.status) {
             case Status.NotReady:
-                return this
+                return [this]
             case Status.Ready:
-                return new TextNode(filterOutput.result as string)
+                return [new TextNode(filterOutput.result as string)]
             case Status.ContainsTags:
-                this.innerNodes.splice(0, this.innerNodes.length, ...parser.rawParse(filterOutput.result as string))
-                return this
+                return parser.rawParse(filterOutput.result as string)
         }
     }
 }
@@ -141,7 +140,7 @@ export class TextNode implements ASTNode {
     }
 
     evaluate() {
-        return this
+        return [this]
     }
 }
 
@@ -156,6 +155,6 @@ export class DocSeparatorNode implements ASTNode {
     }
 
     evaluate() {
-        return this
+        return [this]
     }
 }

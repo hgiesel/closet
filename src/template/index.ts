@@ -87,7 +87,7 @@ export class Template {
 
             const tagAccessor = tagRenderer.makeAccessor(templateInfo, iterationInfo)
 
-            nodes = nodes.map((node, index) => node.evaluate(this.parser, tagAccessor, [index]))
+            nodes = nodes.flatMap((node: ASTNode, index: number) => node.evaluate(this.parser, tagAccessor, [index]))
             ready = nodes.reduce(nodesAreReady, true)
 
             tagRenderer.finishIteration(templateInfo, iterationInfo)

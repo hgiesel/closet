@@ -1,6 +1,6 @@
 export interface FilterResult {
     ready: boolean
-    result: string | null
+    result: string
     containsTags: boolean
 }
 
@@ -25,7 +25,7 @@ const wrapWithReadyBubbled = (result: string, ready: boolean): FilterResult => w
 
 const nullFilterResult: FilterResult = {
     ready: false,
-    result: null,
+    result: '',
     containsTags: false,
 }
 

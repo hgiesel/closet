@@ -11,7 +11,7 @@ const outerTextPattern = /[\s\S]+?(?=\[\[|$)/u
 const innerTextPattern = /[\s\S]+?(?=\[\[|\]\])/u
 
 // img tags are parsed via HTML (!)
-export const tokenizer = moo.states({
+export const templateTokenizer = moo.states({
     main: {
         tagopen: {
             match: TAG_OPEN,
@@ -50,6 +50,44 @@ export const tokenizer = moo.states({
             match: innerTextPattern,
             lineBreaks: true,
         },
+    },
+})
+
+export const tagSelectorTokenizer = moo.compile({
+    str: {
+        match: /\w\\/u,
+    },
+
+    escapeseq: {
+        match: /%\w/u,
+    },
+
+    star: {
+        match: '*',
+    },
+
+    num: {
+        match: /\d+/u
+    },
+
+    groupOpen: {
+        match: '{',
+    },
+
+    groupAlternative: {
+        match: ',',
+    },
+
+    multiplierSeq: {
+        match: '*n+',
+    },
+
+    groupClose: {
+        match: '}',
+    },
+
+    occurSep: {
+        match: ':',
     },
 })
 

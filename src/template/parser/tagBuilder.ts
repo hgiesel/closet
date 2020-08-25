@@ -1,8 +1,6 @@
 import { ASTNode, TagNode } from '../tags'
 
 
-export type TagBuilderSettings = [Map<string, number>, Map<string, number>]
-
 // NOTE this pattern is also when parsing tag arguments
 export const keySeparationPattern = /^([\w/%]+?|\*)([-*\{,\}\d]*)$/u
 
@@ -12,6 +10,8 @@ const getAndInc = (map: Map<string, number>, key: string): number => {
     map.set(key, result)
     return result
 }
+
+export type TagBuilderSettings = [Map<string, number>, Map<string, number>]
 
 export class TagBuilder {
     protected tagCounter: Map<string, number> | null = null

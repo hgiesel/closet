@@ -6,7 +6,5 @@ if ! type nearleyc &> /dev/null; then
   exit
 fi
 
-declare from="$DIR/template.ne"
-declare to="$DIR/template.ts"
-
-nearleyc "$from" > "$to"
+nearleyc "$DIR/template.ne" > "$DIR/template.ts"
+nearleyc "$DIR/tagSelector.ne" > "$DIR/tagSelector.ts"

@@ -1,5 +1,5 @@
 @{%
-import { tokenizer } from './tokenizer'
+import { templateTokenizer } from './tokenizer'
 import { TagBuilder } from './tagBuilder'
 import { TextNode } from '../tags'
 
@@ -7,7 +7,7 @@ export const tagBuilder = new TagBuilder()
 %}
 
 @preprocessor typescript
-@lexer tokenizer
+@lexer templateTokenizer
 
 #################################
 

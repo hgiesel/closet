@@ -29,23 +29,21 @@ const nullFilterResult: FilterResult = {
     containsTags: false,
 }
 
-const withStandardizedFilterResult = <F, T>(wf: WeakFilter<F, T>): Filter<F, T> => (tag: F, internals: T): FilterResult => {
-    const input = wf(tag, internals)
-
-    switch (typeof input) {
+const standardizeFilterResult = (weak: WeakFilterResult): FilterResult => {
+    switch (typeof weak) {
         case 'string':
-            return wrapWithReady(input)
+            return wrapWithReady(weak)
 
-        // includes null
         case 'object':
+            // includes null
             return {
-                result: input.result ?? '',
-                ready: input.ready ?? true,
-                containsTags: input.containsTags ?? false,
+                ready: weak.ready ?? true,
+                result: weak.result ?? '',
+                containsTags: weak.containsTags ?? false,
             }
 
-        // undefined
         default:
+            // undefined
             // marks as not ready
             return nullFilterResult
     }
@@ -59,25 +57,25 @@ const defaultFilter = <T extends Readiable>(t: Filterable, i: T) => wrapWithRead
 const rawFilter = (t: Filterable) => wrapWithReady(t.getRawRepresentation())
 
 export class FilterApi<F extends Filterable, T extends Readiable /* Internals with dependency on RoundInfo */> {
-    private filters: Map<string, Filter<F, T>> = new Map()
+    private filters: Map<string, WeakFilter<F, T>> = new Map()
 
     constructor() {
         this.register('raw', rawFilter)
     }
 
     register(name: string, filter: WeakFilter<F, T>): void {
-        this.filters.set(name, withStandardizedFilterResult(filter))
+        this.filters.set(name, filter)
     }
 
     has(name: string): boolean {
         return this.filters.has(name)
     }
 
-    get(name: string): Filter<F, T> | null {
+    get(name: string): WeakFilter<F, T> | null {
         return this.filters.get(name) ?? null
     }
 
-    getOrDefault(name: string): Filter<F, T> {
+    getOrDefault(name: string): WeakFilter<F, T> {
         return this.get(name) ?? defaultFilter
     }
 
@@ -91,8 +89,6 @@ export class FilterApi<F extends Filterable, T extends Readiable /* Internals wi
 
     execute(name: string, data: F, internals: T): FilterResult {
         const filter = this.getOrDefault(name)
-        const result = filter(data, internals)
-
-        return result
+        return standardizeFilterResult(filter(data, internals))
     }
 }

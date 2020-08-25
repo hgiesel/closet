@@ -31,7 +31,6 @@ const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache, 
             svgRect.y = y
             svgRect.width = width
             svgRect.height = height
-            console.log('options', options)
 
             for (const prop in options) {
                 const rectProperty = prop as RectProperty

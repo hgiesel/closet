@@ -33,21 +33,62 @@ def include_closet_code(webcontent, context):
     webcontent.js.append(f'/_addons/{addon_package}/web/closet.js')
     webcontent.js.append(f'/_addons/{addon_package}/web/editor.js')
 
-def accept_copy_to_clipoard(handled, message, context):
-    if message.startswith('copyToClipboard'):
-        text = message.split(':', 1)[1]
-        mw.app.clipboard().setText(text)
+def process_occlusion_index_text(index_text: str):
+    return [int(text) for text in index_text.split(',')]
 
-        return (True, None)
+def fill_matching_field(editor, current_index):
+    for index, (name, item) in enumerate(editor.note.items()):
+        match = re.search(r'\d+$', name)
 
-    if message.startswith('clearOcclusionMode') and isinstance(context, Editor):
-        _, field_index, txt = message.split(':', 2)
-        repl = without_occlusion_code(txt)
-        repl_escaped = repl.replace(r'"', r'\"')
+        if (
+            match and
+            int(match[0]) == current_index and
 
-        context.web.eval(f'pycmd("key:{field_index}:{context.note.id}:{repl_escaped}")')
+            # TODO anki behavior for empty fields is kinda weird right now:
+            item in ['', '<br>']
+        ):
+            js = (
+                f'pycmd("key:{index}:{editor.note.id}:active");'
+                f'document.querySelector("#f{index}").innerHTML = "active";'
+            )
 
-        return (True, repl)
+            editor.web.eval(js)
+
+def add_occlusion_messages(handled, message, context):
+    if isinstance(context, Editor):
+
+        if message.startswith('copyToClipboard'):
+            text = message.split(':', 1)[1]
+            mw.app.clipboard().setText(text)
+
+            return (True, None)
+
+        if message.startswith('clearOcclusionMode'):
+            _, field_index, txt = message.split(':', 2)
+            repl = without_occlusion_code(txt)
+            repl_escaped = repl.replace(r'"', r'\"')
+
+            context.web.eval(f'pycmd("key:{field_index}:{context.note.id}:{repl_escaped}")')
+
+            return (True, repl)
+
+        if message.startswith('oldOcclusions'):
+            _, src, index_text = message.split(':', 2)
+            indices = process_occlusion_index_text(index_text)
+
+            context._old_occlusion_indices = indices
+
+            return (True, None)
+
+        if message.startswith('newOcclusions'):
+            _, src, index_text = message.split(':', 2)
+            indices = process_occlusion_index_text(index_text)
+
+            fill_indices = set(indices).difference(set(context._old_occlusion_indices))
+            for index in fill_indices:
+                fill_matching_field(context, index)
+
+            return (True, None)
 
     return handled
 
@@ -73,7 +114,7 @@ def remove_occlusion_code(txt, editor):
 
 def init_editor():
     webview_will_set_content.append(include_closet_code)
-    webview_did_receive_js_message.append(accept_copy_to_clipoard)
+    webview_did_receive_js_message.append(add_occlusion_messages)
     editor_did_init_buttons.append(add_occlusion_button)
     # editor_will_munge_html.append(remove_occlusion_code)
     Editor.mungeHTML = wrap(Editor.mungeHTML, lambda editor, txt: remove_occlusion_code(txt, editor) , 'after')

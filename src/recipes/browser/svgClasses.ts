@@ -1,3 +1,5 @@
+import { TAG_OPEN, TAG_CLOSE, ARG_SEP } from '../../template/utils'
+
 const ns = 'http://www.w3.org/2000/svg'
 
 export type RectProperty = 'rx' | 'ry' | 'fill' | 'fillOpacity' | 'stroke' | 'strokeOpacity' | 'strokeWidth'
@@ -197,7 +199,7 @@ export class Rect implements Shape {
     }
 
     toText(): string {
-        return `[[${this.labelText}::${this.x.toFixed()},${this.y.toFixed()},${this.width.toFixed()},${this.height.toFixed()}]]`
+        return `${TAG_OPEN}${this.labelText}${ARG_SEP}${this.x.toFixed()},${this.y.toFixed()},${this.width.toFixed()},${this.height.toFixed()}${TAG_CLOSE}`
     }
 
     /////////////////// on both

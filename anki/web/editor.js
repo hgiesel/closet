@@ -1,9 +1,38 @@
 var EditorCloset = {
+    imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,
     editorOcclusion: Closet.browserRecipes.makeOcclusions({
-        occlusionTextHandler: (_occs, texts) => {
-            pycmd(`copyToClipboard:${texts.join("\n")}`)
+        acceptHandler: (shapes, draw) => {
+            const shapeText = shapes.map(shape => shape.toText()).join("\n")
+
+            const newIndices = [...new Set(shapes
+                .map(shape => shape.labelText)
+                .map(label => label.match(Closet.keySeparationPattern))
+                .filter(match => match)
+                .map(match => Number(match[2]))
+                .filter(maybeNumber => !Number.isNaN(maybeNumber))
+            )]
+
+            const imageSrc = draw.image.src.match(EditorCloset.imageSrcPattern)[1]
+
+            pycmd(`copyToClipboard:${shapeText}`)
+            pycmd(`newOcclusions:${imageSrc}:${newIndices.join(',')}`)
+
             EditorCloset.clearOcclusionMode()
         },
+        existingShapesFilter: (shapeDefs, draw) => {
+            const indices = [...new Set(shapeDefs
+                .map(shape => shape[2])
+                .map(label => label.match(Closet.keySeparationPattern))
+                .filter(match => match)
+                .map(match => Number(match[2]))
+                .filter(maybeNumber => !Number.isNaN(maybeNumber))
+            )]
+
+            const imageSrc = draw.image.src.match(EditorCloset.imageSrcPattern)[1]
+            pycmd(`oldOcclusions:${imageSrc}:${indices.join(',')}`)
+
+            return shapeDefs
+        }
     }),
 
     occlusionMode: false,

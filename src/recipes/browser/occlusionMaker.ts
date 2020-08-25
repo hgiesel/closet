@@ -85,8 +85,8 @@ const occlusionLeftClick = (draw: SVG, event: MouseEvent) => {
     }
 }
 
-type ShapeHandler = (shapes: Shape[]) => void
-type ShapeFilter = (shapes: ShapeDefinition[]) => ShapeDefinition[]
+type ShapeHandler = (shapes: Shape[], draw: SVG) => void
+type ShapeFilter = (shapes: ShapeDefinition[], draw: SVG) => ShapeDefinition[]
 
 export const wrapForOcclusion = (draw: SVG, acceptHandler: ShapeHandler) => {
     const occlusionClick = (event: MouseEvent) => {
@@ -99,7 +99,7 @@ export const wrapForOcclusion = (draw: SVG, acceptHandler: ShapeHandler) => {
 
     const acceptEvent = (event: MouseEvent) => {
         event.preventDefault()
-        acceptHandler(draw.getElements())
+        acceptHandler(draw.getElements(), draw)
     }
 
     const occlusionMenu = setupMenu('occlusion-menu', [{
@@ -113,6 +113,7 @@ export const wrapForOcclusion = (draw: SVG, acceptHandler: ShapeHandler) => {
 
     enableAsMenuTrigger(occlusionMenu, draw.svg)
 }
+
 
 const defaultAcceptHandler: ShapeHandler = (shapes) => navigator.clipboard.writeText(shapes
     .map(shape => shape.toText())
@@ -141,7 +142,7 @@ export const occlusionMakerRecipe = <T extends {}>(options: {
         shapeKeywords = [rectKeyword],
     } = options
 
-    const occlusionMakerFilter = (tag: TagNode, internals: Internals<T>) => {
+    const occlusionMakerFilter = (_tag: TagNode, internals: Internals<T>) => {
         const images = internals.template.textFragments.flatMap(getImages)
 
         internals.aftermath.registerIfNotExists(keyword, () => {
@@ -171,7 +172,7 @@ export const occlusionMakerRecipe = <T extends {}>(options: {
                     shapeType,
                     /* active */,
                     ...rest
-                ] of existingShapesFilter(existingShapes)) {
+                ] of existingShapesFilter(existingShapes, draw)) {
                     switch (shapeType) {
                         case 'rect':
                             const [
@@ -189,7 +190,7 @@ export const occlusionMakerRecipe = <T extends {}>(options: {
                             makeInteractive(draw, newRect)
 
                         default:
-                            // nothing
+                            // no other shapes yet
                     }
                 }
 

@@ -2,7 +2,7 @@ import type { Registrar, TagNode, Internals } from '../types'
 
 import { SVG, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
-import { appendStyleTag, getImages, getOffsets, imageLoadCallback, svgKeyword, svgCss } from './utils'
+import { appendStyleTag, getImages, getHighestNum, getOffsets, imageLoadCallback, svgKeyword, svgCss } from './utils'
 
 import { setupMenu, enableAsMenuTrigger, menuCss } from './menu'
 import { rectKeyword } from './rect'
@@ -58,9 +58,11 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
     const [downX, downY] = getOffsets(event)
 
     const newRect = Rect.make()
-    // const labels = draw.getLabels()
 
-    newRect.labelText = 'rect1'
+    const labels = draw.getLabels()
+    const currentNum = Math.max(1, getHighestNum(labels) + (event.altKey ? 0 : 1))
+
+    newRect.labelText = `rect${currentNum}`
     newRect.pos = [downX, downY, 0, 0]
 
     makeInteractive(draw, newRect)

@@ -1,3 +1,5 @@
+import { keySeparationPattern } from '../utils'
+
 export const appendStyleTag = (input: string): void => {
     var styleSheet = document.createElement('style')
     styleSheet.type = 'text/css'
@@ -42,12 +44,26 @@ export const imageLoadCallback = (query: string, callback: (event: Event) => voi
     }
 }
 
-export const getCurrentIndex = (labels: string[]) => {
+export const getHighestNum = (labels: string[]): number => {
     let result = 0
 
     for (const label of labels) {
-        label.match
+        const match = label.match(keySeparationPattern)
+
+        if (!match) {
+            continue
+        }
+
+        const labelNum = Number(match[2])
+
+        if (Number.isNaN(labelNum)) {
+            continue
+        }
+
+        result = Math.max(result, labelNum)
     }
+
+    return result
 }
 
 export const svgKeyword = 'occlusionSvgCss'

@@ -42,6 +42,14 @@ export const imageLoadCallback = (query: string, callback: (event: Event) => voi
     }
 }
 
+export const getCurrentIndex = (labels: string[]) => {
+    let result = 0
+
+    for (const label of labels) {
+        label.match
+    }
+}
+
 export const svgKeyword = 'occlusionSvgCss'
 export const svgCss = `
 img {

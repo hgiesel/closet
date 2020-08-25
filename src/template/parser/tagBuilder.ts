@@ -3,7 +3,8 @@ import { ASTNode, TagNode } from '../tags'
 
 export type TagBuilderSettings = [Map<string, number>, Map<string, number>]
 
-const keyPattern = /^(.+?)([0-9]*)$/u
+// NOTE this pattern is also when parsing tag arguments
+export const keySeparationPattern = /^([\w/%]+?|\*)([-*\{,\}\d]*)$/u
 
 const getAndInc = (map: Map<string, number>, key: string): number => {
     const result = (map.get(key) ?? -1) + 1
@@ -24,7 +25,7 @@ export class TagBuilder {
     }
 
     build(fullKey: string, innerNodes: ASTNode[]): TagNode {
-        const match = fullKey.match(keyPattern)
+        const match = fullKey.match(keySeparationPattern)
 
         if (!match) {
             throw new Error('Could not match key. This should never happen.')

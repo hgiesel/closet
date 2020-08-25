@@ -1,8 +1,7 @@
-import { TagNode, Internals } from './types'
+import type { TagNode, Internals } from './types'
+import { keySeparationPattern } from './utils'
 
 export type StoreGetter<T> = { get: (key: string, num: number | null, occur: number) => T }
-
-export const storeKeyPattern = /^([a-zA-Z0-9%\/]*?)([0-9]*|\*)$/u
 export const constantGet = <T>(v: T): StoreGetter<T> => ({ get: () => v })
 
 export class ValueStore<T> {
@@ -22,7 +21,7 @@ export class ValueStore<T> {
          */
 
         const [fullKey, occur] = value.split(':')
-        const [, key, num] = fullKey.match(storeKeyPattern)
+        const [, key, num] = fullKey.match(keySeparationPattern)
 
         const theKey = key === ''
             ? ValueStore.all

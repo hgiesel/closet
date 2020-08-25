@@ -3,6 +3,7 @@ const ns = 'http://www.w3.org/2000/svg'
 interface GettableSVG {
     getElements(): Element[]
     resize(forSVG: SVG): void
+    getLabel(): string
 }
 
 export class SVG {
@@ -82,6 +83,10 @@ export class SVG {
         for (const elem of element.getElements()) {
             this.svg.appendChild(elem)
         }
+    }
+
+    getLabels(): string[] {
+        return this.elements.map(element => element.getLabel())
     }
 }
 
@@ -252,5 +257,9 @@ export class Rect implements GettableSVG {
 
     set labelText(txt: string) { this.label.innerHTML = txt }
     get labelText(): string { return this.label.innerHTML }
+
+    getLabel(): string {
+        return this.labelText
+    }
 }
 

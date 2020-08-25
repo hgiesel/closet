@@ -58,6 +58,8 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
     const [downX, downY] = getOffsets(event)
 
     const newRect = Rect.make()
+    // const labels = draw.getLabels()
+
     newRect.labelText = 'rect1'
     newRect.pos = [downX, downY, 0, 0]
 

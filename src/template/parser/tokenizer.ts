@@ -6,6 +6,10 @@ import {
     ARG_SEP,
 } from '../utils'
 
+export const keyPattern = /[\w/%]+/u
+const outerTextPattern = /[\s\S]+?(?=\[\[|$)/u
+const innerTextPattern = /[\s\S]+?(?=\[\[|\]\])/u
+
 // img tags are parsed via HTML (!)
 export const tokenizer = moo.states({
     main: {
@@ -14,14 +18,14 @@ export const tokenizer = moo.states({
             push: 'key',
         },
         text: {
-            match: /[\s\S]+?(?=\[\[|$)/u,
+            match: outerTextPattern,
             lineBreaks: true,
         },
     },
 
     key: {
         keyname: {
-            match: /[a-zA-Z0-9%\/]+\d*/u,
+            match: keyPattern,
         },
         sep: {
             match: ARG_SEP,
@@ -43,7 +47,7 @@ export const tokenizer = moo.states({
             pop: 1,
         },
         text: {
-            match: /[\s\S]+?(?=\[\[|\]\])/u,
+            match: innerTextPattern,
             lineBreaks: true,
         },
     },

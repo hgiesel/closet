@@ -1,5 +1,6 @@
 @{%
 import tagSelectorTokenizer from './tokenizer'
+import { keySeparationPattern } from '../template/parser/tagBuilder'
 %}
 
 @preprocessor typescript
@@ -8,11 +9,27 @@ import tagSelectorTokenizer from './tokenizer'
 #################################
 
 start -> key num occur {%
-    ([keyPattern, numPred, occurPred]) => (key: string, num: number, fullOccur: number) => (
-        keyPattern.test(key) &&
-        numPred(num) &&
-        occurPred(fullOccur)
-    )
+    ([keyPattern, numPred, occurPred]) => (key: string, num: number | null | undefined, fullOccur: number) => {
+        if (typeof num === 'undefined') {
+            const match = key.match(keySeparationPattern)
+
+            if (!match) {
+                return false
+            }
+
+            const actualKey = match[1]
+
+            const maybeNum = Number(match[2])
+            const actualNum = Number.isNaN(maybeNum)
+                ? null
+                : maybeNum 
+
+            return keyPattern.test(actualKey) && numPred(actualNum) && occurPred(fullOccur)
+        }
+        else {
+            return keyPattern.test(key) && numPred(num) && occurPred(fullOccur)
+        }
+    }
 %}
 
 key -> (keyComps):+ {% ([vals]) => new RegExp(`^${vals.join('')}$`, 'u') %}

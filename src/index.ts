@@ -13,7 +13,6 @@ import type { TagRenderer, TemplateInfo, IterationInfo, ResultInfo } from './tem
 import type { TagNode } from './template/tags'
 import type { TagAccessor, TagProcessor, RoundInfo, DataOptions, ProcessorOutput } from './template/types'
 
-
 export type Internals<P extends object> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo & RoundInfo
 export type DeferredInternals<P extends object> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo
 export type AftermathInternals<P extends object> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo

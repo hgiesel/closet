@@ -1,8 +1,8 @@
 export interface StorageType<D> {
-    has(k: string): boolean
-    get<T extends D>(k: string): T | undefined
-    set<T extends D>(k: string, v: T): void
-    delete(k: string): void
+    has(storageTypeHasKey: string): boolean
+    get<T extends D>(storageTypeKey: string): T
+    set<T extends D>(storageTypeKey: string, storageTypeValue: T): void
+    delete(storageTypeDeleteKey: string): void
     clear(): void
 }
 
@@ -12,7 +12,7 @@ export class Storage<D> {
      * is useful for restriciting values available by options storage
      * however is otherwise set to unknown (top type)
      */
-    private readonly storage: StorageType<D>
+    protected readonly storage: StorageType<D>
 
     constructor(v: StorageType<D>) {
         this.storage = v
@@ -22,12 +22,12 @@ export class Storage<D> {
         this.storage.set(name, value)
     }
 
-    has(name: string): boolean {
-        return this.storage.has(name)
-    }
-
     get<T extends D>(name: string, defaultValue: T): T {
         return this.storage.get(name) ?? defaultValue
+    }
+
+    has(name: string): boolean {
+        return this.storage.has(name)
     }
 
     fold<T extends D>(name: string, f: (v: T) => T, mempty: T): T {

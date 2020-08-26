@@ -1,0 +1,3 @@
+name: Pick and Eval value lists
+code: |
+  filterManager.install(Closet.recipes.setList())

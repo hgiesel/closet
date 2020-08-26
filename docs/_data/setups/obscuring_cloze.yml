@@ -13,12 +13,12 @@ code: |
   filterManager.install(
     Closet.recipes.cloze.show({
       tagname: 'c',
-      ...obscureOptions,.
+      ...obscureOptions,
     }),
 
     Closet.recipes.cloze.hide({
       tagname: 'ch',
-      ...obscureOptions,.
+      ...obscureOptions,
     }),
 
     Closet.recipes.cloze.reveal({

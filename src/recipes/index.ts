@@ -16,6 +16,10 @@ import {
     setNumberRecipe,
 } from './preferenceStore'
 
+import {
+    setListRecipe,
+} from './sharedStore'
+
 import { debugRecipe } from './debug'
 import { defRecipe } from './meta'
 
@@ -40,6 +44,8 @@ export const recipes: Recipes = {
     activate: activateRecipe,
     deactivate: deactivateRecipe,
     setNumber: setNumberRecipe,
+
+    setList: setListRecipe,
 
     debug: debugRecipe,
     meta: defRecipe,

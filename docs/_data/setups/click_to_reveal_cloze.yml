@@ -22,7 +22,7 @@ code: |
     }
   }
 
-  const wrappedClozeShow = Closet.wrappers.aftermath(Closet.recipes.clozeShow, () => {
+  const wrappedClozeShow = Closet.wrappers.aftermath(Closet.recipes.cloze.show, () => {
     document.querySelectorAll('.cl--obscure')
     .forEach(tag => {
       tag.addEventListener('click', removeObscure, {

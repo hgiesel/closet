@@ -28,7 +28,7 @@ code: |
     }
   }
 
-  const wrappedClozeShow = Closet.wrappers.aftermath(Closet.recipes.clozeShow, (e, inter) => {
+  const wrappedClozeShow = Closet.wrappers.aftermath(Closet.recipes.cloze.show, (e, inter) => {
     const keyword = 'keydownToRevealObscure'
 
     if (!inter.environment.has(keyword)) {

@@ -1,7 +1,7 @@
 name: "Default cloze"
 code: |
   filterManager.install(
-    Closet.recipes.clozeShow({ tagname: 'c' }),
-    Closet.recipes.clozeHide({ tagname: 'ch' }),
-    Closet.recipes.clozeReveal({ tagname: 'cr' }),
+    Closet.recipes.cloze.show({ tagname: 'c' }),
+    Closet.recipes.cloze.hide({ tagname: 'ch' }),
+    Closet.recipes.cloze.reveal({ tagname: 'cr' }),
   )

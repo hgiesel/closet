@@ -13,15 +13,15 @@ code: |
   }
 
   filterManager.install(
-    Closet.recipes.clozeShow({
+    Closet.recipes.cloze.show({
       tagname: 'c',
       ...blankOptions,
     }),
-    Closet.recipes.clozeHide({
+    Closet.recipes.cloze.hide({
       tagname: 'ch',
       ...blankOptions,
     }),
-    Closet.recipes.clozeReveal({
+    Closet.recipes.cloze.reveal({
       tagname: 'cr',
       ...blankOptions,
     }),

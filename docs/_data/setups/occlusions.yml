@@ -1,8 +1,8 @@
 name: Make occlusions
 code: |
   filterManager.install(
-    Closet.browserRecipes.makeOcclusions(),
-    Closet.browserRecipes.rectShow({ tagname: 'rect' }),
-    Closet.browserRecipes.rectReveal({ tagname: 'rectr' }),
-    Closet.browserRecipes.rectHide({ tagname: 'recth' }),
+    Closet.browser.recipes.occlusionEditor(),
+    Closet.browser.recipes.rect.show({ tagname: 'rect' }),
+    Closet.browser.recipes.rect.reveal({ tagname: 'rectr' }),
+    Closet.browser.recipes.rect.hide({ tagname: 'recth' }),
   )

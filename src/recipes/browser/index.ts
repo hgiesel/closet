@@ -4,11 +4,11 @@ import type { FlashcardPreset } from '../flashcard/flashcardTemplate'
 
 import { prepareFlashcardRecipes } from '../flashcard'
 import { appendStyleTag } from './utils'
-import { occlusionMakerRecipe } from './occlusionMaker'
+import { occlusionMakerRecipe } from './occlusionEditor'
 import { rectRecipes } from './rect'
 
 const recipes: Recipes = {
-    makeOcclusions: occlusionMakerRecipe,
+    occlusionEditor: occlusionMakerRecipe,
     rect: prepareFlashcardRecipes(rectRecipes as Triple<Recipe<FlashcardPreset>>),
 }
 

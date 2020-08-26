@@ -35,7 +35,7 @@ def include_closet_code(webcontent, context):
     webcontent.css.append(f'/_addons/{addon_package}/web/editor.css')
 
 def process_occlusion_index_text(index_text: str):
-    return [int(text) for text in index_text.split(',')]
+    return [] if len(index_text) == 0 else [int(text) for text in index_text.split(',')]
 
 def fill_matching_field(editor, current_index):
     for index, (name, item) in enumerate(editor.note.items()):

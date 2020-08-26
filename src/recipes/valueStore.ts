@@ -1,101 +1,61 @@
 import type { TagNode, Internals } from './types'
-import { keySeparationPattern } from './utils'
+import type { TagPredicate } from '../tagSelector'
 
-export type StoreGetter<T> = { get: (key: string, num: number | null, occur: number) => T }
+import { parseTagSelector } from '../tagSelector'
+
+
+export type StoreGetter<T> = { get: (key: string, num: number | null, fullOccur: number) => T }
 export const constantGet = <T>(v: T): StoreGetter<T> => ({ get: () => v })
 
-export class ValueStore<T> {
-    map: Map<string, T>
-    defaultValue: T
+export const defaultSeparator = { sep: ';' }
+export const innerSeparator = { sep: '=', trim: true, max: 2 }
 
-    static all = Symbol()
+export class ValueStore<T> {
+    /**
+     * Values can be stored in a value store
+     * Tags can inquire against value stores with
+     * 1. the storeId, and
+     * 2. their (key, num, fullOccur)
+     *
+     * Values in a value store can not be updated, only overwritten
+     * You would save settings regarding a specific tag in here,
+     * not make a shared value, for that see `SharedStore` (TODO)
+     */
+
+    predicates: [TagPredicate, T][]
+    defaultValue: T
 
     constructor(defaultValue: T) {
         this.defaultValue = defaultValue
-        this.map = new Map()
+        this.predicates = []
     }
 
-    protected getComponents(value: string): [string | symbol, number | symbol | null, number | symbol] {
-        /**
-         * turns a store key into its components
-         */
-
-        const [fullKey, occur] = value.split(':')
-        const [, key, num] = fullKey.match(keySeparationPattern)
-
-        const theKey = key === ''
-            ? ValueStore.all
-            : key
-
-        const theNum = num === '*'
-            ? ValueStore.all
-            : num.length === 0
-            ? null
-            : Number(num)
-
-        const theOccur = occur
-            ? Number(occur)
-            : ValueStore.all
-
-        return [theKey, theNum, theOccur]
-    }
-
-
-    protected getStoreKey(key: string | symbol, num: number | null | symbol, occur: number | symbol): string {
-        /**
-         * turns components into a fully qualified store key
-         */
-
-        const keyString: string = key === ValueStore.all ? '' : String(key)
-
-        const numString: string = num === ValueStore.all
-            ? '*'
-            : num === null
-            ? ''
-            : String(num)
-
-        const occurString: string = occur === ValueStore.all
-            ? 'all'
-            : String(occur) 
-
-        return `${keyString}${numString}:${occurString}`
-    }
-
-    get(key: string | symbol, num: number | null | symbol, occur: number | symbol): T {
-        const firstKey = this.getStoreKey(key, num, occur)
-        if (this.map.has(firstKey)) {
-            return this.map.get(firstKey) ?? this.defaultValue
+    get(key: string, num: number, fullOccur: number): T {
+        for (const [predicate, value] of this.predicates) {
+            if (predicate(key, num, fullOccur)) {
+                return value
+            }
         }
 
-        const secondKey = this.getStoreKey(key, num, ValueStore.all)
-        if (this.map.has(secondKey)) {
-            return this.map.get(secondKey) ?? this.defaultValue
-        }
-
-        const thirdKey = this.getStoreKey(key, ValueStore.all, ValueStore.all)
-        return this.map.get(thirdKey) ?? this.defaultValue
+        return this.defaultValue
     }
 
-    set(key: string | symbol, num: number | null | symbol, occur: number | symbol, value: T): void {
-        this.map.set(this.getStoreKey(key, num, occur), value)
-    }
-
-    has(key: string | symbol, num: number | null | symbol, occur: number | symbol): void {
-        this.map.has(this.getStoreKey(key, num, occur))
+    set(selector: string, value: T): void {
+        this.predicates.unshift([parseTagSelector(selector), value])
     }
 }
 
-export const valueStoreTemplate = <T extends ValueStore<U>, U>(
-    T: new (u: U) => T,
+export const valueStoreTemplate = <Store extends ValueStore<U>, U>(
+    Store: new (u: U) => Store,
 ) => (
     storeId: string,
     defaultValue: U,
-    operation: (...vals: string[]) => (a: T) => void,
-) => <TT extends {}>(tag: TagNode, { cache }: Internals<TT>) => {
+    operation: (...vals: string[]) => (a: Store) => void,
+) => <T extends {}>(tag: TagNode, { cache }: Internals<T>) => {
     const commands = tag.values
 
     commands.forEach((cmd: string) => {
-        cache.over(storeId, operation(...cmd), new T(defaultValue))
+        cache.over(storeId, operation(...cmd), new Store(defaultValue))
     })
 
     return { ready: true }

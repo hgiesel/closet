@@ -1,7 +1,8 @@
 import type { InactiveAdapter, InactiveBehavior, TagNode, Internals, WeakFilter, WeakFilterResult } from './types'
 import type { CardPreset } from './flashcardTemplate'
+import type { StoreGetter } from './valueStore'
 
-import { StoreGetter, constantGet } from './valueStore'
+import { constantGet } from './valueStore'
 
 const constantFalse = constantGet(false)
 const constantZero = constantGet(0)

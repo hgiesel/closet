@@ -3,7 +3,6 @@ code: |
   filterManager.install(
     Closet.recipes.activate({ tagname: 'on', storeId: 'flashcardActive' }),
     Closet.recipes.deactivate({ tagname: 'off', storeId: 'flashcardActive' }),
-    Closet.recipes.toggle({ tagname: 'toggle', storeId: 'flashcardActive' }),
 
     Closet.wrappers.product(Closet.recipes.setNumber, Closet.recipes.setNumber)({
       tagname: 'around',

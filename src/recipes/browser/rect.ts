@@ -1,7 +1,7 @@
 import type { TagNode, Internals, AftermathEntry, AftermathInternals, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from '../types'
-import type { FlashcardTemplate, FlashcardPreset } from '../flashcardTemplate'
+import type { FlashcardPreset } from '../flashcard'
 
-import { makeFlashcardTemplate, generateFlashcardRecipes } from '../flashcardTemplate'
+import { FlashcardTemplate, makeFlashcardTemplate, generateFlashcardRecipes } from '../flashcard/flashcardTemplate'
 
 import type { RectProperty, RectProperties, RectDefinition } from './svgClasses'
 import { SVG, Rect } from './svgClasses'
@@ -148,8 +148,4 @@ const rectPublicApi = <T extends FlashcardPreset>(
     return rectRecipe(tagname, front as any, back, inactiveRect, makeContextRects, rectSeparators)
 }
 
-export const [
-    rectShowRecipe,
-    rectHideRecipe,
-    rectRevealRecipe,
-] = generateFlashcardRecipes(rectPublicApi)
+export const rectRecipes = generateFlashcardRecipes(rectPublicApi)

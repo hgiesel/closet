@@ -1,10 +1,11 @@
-import type { TagNode, Internals, Registrar, Recipe, Stylizer, Eval, InactiveBehavior, InactiveAdapter, DataOptions, WeakFilter, WeakFilterResult } from './types'
+import type { TagNode, Internals, Registrar, Recipe, Eval, InactiveBehavior, InactiveAdapter, DataOptions, WeakFilter } from '../types'
 
-import { id, id2, constant } from './utils'
+import { id, id2, constant } from '../utils'
+import { sumFour } from '../sum'
+import { simpleRecipe } from '../simple'
+
 import { isActiveAll, isBackAll } from './deciders'
 import { inactiveAdapterAll } from './inactiveAdapter'
-import { sumFour } from './sum'
-import { simpleRecipe } from './simple'
 
 export type FlashcardTemplate<T extends FlashcardPreset> = (
     f2: InactiveBehavior<T>,

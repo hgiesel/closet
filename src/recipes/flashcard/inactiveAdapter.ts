@@ -1,8 +1,8 @@
-import type { InactiveAdapter, InactiveBehavior, TagNode, Internals, WeakFilter, WeakFilterResult } from './types'
+import type { InactiveAdapter, InactiveBehavior, TagNode, Internals, WeakFilter, WeakFilterResult } from '../types'
+import type { StoreGetter } from '../preferenceStore'
 import type { CardPreset } from './flashcardTemplate'
-import type { StoreGetter } from './preferenceStore'
 
-import { constantGet } from './preferenceStore'
+import { constantGet } from '../preferenceStore'
 
 const constantFalse = constantGet(false)
 const constantZero = constantGet(0)

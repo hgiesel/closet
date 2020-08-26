@@ -1,10 +1,11 @@
-import type { TagNode, Internals, Eval, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from './types'
+import type { TagNode, Internals, Eval, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from '../types'
+import type { StyleList } from '../styleList'
+
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
-import type { StyleList } from './styleList'
 
 import { makeFlashcardTemplate, ellipsis, generateFlashcardRecipes } from './flashcardTemplate'
-import { listStylize } from './styleList'
-import { Stylizer } from './stylizer'
+import { listStylize } from '../styleList'
+import { Stylizer } from '../stylizer'
 
 const wrapWithBrackets = (v: string) => `[${v}]`
 
@@ -71,8 +72,4 @@ const clozePublicApi = <T extends FlashcardPreset>(
     return clozeRecipe(tagname, front, back, firstValue, inactiveEllipser, clozeSeparators)
 }
 
-export const [
-    clozeShowRecipe,
-    clozeHideRecipe,
-    clozeRevealRecipe,
-] = generateFlashcardRecipes(clozePublicApi)
+export const clozeRecipes = generateFlashcardRecipes(clozePublicApi)

@@ -1,64 +1,60 @@
 import type { Recipe } from './types'
+import type { FlashcardRecipes } from './flashcard'
 
-interface Recipes {
-    [propName: string]: Recipe<any>;
+export interface Recipes {
+    [propName: string]: Recipe<any> | FlashcardRecipes
 }
 
 import { shufflingRecipe } from './shuffling'
 import { orderingRecipe } from './ordering'
-import { clozeShowRecipe, clozeHideRecipe, clozeRevealRecipe } from './clozes'
-import { multipleChoiceShowRecipe, multipleChoiceHideRecipe, multipleChoiceRevealRecipe } from './multipleChoice'
-import { shuffleShowRecipe, shuffleHideRecipe, shuffleRevealRecipe, sortShowRecipe, sortHideRecipe, sortRevealRecipe, jumbleShowRecipe, jumbleHideRecipe, jumbleRevealRecipe } from './shuffleQuestion'
 import { generateIntegerRecipe, generateRealRecipe } from './generator'
-
 import { styleRecipe, processRecipe } from './stylizing'
 
-import { debugRecipe } from './debug'
-import { defRecipe } from './meta'
 import {
     activateRecipe,
     deactivateRecipe,
     setNumberRecipe,
 } from './preferenceStore'
 
+import { debugRecipe } from './debug'
+import { defRecipe } from './meta'
+
+import {
+    cloze,
+    multipleChoice,
+    mingle,
+    sort,
+    jumble,
+} from './flashcard'
+
 export const recipes: Recipes = {
     shuffle: shufflingRecipe,
     order: orderingRecipe,
 
-    shuffleShow: shuffleShowRecipe,
-    shuffleHide: shuffleHideRecipe,
-    shuffleReveal: shuffleRevealRecipe,
-
-    sortShow: sortShowRecipe,
-    sortHide: sortHideRecipe,
-    sortReveal: sortRevealRecipe,
-
-    jumbleShow: jumbleShowRecipe,
-    jumbleHide: jumbleHideRecipe,
-    jumbleReveal: jumbleRevealRecipe,
-
     generateInteger: generateIntegerRecipe,
     generateReal: generateRealRecipe,
-
-    clozeShow: clozeShowRecipe,
-    clozeHide: clozeHideRecipe,
-    clozeReveal: clozeRevealRecipe,
-
-    multipleChoiceShow: multipleChoiceShowRecipe,
-    multipleChoiceHide: multipleChoiceHideRecipe,
-    multipleChoiceReveal: multipleChoiceRevealRecipe,
 
     process: processRecipe,
     stylize: styleRecipe,
 
     activate: activateRecipe,
     deactivate: deactivateRecipe,
-
     setNumber: setNumberRecipe,
 
     debug: debugRecipe,
     meta: defRecipe,
+
+    cloze: cloze,
+    multipleChoice: multipleChoice,
+
+    mingle: mingle,
+    sort: sort,
+    jumble: jumble,
 }
+
+////////////////////////////////////
+
+export * as deciders from './flashcard/deciders'
 
 ////////////////////////////////////
 
@@ -77,10 +73,6 @@ export const wrappers = {
 
     product: product,
 }
-
-////////////////////////////////////
-
-export * as deciders from './deciders'
 
 ////////////////////////////////////
 

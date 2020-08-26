@@ -1,13 +1,13 @@
-import type { TagNode, Recipe, Eval, Internals, InactiveBehavior, WeakFilter, WeakSeparator } from './types'
+import type { TagNode, Recipe, Eval, Internals, InactiveBehavior, WeakFilter, WeakSeparator } from '../types'
+import type { SortInStrategy } from '../sortInStrategies'
+import type { StyleList } from '../styleList'
 import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'
-import type { SortInStrategy } from './sortInStrategies'
-import type { StyleList } from './styleList'
 
-import { Stylizer } from './stylizer'
-import { acrossTag } from './sequencer'
+import { Stylizer } from '../stylizer'
+import { acrossTag } from '../sequencer'
+import { listStylize, listStylizeMaybe } from '../styleList'
+import { topUp } from '../sortInStrategies'
 import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './flashcardTemplate'
-import { listStylize, listStylizeMaybe } from './styleList'
-import { topUp } from './sortInStrategies'
 
 type ValuePlusCategory = [string, number]
 
@@ -92,8 +92,4 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
     return multipleChoiceRecipe(tagname, front, back, trueContexter, ellipser, multipleChoiceSeparators)
 }
 
-export const [
-    multipleChoiceShowRecipe,
-    multipleChoiceHideRecipe,
-    multipleChoiceRevealRecipe,
-] = generateFlashcardRecipes(multipleChoicePublicApi)
+export const multipleChoiceRecipes = generateFlashcardRecipes(multipleChoicePublicApi)

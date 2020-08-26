@@ -1,14 +1,14 @@
-import type { TagNode, Internals, Eval, WeakSeparator, Recipe, InactiveBehavior, WeakFilter } from './types'
+import type { TagNode, Internals, Eval, WeakSeparator, Recipe, InactiveBehavior, WeakFilter } from '../types'
+import type { SortInStrategy } from '../sortInStrategies'
+import type { StyleList } from '../styleList'
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
-import type { SortInStrategy } from './sortInStrategies'
-import type { StyleList } from './styleList'
 
+import { listStylize, listStylizeMaybe } from '../styleList'
 import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './flashcardTemplate'
-import { listStylize, listStylizeMaybe } from './styleList'
 
-import { Stylizer } from './stylizer'
-import { acrossTag } from './sequencer'
-import { topUp } from './sortInStrategies'
+import { Stylizer } from '../stylizer'
+import { acrossTag } from '../sequencer'
+import { topUp } from '../sortInStrategies'
 
 const justValues = <T extends {}>(tag: TagNode, _internals: Internals<T>) => tag.values
 
@@ -75,20 +75,6 @@ const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList
     return clozeRecipe(tagname, front, back, trueContexter, ellipser, clozeSeparators)
 }
 
-export const [
-    shuffleShowRecipe,
-    shuffleHideRecipe,
-    shuffleRevealRecipe,
-] = generateFlashcardRecipes(oneSidedShufflePublicApi(listStylizeMaybe, listStylizeMaybe))
-
-export const [
-    sortShowRecipe,
-    sortHideRecipe,
-    sortRevealRecipe,
-] = generateFlashcardRecipes(oneSidedShufflePublicApi(listStylizeMaybe, simplyShow))
-
-export const [
-    jumbleShowRecipe,
-    jumbleHideRecipe,
-    jumbleRevealRecipe,
-] = generateFlashcardRecipes(oneSidedShufflePublicApi(simplyShow, listStylizeMaybe))
+export const mingleRecipes = generateFlashcardRecipes(oneSidedShufflePublicApi(listStylizeMaybe, listStylizeMaybe))
+export const sortRecipes = generateFlashcardRecipes(oneSidedShufflePublicApi(listStylizeMaybe, simplyShow))
+export const jumbleRecipes = generateFlashcardRecipes(oneSidedShufflePublicApi(simplyShow, listStylizeMaybe))

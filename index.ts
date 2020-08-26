@@ -2,7 +2,6 @@ export { Template } from './src/template'
 export { BrowserTemplate } from './src/browserTemplate'
 
 export { FilterManager } from './src'
-
 export { Parser } from './src/template/parser'
 
 export {
@@ -20,4 +19,4 @@ export { Stylizer } from './src/recipes/stylizer'
 
 export * as anki from './src/ankiUtils'
 
-export { browser, browserRecipes } from './src/recipes/browser'
+export { browser } from './src/recipes/browser'

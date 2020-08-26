@@ -25,6 +25,8 @@ export type Recipe<T extends {}> = (options?: {}) => (filters: Registrar<T>) => 
 export type Eval<T extends {}, U> = (t: TagNode, i: Internals<T>) => U
 export type { Stylizer } from './stylizer'
 
+export type Triple<T> = [T, T, T]
+
 export interface WrapOptions {
     wrapId: string
     getTagnames: (o: {}) => string[]

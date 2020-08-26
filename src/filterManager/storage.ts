@@ -1,7 +1,7 @@
 export interface StorageType<D> {
     has(storageTypeHasKey: string): boolean
-    get<T extends D>(storageTypeKey: string): T
-    set<T extends D>(storageTypeKey: string, storageTypeValue: T): void
+    get(storageTypeKey: string): D | undefined
+    set(storageTypeKey: string, storageTypeValue: D): void
     delete(storageTypeDeleteKey: string): void
     clear(): void
 }
@@ -23,37 +23,37 @@ export class Storage<D> {
     }
 
     get<T extends D>(name: string, defaultValue: T): T {
-        return this.storage.get(name) ?? defaultValue
+        return this.storage.get(name) as T ?? defaultValue
     }
 
     has(name: string): boolean {
         return this.storage.has(name)
     }
 
-    fold<T extends D>(name: string, f: (v: T) => T, mempty: T): T {
-        const result = f(this.get(name, mempty))
+    fold<T extends D>(name: string, foldFunc: (foldParam: T) => T, mempty: T): T {
+        const result = foldFunc(this.get(name, mempty))
         this.set(name, result)
 
         return result
     }
 
-    post<T extends D>(name: string, f: (v: T) => T, mempty: T): T {
+    post<T extends D>(name: string, postFunc: (postParam: T) => T, mempty: T): T {
         const result = this.get(name, mempty)
-        this.set(name, f(result))
+        this.set(name, postFunc(result))
 
         return result
     }
 
-    lazy<T extends D>(name: string, f: () => T): T {
+    lazy<T extends D>(name: string, lazyFunc: () => T): T {
         // @ts-ignore
-        return this.get(name, null) || this.fold(name, f, null)
+        return this.get(name, null) || this.fold(name, lazyFunc, null)
     }
 
-    over<T extends D>(name: string, f: (v: T) => void, mempty: T): void {
+    over<T extends D>(name: string, overFunc: (overParam: T) => void, mempty: T): void {
         const value = this.get(name, mempty)
         this.set(name, value)
 
-        f(value)
+        overFunc(value)
     }
 
     delete(name: string): void {

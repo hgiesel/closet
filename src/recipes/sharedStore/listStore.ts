@@ -4,29 +4,29 @@ import {
     SharedStore,
     storeTemplate,
     defaultSeparator,
-    innerSeparator
+    defaultInnerSeparator
 } from './storeTemplate'
 
 
 class ListStore extends SharedStore<string[]> {
-    setList<T extends string[]>(storeKey: string, list: T) {
+    setList(storeKey: string, list: string[]) {
         this.set(storeKey, list)
     }
 }
 
-const listStoreTemplate = storeTemplate(ListStore as any)
+const listStoreTemplate = storeTemplate(ListStore)
 
 export const setListRecipe = <T extends {}>({
     tagname = 'setl',
     storeId = 'lists',
     separator = defaultSeparator,
-    assignmentSeparator = innerSeparator,
+    innerSeparator = defaultInnerSeparator,
 } = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     listStoreTemplate(
         storeId,
-        (key, vals) => (listStore) => (listStore as any).setList(key[0], vals),
+        (key, vals) => (listStore) => listStore.setList(key[0], vals),
     ), {
-        separators: [separator, assignmentSeparator],
+        separators: [separator, innerSeparator],
     },
 )

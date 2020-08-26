@@ -158,7 +158,7 @@ export const occlusionMakerRecipe = <T extends {}>(options: {
             const existingShapes: any[] = []
             for (const kw of shapeKeywords) {
                 // get shapes for editing
-                const otherShapes = internals.cache.get(kw, [])
+                const otherShapes = internals.cache.get<Shape[]>(kw, [])
                 existingShapes.push(...otherShapes)
 
                 // block aftermath render action

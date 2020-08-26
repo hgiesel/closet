@@ -3,17 +3,19 @@ import type { Registrar, TagNode, Internals } from './types'
 type NumberGenAlgorithm = () => number
 // type NumberGen = (min: number, max: number, extra: number, banDomain: string[], filter: boolean) => Generator<string, void, unknown>
 
-const maxTries = 10_000
-const numberGenerator = function*(
+const maxTries = 1_000
+
+export const numberGenerator = function*(
     gen: NumberGenAlgorithm,
     filter: boolean,
     banDomain: number[] = [],
-    restrict: (banDomain: number[]) => boolean = () => true,
+    prematureStop: (banDomain: number[]) => boolean = () => false,
 ): Generator<number, void, unknown> {
     let tries = 0
 
-    while (restrict(banDomain) && tries < maxTries) {
+    while (!prematureStop(banDomain) && tries < maxTries) {
         const randomValue = gen()
+        console.log('banned', randomValue, banDomain)
 
         if (!filter || !banDomain.includes(randomValue)) {
             yield randomValue
@@ -25,7 +27,8 @@ const numberGenerator = function*(
 }
 
 export const intAlgorithm = (min: number, max: number): NumberGenAlgorithm => () => min + Math.floor(Math.random() * (max - min))
-const intOutput = (value: number, extra: number) => String(value * extra)
+export const intOutput = (value: number, extra: number) => String(value * extra)
+export const intStop = (min: number, max: number) => (banDomain: number[]) => banDomain.length >= max - min
 
 const realAlgorithm = (min: number, max: number): NumberGenAlgorithm => () => min + Math.random() * (max - min)
 const realOutput = (value: number, extra: number) => value.toFixed(extra)
@@ -51,7 +54,6 @@ export const generateTemplate = (
             : uniqConstraintPrefix
 
         const generateId = `gen:${tagname}:${fullOccur}`
-
 
         const result = memory.lazy(generateId, (): string => {
             const gen = numberGenerator(

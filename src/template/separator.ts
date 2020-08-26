@@ -11,29 +11,33 @@ export const splitValues = (text: string, seps: Separator[]): any => {
         return text
     }
 
-    const [{ sep, max, trim }, ...nextSeps] = seps
-
-    let textSplit = text
+    const [
+        { sep, max, trim },
+        ...nextSeps
+    ] = seps
 
     const splits = []
+    let textSplit = text
 
-    for (let i = 1; textSplit.length !== 0 && i < max; i++) {
+    do {
         const pos = textSplit.indexOf(sep)
-        const [ currentSplit, rest ] = pos >= 0
+
+        const [
+            currentSplit,
+            rest,
+        ] = pos >= 0
             ? [textSplit.slice(0, pos), textSplit.slice(pos + sep.length)]
             : [textSplit, '']
 
-        splits.push(trim ? currentSplit.trim() : currentSplit)
+        splits.push(trim
+            ? currentSplit.trim()
+            : currentSplit
+        )
+
         textSplit = rest
-    }
+    } while (textSplit.length > 0 && splits.length < max)
 
-    if (textSplit.length !== 0) {
-        splits.push(textSplit)
-    }
-
-    return nextSeps.length === 0
-        ? splits
-        : splits.map(v => splitValues(v, nextSeps))
+    return splits.map(v => splitValues(v, nextSeps))
 }
 
 export const weakSeparatorToSeparator = (v: WeakSeparator): Separator => typeof v === 'string'

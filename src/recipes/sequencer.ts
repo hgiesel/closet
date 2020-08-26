@@ -84,7 +84,7 @@ export const sequencer = <T extends {}, V>(
 
     // needs to be executed once per fullKey
     internals.deferred.registerIfNotExists(shuffleKey, () => {
-        if (internals.cache.get(waitingSetKey, new Set()).size > 0) {
+        if (internals.cache.over(waitingSetKey, (waitingSet) => waitingSet.size > 0, new Set())) {
             return
         }
         // will only go go beyong this point for the last set that becomes ready

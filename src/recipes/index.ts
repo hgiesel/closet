@@ -18,6 +18,7 @@ import {
 
 import {
     setListRecipe,
+    pickRecipe,
 } from './sharedStore'
 
 import { debugRecipe } from './debug'
@@ -46,6 +47,7 @@ export const recipes: Recipes = {
     setNumber: setNumberRecipe,
 
     setList: setListRecipe,
+    pick: pickRecipe,
 
     debug: debugRecipe,
     meta: defRecipe,

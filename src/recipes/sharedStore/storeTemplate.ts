@@ -21,11 +21,11 @@ export const storeTemplate = <Store extends SharedStore<U>, U>(
     Store: new (map: Map<string, U>) => Store,
 ) => (
     storeId: string,
-    operation: (...vals: string[][]) => (store: Store) => void,
+    operation: (...vals: string[][]) => (store: Store) => string | void,
 ) => <T extends {}>(tag: TagNode, { cache }: Internals<T>) => {
     const commands = tag.values
 
-    cache.over(storeId, operation(...commands), new Store(new Map<string, U>()))
+    const result = (cache.over(storeId, operation(...commands), new Store(new Map<string, U>())) ?? '') as string
 
-    return { ready: true }
+    return { ready: true, result: result }
 }

@@ -1,6 +1,7 @@
 var EditorCloset = {
     imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,
-    editorOcclusion: Closet.browserRecipes.makeOcclusions({
+
+    editorOcclusion: Closet.browser.recipes.occlusionEditor({
         acceptHandler: (shapes, draw) => {
             const shapeText = shapes.map(shape => shape.toText()).join("\n")
 
@@ -68,9 +69,9 @@ var EditorCloset = {
             const filterManager = Closet.FilterManager.make()
             filterManager.install(
                 EditorCloset.editorOcclusion,
-                Closet.browserRecipes.rectShow({ tagname: 'rect' }),
-                Closet.browserRecipes.rectHide({ tagname: 'recth' }),
-                Closet.browserRecipes.rectReveal({ tagname: 'rectr' }),
+                Closet.browser.recipes.rect.show({ tagname: 'rect' }),
+                Closet.browser.recipes.rect.hide({ tagname: 'recth' }),
+                Closet.browser.recipes.rect.reveal({ tagname: 'rectr' }),
             )
 
             Closet.BrowserTemplate

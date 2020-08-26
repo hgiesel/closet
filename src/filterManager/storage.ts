@@ -49,11 +49,11 @@ export class Storage<D> {
         return this.get(name, null) || this.fold(name, lazyFunc, null)
     }
 
-    over<T extends D>(name: string, overFunc: (overParam: T) => void, mempty: T): void {
+    over<T extends D, X>(name: string, overFunc: (overParam: T) => X, mempty: T): X {
         const value = this.get(name, mempty)
         this.set(name, value)
 
-        overFunc(value)
+        return overFunc(value)
     }
 
     delete(name: string): void {

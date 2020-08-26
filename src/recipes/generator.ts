@@ -1,4 +1,4 @@
-import type { Registrar, WeakFilter, TagNode, Internals } from './types'
+import type { Registrar, TagNode, Internals } from './types'
 
 type NumberGenAlgorithm = (min: number, max: number, extra: number) => string
 type NumberGen = (min: number, max: number, extra: number, banDomain: string[], filter: boolean) => Generator<string, void, unknown>

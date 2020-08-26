@@ -1,13 +1,14 @@
-import type { Registrar } from './types'
+import type { Registrar } from '../types'
 
 import {
-    ValueStore,
-    valueStoreTemplate,
+    PreferenceStore,
+    storeTemplate,
     defaultSeparator,
     innerSeparator
-} from './valueStore'
+} from './storeTemplate'
 
-class BoolStore extends ValueStore<boolean> {
+
+class BoolStore extends PreferenceStore<boolean> {
     on(selector: string): void {
         this.set(selector, true)
     }
@@ -17,8 +18,7 @@ class BoolStore extends ValueStore<boolean> {
     }
 }
 
-const boolStoreFilterTemplate = valueStoreTemplate(BoolStore)
-
+const boolStoreFilterTemplate = storeTemplate(BoolStore)
 
 export const activateRecipe = ({
     tagname = 'on',

@@ -1,19 +1,20 @@
-import type { Registrar } from './types'
+import type { Registrar } from '../types'
 
 import {
-    ValueStore,
-    valueStoreTemplate,
+    PreferenceStore,
+    storeTemplate,
     defaultSeparator,
     innerSeparator
-} from './valueStore'
+} from './storeTemplate'
 
-class NumberStore extends ValueStore<number> {
+
+class NumberStore extends PreferenceStore<number> {
     setNumber(selector: string, value: number): void {
         this.set(selector, Number.isNaN(value) ? 0 : value)
     }
 }
 
-const numStoreFilterTemplate = valueStoreTemplate(NumberStore)
+const numStoreFilterTemplate = storeTemplate(NumberStore)
 
 export const setNumberRecipe = <T extends {}>({
     tagname = 'set',

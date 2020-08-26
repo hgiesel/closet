@@ -1,23 +1,20 @@
-import type { TagNode, Internals } from './types'
-import type { TagPredicate } from '../tagSelector'
+import type { TagNode, Internals } from '../types'
+import type { TagPredicate } from '../../tagSelector'
 
-import { parseTagSelector } from '../tagSelector'
+import { parseTagSelector } from '../../tagSelector'
 
-
-export type StoreGetter<T> = { get: (key: string, num: number | null, fullOccur: number) => T }
-export const constantGet = <T>(v: T): StoreGetter<T> => ({ get: () => v })
 
 export const defaultSeparator = { sep: ';' }
 export const innerSeparator = { sep: '=', trim: true, max: 2 }
 
-export class ValueStore<T> {
+export class PreferenceStore<T> {
     /**
-     * Values can be stored in a value store
-     * Tags can inquire against value stores with
+     * Values can be stored in a preference store
+     * Tags can inquire against value stores if they provide
      * 1. the storeId, and
-     * 2. their (key, num, fullOccur)
+     * 2. their identification, typically (key, num, fullOccur)
      *
-     * Values in a value store can not be updated, only overwritten
+     * Values cannot be updated, only overwritten
      * You would save settings regarding a specific tag in here,
      * not make a shared value, for that see `SharedStore` (TODO)
      */
@@ -45,7 +42,7 @@ export class ValueStore<T> {
     }
 }
 
-export const valueStoreTemplate = <Store extends ValueStore<U>, U>(
+export const storeTemplate = <Store extends PreferenceStore<U>, U>(
     Store: new (u: U) => Store,
 ) => (
     storeId: string,

@@ -15,8 +15,11 @@ import { styleRecipe, processRecipe } from './stylizing'
 
 import { debugRecipe } from './debug'
 import { defRecipe } from './meta'
-import { activateRecipe, deactivateRecipe } from './boolStore'
-import { setNumberRecipe } from './numberStore'
+import {
+    activateRecipe,
+    deactivateRecipe,
+    setNumberRecipe,
+} from './preferenceStore'
 
 export const recipes: Recipes = {
     shuffle: shufflingRecipe,

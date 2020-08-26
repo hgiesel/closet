@@ -32,6 +32,7 @@ def include_closet_code(webcontent, context):
 
     webcontent.js.append(f'/_addons/{addon_package}/web/closet.js')
     webcontent.js.append(f'/_addons/{addon_package}/web/editor.js')
+    webcontent.css.append(f'/_addons/{addon_package}/web/editor.css')
 
 def process_occlusion_index_text(index_text: str):
     return [int(text) for text in index_text.split(',')]

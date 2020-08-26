@@ -27,6 +27,10 @@ export class PreferenceStore<T> {
         this.predicates = []
     }
 
+    protected set(selector: string, value: T): void {
+        this.predicates.unshift([parseTagSelector(selector), value])
+    }
+
     get(key: string, num: number, fullOccur: number): T {
         for (const [predicate, value] of this.predicates) {
             if (predicate(key, num, fullOccur)) {
@@ -35,10 +39,6 @@ export class PreferenceStore<T> {
         }
 
         return this.defaultValue
-    }
-
-    set(selector: string, value: T): void {
-        this.predicates.unshift([parseTagSelector(selector), value])
     }
 }
 

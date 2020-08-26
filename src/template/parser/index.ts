@@ -1,12 +1,12 @@
-import nearley from 'nearley'
-import grammar from './template'
-
 import type { TagBuilderSettings } from './tagBuilder'
 import type { ASTNode } from '../tags'
 
+import nearley from 'nearley'
+import grammar from './grammar'
+
 import { TextNode, DocSeparatorNode } from '../tags'
 import { intersperse2d } from '../utils'
-import { tagBuilder } from './template'
+import { tagBuilder } from './grammar'
 
 const templateGrammar = nearley.Grammar.fromCompiled(grammar)
 

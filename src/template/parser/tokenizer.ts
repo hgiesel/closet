@@ -6,7 +6,7 @@ import {
     ARG_SEP,
 } from '../utils'
 
-export const keyPattern = /[a-zA-Z_\/](?:[\w\/]|%\w)*/u
+export const keyPattern = /(?:[a-zA-Z_\/]|%\w)+\d*/u
 const outerTextPattern = /[\s\S]+?(?=\[\[|$)/u
 const innerTextPattern = /[\s\S]+?(?=\[\[|\]\])/u
 

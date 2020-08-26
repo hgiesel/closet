@@ -28,7 +28,7 @@ code: |
     }
   }
 
-  const wrappedClozeShow = Closet.wrappers.aftermath(Closet.recipes.clozeShow, (e, inter) => {
+  const wrappedClozeShow = Closet.wrappers.aftermath(Closet.recipes.cloze.show, (e, inter) => {
     const keyword = 'keydownToRevealObscure'
 
     if (!inter.environment.has(keyword)) {
@@ -68,13 +68,13 @@ code: |
     processor: v => `<span style="color: cornflowerblue">${v}</span>`,
   })
 
-  filterManager.addRecipe(wrappedClozeShow({
+  filterManager.install(wrappedClozeShow({
     tagname: 'c',
     frontEllipser: obscureAndKeydown,
     frontStylizer: frontStylizer,
   }))
 
-  filterManager.addRecipe(wrappedClozeShow({
+  filterManager.install(wrappedClozeShow({
     tagname: 'cx',
     frontEllipser: obscureAndKeydownFix,
     frontStylizer: frontStylizer,

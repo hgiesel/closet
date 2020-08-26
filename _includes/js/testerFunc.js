@@ -36,6 +36,10 @@ const getActiveSetups = () => {
         .map(as => setups.get(as.value))
 }
 
+
+///////////////////////////// Make filter manager available for debugging
+globalThis.filterManager = null
+
 ///////////////////////////// render button
 const processTemplateText = () => {
     presetCM.getWrapperElement().classList.remove('failed')
@@ -72,6 +76,8 @@ const processTemplateText = () => {
 
     /////////////////////////////
     const filterManager = Closet.FilterManager.make(preset, memory)
+    globalThis.filterManager = filterManager
+
     const setups = getActiveSetups()
 
     for (const s of setups) {

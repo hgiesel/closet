@@ -32,22 +32,24 @@ code: |
     mapper: (v, i) => `${i}: ${v}`
   })
 
-  filterManager.addRecipe(Closet.recipes.shuffle({
-    tagname: 'cmix',
-    stylizer: colorfulWithMiddleDot,
-  }))
+  filterManager.install(
+    Closet.recipes.shuffle({
+      tagname: 'cmix',
+      stylizer: colorfulWithMiddleDot,
+    }),
 
-  filterManager.addRecipe(Closet.recipes.shuffle({
-    tagname: 'amix',
-    stylizer: withMiddleDot,
-  }))
+    Closet.recipes.shuffle({
+      tagname: 'amix',
+      stylizer: withMiddleDot,
+    }),
 
-  filterManager.addRecipe(Closet.recipes.shuffle({
-    tagname: 'vmix',
-    stylizer: withVs,
-  }))
+    Closet.recipes.shuffle({
+      tagname: 'vmix',
+      stylizer: withVs,
+    }),
 
-  filterManager.addRecipe(Closet.recipes.shuffle({
-    tagname: 'mix',
-    stylizer: withSlash
-  }))
+    Closet.recipes.shuffle({
+      tagname: 'mix',
+      stylizer: withSlash
+    }),
+  )

@@ -12,17 +12,17 @@ code: |
     }),
   }
 
-  filterManager.addRecipe(Closet.recipes.clozeShow({
-    tagname: 'c',
-    ...blankOptions,
-  }))
-
-  filterManager.addRecipe(Closet.recipes.clozeHide({
-    tagname: 'ch',
-    ...blankOptions,
-  }))
-
-  filterManager.addRecipe(Closet.recipes.clozeReveal({
-    tagname: 'cr',
-    ...blankOptions,
-  }))
+  filterManager.install(
+    Closet.recipes.cloze.show({
+      tagname: 'c',
+      ...blankOptions,
+    }),
+    Closet.recipes.cloze.hide({
+      tagname: 'ch',
+      ...blankOptions,
+    }),
+    Closet.recipes.cloze.reveal({
+      tagname: 'cr',
+      ...blankOptions,
+    }),
+  )

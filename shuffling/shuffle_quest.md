@@ -23,11 +23,8 @@ This makes them similar to how [clozes](../clozes) behave, for example.
 
 Altogether there are three different kinds of these "shuffling as flashcard" types:
 - `shuffle`: cards will be shuffled on both sides
-  - recipes are `shuffleShow`, `shuffleHide`, `shuffleReveal`
 - `sort`: cards will be shuffled on the front, but not on the back
-  - recipes are `sortShow`, `sortHide`, `sortReveal`
 - `jumble`: cards will be shuffled on the back, but not the front
-  - recipes are `jumbleShow`, `jumbleHide`, `jumbleReveal`
 
 ---
 ## Combining with other flashcard types

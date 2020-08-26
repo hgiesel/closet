@@ -13,6 +13,8 @@ export {
     unicodeAlphanumericPattern,
 } from './src/recipes/utils'
 
+export { parseTagSelector } from './src/tagSelector'
+
 export { recipes, wrappers, deciders, sequencers } from './src/recipes'
 export { Stylizer } from './src/recipes/stylizer'
 

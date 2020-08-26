@@ -10,8 +10,21 @@ export type ShapeDefinition = RectDefinition
 
 export interface Shape {
     getElements(): Element[]
-    resize(forSVG: SVG): void
+    /**
+     * all elements that need to be put into svg container
+     */
+
+    getAnchorElement(): Element
+    /**
+     * the "anchor" element should be the one used in the "wrap" command
+     * can be used to locate all other svgs related to that shape
+     */
+
     getLabel(): string
+
+    resize(forSVG: SVG): void
+    readjust(forSVG: SVG): void
+
     toDefinition(): ShapeDefinition
     toText(): string
 }
@@ -62,7 +75,6 @@ export class SVG {
         container.appendChild(svg)
         container.classList.add('closet__occlusion-container')
 
-
         return new SVG(container, image, svg)
     }
 
@@ -101,6 +113,19 @@ export class SVG {
 
     getLabels(): string[] {
         return this.getElements().map(element => element.getLabel())
+    }
+
+    remove(shape: Shape): void {
+        this.elements.find((elem, index) => {
+            if (elem.getAnchorElement() === shape.getAnchorElement()) {
+                for (const elem of shape.getElements()) {
+                    elem.remove()
+                }
+
+                this.elements.splice(index, 1)
+                return true
+            }
+        })
     }
 }
 
@@ -184,12 +209,21 @@ export class Rect implements Shape {
         return [this.container]
     }
 
-    resize(forSVG: SVG) {
-        const savePos = this.pos
+    getAnchorElement(): Element {
+        return this.rect
+    }
+
+    readjust(forSVG: SVG) {
         const scaleFactors = forSVG.scaleFactors
 
         this.scalingFactorX = scaleFactors[0]
         this.scalingFactorY = scaleFactors[1]
+    }
+
+    resize(forSVG: SVG) {
+        const savePos = this.pos
+
+        this.readjust(forSVG)
 
         this.pos = savePos
     }

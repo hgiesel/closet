@@ -13,7 +13,7 @@ const clickInsideShape = (draw: SVG, event: MouseEvent) => {
     const rect = Rect.wrap(event.target as SVGRectElement)
 
     if (event.shiftKey) {
-        rect.remove()
+        draw.remove(rect)
         return
     }
 
@@ -70,7 +70,10 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
 
     const resizer = onMouseMoveResize(newRect, true, true, true, true, downX, downY)
     draw.svg.addEventListener('mousemove', resizer)
-    draw.svg.addEventListener('mouseup', () => draw.svg.removeEventListener('mousemove', resizer))
+    draw.svg.addEventListener('mouseup', () => {
+        draw.svg.removeEventListener('mousemove', resizer)
+        newRect.readjust(draw)
+    })
 }
 
 const occlusionLeftClick = (draw: SVG, event: MouseEvent) => {

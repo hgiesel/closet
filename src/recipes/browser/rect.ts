@@ -27,10 +27,7 @@ const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache, 
             }
 
             const svgRect = Rect.make(draw)
-            svgRect.x = x
-            svgRect.y = y
-            svgRect.width = width
-            svgRect.height = height
+            svgRect.pos = [x, y, width, height]
 
             for (const prop in options) {
                 const rectProperty = prop as RectProperty

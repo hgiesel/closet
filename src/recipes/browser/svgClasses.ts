@@ -36,8 +36,6 @@ export class SVG {
 
     protected constrainedFactorX: number = 1
     protected constrainedFactorY: number = 1
-    protected zoomX: number = 1
-    protected zoomY: number = 1
 
     protected elements: Shape[] = []
     protected resizer: any /* ResizeObserver */
@@ -57,9 +55,6 @@ export class SVG {
     protected setScaleFactors() {
         this.constrainedFactorX = this.image.width / this.image.naturalWidth
         this.constrainedFactorY = this.image.height / this.image.naturalHeight
-
-        this.zoomX = this.svg.clientWidth / this.image.width
-        this.zoomY = this.svg.clientHeight / this.image.height
     }
 
     static wrapImage(image: HTMLImageElement): SVG {
@@ -72,6 +67,11 @@ export class SVG {
         svg.setAttributeNS(null, 'width', '100%')
         svg.setAttributeNS(null, 'height', '100%')
 
+        // Adopt images zoom and transform attributes
+        // both can be used to scale
+        svg.style.zoom = image.style.zoom
+        svg.style.transform = image.style.transform
+
         container.appendChild(svg)
         container.classList.add('closet__occlusion-container')
 
@@ -80,8 +80,8 @@ export class SVG {
 
     get scaleFactors(): [number, number] {
         return [
-            this.constrainedFactorX * this.zoomX,
-            this.constrainedFactorY * this.zoomY,
+            this.constrainedFactorX,
+            this.constrainedFactorY,
         ]
     }
 

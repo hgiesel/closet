@@ -15,7 +15,6 @@ export const numberGenerator = function*(
 
     while (!prematureStop(banDomain) && tries < maxTries) {
         const randomValue = gen()
-        console.log('banned', randomValue, banDomain)
 
         if (!filter || !banDomain.includes(randomValue)) {
             yield randomValue

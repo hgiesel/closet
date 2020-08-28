@@ -41,7 +41,7 @@
     "dev-anki": "run-s watch-anki",
     "zip": "run-s build-anki zip-sub",
     "zip-sub": "bin/zip.sh",
-    "mocha": "mocha",
+    "test": "mocha",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
@@ -54,10 +54,12 @@
     "@rollup/plugin-node-resolve": "^7.1.3",
     "@rollup/plugin-strip": "^1.3.3",
     "@rollup/plugin-typescript": "^3.1.1",
+    "@types/chai": "^4.2.12",
     "@types/mocha": "^7.0.2",
     "@types/nearley": "^2.11.1",
     "@typescript-eslint/eslint-plugin": "^3.10.1",
     "@typescript-eslint/parser": "^3.10.1",
+    "chai": "^4.2.0",
     "eslint": "^7.7.0",
     "mocha": "^7.2.0",
     "npm-run-all": "^4.1.5",

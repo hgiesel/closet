@@ -17,19 +17,19 @@ const blueWithBrackets = blueHighlight.toStylizer({
     mapper: wrapWithBrackets,
 })
 
-const hintEllipser = <T extends {}>(
+const hintEllipser = <T extends Record<string, unknown>>(
     tag: TagNode,
     _internals: Internals<T>,
 ) => {
     return [tag.values[1] ?? '...']
 }
 
-const firstValue = <T extends object>(tag: TagNode, { ready }: Internals<T>) => ({
+const firstValue = <T extends Record<string, unknown>>(tag: TagNode, { ready }: Internals<T>) => ({
     ready: ready,
     result: tag.values[0],
 })
 
-const firstValueAsList = <T extends object>(tag: TagNode, _internals: Internals<T>) => [tag.values[0]]
+const firstValueAsList = <T extends Record<string, unknown>>(tag: TagNode, _internals: Internals<T>) => [tag.values[0]]
 
 const clozePublicApi = <T extends FlashcardPreset>(
     frontInactive: InactiveBehavior<T>,

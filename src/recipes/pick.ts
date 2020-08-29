@@ -4,5 +4,5 @@ export const pickRecipe = ({
     tagname = 'pick',
     storeId = 'lists',
     separator = { sep: ',' },
-} = {}) => <T extends {}>(registrar: Registrar<T>) => {
+} = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
 }

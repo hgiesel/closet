@@ -10,7 +10,7 @@ export const orderingRecipe = ({
     cmdSeparator = '::',
 
     sortInStrategy = topUp,
-} = {}) => <T extends {}>(registrar: Registrar<T>) => {
+} = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const ordFilter = (tag: TagNode, { deferred, cache, memory }: Internals<T>) => {
         /**
          * @param tag.values must contain lists of sequence ids (!), not tagnames

@@ -8,7 +8,7 @@ export const shufflingRecipe = ({
     tagname = 'mix',
     stylizer = Stylizer.make(),
     sortInStrategy = topUp,
-} = {}) => <T extends {}>(registrar: Registrar<T>) => {
+} = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const shuffleFilter = (tag: TagNode, internals: Internals<T>) => {
         const unitId = `${tag.fullKey}:${tag.fullOccur}`
         const sequenceId = tag.num ? tag.fullKey : unitId

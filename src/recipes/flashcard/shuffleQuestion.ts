@@ -10,7 +10,7 @@ import { Stylizer } from '../stylizer'
 import { acrossTag } from '../sequencer'
 import { topUp } from '../sortInStrategies'
 
-const justValues = <T extends {}>(tag: TagNode, _internals: Internals<T>) => tag.values
+const justValues = <T extends Record<string, unknown>>(tag: TagNode, _internals: Internals<T>) => tag.values
 
 const inactive: Stylizer = Stylizer.make({
     separator: ', ',
@@ -20,9 +20,9 @@ const blueHighlight: Stylizer = Stylizer.make({
     processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
 })
 
-const valuesInOrder = <T extends {}>(tag: TagNode, _internals: Internals<T>): StyleList => tag.values ? tag.values : []
+const valuesInOrder = <T extends Record<string, unknown>>(tag: TagNode, _internals: Internals<T>): StyleList => tag.values ? tag.values : []
 
-const simplyShow = <T extends {}, V extends StyleList>(stylizer: Stylizer, _shuffler: Eval<T, V | void>) => listStylize(stylizer, justValues)
+const simplyShow = <T extends Record<string, unknown>, V extends StyleList>(stylizer: Stylizer, _shuffler: Eval<T, V | void>) => listStylize(stylizer, justValues)
 
 const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList >(
     frontActive: (stylizer: Stylizer, shuffler: Eval<T, V | void>) => WeakFilter<T>,

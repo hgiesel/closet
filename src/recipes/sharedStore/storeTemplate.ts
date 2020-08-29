@@ -21,8 +21,8 @@ export const storeTemplate = <Store extends SharedStore<U>, U>(
     Store: new (map: Map<string, U>) => Store,
 ) => (
     storeId: string,
-    operation: <T extends object>(tag: TagNode, internals: Internals<T>) => (store: Store) => string | void,
-) => <T extends {}>(tag: TagNode, internals: Internals<T>) => {
+    operation: <T extends Record<string, unknown>>(tag: TagNode, internals: Internals<T>) => (store: Store) => string | void,
+) => <T extends Record<string, unknown>>(tag: TagNode, internals: Internals<T>) => {
     const result = (internals.cache.over(
         storeId,
         operation(tag, internals),

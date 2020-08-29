@@ -26,7 +26,7 @@ const coreParse = (text: string): ASTNode[][] => {
 }
 
 const mainParse = (text: string): ASTNode[] => {
-    let parsed = coreParse(text)
+    const parsed = coreParse(text)
 
     if (parsed.length > 1) {
         console.error('Ambiguous template grammar')

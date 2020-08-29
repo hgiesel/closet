@@ -4,7 +4,7 @@ import type { SortInStrategy } from './sortInStrategies'
 import { sortWithIndices } from './utils'
 
 // TODO abstract to an object without dependence on Internals
-export const sequencer = <T extends {}, V>(
+export const sequencer = <T extends Record<string, unknown>, V>(
     // identifies each unit (tag) receiving shuffled items
     unitId: string,
     // identifies each collection of items being shuffled
@@ -100,7 +100,7 @@ export const sequencer = <T extends {}, V>(
     })
 }
 
-const sequenceTemplate = <T extends {}>(
+const sequenceTemplate = <T extends Record<string, unknown>>(
     makeKeywords: Eval<T, [string, string]>,
 ) => <V extends [...any[]]>(
     getValues: Eval<T, V[]>,
@@ -113,8 +113,8 @@ const sequenceTemplate = <T extends {}>(
     return sequencer(uid, sequenceId, sortIn, getValues)(tag, internals)
 }
 
-const within = <T extends {}>({ fullKey, fullOccur }: TagNode, _internals: Internals<T>): [string, string] => [`${fullKey}:${fullOccur}`, `${fullKey}:${fullOccur}`]
+const within = <T extends Record<string, unknown>>({ fullKey, fullOccur }: TagNode, _internals: Internals<T>): [string, string] => [`${fullKey}:${fullOccur}`, `${fullKey}:${fullOccur}`]
 export const withinTag = sequenceTemplate(within)
 
-const across = <T extends {}>({ fullKey, fullOccur }: TagNode, _internals: Internals<T>): [string, string] => [`${fullKey}:${fullOccur}`, fullKey]
+const across = <T extends Record<string, unknown>>({ fullKey, fullOccur }: TagNode, _internals: Internals<T>): [string, string] => [`${fullKey}:${fullOccur}`, fullKey]
 export const acrossTag = sequenceTemplate(across)

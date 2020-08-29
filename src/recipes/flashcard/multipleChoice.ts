@@ -11,14 +11,14 @@ import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './fla
 
 type ValuePlusCategory = [string, number]
 
-const valuesWithIndex = <T extends {}>(
+const valuesWithIndex = <T extends Record<string, unknown>>(
     tag: TagNode,
     _internals: Internals<T>,
 ): ValuePlusCategory[] => tag.values
     ? tag.values.flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
     : []
 
-const firstCategory = <T extends {}>(tag: TagNode, _internals: Internals<T>): string[] => tag.values[0]
+const firstCategory = <T extends Record<string, unknown>>(tag: TagNode, _internals: Internals<T>): string[] => tag.values[0]
 
 const inactive = Stylizer.make()
 

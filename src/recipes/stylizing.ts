@@ -3,7 +3,7 @@ import type { TagNode, Registrar } from './types'
 import { Stylizer } from './stylizer'
 import { id } from './utils'
 
-export const styleRecipe = <T extends {}>({
+export const styleRecipe = <T extends Record<string, unknown>>({
     tagname = 's',
     stylizer = Stylizer.make(),
     separator = '::',
@@ -15,7 +15,7 @@ export const styleRecipe = <T extends {}>({
     registrar.register(tagname, styleFilter, { separators: [separator] })
 }
 
-export const processRecipe = <T extends {}>({
+export const processRecipe = <T extends Record<string, unknown>>({
     tagname = 's',
     processor = id,
 } = {}) => (registrar: Registrar<T>) => {

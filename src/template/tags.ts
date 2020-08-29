@@ -68,15 +68,15 @@ export class TagNode implements ASTNode, Filterable {
         return `${TAG_OPEN}${this.fullKey}${ARG_SEP}${this.valuesText}${TAG_CLOSE}`
     }
 
-    isReady() {
+    isReady(): boolean {
         return false
     }
 
-    getDefaultRepresentation() {
+    getDefaultRepresentation(): string {
         return this.toString()
     }
 
-    getRawRepresentation() {
+    getRawRepresentation(): string {
         return this.valuesText
     }
 
@@ -130,31 +130,31 @@ export class TextNode implements ASTNode {
         this.text = text
     }
 
-    toString() {
+    toString(): string | null {
         return this.text
     }
 
-    isReady() {
+    isReady(): boolean {
         // should never happen
         return true
     }
 
-    evaluate() {
+    evaluate(): ASTNode[] {
         return [this]
     }
 }
 
 export class DocSeparatorNode implements ASTNode {
-    toString() {
+    toString(): string | null {
         return null
     }
 
-    isReady() {
+    isReady(): boolean {
         // should never happen
         return true
     }
 
-    evaluate() {
+    evaluate(): ASTNode[] {
         return [this]
     }
 }

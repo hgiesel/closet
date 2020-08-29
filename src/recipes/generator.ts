@@ -40,7 +40,7 @@ export const generateTemplate = (
     tagname = 'gen',
     uniqueConstraintId = 'uniq',
     separator = { sep: ',' },
-} = {}) => <T extends {}>(registrar: Registrar<T>) => {
+} = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const uniqConstraintPrefix = `gen:${uniqueConstraintId}`
 
     const generateFilter = ({ values, fullOccur, num }: TagNode, { memory }: Internals<T>) => {

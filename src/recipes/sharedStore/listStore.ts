@@ -27,7 +27,7 @@ class ListStore extends SharedStore<string[]> {
 
 const listStoreTemplate = storeTemplate(ListStore)
 
-export const setListRecipe = <T extends {}>({
+export const setListRecipe = <T extends Record<string, unknown>>({
     tagname = 'setl',
     storeId = 'lists',
     separator = defaultSeparator,
@@ -51,7 +51,7 @@ export const setListRecipe = <T extends {}>({
 
 const pickSeparator = { 'sep': '::' }
 
-export const pickRecipe = <T extends {}>({
+export const pickRecipe = <T extends Record<string, unknown>>({
     tagname = 'pick',
     storeId = 'lists',
     stylizer = Stylizer.make(),

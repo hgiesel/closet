@@ -1,6 +1,6 @@
 import type { Registrar, TagNode, Internals } from './types'
 
-export const debugRecipe = () => <T extends {}>(registrar: Registrar<T>) => {
+export const debugRecipe = () => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const pathFilter = (_t: TagNode, { path }: Internals<T>) => path.join(':')
 
     registrar.register('tagpath', pathFilter)

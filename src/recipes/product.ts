@@ -2,7 +2,7 @@ import type { TagNode, RecipeOptions, Registrar, WeakFilter, WeakFilterResult, I
 
 import { defaultTagnameGetter, defaultTagnameSetter } from './wrappers'
 
-export const product = <T extends {}>(
+export const product = <T extends Record<string, unknown>>(
     recipeFirst: Recipe<T>,
     recipeSecond: Recipe<T>,
     multiply: (fst: WeakFilterResult, snd: WeakFilterResult) => WeakFilter<T> = () => () => ({ ready: true }), {

@@ -6,7 +6,7 @@ const transpose = <T>(array: (T | T[])[]): T[][] => Array.isArray(array[0])
 
 export type StyleList = (string | [string, ...any[]])[]
 
-export const listStylize = <T extends {}>(
+export const listStylize = <T extends Record<string, unknown>>(
     stylizer: Stylizer,
     toList: Eval<T, StyleList>,
 ): WeakFilter<T> => (tag: TagNode, internals: Internals<T>) => internals.ready
@@ -14,7 +14,7 @@ export const listStylize = <T extends {}>(
     ? stylizer.stylize(...transpose(toList(tag, internals)))
     : { ready: false }
 
-export const listStylizeMaybe = <T extends {}>(
+export const listStylizeMaybe = <T extends Record<string, unknown>>(
     stylizer: Stylizer,
     toListMaybe: Eval<T, StyleList | void>,
 ): WeakFilter<T> => (tag: TagNode, internals: Internals<T>) => {

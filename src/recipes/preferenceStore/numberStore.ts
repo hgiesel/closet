@@ -16,7 +16,7 @@ class NumberStore extends PreferenceStore<number> {
 
 const numStoreFilterTemplate = storeTemplate(NumberStore)
 
-export const setNumberRecipe = <T extends {}>({
+export const setNumberRecipe = <T extends Record<string, unknown>>({
     tagname = 'set',
     storeId = 'numerical',
     separator = defaultSeparator,

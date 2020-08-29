@@ -9,7 +9,7 @@ export const defaultTagnameSetter = (o: RecipeOptions, newNames: string[]) => o[
 
 const defaultWrapId = 'wrapped'
 
-export const wrap = <T extends object>(
+export const wrap = <T extends Record<string, unknown>>(
     wrapped: (tag: TagNode & WithInternalKeyword, internals: Internals<T>) => void,
 ) => (
     mainRecipe: Recipe<T>, {
@@ -51,7 +51,7 @@ export const wrap = <T extends object>(
     }
 }
 
-const wrapWithDeferredTemplate = <T extends object, D>(
+const wrapWithDeferredTemplate = <T extends Record<string, unknown>, D>(
     getDeferredApi: (i: Internals<T>) => DeferredApi<D>,
 ) => (
     mainRecipe: Recipe<T>,

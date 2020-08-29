@@ -1,6 +1,6 @@
 import type { WeakFilter, Recipe, Registrar } from './types'
 
-export const simpleRecipe = <T extends {}>(weakFilter: WeakFilter<T>): Recipe<T> => ({
+export const simpleRecipe = <T extends Record<string, unknown>>(weakFilter: WeakFilter<T>): Recipe<T> => ({
     tagname = 's',
 }: {
     tagname?: string,

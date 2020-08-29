@@ -130,7 +130,7 @@ const occlusionCss = `
 
 const occlusionMakerCssKeyword = 'occlusionMakerCss'
 
-export const occlusionMakerRecipe = <T extends {}>(options: {
+export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options: {
     tagname?: string,
     acceptHandler?: ShapeHandler,
     existingShapesFilter?: ShapeFilter,

@@ -23,10 +23,12 @@ export type FlashcardTemplate<T extends FlashcardPreset> = (
 
 export interface CardPreset {
     cardNumber: number
+    [v: string]: unknown
 }
 
 export interface SidePreset {
     side: 'front' | 'back'
+    [v: string]: unknown
 }
 
 export type FlashcardPreset = CardPreset & SidePreset

@@ -48,7 +48,7 @@ export const storeTemplate = <Store extends PreferenceStore<U>, U>(
     storeId: string,
     defaultValue: U,
     operation: (...vals: string[]) => (a: Store) => void,
-) => <T extends {}>(tag: TagNode, { cache }: Internals<T>) => {
+) => <T extends Record<string, unknown>>(tag: TagNode, { cache }: Internals<T>) => {
     const commands = tag.values
 
     commands.forEach((cmd: string) => {

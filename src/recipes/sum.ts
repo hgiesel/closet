@@ -2,7 +2,7 @@ import type { TagNode, Registrar, Eval, Internals, Recipe, WrapOptions } from '.
 
 import { defaultTagnameGetter, defaultTagnameSetter } from './wrappers'
 
-export const sum = <T extends {}>(
+export const sum = <T extends Record<string, unknown>>(
     recipeFalse: Recipe<T>,
     recipeTrue: Recipe<T>,
     predicate: Eval<T, boolean>, {
@@ -21,8 +21,8 @@ export const sum = <T extends {}>(
 }: {
     tagname?: string,
 
-    optionsTrue?: object,
-    optionsFalse?: object,
+    optionsTrue?: Record<string, unknown>,
+    optionsFalse?: Record<string, unknown>,
 } = {}) => (registrar: Registrar<T>) => {
     const tagnameTrue = `${tagname}:${wrapId}:true`
     const tagnameFalse = `${tagname}:${wrapId}:false`
@@ -30,8 +30,8 @@ export const sum = <T extends {}>(
     setTagnames(optionsTrue, [tagnameTrue])
     setTagnames(optionsFalse, [tagnameFalse])
 
-    recipeTrue(optionsTrue)(registrar)
     recipeFalse(optionsFalse)(registrar)
+    recipeTrue(optionsTrue)(registrar)
 
     const sumFilter = (
         tag: TagNode,
@@ -45,7 +45,7 @@ export const sum = <T extends {}>(
     registrar.register(tagname, sumFilter, registrar.getOptions(tagnameTrue /* have to be same for True/False */))
 }
 
-export const sumFour = <T extends {}>(
+export const sumFour = <T extends Record<string, unknown>>(
     recipeZero: Recipe<T>,
     recipeOne: Recipe<T>,
     recipeTwo: Recipe<T>,
@@ -70,12 +70,12 @@ export const sumFour = <T extends {}>(
 }: {
     tagname?: string,
 
-    optionsThree?: object,
-    optionsTwo?: object,
-    optionsOne?: object,
-    optionsZero?: object,
+    optionsThree?: Record<string, unknown>,
+    optionsTwo?: Record<string, unknown>,
+    optionsOne?: Record<string, unknown>,
+    optionsZero?: Record<string, unknown>,
 
-    setTagname?: (options: object, newName: string) => void,
+    setTagname?: (options: Record<string, unknown>, newName: string) => void,
 } = {}) => (registrar: Registrar<T>) => {
     const tagnameZero = `${tagname}:${wrapId}:zero`
     const tagnameTwo = `${tagname}:${wrapId}:two`

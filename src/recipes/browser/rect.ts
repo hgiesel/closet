@@ -10,7 +10,7 @@ import { appendStyleTag, getImages, imageLoadCallback, svgKeyword, svgCss } from
 
 export const rectKeyword = 'occlusionRenderRect'
 
-const renderRects = <T extends {}>(entry: AftermathEntry<T>, { template, cache, environment }: AftermathInternals<T>) => {
+const renderRects = <T extends Record<string, unknown>>(entry: AftermathEntry<T>, { template, cache, environment }: AftermathInternals<T>) => {
     const images = (template.textFragments as any).flatMap(getImages)
     const rects = cache.get<RectDefinition[]>(entry.keyword, [])
 
@@ -49,7 +49,7 @@ const processProps = (rest: string[], overwriteProps = {}): RectProperties => {
     return Object.assign(propObject, overwriteProps)
 }
 
-const inactiveRect = <T extends {}>({ fullKey, values }: TagNode, { cache }: Internals<T>) => {
+const inactiveRect = <T extends Record<string, unknown>>({ fullKey, values }: TagNode, { cache }: Internals<T>) => {
     const [x = 0, y = 0, width = 50, height = width, ...rest] = values
 
     cache.over(
@@ -70,7 +70,7 @@ const inactiveRect = <T extends {}>({ fullKey, values }: TagNode, { cache }: Int
     return { ready: true }
 }
 
-const makeContextRects = <T extends {}>({ fullKey, values }: TagNode, { cache, aftermath }: Internals<T>) => {
+const makeContextRects = <T extends Record<string, unknown>>({ fullKey, values }: TagNode, { cache, aftermath }: Internals<T>) => {
     const [x = 0, y = 0, width = 50, height = width, ...rest] = values
 
     cache.over(
@@ -93,7 +93,7 @@ const makeContextRects = <T extends {}>({ fullKey, values }: TagNode, { cache, a
     return { ready: true }
 }
 
-const makeActiveRects = <T extends {}>({ fullKey, values }: TagNode, { cache, aftermath }: Internals<T>) => {
+const makeActiveRects = <T extends Record<string, unknown>>({ fullKey, values }: TagNode, { cache, aftermath }: Internals<T>) => {
     const [x = 0, y = 0, width = 50, height = width, ...rest] = values
     const activeProps = { fill: 'salmon', stroke: 'yellow' }
 

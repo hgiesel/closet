@@ -29,8 +29,8 @@ export type Triple<T> = [T, T, T]
 
 export interface WrapOptions {
     wrapId: string
-    getTagnames: (o: {}) => string[]
-    setTagnames: (o: {}, newNames: string[]) => void
+    getTagnames: (o: Record<string, unknown>) => string[]
+    setTagnames: (o: Record<string, unknown>, newNames: string[]) => void
 }
 
 export type InactiveBehavior<T extends Record<string, unknown>> = (

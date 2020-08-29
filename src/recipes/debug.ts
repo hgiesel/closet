@@ -4,7 +4,7 @@ export const debugRecipe = () => <T extends Record<string, unknown>>(registrar: 
     const pathFilter = (_t: TagNode, { path }: Internals<T>) => path.join(':')
 
     registrar.register('tagpath', pathFilter)
-    registrar.register('never', (() => {}))
+    registrar.register('never', (() => {/* nothing */}))
     registrar.register('empty', (() => ''))
     registrar.register('key', (({ key }: TagNode) => key))
 
@@ -21,7 +21,7 @@ export const debugRecipe = () => <T extends Record<string, unknown>>(registrar: 
         return { ready: true }
     })
 
-    registrar.register('memorytest', (({}, { memory }: Internals<T>) => {
+    registrar.register('memorytest', ((_tag, { memory }: Internals<T>) => {
         const memoryTestKey = 'base:memorytest'
         return String(memory.fold(memoryTestKey, (v: number) => ++v, 0))
     }))

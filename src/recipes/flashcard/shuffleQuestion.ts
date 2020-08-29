@@ -63,8 +63,7 @@ const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList
 
     const clozeSeparators = { separators: [separator] }
 
-    // @ts-ignore
-    const shuffler: Eval<T, V> = sequence(contexter, sortInStrategy)
+    const shuffler: Eval<T, V> = sequence(contexter as any, sortInStrategy) as Eval<T, V>
 
     const front = frontActive(activeStylizer, shuffler)
     const back = backActive(activeStylizer, shuffler)

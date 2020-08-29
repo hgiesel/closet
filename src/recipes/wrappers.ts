@@ -4,7 +4,10 @@ interface WithInternalKeyword {
     keyInternal: string,
 }
 
-export const defaultTagnameGetter = (o: RecipeOptions) => o.hasOwnProperty('tagname') ? [o['tagname']] : []
+export const defaultTagnameGetter = (o: RecipeOptions) => Object.prototype.hasOwnProperty.call(o, 'tagname')
+    ? [o['tagname']]
+    : []
+
 export const defaultTagnameSetter = (o: RecipeOptions, newNames: string[]) => o['tagname'] = newNames[0]
 
 const defaultWrapId = 'wrapped'

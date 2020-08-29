@@ -16,6 +16,7 @@ export interface IterationInfo {
 
 export interface ResultInfo {
     result: string | string[]
+    [k: string]: unknown
 }
 
 // TagRenderer -> TagAcessor -> TagProcessor

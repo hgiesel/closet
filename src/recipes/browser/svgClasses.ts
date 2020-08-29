@@ -34,8 +34,8 @@ export class SVG {
     readonly image: HTMLImageElement
     readonly svg: SVGElement
 
-    protected constrainedFactorX: number = 1
-    protected constrainedFactorY: number = 1
+    protected constrainedFactorX = 1
+    protected constrainedFactorY = 1
 
     protected elements: Shape[] = []
     protected resizer: any /* ResizeObserver */
@@ -45,8 +45,7 @@ export class SVG {
         this.image = image
         this.svg = svg
 
-        // @ts-ignore
-        this.resizer = new ResizeObserver(() => this.resize())
+        this.resizer = new (globalThis as any).ResizeObserver(() => this.resize())
         this.resizer.observe(image)
 
         this.setScaleFactors()

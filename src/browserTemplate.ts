@@ -16,19 +16,23 @@ const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string, tak
         return input
     }
 
+    let textNode = null,
+        elementNode = null,
+        span = null
+
     switch (input.nodeType) {
         case Node.TEXT_NODE:
-            const textNode = input as Text
+            textNode = input as Text
             return textNode.textContent ?? ''
 
         case Node.ELEMENT_NODE:
-            const elementNode = input as Element
+            elementNode = input as Element
             return takeOuter
                 ? elementNode.outerHTML
                 : elementNode.innerHTML
 
         case ChildNodeSpan.CHILD_NODE_SPAN:
-            const span = input as ChildNodeSpan
+            span = input as ChildNodeSpan
             return span.spanAsStrings().join('')
 
         default:
@@ -41,10 +45,15 @@ const setText = (input: Element | Text | ChildNodeSpan | string, newText: string
         return
     }
 
+    let textNode = null,
+        placeholderNode = null,
+        elementNode = null,
+        span = null
+
     switch (input.nodeType) {
         case Node.TEXT_NODE:
-            const textNode = input as Text
-            const placeholderNode = document.createElement('div')
+            textNode = input as Text
+            placeholderNode = document.createElement('div')
 
             if (textNode.parentElement) {
                 textNode.parentElement.insertBefore(placeholderNode, textNode)
@@ -55,12 +64,12 @@ const setText = (input: Element | Text | ChildNodeSpan | string, newText: string
             break
 
         case Node.ELEMENT_NODE:
-            const elementNode = input as Element
+            elementNode = input as Element
             elementNode.innerHTML = newText
             break
 
         case ChildNodeSpan.CHILD_NODE_SPAN:
-            const span = input as ChildNodeSpan
+            span = input as ChildNodeSpan
             span.replaceSpan(newText)
             break
     }
@@ -252,7 +261,7 @@ export class ChildNodeSpan {
     }
 }
 
-const makePositions = (template: ChildNodePredicate, currentIndex: number = 0): [ChildNodePredicate, ChildNodePredicate] => {
+const makePositions = (template: ChildNodePredicate, currentIndex = 0): [ChildNodePredicate, ChildNodePredicate] => {
     const fromSkip: ChildNodePredicate = {
         type: 'predicate',
         value: template.value,

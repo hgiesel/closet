@@ -15,7 +15,7 @@ export const isActive = <T extends CardPreset>({ num }: TagNode, { preset }: Int
         case 0:
             return true
         default:
-            if (!preset.hasOwnProperty('cardNumber')) {
+            if (!Object.prototype.hasOwnProperty.call(preset, 'cardNumber')) {
                 return false
             }
 
@@ -28,6 +28,9 @@ export const isActiveGetRange = <T extends CardPreset>({ key, num, fullOccur }: 
     const topRangeKeyword = 'flashcardActiveTop'
     const constantZero = constantGet(0)
 
+    let bottomRange = null
+    let topRange = null
+
     switch (num) {
         case null:
             return false
@@ -38,13 +41,18 @@ export const isActiveGetRange = <T extends CardPreset>({ key, num, fullOccur }: 
                 return false
             }
 
-            const bottomRange = cache.get<StoreGetter<number>>(bottomRangeKeyword, constantZero)
+            bottomRange = cache.get<StoreGetter<number>>(bottomRangeKeyword, constantZero)
                 .get(key, preset.cardNumber, fullOccur)
 
-            const topRange = cache.get<StoreGetter<number>>(topRangeKeyword, constantZero)
+            topRange = cache.get<StoreGetter<number>>(topRangeKeyword, constantZero)
                 .get(key, preset.cardNumber, fullOccur)
 
-            return isActiveWithinRange(preset.cardNumber, num, bottomRange, topRange)
+            return isActiveWithinRange(
+                preset.cardNumber,
+                num,
+                bottomRange,
+                topRange,
+            )
     }
 }
 

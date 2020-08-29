@@ -4,6 +4,8 @@ const paramPattern = /%(.)/gu
 const defOptions = { separators: [{ sep: '::', max: 2 }], capture: true }
 
 const matcher = (tag: TagNode) => (match: string, p1: string) => {
+    let num = null
+
     switch (p1) {
         case '%':
             return p1
@@ -19,7 +21,7 @@ const matcher = (tag: TagNode) => (match: string, p1: string) => {
             return tag.fullKey
 
         default:
-            const num = Number(p1)
+            num = Number(p1)
 
             return Number.isNaN(num)
                 ? match

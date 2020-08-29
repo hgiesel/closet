@@ -18,6 +18,7 @@ export interface ProcessorOutput {
 export interface DataOptions {
     separators: Array<string | Partial<Separator>>
     capture: boolean
+    [k: string]: unknown
 }
 
 export interface RoundInfo {

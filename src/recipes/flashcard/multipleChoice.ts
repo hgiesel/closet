@@ -78,8 +78,7 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
-    // @ts-ignore
-    const shuffler: Eval<T, V | void> = sequence(getValues, sortInStrategy)
+    const shuffler: Eval<T, V | void> = sequence(getValues as any, sortInStrategy) as Eval<T, V | void>
 
     const front = listStylizeMaybe(frontStylizer, shuffler)
     const back = listStylizeMaybe(backStylizer, shuffler)

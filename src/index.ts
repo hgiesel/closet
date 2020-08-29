@@ -13,18 +13,18 @@ import type { TagRenderer, TemplateInfo, IterationInfo, ResultInfo } from './tem
 import type { TagNode } from './template/tags'
 import type { TagAccessor, TagProcessor, RoundInfo, DataOptions, ProcessorOutput } from './template/types'
 
-export type Internals<P extends object> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo & RoundInfo
-export type DeferredInternals<P extends object> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo
-export type AftermathInternals<P extends object> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo
-export type DeferredEntry<P extends object> = DefEntry<DeferredInternals<P>>
-export type AftermathEntry<P extends object> = DefEntry<AftermathInternals<P>>
+export type Internals<P extends Record<string, unknown>> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo & RoundInfo
+export type DeferredInternals<P extends Record<string, unknown>> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo
+export type AftermathInternals<P extends Record<string, unknown>> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo
+export type DeferredEntry<P extends Record<string, unknown>> = DefEntry<DeferredInternals<P>>
+export type AftermathEntry<P extends Record<string, unknown>> = DefEntry<AftermathInternals<P>>
 
-export type Registrar<P extends object> = RegistrarApi<TagNode, Internals<P>, DataOptions>
-export type Filters<P extends object> = FilterApi<TagNode, Internals<P>>
+export type Registrar<P extends Record<string, unknown>> = RegistrarApi<TagNode, Internals<P>, DataOptions>
+export type Filters<P extends Record<string, unknown>> = FilterApi<TagNode, Internals<P>>
 export type { DataOptions } from './template/types'
 
-export type Filter<P extends object> = FilterType<TagNode, Internals<P>>
-export type WeakFilter<P extends object> = WeakFilterType<TagNode, Internals<P>>
+export type Filter<P extends Record<string, unknown>> = FilterType<TagNode, Internals<P>>
+export type WeakFilter<P extends Record<string, unknown>> = WeakFilterType<TagNode, Internals<P>>
 export type { FilterResult, WeakFilterResult, FilterApi } from './filterManager/filters'
 
 const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => filterResult.ready
@@ -49,9 +49,9 @@ interface ClosetEnvironment {
     [closetEnvironmentName]: StorageType<unknown>
 }
 
-export class FilterManager<P extends object> extends MetaFilterManager<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> implements TagRenderer {
-    static make(preset: object = {}, memory: StorageType<unknown> = new Map()) {
-        const environment = !globalThis.hasOwnProperty(closetEnvironmentName)
+export class FilterManager<P extends Record<string, unknown>> extends MetaFilterManager<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> implements TagRenderer {
+    static make(preset: Record<string, unknown> = {}, memory: StorageType<unknown> = new Map()) {
+        const environment = !Object.prototype.hasOwnProperty.call(globalThis, closetEnvironmentName)
             ? (globalThis as typeof globalThis & Partial<ClosetEnvironment>)[closetEnvironmentName] = new Map()
             : (globalThis as typeof globalThis & Partial<ClosetEnvironment>)[closetEnvironmentName]
 

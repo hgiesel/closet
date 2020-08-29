@@ -176,9 +176,17 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
                     /* active */,
                     ...rest
                 ] of existingShapesFilter(existingShapes, draw)) {
+
+                    let labelTxt = null,
+                        x = null,
+                        y = null,
+                        width = null,
+                        height = null,
+                        newRect = null
+
                     switch (shapeType) {
                         case 'rect':
-                            const [
+                            [
                                 labelTxt,
                                 x,
                                 y,
@@ -186,11 +194,12 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
                                 height,
                             ] = rest
 
-                            const newRect = Rect.make(draw)
+                            newRect = Rect.make(draw)
                             newRect.labelText = labelTxt
                             newRect.pos = [x, y, width, height]
 
                             makeInteractive(draw, newRect)
+                            break
 
                         default:
                             // no other shapes yet

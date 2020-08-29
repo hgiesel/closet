@@ -20,7 +20,7 @@ import {
     RegistrarApi,
 } from './registrar'
 
-export interface ManagerInfo<F extends Filterable, T,I,R extends Readiable, X, D extends object, P extends object> {
+export interface ManagerInfo<F extends Filterable, T,I,R extends Readiable, X, D extends Record<string, unknown>, P extends Record<string, unknown>> {
     filters: FilterApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R>
     options: Storage<Partial<D>>
     registrar: RegistrarApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R, D>
@@ -49,9 +49,9 @@ export class MetaFilterManager<
     T,
     I,
     R extends Readiable,
-    X extends object,
-    D extends object,
-    P extends object,
+    X extends Record<string, unknown>,
+    D extends Record<string, unknown>,
+    P extends Record<string, unknown>,
 > {
     protected readonly filters: FilterApi<F, ManagerInfo<F,T,I,R,X,D,P> & T & I & R>
     protected readonly options: Storage<Partial<D>>

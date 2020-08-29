@@ -45,8 +45,7 @@ export class Storage<D> {
     }
 
     lazy<T extends D>(name: string, lazyFunc: () => T): T {
-        // @ts-ignore
-        return this.get(name, null) || this.fold(name, lazyFunc, null)
+        return this.get(name, null as unknown as T) ?? this.fold(name, lazyFunc, null as unknown as T)
     }
 
     over<T extends D, X>(name: string, overFunc: (overParam: T) => X, mempty: T): X {

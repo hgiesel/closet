@@ -10,8 +10,7 @@ export const listStylize = <T extends Record<string, unknown>>(
     stylizer: Stylizer,
     toList: Eval<T, StyleList>,
 ): WeakFilter<T> => (tag: TagNode, internals: Internals<T>) => internals.ready
-    // @ts-ignore
-    ? stylizer.stylize(...transpose(toList(tag, internals)))
+    ? stylizer.stylize(...transpose(toList(tag, internals)) as [any, ...any[]])
     : { ready: false }
 
 export const listStylizeMaybe = <T extends Record<string, unknown>>(
@@ -28,6 +27,5 @@ export const listStylizeMaybe = <T extends Record<string, unknown>>(
         return { ready: false }
     }
 
-    // @ts-ignore
-    return stylizer.stylize(...transpose(maybeValues))
+    return stylizer.stylize(...transpose(maybeValues) as [any, ...any[]])
 }

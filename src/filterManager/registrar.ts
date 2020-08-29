@@ -1,7 +1,7 @@
 import { Filterable, FilterApi, Readiable, WeakFilter } from './filters'
 import { Storage } from './storage'
 
-export class RegistrarApi<F extends Filterable, T extends Readiable, D extends object> {
+export class RegistrarApi<F extends Filterable, T extends Readiable, D extends Record<string, unknown>> {
     private filters: FilterApi<F,T>
     private options: Storage<Partial<D>>
 

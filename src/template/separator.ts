@@ -27,11 +27,19 @@ export function splitValues(text: string, seps: Separator[]): any {
             currentSplit,
             rest,
             quit,
-        ] = pos < 0 || splits.length + 1 === max
-            ? [textSplit, '', true]
-            : [textSplit.slice(0, pos), textSplit.slice(pos + sep.length), false]
+        ]: [string, string, boolean] = pos < 0 || splits.length + 1 === max
+            ? [
+                textSplit,
+                '',
+                true,
+            ]
+            : [
+                textSplit.slice(0, pos),
+                textSplit.slice(pos + sep.length),
+                false,
+            ]
 
-        const trimmed = trim
+        const trimmed: string = trim
             ? currentSplit.trim()
             : currentSplit
 

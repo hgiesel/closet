@@ -19,14 +19,15 @@ export function splitValues(text: string, seps: Separator[]): any {
 
     const splits = []
     let textSplit = text
+    let quit = false
 
-    while (true) {
+    while (!quit) {
         const pos = textSplit.indexOf(sep)
 
         const [
             currentSplit,
             rest,
-            quit,
+            innerQuit,
         ]: [string, string, boolean] = pos < 0 || splits.length + 1 === max
             ? [
                 textSplit,
@@ -47,11 +48,8 @@ export function splitValues(text: string, seps: Separator[]): any {
             splits.push(trimmed)
         }
 
-        if (quit) {
-            break
-        }
-
         textSplit = rest
+        quit = innerQuit
     }
 
     return splits.map(v => splitValues(v, nextSeps))

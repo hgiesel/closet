@@ -52,8 +52,8 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
     sequence?: (getValues: Eval<T, V>, sortIn: SortInStrategy) => Eval<T, V | void>
 
     sortInStrategy?: SortInStrategy,
-    categorySeparator?: WeakSeparator,
-    valueSeparator?: WeakSeparator,
+    categorySeparator?: string,
+    valueSeparator?: string,
 
     flashcardTemplate?: FlashcardTemplate<T>,
 } = {})  => {
@@ -72,8 +72,8 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
         sequence = acrossTag,
         sortInStrategy = topUp,
 
-        categorySeparator = { sep: '::' },
-        valueSeparator = { sep: '||' },
+        categorySeparator = '::',
+        valueSeparator = '||',
 
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
@@ -83,7 +83,15 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
     const front = listStylizeMaybe(frontStylizer, shuffler)
     const back = listStylizeMaybe(backStylizer, shuffler)
 
-    const multipleChoiceSeparators = { separators: [categorySeparator, valueSeparator] }
+    const multipleChoiceSeparators = {
+        separators: [{
+            sep: categorySeparator,
+        }, {
+            sep: valueSeparator,
+            keepEmpty: false,
+        }],
+    }
+
     const multipleChoiceRecipe = flashcardTemplate(frontInactive, backInactive)
 
     const trueContexter = listStylize(inactiveStylizer, contexter)

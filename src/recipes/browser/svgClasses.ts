@@ -213,14 +213,16 @@ export class Rect implements Shape {
         return this.rect
     }
 
-    readjust(forSVG: SVG) {
-        const scaleFactors = forSVG.scaleFactors
+    readjust(forSVG?: SVG) {
+        const scaleFactors = forSVG
+            ? forSVG.scaleFactors
+            : [1, 1]
 
         this.scalingFactorX = scaleFactors[0]
         this.scalingFactorY = scaleFactors[1]
     }
 
-    resize(forSVG: SVG) {
+    resize(forSVG?: SVG) {
         const savePos = this.pos
 
         this.readjust(forSVG)
@@ -246,7 +248,6 @@ export class Rect implements Shape {
             this.height,
         ]
     }
-
     set pos([x, y, width, height]: [number, number, number, number]) {
         this.width = width
         this.height = height
@@ -255,33 +256,50 @@ export class Rect implements Shape {
         this.y = y
     }
 
-    set width(i: number) {
-        const stringified = String(Math.max(10, i) * this.scalingFactorX)
-        this.rect.setAttributeNS(null, 'width', stringified)
-        this.label.setAttributeNS(null, 'width', stringified)
+    get scaled(): [number, number, number, number] {
+        return [
+            Number(this.rect.getAttributeNS(null, 'x')),
+            Number(this.rect.getAttributeNS(null, 'y')),
+            Number(this.rect.getAttributeNS(null, 'width')),
+            Number(this.rect.getAttributeNS(null, 'height')),
+        ]
     }
-    get width(): number { return Number(this.rect.getAttributeNS(null, 'width')) / this.scalingFactorX }
 
-    set height(i: number) {
-        const stringified = String(Math.max(10, i) * this.scalingFactorY)
-        this.rect.setAttributeNS(null, 'height', stringified)
-        this.label.setAttributeNS(null, 'height', stringified)
+    get x(): number {
+        return Number(this.rect.getAttributeNS(null, 'x')) / this.scalingFactorX
     }
-    get height(): number { return Number(this.rect.getAttributeNS(null, 'height')) / this.scalingFactorY }
-
     set x(i: number) {
         const scaledX = i * this.scalingFactorX
         this.rect.setAttributeNS(null, 'x', String(scaledX))
         this.label.setAttributeNS(null, 'x', String((scaledX + this.width / 2 * this.scalingFactorX)))
     }
-    get x(): number { return Number(this.rect.getAttributeNS(null, 'x')) / this.scalingFactorX }
 
+    get y(): number {
+        return Number(this.rect.getAttributeNS(null, 'y')) / this.scalingFactorY
+    }
     set y(i: number) {
         const scaledY = i * this.scalingFactorY
         this.rect.setAttributeNS(null, 'y', String(scaledY))
         this.label.setAttributeNS(null, 'y', String((scaledY + this.height / 2 * this.scalingFactorY)))
     }
-    get y(): number { return Number(this.rect.getAttributeNS(null, 'y')) / this.scalingFactorY }
+
+    get width(): number {
+        return Number(this.rect.getAttributeNS(null, 'width')) / this.scalingFactorX
+    }
+    set width(i: number) {
+        const stringified = String(Math.max(10, i) * this.scalingFactorX)
+        this.rect.setAttributeNS(null, 'width', stringified)
+        this.label.setAttributeNS(null, 'width', stringified)
+    }
+
+    get height(): number {
+        return Number(this.rect.getAttributeNS(null, 'height')) / this.scalingFactorY
+    }
+    set height(i: number) {
+        const stringified = String(Math.max(10, i) * this.scalingFactorY)
+        this.rect.setAttributeNS(null, 'height', stringified)
+        this.label.setAttributeNS(null, 'height', stringified)
+    }
 
     /////////////////// on rect
 
@@ -315,4 +333,3 @@ export class Rect implements Shape {
         return this.labelText
     }
 }
-

@@ -2,7 +2,18 @@ import { Rect } from './svgClasses'
 import { getOffsets } from './utils'
 import type { Reverser } from './scaleZoom'
 
-export const onMouseMoveResize = (reverser: Reverser, currentShape: Rect, left: boolean, right: boolean, top: boolean, bottom: boolean, downX: number, downY: number) => (event: MouseEvent) => {
+export const onMouseMoveResize = (
+    reverser: Reverser,
+    currentShape: Rect,
+    left: boolean,
+    right: boolean,
+    top: boolean,
+    bottom: boolean,
+    downX: number,
+    downY: number,
+) => (
+    event: MouseEvent,
+) => {
     const [moveX, moveY] = reverser(getOffsets(event))
 
     if (left && moveX < downX) {
@@ -44,14 +55,19 @@ const perDirection = <T>(
     top: (shape: Rect) => T,
     bottom: (shape: Rect) => T,
     none: (shape: Rect) => T,
-) => (rect: Rect, downX: number, downY: number): T => {
+) => (
+    rect: Rect,
+    downX: number,
+    downY: number,
+): T => {
     const borderOffset = 5
+    const [x, y, width, height] = rect.scaled
 
-    const offsetLeft = downX - rect.x
-    const offsetRight = (rect.x + rect.width) - downX
+    const offsetLeft = downX - x
+    const offsetRight = (x + width) - downX
 
-    const offsetTop = downY - rect.y
-    const offsetBottom = (rect.y + rect.height) - downY
+    const offsetTop = downY - y
+    const offsetBottom = (y + height) - downY
 
     const result = offsetLeft <= borderOffset
         ? offsetTop <= borderOffset
@@ -105,6 +121,8 @@ export const adaptCursor = (reverser: Reverser, currentShape: Rect) => (event: M
 
     else {
         const [downX, downY] = reverser(getOffsets(event))
-        currentShape.rect.style.cursor = getCursor(currentShape, downX, downY)
+        const cursor = getCursor(currentShape, downX, downY)
+
+        currentShape.rect.style.cursor = cursor
     }
 }

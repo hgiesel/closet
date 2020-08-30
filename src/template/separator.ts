@@ -2,6 +2,7 @@ export interface Separator {
     sep: string
     max: number
     trim: boolean
+    keepEmpty: boolean
 }
 
 export type WeakSeparator = Partial<Separator> | string
@@ -12,34 +13,52 @@ export function splitValues(text: string, seps: Separator[]): any {
     }
 
     const [
-        { sep, max, trim },
+        { sep, max, trim, keepEmpty },
         ...nextSeps
     ] = seps
 
     const splits = []
     let textSplit = text
 
-    do {
+    while (true) {
         const pos = textSplit.indexOf(sep)
 
         const [
             currentSplit,
             rest,
-        ] = pos >= 0
-            ? [textSplit.slice(0, pos), textSplit.slice(pos + sep.length)]
-            : [textSplit, '']
+            quit,
+        ] = pos < 0 || splits.length + 1 === max
+            ? [textSplit, '', true]
+            : [textSplit.slice(0, pos), textSplit.slice(pos + sep.length), false]
 
-        splits.push(trim
+        const trimmed = trim
             ? currentSplit.trim()
             : currentSplit
-        )
+
+        if (keepEmpty || trimmed.length >= 1) {
+            splits.push(trimmed)
+        }
+
+        if (quit) {
+            break
+        }
 
         textSplit = rest
-    } while (textSplit.length > 0 && splits.length < max)
+    }
 
     return splits.map(v => splitValues(v, nextSeps))
 }
 
-export const weakSeparatorToSeparator = (v: WeakSeparator): Separator => typeof v === 'string'
-    ? { sep: v, max: Infinity, trim: false }
-    : { sep: v.sep ?? '::', max: v.max ?? Infinity, trim: v.trim ?? false }
+export const weakSeparatorToSeparator = (ws: WeakSeparator): Separator => typeof ws === 'string'
+    ? {
+        sep: ws,
+        max: Infinity,
+        trim: false,
+        keepEmpty: true,
+    }
+    : {
+        sep: ws.sep ?? '::',
+        max: ws.max ?? Infinity,
+        trim: ws.trim ?? false,
+        keepEmpty: ws.keepEmpty ?? true,
+    }

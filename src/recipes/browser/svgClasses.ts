@@ -68,8 +68,9 @@ export class SVG {
 
         // Adopt images zoom and transform attributes
         // both can be used to scale
-        svg.style.zoom = image.style.zoom
-        svg.style.transform = image.style.transform
+        const imageStyle = window.getComputedStyle(image)
+        svg.style.zoom = imageStyle.getPropertyValue('zoom')
+        svg.style.transform = imageStyle.getPropertyValue('transform')
 
         container.appendChild(svg)
         container.classList.add('closet__occlusion-container')

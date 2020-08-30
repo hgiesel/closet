@@ -3,12 +3,16 @@ import { id } from '../utils'
 
 import { SVG, Shape, ShapeDefinition, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
+import { reverseEffects } from './scaleZoom'
 import { appendStyleTag, getImages, getHighestNum, getOffsets, imageLoadCallback, svgKeyword, svgCss } from './utils'
 
 import { setupMenu, enableAsMenuTrigger, menuCss } from './menu'
 import { rectKeyword } from './rect'
 
-const clickInsideShape = (draw: SVG, event: MouseEvent) => {
+const clickInsideShape = (
+    draw: SVG,
+    event: MouseEvent,
+) => {
     /* assumes its rect */
     const rect = Rect.wrap(event.target as SVGRectElement)
 
@@ -17,12 +21,14 @@ const clickInsideShape = (draw: SVG, event: MouseEvent) => {
         return
     }
 
-    const [downX, downY] = getOffsets(event)
+    const reverser = reverseEffects(window.getComputedStyle(draw.image))
+    const [downX, downY] = reverser(getOffsets(event))
+
     const resizeParameters = getResizeParameters(rect, downX, downY)
 
     const action = resizeParameters.includes(true)
-        ? onMouseMoveResize(rect, ...resizeParameters)
-        : onMouseMoveMove(rect, rect.x, rect.y, downX, downY)
+        ? onMouseMoveResize(reverser, rect, ...resizeParameters)
+        : onMouseMoveMove(reverser, rect, rect.x, rect.y, downX, downY)
 
     draw.svg.addEventListener('mousemove', action)
     draw.svg.addEventListener('mouseup', (innerEvent: MouseEvent) => {
@@ -35,7 +41,8 @@ const makeInteractive = (
     draw: SVG,
     newRect: Rect,
 ) => {
-    newRect.rect.addEventListener('mousemove', adaptCursor)
+    const reverser = reverseEffects(window.getComputedStyle(draw.image))
+    newRect.rect.addEventListener('mousemove', adaptCursor(reverser, newRect))
 
     const shapeMenu = setupMenu('occlusion-shape-menu', [{
         label: 'Change Label',
@@ -56,7 +63,8 @@ const makeInteractive = (
 }
 
 const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
-    const [downX, downY] = getOffsets(event)
+    const reverser = reverseEffects(window.getComputedStyle(draw.image))
+    const [downX, downY] = reverser(getOffsets(event))
 
     const newRect = Rect.make()
 
@@ -68,7 +76,8 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
 
     makeInteractive(draw, newRect)
 
-    const resizer = onMouseMoveResize(newRect, true, true, true, true, downX, downY)
+    const resizer = onMouseMoveResize(reverser, newRect, true, true, true, true, downX, downY)
+
     draw.svg.addEventListener('mousemove', resizer)
     draw.svg.addEventListener('mouseup', () => {
         draw.svg.removeEventListener('mousemove', resizer)

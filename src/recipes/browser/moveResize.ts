@@ -1,8 +1,9 @@
 import { Rect } from './svgClasses'
 import { getOffsets } from './utils'
+import type { Reverser } from './scaleZoom'
 
-export const onMouseMoveResize = (currentShape: Rect, left: boolean, right: boolean, top: boolean, bottom: boolean, downX: number, downY: number) => (event: MouseEvent) => {
-    const [moveX, moveY] = getOffsets(event)
+export const onMouseMoveResize = (reverser: Reverser, currentShape: Rect, left: boolean, right: boolean, top: boolean, bottom: boolean, downX: number, downY: number) => (event: MouseEvent) => {
+    const [moveX, moveY] = reverser(getOffsets(event))
 
     if (left && moveX < downX) {
         currentShape.x = moveX
@@ -23,8 +24,8 @@ export const onMouseMoveResize = (currentShape: Rect, left: boolean, right: bool
     }
 }
 
-export const onMouseMoveMove = (currentShape: Rect, startX: number, startY: number, downX: number, downY: number) => (event: MouseEvent): void => {
-    const [moveX, moveY] = getOffsets(event)
+export const onMouseMoveMove = (reverser: Reverser, currentShape: Rect, startX: number, startY: number, downX: number, downY: number) => (event: MouseEvent): void => {
+    const [moveX, moveY] = reverser(getOffsets(event))
 
     const newX = startX + (moveX - downX)
     const newY = startY + (moveY - downY)
@@ -97,25 +98,13 @@ const getCursor = perDirection<string>(
     () => 'move',
 )
 
-export const adaptCursor = (event: MouseEvent) => {
-    const rect = Rect.wrap(event.target as SVGRectElement)
-    const rawElement = rect.rect
-
+export const adaptCursor = (reverser: Reverser, currentShape: Rect) => (event: MouseEvent) => {
     if (event.shiftKey) {
-        rawElement.style.cursor = 'no-drop'
+        currentShape.rect.style.cursor = 'no-drop'
     }
+
     else {
-        const [downX, downY] = getOffsets(event)
-
-        rawElement.style.cursor = getCursor(rect, downX, downY)
-    }
-}
-
-export const adaptCursorKeydown = (event: KeyboardEvent) => {
-    const rect = Rect.wrap(event.target as SVGRectElement)
-    const rawElement = rect.rect
-
-    if (event.shiftKey) {
-        rawElement.style.cursor = 'no-drop'
+        const [downX, downY] = reverser(getOffsets(event))
+        currentShape.rect.style.cursor = getCursor(currentShape, downX, downY)
     }
 }

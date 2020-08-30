@@ -23,11 +23,28 @@ export const getImages = (txt: string) => {
 }
 
 export const getOffsets = (event: MouseEvent): [number, number] => {
-    // layerX / layerY are deprecated, however offsetX/Y gives wrong values work on Firefox
-    const downX = (event as any).layerX || event.offsetX
-    const downY = (event as any).layerY || event.offsetY
+    if (navigator.userAgent.search('Chrome') >= 0) {
+        return [
+            event.offsetX,
+            event.offsetY,
+        ]
+    }
+    else /* Firefox support */ {
+        // layerX/Y are deprecated, however offsetX/Y give wrong values on Firefox
+        // this does not work when using transform
+        const target = (event.currentTarget as Element)
 
-    return [downX, downY]
+        const boundingRect = target.getBoundingClientRect()
+        const parentRect = (target.parentElement as Element).getBoundingClientRect()
+
+        const offsetX = (event as any).layerX - (parentRect.left - boundingRect.left)
+        const offsetY = (event as any).layerY - (parentRect.top - boundingRect.top)
+
+        return [
+            offsetX,
+            offsetY,
+        ]
+    }
 }
 
 export const imageLoadCallback = (query: string, callback: (event: Event) => void) => {

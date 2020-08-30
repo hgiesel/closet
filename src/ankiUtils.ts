@@ -67,7 +67,11 @@ export const memoryMap = (memoryKey: string): MemoryMap => {
 export const clearSessionStorage = (key: string): void => {
     // this will clear Anki Persistence, however only the sessionStorage implementation
     // the windowKey implementation may persist
-    sessionStorage.removeItem(`github.com/SimonLammer/anki-persistence/${key}`)
+    // throws an exception within QWebView
+    try {
+        sessionStorage.removeItem(`github.com/SimonLammer/anki-persistence/${key}`)
+    }
+    catch {}
 }
 
 export const getQaChildNodes = (): ChildNodeSpan[] | null => {

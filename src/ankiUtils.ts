@@ -30,6 +30,7 @@ export const preset = (cardType: string, tagsFull: string, side: 'front' | 'back
 })
 
 interface MemoryMap {
+    key: string,
     map: Map<string, unknown>
     writeBack: () => void
 }
@@ -55,11 +56,16 @@ export const memoryMap = (memoryKey: string): MemoryMap => {
     const map = getPersistentMap(persistence, memoryKey)
 
     return {
+        key: memoryKey,
         map: map,
         writeBack: (): void => {
             setPersistentMap(persistence, memoryKey, map)
         },
     }
+}
+
+export const clearSessionStorage = (key: string): void => {
+    sessionStorage.removeItem(`github.com/SimonLammer/anki-persistence/${key}`)
 }
 
 export const getQaChildNodes = (): ChildNodeSpan[] | null => {

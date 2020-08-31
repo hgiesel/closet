@@ -7,9 +7,7 @@ import typescript from '@rollup/plugin-typescript'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 
-import {
-    typescriptOptions,
-} from './rollup.config.js'
+import * as tsconfig from '../tsconfig.json'
 
 export default {
     input: 'index.ts',
@@ -19,7 +17,7 @@ export default {
         name: 'Closet',
     },
     plugins: [
-        typescript(typescriptOptions),
+        typescript(tsconfig),
         resolve(),
         commonjs(),
     ],

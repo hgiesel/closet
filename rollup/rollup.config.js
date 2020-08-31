@@ -19,13 +19,3 @@ export const stripOptions = {
     sourceMap: true,
     include: '**/*.ts',
 }
-
-export const typescriptOptions = {
-    strict: true,
-    downlevelIteration: true,
-    target: 'es5',
-    lib: [
-        'dom',
-        'es2019',
-    ],
-}

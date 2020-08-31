@@ -1,6 +1,6 @@
 name: Generators
 code: |
   filterManager.install(
-    Closet.recipes.generateInteger({ tagname: 'gen' }),
-    Closet.recipes.generateReal({ tagname: 'genr' }),
+    closet.recipes.generateInteger({ tagname: 'gen' }),
+    closet.recipes.generateReal({ tagname: 'genr' }),
   )

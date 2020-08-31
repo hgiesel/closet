@@ -1,3 +1,3 @@
 name: Ordering
 code: |
-  filterManager.install(Closet.recipes.order({ tagname: 'ord' }))
+  filterManager.install(closet.recipes.order({ tagname: 'ord' }))

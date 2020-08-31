@@ -8,7 +8,12 @@ import { keySeparationPattern } from '../template/parser/tagBuilder'
 
 #################################
 
-start -> key num occur {%
+start -> allStar {% id %}
+       | pattern {% id %}
+
+allStar -> %allStar {% () => () => true %}
+
+pattern -> key num occur {%
     ([keyPattern, numPred, occurPred]) => (key: string, num: number | null | undefined, fullOccur: number) => {
         if (typeof num === 'undefined') {
             const match = key.match(keySeparationPattern)

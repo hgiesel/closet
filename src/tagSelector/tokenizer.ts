@@ -1,6 +1,6 @@
-import moo from 'moo'
+import { compile } from 'moo'
 
-export const tagSelectorTokenizer = moo.compile({
+export const tagSelectorTokenizer = compile({
     text: {
         match: /[a-zA-Z_]+/u,
     },
@@ -24,6 +24,10 @@ export const tagSelectorTokenizer = moo.compile({
     // has to come before star
     multiplierSeq: {
         match: /\*n\+/u,
+    },
+
+    allStar: {
+        match: /^\*$/u,
     },
 
     numStar: {

@@ -1,9 +1,9 @@
-import nearley from 'nearley'
+import { Grammar, Parser } from 'nearley'
 import grammar from './grammar'
 
 export type TagPredicate = (key: string, num: number | null | undefined, occur: number) => boolean
 
-const tagSelectorGrammar = nearley.Grammar.fromCompiled(grammar)
+const tagSelectorGrammar = Grammar.fromCompiled(grammar)
 
 export const parseTagSelector = (selector: string): TagPredicate => {
     /**
@@ -22,7 +22,7 @@ export const parseTagSelector = (selector: string): TagPredicate => {
      * but it allows all three
      */
 
-    const parser = new nearley.Parser(tagSelectorGrammar)
+    const parser = new Parser(tagSelectorGrammar)
 
     try {
         const parsed = parser.feed(selector).results

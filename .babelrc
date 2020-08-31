@@ -1,0 +1,16 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env", {
+                "targets": {
+                    "browsers": "last 2 versions, ie 10-11"
+                }
+            }
+        ],
+        "@babel/preset-typescript"
+    ],
+    "plugins": [
+        "@babel/plugin-proposal-class-properties"
+    ],
+    "sourceMaps": true
+}

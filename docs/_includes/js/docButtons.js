@@ -34,7 +34,7 @@ const readyRenderButton = (
         lastButtons[id] = currentButtonIndex
 
         // render
-        const tmpl = Closet.Template.make(code)
+        const tmpl = closet.Template.make(code)
         filterManager.switchPreset(preset)
 
         tmpl.render(filterManager, output => theDisplay.innerHTML = output)

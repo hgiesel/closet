@@ -49,7 +49,7 @@ code: |
     background-color: coral;
   }`
 
-  const wrappedMultipleChoiceShow = Closet.wrappers.aftermath(Closet.recipes.multipleChoice.show, (e, inter) => {
+  const wrappedMultipleChoiceShow = closet.wrappers.aftermath(closet.recipes.multipleChoice.show, (e, inter) => {
     document.querySelectorAll('.cl--child')
       .forEach(v => v.addEventListener('click', () => {
         const container = document.querySelector('.cl--container')
@@ -62,7 +62,7 @@ code: |
     const keyword = 'fancyMultipleChoice'
 
     if (!inter.environment.has(keyword)) {
-      Closet.browser.appendStyleTag(fancyMultipleChoiceStyle)
+      closet.browser.appendStyleTag(fancyMultipleChoiceStyle)
       inter.environment.set(keyword, true)
     }
   })
@@ -71,12 +71,12 @@ code: |
 
   filterManager.install(wrappedMultipleChoiceShow({
     tagname: 'mc',
-    frontStylizer: Closet.Stylizer.make({
+    frontStylizer: closet.Stylizer.make({
       mapper: wrapItem,
       separator: '',
       processor: (v) => `<div class="cl--container">${v}</div>`,
     }),
-    backStylizer: Closet.Stylizer.make({
+    backStylizer: closet.Stylizer.make({
       mapper: wrapItem,
       separator: '',
       processor: (v) => `<div class="cl--container cl--reveal">${v}</div>`,

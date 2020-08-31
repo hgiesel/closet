@@ -10,6 +10,7 @@ import {
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
+import babel from '@rollup/plugin-babel'
 import strip from '@rollup/plugin-strip'
 
 import {
@@ -31,9 +32,15 @@ export default {
         sourcemap: !production,
     },
     plugins: [
+        resolve({
+            jsnext: true,
+            main: true,
+            browser: true
+        }),
+        commonjs({
+            include: 'node_modules/**'
+        }),
         typescript(compilerOptions),
-        resolve(),
-        commonjs(),
         production && strip(stripOptions),
         production && terser(terserOptions),
     ],

@@ -6,7 +6,7 @@
 
 {% assign fmName = include.theId | replace: "-", "" | replace: "_", "" %}
 
-const {{ fmName }}filterManager = Closet.FilterManager.make()
+const {{ fmName }}filterManager = closet.FilterManager.make()
 
 const {{ fmName }}func = (filterManager) => {
     {{ fmCode }}

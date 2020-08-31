@@ -1,6 +1,6 @@
 name: Click to reveal cloze
 code: |
-  Closet.browser.appendStyleTag(`
+  closet.browser.appendStyleTag(`
   .cl--obscure-hint {
     filter: blur(0.25em);
   }
@@ -22,7 +22,7 @@ code: |
     }
   }
 
-  const wrappedClozeShow = Closet.wrappers.aftermath(Closet.recipes.cloze.show, () => {
+  const wrappedClozeShow = closet.wrappers.aftermath(closet.recipes.cloze.show, () => {
     document.querySelectorAll('.cl--obscure')
     .forEach(tag => {
       tag.addEventListener('click', removeObscure, {
@@ -39,7 +39,7 @@ code: |
     return [`<span class="cl--obscure cl--obscure-fix cl--obscure-clickable"><span>${t.values[0]}</span></span>`]
   }
 
-  const frontStylizer = Closet.Stylizer.make({
+  const frontStylizer = closet.Stylizer.make({
     processor: v => `<span style="color: cornflowerblue">${v}</span>`,
   })
 

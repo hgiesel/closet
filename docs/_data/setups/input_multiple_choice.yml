@@ -49,14 +49,14 @@ code: |
     `
   }
 
-  const front = Closet.Stylizer.make({
+  const front = closet.Stylizer.make({
     separator: '<br />',
     mapper: createInputElement('')
   })
 
   const backClassName = 'closet-mc-right-answer'
 
-  const back = Closet.Stylizer.make({
+  const back = closet.Stylizer.make({
     separator: '<br />',
     mapper: createInputElement(backClassName),
   })
@@ -70,11 +70,11 @@ code: |
     const keyword = 'inputMultipleChoice'
 
     if (!internals.environment.post(keyword, () => true, false)) {
-      Closet.browser.appendStyleTag(inputMultipleChoiceStyle)
+      closet.browser.appendStyleTag(inputMultipleChoiceStyle)
     }
   }
 
-  const wrappedMultipleChoiceShow = Closet.wrappers.aftermath(Closet.recipes.multipleChoice.show, addHighlightCSS)
+  const wrappedMultipleChoiceShow = closet.wrappers.aftermath(closet.recipes.multipleChoice.show, addHighlightCSS)
 
   filterManager.install(wrappedMultipleChoiceShow({
     tagname: 'mc',

@@ -1,5 +1,7 @@
-{
-    "presets": [
+module.exports = api => {
+    api.cache(true)
+
+    const presets = [
         [
             "@babel/preset-env", {
                 "targets": {
@@ -7,10 +9,15 @@
                 }
             }
         ],
-        "@babel/preset-typescript"
-    ],
-    "plugins": [
+    ]
+
+    const plugins = [
         "@babel/plugin-proposal-class-properties"
-    ],
-    "sourceMaps": true
+    ]
+
+    return {
+        presets,
+        plugins,
+        "sourceMaps": true
+    }
 }

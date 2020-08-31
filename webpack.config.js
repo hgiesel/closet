@@ -2,15 +2,15 @@ const path = require('path')
 const Terser = require('terser-webpack-plugin')
 
 module.exports = (env, argv) => {
-    const destination = env.destination === 'docs'
+    const destination = env && env.destination === 'docs'
         ? path.resolve(__dirname, 'docs', 'assets', 'js')
-        : env.destination === 'anki'
+        : env && env.destination === 'anki'
         ? path.resolve(__dirname, 'anki', 'web')
         : path.resolve(__dirname, 'dist')
 
-    const filename = env.destination === 'docs' && argv.mode === 'production'
+    const filename = env && env.destination === 'docs' && argv.mode === 'production'
         ? 'main'
-        : env.destination === 'docs'
+        : env && env.destination === 'docs'
         ? 'dev'
         : 'closet'
 

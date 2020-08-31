@@ -1,4 +1,5 @@
 export {
     setListRecipe,
-    pickRecipe
+    pickRecipe,
+    pickIndexRecipe,
 } from './listStore'

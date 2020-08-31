@@ -19,6 +19,7 @@ import {
 import {
     setListRecipe,
     pickRecipe,
+    pickIndexRecipe,
 } from './sharedStore'
 
 import { debugRecipe } from './debug'
@@ -48,6 +49,7 @@ export const recipes: Recipes = {
 
     setList: setListRecipe,
     pick: pickRecipe,
+    pickIndex: pickIndexRecipe,
 
     debug: debugRecipe,
     meta: defRecipe,

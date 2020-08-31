@@ -64,14 +64,17 @@ export const pickRecipe = <T extends Record<string, unknown>>({
         (tag, internals) => (listStore) => {
             const result = []
 
+            if (tag.values.length < 2) {
+                return ''
+            }
+
             const [
                 key,
                 options,
-                uniq,
+                uniq = [],
             ] = tag.values
 
             const valueList = listStore.getList(key[0])
-
             const pickedKey = `pick:${tag.fullKey}:${tag.occur}:${tagname}:picked`
 
             const indices = internals.memory.lazy(pickedKey, () => {
@@ -98,6 +101,37 @@ export const pickRecipe = <T extends Record<string, unknown>>({
 
             for (const index of indices) {
                 result.push(valueList[index])
+            }
+
+            return stylizer.stylize(result)
+        },
+    ), {
+        separators: [separator, innerSeparator],
+    },
+)
+
+export const pickIndexRecipe = <T extends Record<string, unknown>>({
+    tagname = 'pick',
+    storeId = 'lists',
+    stylizer = Stylizer.make(),
+    separator = { sep: ',' },
+    innerSeparator = { sep: ':', trim: true },
+} = {}) => (registrar: Registrar<T>) => registrar.register(
+    tagname,
+    listStoreTemplate(
+        storeId,
+        (tag, _internals) => (listStore) => {
+            const result = []
+
+            for (const [storeKey, numIndexString] of tag.values) {
+                const valueList = listStore.getList(storeKey)
+                const numIndex = Number(numIndexString)
+
+                if (Number.isNaN(numIndex)) {
+                    continue
+                }
+
+                result.push(valueList[numIndex])
             }
 
             return stylizer.stylize(result)

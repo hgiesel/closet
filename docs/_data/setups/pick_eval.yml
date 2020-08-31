@@ -2,3 +2,4 @@ name: Pick and Eval value lists
 code: |
   filterManager.install(Closet.recipes.setList())
   filterManager.install(Closet.recipes.pick())
+  filterManager.install(Closet.recipes.pickIndex({ tagname: 'picki' }))

@@ -52,5 +52,3 @@ export const templateTokenizer = moo.states({
         },
     },
 })
-
-export default tokenizer

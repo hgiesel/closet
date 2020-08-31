@@ -14,9 +14,8 @@ import strip from '@rollup/plugin-strip'
 import {
     terserOptions,
     stripOptions,
-} from './rollup.config.js'
-
-import * as tsconfig from '../tsconfig.json'
+    compilerOptions,
+} from './rollup.config'
 
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
@@ -31,7 +30,7 @@ export default {
         sourcemap: false,
     },
     plugins: [
-        typescript(tsconfig),
+        typescript(compilerOptions),
         resolve(),
         commonjs(),
         production && strip(stripOptions),

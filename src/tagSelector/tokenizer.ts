@@ -58,5 +58,3 @@ export const tagSelectorTokenizer = moo.compile({
         match: ':',
     },
 })
-
-export default tagSelectorTokenizer

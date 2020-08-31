@@ -19,3 +19,6 @@ export const stripOptions = {
     sourceMap: true,
     include: '**/*.ts',
 }
+
+import * as tsconfig from '../tsconfig.json'
+export const compilerOptions = tsconfig.compilerOptions

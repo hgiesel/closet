@@ -1,5 +1,5 @@
 @{%
-import tagSelectorTokenizer from './tokenizer'
+import { tagSelectorTokenizer } from './tokenizer'
 import { keySeparationPattern } from '../template/parser/tagBuilder'
 %}
 

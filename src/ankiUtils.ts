@@ -35,43 +35,58 @@ interface MemoryMap {
     writeBack: () => void
 }
 
-const getPersistentMap = (persistence: AnkiPersistence | null, memoryKey: string): Map<string, unknown> => {
-    if (persistence && persistence.isAvailable()) {
-        const maybeMap = persistence.getItem(memoryKey) as Iterable<readonly [string, unknown]>
-        return new Map(maybeMap)
+const usesSessionStorage = (): boolean => {
+    // this detects whether Anki Persistence uses the sessionStorage implementation
+    // this definition is mostly from Anki Persistence source code
+    try {
+        if (typeof globalThis.sessionStorage === 'object') {
+            return true
+        }
+    }
+    catch {
+        return false
     }
 
-    return new Map()
+    // should never get here
+    return false
 }
 
-const setPersistentMap = (persistence: AnkiPersistence | null, memoryKey: string, value: Map<string, unknown>): void => {
-    if (persistence && persistence.isAvailable()) {
-        const persistentData = Array.from(value.entries())
-        persistence.setItem(memoryKey, persistentData)
-    }
-}
-
-export const memoryMap = (memoryKey: string): MemoryMap => {
+export const persistenceInterface = (side: 'front' | 'back') => (memoryKey: string): MemoryMap => {
     const persistence = (globalThis as typeof globalThis & Partial<ClosetPersistence>).Persistence ?? null
-    const map = getPersistentMap(persistence, memoryKey)
 
-    return {
+    const getPersistentMap = (): Map<string, unknown> => {
+        if (
+            persistence &&
+            persistence.isAvailable() &&
+            (side === 'back' || !usesSessionStorage())
+        ) {
+            const maybeMap = persistence.getItem(memoryKey) as Iterable<readonly [string, unknown]> 
+            return new Map(maybeMap)
+        }
+
+        return new Map()
+    }
+
+    const map = getPersistentMap()
+
+    const setPersistentMap = (): void => {
+        if (
+            persistence &&
+            persistence.isAvailable()
+        ) {
+            const persistentData = Array.from(map.entries())
+
+            persistence.setItem(memoryKey, persistentData)
+        }
+    }
+
+    const mmap = {
         key: memoryKey,
         map: map,
-        writeBack: (): void => {
-            setPersistentMap(persistence, memoryKey, map)
-        },
+        writeBack: setPersistentMap,
     }
-}
 
-export const clearSessionStorage = (key: string): void => {
-    // this will clear Anki Persistence, however only the sessionStorage implementation
-    // the windowKey implementation may persist
-    // throws an exception within QWebView
-    try {
-        sessionStorage.removeItem(`github.com/SimonLammer/anki-persistence/${key}`)
-    }
-    catch {}
+    return mmap
 }
 
 export const getQaChildNodes = (): ChildNodeSpan[] | null => {

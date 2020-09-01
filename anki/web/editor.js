@@ -1,13 +1,13 @@
 var EditorCloset = {
     imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,
 
-    editorOcclusion: Closet.browser.recipes.occlusionEditor({
+    editorOcclusion: closet.browser.recipes.occlusionEditor({
         acceptHandler: (shapes, draw) => {
             const shapeText = shapes.map(shape => shape.toText()).join("\n")
 
             const newIndices = [...new Set(shapes
                 .map(shape => shape.labelText)
-                .map(label => label.match(Closet.keySeparationPattern))
+                .map(label => label.match(closet.keySeparationPattern))
                 .filter(match => match)
                 .map(match => Number(match[2]))
                 .filter(maybeNumber => !Number.isNaN(maybeNumber))
@@ -23,7 +23,7 @@ var EditorCloset = {
         existingShapesFilter: (shapeDefs, draw) => {
             const indices = [...new Set(shapeDefs
                 .map(shape => shape[2])
-                .map(label => label.match(Closet.keySeparationPattern))
+                .map(label => label.match(closet.keySeparationPattern))
                 .filter(match => match)
                 .map(match => Number(match[2]))
                 .filter(maybeNumber => !Number.isNaN(maybeNumber))
@@ -66,15 +66,15 @@ var EditorCloset = {
         else {
             const elements = ['[[makeOcclusions]]'].concat(...document.body.querySelectorAll('.field'))
 
-            const filterManager = Closet.FilterManager.make()
+            const filterManager = closet.FilterManager.make()
             filterManager.install(
                 EditorCloset.editorOcclusion,
-                Closet.browser.recipes.rect.show({ tagname: 'rect' }),
-                Closet.browser.recipes.rect.hide({ tagname: 'recth' }),
-                Closet.browser.recipes.rect.reveal({ tagname: 'rectr' }),
+                closet.browser.recipes.rect.show({ tagname: 'rect' }),
+                closet.browser.recipes.rect.hide({ tagname: 'recth' }),
+                closet.browser.recipes.rect.reveal({ tagname: 'rectr' }),
             )
 
-            Closet.BrowserTemplate
+            closet.BrowserTemplate
                 .makeFromNodes(elements)
                 .render(filterManager)
 

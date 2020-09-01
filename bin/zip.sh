@@ -5,8 +5,10 @@ declare addon_id='ClosetForAnki'
 cd "$DIR/anki"
 
 zip -r "$DIR/build/$addon_id.ankiaddon" \
-  ""*".py" \
+  *".py" \
   "manifest.json" \
+  "gui/"* \
+  "gui/forms/"* \
+  "icons/"* \
   "src/"* \
-  "web/"* \
-  "icons/"*
+  "web/"*

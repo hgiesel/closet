@@ -1,16 +1,27 @@
-const elements = closet.anki.getQaChildNodes()
-const memoryMap = chooseMemory('closet__1')
+var side = '$$side'
+var cardType = '$$cardType'
+var tagsFull = '$$tagsFull'
 
-const filterManager = closet.FilterManager.make(preset, memoryMap.map())
+var preset = closet.anki.preset(cardType, tagsFull, side)
+var chooseMemory = closet.anki.persistenceInterface(side)
 
-/* here goes the setup - change it to fit your own needs */
+function userLogic() {
+    $$editableCode
+}
 
-$$defaultCode
+var initCloset = () => {
+    for (const [elements, memoryMap, filterManager] of userLogic()) {
+        closet.BrowserTemplate
+            .makeFromNodes(elements)
+            .renderToNodes(filterManager)
 
-/* end of setup */
+        memoryMap.writeBack()
+    }
+}
 
-return [[
-    elements,
-    memoryMap,
-    filterManager,
-]]
+if (['complete', 'loaded', 'interactive'].includes(document.readyState)) {
+    initCloset()
+}
+else {
+    document.addEventListener('DOMContentLoaded', initCloset)
+}

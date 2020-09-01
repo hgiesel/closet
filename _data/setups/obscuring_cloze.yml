@@ -1,7 +1,7 @@
 name: Obscuring clozes
 code: |
   const firstValue = (tag) => [tag.values[0]]
-  const obscureYellow = Closet.Stylizer.make({
+  const obscureYellow = closet.Stylizer.make({
     processor: v => `<span style="color: yellow; filter: blur(0.2rem);">${v}</span>`,
   })
 
@@ -11,17 +11,17 @@ code: |
   }
 
   filterManager.install(
-    Closet.recipes.cloze.show({
+    closet.recipes.cloze.show({
       tagname: 'c',
       ...obscureOptions,
     }),
 
-    Closet.recipes.cloze.hide({
+    closet.recipes.cloze.hide({
       tagname: 'ch',
       ...obscureOptions,
     }),
 
-    Closet.recipes.cloze.reveal({
+    closet.recipes.cloze.reveal({
       tagname: 'cr',
       ...obscureOptions,
     }),

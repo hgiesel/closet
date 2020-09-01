@@ -221,11 +221,11 @@ code: |
   const splitAndMap = (f) => (str) => mapPinyin(split(str, true, true), f).join('')
 
   // Filter Manager Setup
-  const sideSensitiveStyler = Closet.wrappers.sum(Closet.recipes.process, Closet.recipes.process, Closet.deciders.isBack)
+  const sideSensitiveStyler = closet.wrappers.sum(closet.recipes.process, closet.recipes.process, closet.deciders.isBack)
 
-  const wrappedSideSensitive = Closet.wrappers.aftermath(sideSensitiveStyler, (_e, internals) => {
+  const wrappedSideSensitive = closet.wrappers.aftermath(sideSensitiveStyler, (_e, internals) => {
     if (!internals.environment.has('addMandarinToneStyleTag')) {
-      Closet.browser.appendStyleTag(`
+      closet.browser.appendStyleTag(`
       .zh--tone-1 { color: dodgerblue; }
       .zh--tone-2 { color: lime; }
       .zh--tone-3 { color: yellow; }

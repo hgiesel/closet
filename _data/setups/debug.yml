@@ -1,6 +1,6 @@
 name: Debug
 code: |
   filterManager.install(
-    Closet.recipes.debug(),
-    Closet.recipes.meta(),
+    closet.recipes.debug(),
+    closet.recipes.meta(),
   )

@@ -11,7 +11,7 @@ code: |
   const cw = colorWheel()
   cw.next()
 
-  const colorfulWithMiddleDot = Closet.Stylizer.make({
+  const colorfulWithMiddleDot = closet.Stylizer.make({
     separator: '・',
     mapper: v => (
       `<span style="color: ${cw.next().value};">${v}</span>`
@@ -19,36 +19,36 @@ code: |
     processor: v => `〈${v}〉`,
   })
 
-  const withMiddleDot = Closet.Stylizer.make({
+  const withMiddleDot = closet.Stylizer.make({
     separator: '・',
   })
 
-  const withSlash = Closet.Stylizer.make({
+  const withSlash = closet.Stylizer.make({
     separator: ' / ',
   })
 
-  const withVs = Closet.Stylizer.make({
+  const withVs = closet.Stylizer.make({
     separator: ' vs ',
     mapper: (v, i) => `${i}: ${v}`
   })
 
   filterManager.install(
-    Closet.recipes.shuffle({
+    closet.recipes.shuffle({
       tagname: 'cmix',
       stylizer: colorfulWithMiddleDot,
     }),
 
-    Closet.recipes.shuffle({
+    closet.recipes.shuffle({
       tagname: 'amix',
       stylizer: withMiddleDot,
     }),
 
-    Closet.recipes.shuffle({
+    closet.recipes.shuffle({
       tagname: 'vmix',
       stylizer: withVs,
     }),
 
-    Closet.recipes.shuffle({
+    closet.recipes.shuffle({
       tagname: 'mix',
       stylizer: withSlash
     }),

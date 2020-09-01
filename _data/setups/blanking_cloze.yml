@@ -1,27 +1,27 @@
 name: Blanking Clozes
 code: |
   const blank = function(tag) {
-    return [tag.values[0].replace(Closet.unicodeAlphanumericPattern, '_')]
+    return [tag.values[0].replace(closet.unicodeAlphanumericPattern, '_')]
   }
 
   const blankOptions = {
     frontEllipser: blank,
-    frontStylizer: Closet.Stylizer.make({
+    frontStylizer: closet.Stylizer.make({
       process: v => `<span style="color: cornflowerblue">${v}</span>`,
       separator: '',
     }),
   }
 
   filterManager.install(
-    Closet.recipes.cloze.show({
+    closet.recipes.cloze.show({
       tagname: 'c',
       ...blankOptions,
     }),
-    Closet.recipes.cloze.hide({
+    closet.recipes.cloze.hide({
       tagname: 'ch',
       ...blankOptions,
     }),
-    Closet.recipes.cloze.reveal({
+    closet.recipes.cloze.reveal({
       tagname: 'cr',
       ...blankOptions,
     }),

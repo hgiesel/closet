@@ -42,7 +42,23 @@ module.exports = (env, argv) => {
         optimization: {
             minimize: argv.mode === 'production' ? true : false,
             minimizer: [
-                new Terser(),
+                new Terser({
+                    terserOptions: {
+                        mangle: true,
+                        output: {
+                            ecma: 6 /* default is 5 */,
+                        },
+                        ecma: 8, // specify one of: 5, 6, 7 or 8
+                        ie8: false,
+                        module: false,
+                        nameCache: null, // or specify a name cache object
+                        keep_classnames: true,
+                        keep_fnames: true,
+                        safari10: false,
+                        toplevel: false,
+                        warnings: false,
+                    }
+                }),
             ],
         },
 

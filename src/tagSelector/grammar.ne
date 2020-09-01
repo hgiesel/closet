@@ -40,8 +40,14 @@ pattern -> key num occur {%
 key -> (keyComps):+ {% ([vals]) => new RegExp(`^${vals.join('')}$`, 'u') %}
 
 keyComps -> mixedText {% id %}
-          | %escapeseq {% ([val]) => val.value %}
+          | escapeseq {% id %}
           | keyGroup {% id %}
+
+mixedText -> %text {% ([val]) => val.value %}
+           | %star {% () => '.*' %}
+           | %slash {% () => '\\\\' %}
+
+escapeseq -> %escapeseq {% ([val]) => val.value %}
 
 keyGroup -> %groupOpen keyGroupInner %groupClose {%
     ([,inner]) => inner.join('')
@@ -55,10 +61,6 @@ keyGroupItem -> (mixedText):* {%
     ([vals]) => vals.join('')
 %}
 
-mixedText -> %text {% ([val]) => val.value %}
-           | %star {% () => '.*' %}
-           | %slash {% () => '\\\\' %}
-
 #################################
 
 num -> (numPredicate):? {%
@@ -66,12 +68,12 @@ num -> (numPredicate):? {%
 %}
 
 numPredicate -> numDigits {% id %}
-     | numStar {% id %}
-     | numGroup {% id %}
+              | numStar {% id %}
+              | numGroup {% id %}
 
 numDigits -> %numDigits {% ([val]) => (num: number | null) => num === Number(val.value) %}
 
-numStar -> %numStar {% () => (num: number | null) => typeof num === 'number' %}
+numStar -> %numStar {% () => (num: number | null) => true %}
 
 numGroup -> %groupOpen numGroupInner %numGroupClose {%
     ([,preds]) => (num: number | null) => preds.reduce((accu: boolean, pred: any) => accu || pred(num), false)

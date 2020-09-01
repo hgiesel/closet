@@ -5,13 +5,17 @@ from os.path import dirname, realpath
 from anki.hooks import wrap
 
 from aqt import mw
+from aqt.qt import QKeySequence
 from aqt.editor import Editor
 from aqt.gui_hooks import (
     webview_will_set_content,
     webview_did_receive_js_message,
     editor_did_init_buttons,
-    # editor_will_munge_html,
+    editor_did_init_shortcuts,
+    editor_will_munge_html,
 )
+
+from .utils import occlude_keyword
 
 addon_package = mw.addonManager.addonFromModule(__name__)
 mw.addonManager.setWebExports(__name__, r"web/.*(css|js)")
@@ -100,15 +104,21 @@ def add_occlusion_button(buttons, editor):
     file_path = dirname(realpath(__file__))
     icon_path = Path(file_path, '..', 'icons', 'occlude.png')
 
-    editor._links['occlude'] = toggle_occlusion_mode
+    shortcut_as_text = QKeySequence(mw.pm.profile.get(occlude_keyword, 'Ctrl+O')).toString(QKeySequence.NativeText)
 
     occlusion_button = editor._addButton(
         str(icon_path.absolute()),
         'occlude',
-        'Put all fields into occlusion mode',
+        f'Put all fields into occlusion mode ({shortcut_as_text})',
     )
 
-    buttons.append(occlusion_button)
+    editor._links['occlude'] = toggle_occlusion_mode
+    buttons.insert(-1, occlusion_button)
+
+def add_occlusion_shortcut(cuts, editor):
+    occludeShortcut = mw.pm.profile.get(occlude_keyword, 'Ctrl+O')
+
+    cuts.append((occludeShortcut, lambda: toggle_occlusion_mode(editor)))
 
 def remove_occlusion_code(txt, editor):
     return without_occlusion_code(txt)
@@ -117,5 +127,5 @@ def init_editor():
     webview_will_set_content.append(include_closet_code)
     webview_did_receive_js_message.append(add_occlusion_messages)
     editor_did_init_buttons.append(add_occlusion_button)
-    # editor_will_munge_html.append(remove_occlusion_code)
-    Editor.mungeHTML = wrap(Editor.mungeHTML, lambda editor, txt: remove_occlusion_code(txt, editor) , 'after')
+    editor_did_init_shortcuts.append(add_occlusion_shortcut)
+    editor_will_munge_html.append(remove_occlusion_code)

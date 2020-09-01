@@ -6,7 +6,7 @@ module.exports = (env, argv) => {
         ? path.resolve(__dirname, 'docs', 'assets', 'js')
         : env && env.destination === 'anki'
         ? path.resolve(__dirname, 'anki', 'web')
-        : path.resolve(__dirname, 'dist')
+        : path.resolve(__dirname, 'build')
 
     const filename = env && env.destination === 'docs' && argv.mode === 'production'
         ? 'main'

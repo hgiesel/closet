@@ -34,7 +34,7 @@
     "pack:watch:anki": "webpack -d --env.destination=anki",
     "serve:docs": "bin/serve.sh",
     "serve:test": "serve -l 59045",
-    "dev:docs": "run-p serve-docs watch:docs",
+    "dev:docs": "run-p serve:docs watch:docs",
     "dev:anki": "run-s watch:anki",
     "link": "bin/link.sh -c",
     "zip": "run-s build:anki zip:sub",

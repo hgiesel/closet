@@ -1,14 +1,18 @@
 const path = require('path')
 
 const Terser = require('terser-webpack-plugin')
-const terserOptions = {
-    mangle: true,
+const terserOptions = /* order is important it seems (?) */ {
     output: {
         ecma: 6 /* default is 5 */,
     },
-    ecma: 8, // specify one of: 5, 6, 7 or 8
+    ecma: 8,
+
+    mangle: true,
+    compress: {
+        drop_console: true,
+    },
     module: false,
-    nameCache: null, // or specify a name cache object
+    nameCache: null /* or specify a name cache object */,
     keep_classnames: true,
     keep_fnames: true,
     ie8: false,

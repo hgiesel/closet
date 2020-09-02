@@ -28,26 +28,29 @@ There are two parts to this website:
 
 The effect previews contain various code displays, like the one below:
 
-{% include codeDisplay.md content=cloze.zero_cloze setups="default_cloze" buttons=buttons.frontBack %}
+{% include codeDisplay.md content=home.intro_example setups="default_cloze" buttons=buttons.frontBack %}
 
-If you use [Closet for Anki](ankiweb link), there are the following things to take in account:
+If you use [Closet For Anki](https://ankiweb.net/shared/info/272311064), there are the following things to take in account:
 - the **lower part** of the display shows the text you'd fill into your **note fields**
 - the **upper part** is what you expect as output on the **displayed card** in the reviewer (or previewer)
 - the **buttons** signify different preconfigurations:
-  - in the context of Anki this means whether it is the _front_, or the _back_ of the card.
+  - for Anki this means whether it is the _front_, or the _back_ of the card.
+  - additionaly they might designate the [card number](#card-numbers)
 - the **setup** button will give you the JavaScript code, you'd need to configure Closet to transform the input text in the lower part to the output text in the upper part
 - clicking **tester** takes you to the other part of this website, the [tester](../tester)
   - the tester will be preconfigured with the setup of the *effect preview* you came from
 
 ---
+## Card Numbers
 
-- however Closet inherently supports the notion of different _card numbers_:
-  - a lot of times you will see button labels like "Front 1", "Front 2", "Back 1", etc., or just "F1", "F2", "B1"
-  - in [Closet for Anki]() itself, Closet inferes which card you're on, by looking at the card name:
+Closet inherently supports the notion of different _card numbers_:
+- the effect previews will typically have buttons with labels such as _Front 1_, _Front 2_, _Back 1_, or simply _F1_, _F2_, _B1_, and so on
+- these numbers imply the *card number*
+- in [Closet For Anki](https://ankiweb.net/shared/info/272311064) itself, Closet infers the card number by looking at the _card name_:
 
 ![card_names](../assets/images/anki-fields.png)
 
-In this example, "Card 1" would be considered to have card number 1, "Card 2" would have card number 2, but "Extra" would have an undefined card number.
+In this example, _Card 1_ would be considered to have card number 1, _Card 2_ would have card number 2, and _Extra_ would have an undefined card number.
 
 ---
 ## The Tester

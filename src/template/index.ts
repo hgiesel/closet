@@ -29,7 +29,12 @@ export interface TagRenderer {
 const MAX_ITERATIONS = 50
 
 const stringifyNodes = (nodes: ASTNode[]): string[] => {
-    const result = []
+    const result: string[] = []
+
+    if (nodes.length === 0) {
+        return result
+    }
+
     let currentString = ''
 
     for (const node of nodes) {

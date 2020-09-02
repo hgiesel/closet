@@ -1,7 +1,7 @@
 ---
 layout: doc
 title: How to use the website
-nav_order: 2
+nav_order: 3
 permalink: how-to-use
 parent: Home
 ---

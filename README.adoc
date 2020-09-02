@@ -1,5 +1,11 @@
-image:https://github.com/hgiesel/closet/workflows/Zip%20Anki%20add-ons/badge.svg[link="https://github.com/hgiesel/closet/actions?query=workflow%3A%22Zip+Anki+add-ons%22"]
-image:https://github.com/hgiesel/closet/workflows/Build%20Closet/badge.svg[link="https://github.com/hgiesel/closet/actions?query=workflow%3A%22Build+Closet%22"]
-image:https://github.com/hgiesel/closet/workflows/Deploy%20to%20GitHub%20Pages/badge.svg[link="https://github.com/hgiesel/closet/actions?query=workflow%3A%22Deploy+to+GitHub+Pages%22"]
+image:https://https://github.com/hgiesel/closet/workflows/Build%20Closet/badge.svg[Build Closet]
+image:https://github.com/hgiesel/closet/workflows/Test%20Closet/badge.svg[Test Closet]
+iamge:https://github.com/hgiesel/closet/workflows/Lint%20Closet/badge.svg[Lint Closet]
+image:https://github.com/hgiesel/closet/workflows/Zip%20Anki%20add-ons/badge.svg[Zip Anki add-ons]
+image:https://github.com/hgiesel/closet/workflows/Deploy%20to%20GitHub%20Pages/badge.svg[Deploy to GitHub Pages]
+
+Closet is a powerful templating engine for use in flashcards, especially link:https://apps.ankiweb.net/[Anki] flashcards.
+
+For more info on Closet, see its link:https://closetengine.com[website].
 
 image::https://github.com/hgiesel/closet/blob/master/images/textlogo.png[ClosetLogo,width=100%,align="center",link="https://closetengine.com"]

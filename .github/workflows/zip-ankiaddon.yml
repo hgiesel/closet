@@ -19,7 +19,6 @@ jobs:
       - name: Install and Build 🔧
         run: |
           npm install
-          npm run-script build:anki
           npm run-script zip
 
       - name: Upload to GitHub

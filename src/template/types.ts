@@ -1,4 +1,4 @@
-import type { TagNode } from './tags'
+import type { TagNode } from './nodes'
 import type { Separator } from './separator'
 
 

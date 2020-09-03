@@ -1,4 +1,4 @@
-import type { TagNode } from '../template/tags'
+import type { TagNode } from '../template/nodes'
 import type { Internals, Registrar, WeakFilter } from '..'
 
 export type {
@@ -18,7 +18,7 @@ export type {
 } from '..'
 
 export type { DeferredApi, Deferred } from '../filterManager/deferred'
-export type { TagNode } from '../template/tags'
+export type { TagNode } from '../template/nodes'
 export type { Separator, WeakSeparator } from '../template/separator'
 
 export type Recipe<T extends Record<string, unknown>> = (options?: Record<string, unknown>) => (filters: Registrar<T>) => void

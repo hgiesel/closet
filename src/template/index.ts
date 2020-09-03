@@ -1,7 +1,7 @@
-import type { ASTNode } from './tags'
+import type { ASTNode } from './nodes'
 import type { TagAccessor } from './types'
 
-import { nodesAreReady } from './tags'
+import { nodesAreReady } from './nodes'
 import { Parser } from './parser'
 
 

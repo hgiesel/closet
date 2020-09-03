@@ -1,5 +1,5 @@
 import type { TagRenderer } from './template'
-import type { ASTNode } from './template/tags'
+import type { ASTNode } from './template/nodes'
 
 import { Template } from './template'
 

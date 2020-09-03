@@ -1,4 +1,4 @@
-import { ASTNode, TagNode } from '../tags'
+import { ASTNode, TagNode } from '../nodes'
 
 export const keySeparationPattern = /^((?:[a-zA-Z_/]|%\w)+)(\d*)$/u
 

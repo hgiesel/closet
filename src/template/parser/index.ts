@@ -1,10 +1,10 @@
 import type { TagBuilderSettings } from './tagBuilder'
-import type { ASTNode } from '../tags'
+import type { ASTNode } from '../nodes'
 
 import { Grammar, Parser as NearleyParser } from 'nearley'
 import grammar from './grammar'
 
-import { TextNode, DocSeparatorNode } from '../tags'
+import { TextNode, DocSeparatorNode } from '../nodes'
 import { intersperse2d } from '../utils'
 import { tagBuilder } from './grammar'
 

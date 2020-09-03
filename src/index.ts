@@ -10,7 +10,7 @@ import type { RegistrarApi } from './filterManager/registrar'
 import type { DeferredEntry as DefEntry } from './filterManager/deferred'
 
 import type { TagRenderer, TemplateInfo, IterationInfo, ResultInfo } from './template'
-import type { TagNode } from './template/tags'
+import type { TagNode } from './template/nodes'
 import type { TagAccessor, TagProcessor, RoundInfo, DataOptions, ProcessorOutput } from './template/types'
 
 export type Internals<P extends Record<string, unknown>> = ManagerInfo<TagNode, TemplateInfo, IterationInfo, RoundInfo, ResultInfo, DataOptions, P> & TemplateInfo & IterationInfo & RoundInfo

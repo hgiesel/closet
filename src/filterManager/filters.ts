@@ -5,8 +5,7 @@ export interface FilterResult {
 }
 
 export interface Filterable {
-    getDefaultRepresentation(): string
-    getRawRepresentation(): string
+    representation: string
 }
 
 export type Filter<F, T> = (t: F, i: T) => FilterResult
@@ -23,11 +22,14 @@ const wrapWithBool = (result: string, bool: boolean): FilterResult => ({
 const wrapWithReady = (result: string): FilterResult => wrapWithBool(result, true)
 const wrapWithReadyBubbled = (result: string, ready: boolean): FilterResult => wrapWithBool(result, ready)
 
+const defaultFilter = <T extends Readiable>(t: Filterable, i: T) => wrapWithReadyBubbled(t.representation, i.ready)
+
 const nullFilterResult: FilterResult = {
     ready: false,
     result: '',
     containsTags: false,
 }
+
 
 const standardizeFilterResult = (weak: WeakFilterResult): FilterResult => {
     switch (typeof weak) {
@@ -53,15 +55,9 @@ export interface Readiable {
     ready: boolean
 }
 
-const defaultFilter = <T extends Readiable>(t: Filterable, i: T) => wrapWithReadyBubbled(t.getDefaultRepresentation(), i.ready)
-const rawFilter = (t: Filterable) => wrapWithReady(t.getRawRepresentation())
 
 export class FilterApi<F extends Filterable, T extends Readiable /* Internals with dependency on RoundInfo */> {
     private filters: Map<string, WeakFilter<F, T>> = new Map()
-
-    constructor() {
-        this.register('raw', rawFilter)
-    }
 
     register(name: string, filter: WeakFilter<F, T>): void {
         this.filters.set(name, filter)

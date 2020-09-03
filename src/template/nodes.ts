@@ -48,6 +48,10 @@ export class TagNode implements ASTNode, Filterable {
         this.innerNodes = innerNodes
     }
 
+    get representation() {
+        return this.toString()
+    }
+
     get valuesText(): string {
         return this.innerNodes.map(node => node.toString()).join('')
     }
@@ -70,14 +74,6 @@ export class TagNode implements ASTNode, Filterable {
 
     isReady(): boolean {
         return false
-    }
-
-    getDefaultRepresentation(): string {
-        return this.toString()
-    }
-
-    getRawRepresentation(): string {
-        return this.valuesText
     }
 
     evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode[] {

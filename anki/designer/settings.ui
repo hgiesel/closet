@@ -38,7 +38,7 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="2">
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="attribution">
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Occlusion icon is the &lt;a href=&quot;https://icons8.com/icons/set/picture-in-picture&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#419cff;&quot;&gt;Picture in Picture icon&lt;/span&gt;&lt;/a&gt; by &lt;a href=&quot;https://icons8.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#419cff;&quot;&gt;Icons8&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
@@ -58,6 +58,13 @@
     <widget class="QKeySequenceEdit" name="occludeShortcut">
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;(default: &amp;quot;Ctrl+O&amp;quot;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="versionInfo">
+     <property name="text">
+      <string>VERSION_INFO</string>
      </property>
     </widget>
    </item>

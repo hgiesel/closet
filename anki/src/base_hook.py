@@ -6,10 +6,11 @@ from anki.hooks import addHook
 from aqt.utils import showInfo
 
 from .utils import find_addon_by_name
+from .version import version
 
 
-version = 'v0.1'
 description = '''This is the compiled Closet source code.
+You can visit the Closet homepage under https://closetengine.com.
 If you find any bugs, have any questions, or want to contribute to the ongoing development of the Closet project, please visit github.com/hgiesel/closet.'''
 
 script_name = 'Closet'

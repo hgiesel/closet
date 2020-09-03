@@ -1,3 +1,9 @@
+export {
+    version,
+    versionInfo,
+    prereleaseInfo
+} from './src/version'
+
 export { Template } from './src/template'
 export { BrowserTemplate } from './src/browserTemplate'
 
@@ -12,11 +18,21 @@ export {
     unicodeAlphanumericPattern,
 } from './src/recipes/utils'
 
-export { parseTagSelector } from './src/tagSelector'
-
-export { recipes, wrappers, deciders, sequencers } from './src/recipes'
 export { Stylizer } from './src/recipes/stylizer'
 
-export * as anki from './src/ankiUtils'
+export {
+    parseTagSelector
+} from './src/tagSelector'
 
-export { browser } from './src/recipes/browser'
+export {
+    recipes,
+    wrappers,
+    deciders,
+    sequencers,
+} from './src/recipes'
+
+export {
+    browser,
+} from './src/recipes/browser'
+
+export * as anki from './src/ankiUtils'

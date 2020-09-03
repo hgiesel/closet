@@ -17,7 +17,7 @@ interface ClosetPersistence {
     Persistence: AnkiPersistence
 }
 
-export const getCardNumber = (textNum: string): number => Number(textNum.match(/[0-9]*$/))
+const getCardNumber = (textNum: string): number => Number(textNum.match(/[0-9]*$/))
 
 export const preset = (cardType: string, tagsFull: string, side: 'front' | 'back') => ({
     card: cardType,

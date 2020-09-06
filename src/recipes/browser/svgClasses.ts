@@ -312,17 +312,17 @@ export class Rect implements Shape {
     set fill(color: string) { this.rect.setAttributeNS(null, 'fill', color) }
     get fill(): string { return this.rect.getAttributeNS(null, 'fill') ?? ''}
 
-    set fillOpacity(i: number | string) { this.rect.setAttributeNS(null, 'fillOpacity', String(i)) }
-    get fillOpacity(): number | string { return Number(this.rect.getAttributeNS(null, 'fillOpacity')) }
+    set fillOpacity(i: number | string) { this.rect.setAttributeNS(null, 'fill-opacity', String(i)) }
+    get fillOpacity(): number | string { return Number(this.rect.getAttributeNS(null, 'fill-opacity')) }
 
     set stroke(color: string) { this.rect.setAttributeNS(null, 'stroke', color) } 
     get stroke(): string { return this.rect.getAttributeNS(null, 'stroke') ?? '' }
 
     set strokeOpacity(i: number | string) { this.rect.setAttributeNS(null, 'strokeOpacity', String(i)) }
-    get strokeOpacity(): number | string { return Number(this.rect.getAttributeNS(null, 'strokeOpacity')) }
+    get strokeOpacity(): number | string { return Number(this.rect.getAttributeNS(null, 'stroke-opacity')) }
 
     set strokeWidth(i: number | string) { this.rect.setAttributeNS(null, 'strokeWidth', String(i)) }
-    get strokeWidth(): number | string { return Number(this.rect.getAttributeNS(null, 'strokeWidth')) }
+    get strokeWidth(): number | string { return Number(this.rect.getAttributeNS(null, 'stroke-width')) }
 
     /////////////////// on label
 

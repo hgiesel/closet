@@ -1,8 +1,8 @@
 ---
 layout: doc
 title: Using occlusions with other effects
-nav_order: 3
-permalink: /occlusions/with_other_types
+nav_order: 4
+permalink: /occlusions/with-other-types
 parent: Image Occlusions
 ---
 

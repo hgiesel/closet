@@ -1,6 +1,15 @@
 ---
 ---
 
+.clearfix:before, .clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
 .d-inline-block {
     position: relative;
 }
@@ -8,18 +17,12 @@
 a[href="//github.com/hgiesel/closet/"] {
     padding-right: 30px;
 
-    &:before {
+    &:after {
         content: url(https://github.githubassets.com/images/modules/logos_page/Octocat.png);
-
-        position: absolute;
-        transform: scale(.05);
-
-        z-index: 99;
-        right: 2rem;
-        top: -0.9rem;
-
-        width: 1%;
-        height: 1%;
+        object-fit: contain;
+        transform: scale(.06) translate(0, -20rem);
+        width: 0rem;
+        height: 0rem;
 
     }
 }

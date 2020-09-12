@@ -13,5 +13,7 @@ has_toc: false
 
 It allows to use many "effects", that you'd like to have on flashcards, like [shuffling text items](/shuffling), [clozes](/clozes), [multiple choice](/multiple-choice), or [image occlusions](/occlusions).
 
-<img alt="Closet logo" src="/assets/images/before.png" style="float: left; width: 40%; display: block; margin: 0 auto;"/>
-<img alt="Closet logo" src="/assets/images/after.png" style="float: right; width: 40%; display: block; margin: 0 auto;"/>
+<div class="clearfix">
+  <img alt="Closet logo" src="/assets/images/before.png" style="float: left; width: 40%; display: block; margin: 0 auto;"/>
+  <img alt="Closet logo" src="/assets/images/after.png" style="float: right; width: 40%; display: block; margin: 0 auto;"/>
+</div>

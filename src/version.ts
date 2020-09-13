@@ -6,8 +6,6 @@ export const versionInfo = [
 ]
 
 export const prereleaseInfo = [
-    'beta',
-    /* '1', */
 ]
 
 export const version = `v${versionInfo.join('.')}` + (prereleaseInfo.length > 0

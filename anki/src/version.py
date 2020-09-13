@@ -6,8 +6,6 @@ versionInfo = [
 ]
 
 prereleaseInfo = [
-    # 'beta',
-    # '1',
 ]
 
 version = 'v' + '.'.join([str(comp) for comp in versionInfo]) + (

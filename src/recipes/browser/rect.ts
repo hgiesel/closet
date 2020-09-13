@@ -70,7 +70,10 @@ const inactiveRect = <T extends Record<string, unknown>>({ fullKey, values }: Ta
     return { ready: true }
 }
 
-const makeContextRects = <T extends Record<string, unknown>>({ fullKey, values }: TagNode, { cache, aftermath }: Internals<T>) => {
+const makeContextRects = (inactiveProps: RectProperties) => <T extends Record<string, unknown>>(
+    { fullKey, values }: TagNode,
+    { cache, aftermath }: Internals<T>,
+) => {
     const [x = 0, y = 0, width = 50, height = width, ...rest] = values
 
     cache.over(
@@ -83,7 +86,7 @@ const makeContextRects = <T extends Record<string, unknown>>({ fullKey, values }
             Number(y),
             Number(width),
             Number(height),
-            processProps(rest),
+            processProps(rest, inactiveProps),
         ]),
         [],
     )
@@ -93,9 +96,11 @@ const makeContextRects = <T extends Record<string, unknown>>({ fullKey, values }
     return { ready: true }
 }
 
-const makeActiveRects = <T extends Record<string, unknown>>({ fullKey, values }: TagNode, { cache, aftermath }: Internals<T>) => {
+const makeActiveRects = (activeProps: RectProperties) => <T extends Record<string, unknown>>(
+    { fullKey, values }: TagNode,
+    { cache, aftermath }: Internals<T>,
+) => {
     const [x = 0, y = 0, width = 50, height = width, ...rest] = values
-    const activeProps = { fill: 'salmon', stroke: 'yellow' }
 
     cache.over(
         rectKeyword,
@@ -128,6 +133,9 @@ const rectPublicApi = <T extends FlashcardPreset>(
 
     separator?: WeakSeparator,
     flashcardTemplate?: FlashcardTemplate<T>,
+
+    activeProps?: RectProperties,
+    inactiveProps?: RectProperties,
 } = {}) => {
     const {
         tagname = 'rect',
@@ -137,12 +145,22 @@ const rectPublicApi = <T extends FlashcardPreset>(
 
         separator = { sep: ',' },
         flashcardTemplate = makeFlashcardTemplate(),
+
+        activeProps = { fill: 'salmon', stroke: 'yellow' },
+        inactiveProps = {},
     } = options
 
     const rectSeparators = { separators: [separator] }
     const rectRecipe = flashcardTemplate(frontInactive, backInactive)
 
-    return rectRecipe(tagname, front as any, back, inactiveRect, makeContextRects, rectSeparators)
+    return rectRecipe(
+        tagname,
+        (front as any)(activeProps),
+        back,
+        inactiveRect,
+        makeContextRects(inactiveProps),
+        rectSeparators,
+    )
 }
 
 export const rectRecipes = generateFlashcardRecipes(rectPublicApi)

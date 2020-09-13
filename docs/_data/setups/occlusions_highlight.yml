@@ -1,0 +1,12 @@
+name: Occlusions with highlighting border
+code: |
+  const activeProps = {
+    fill: 'transparent',
+    strokeWidth: '5px',
+  }
+
+  filterManager.install(
+    closet.browser.recipes.rect.show({ tagname: 'rect', activeProps }),
+    closet.browser.recipes.rect.reveal({ tagname: 'rectr', activeProps }),
+    closet.browser.recipes.rect.hide({ tagname: 'recth', activeProps }),
+  )

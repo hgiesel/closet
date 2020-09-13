@@ -318,10 +318,10 @@ export class Rect implements Shape {
     set stroke(color: string) { this.rect.setAttributeNS(null, 'stroke', color) } 
     get stroke(): string { return this.rect.getAttributeNS(null, 'stroke') ?? '' }
 
-    set strokeOpacity(i: number | string) { this.rect.setAttributeNS(null, 'strokeOpacity', String(i)) }
+    set strokeOpacity(i: number | string) { this.rect.setAttributeNS(null, 'stroke-opacity', String(i)) }
     get strokeOpacity(): number | string { return Number(this.rect.getAttributeNS(null, 'stroke-opacity')) }
 
-    set strokeWidth(i: number | string) { this.rect.setAttributeNS(null, 'strokeWidth', String(i)) }
+    set strokeWidth(i: number | string) { this.rect.setAttributeNS(null, 'stroke-width', String(i)) }
     get strokeWidth(): number | string { return Number(this.rect.getAttributeNS(null, 'stroke-width')) }
 
     /////////////////// on label

@@ -16,6 +16,7 @@ export class SharedStore<T> extends Storage<T> {
 
 export const storeTemplate = <Store extends SharedStore<U>, U>(
     Store: new (map: Map<string, U>) => Store,
+
 ) => (
     storeId: string,
     operation: <T extends Record<string, unknown>>(tag: TagNode, internals: Internals<T>) => (store: Store) => string | void,

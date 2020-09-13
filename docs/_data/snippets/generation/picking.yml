@@ -1,0 +1,6 @@
+name: Simple picking
+code: |
+  My favorite fruit is [[pick::fruits[[setl::fruits::apple||banana||grapefruit]]]]
+  Your favorite fruit is [[pick::fruits]]
+  Her favorite fruit is [[pick::fruits]]
+  His favorite fruit is [[pick::fruits]]

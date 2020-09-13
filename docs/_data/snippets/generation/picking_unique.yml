@@ -1,0 +1,10 @@
+name: Picking uniquely
+code: |
+  Peter's favorite fruit is [[pick1::fruits[[setl::fruits::apple||banana||grapefruit]]]]
+  Paul's favorite fruit is [[pick1::fruits]]
+  Patty's favorite fruit is [[pick1::fruits]]
+
+  Susan's favorite fruit is [[pick2::fruits]]
+  Saul's favorite fruit is [[pick2::fruits]]
+  Sam's favorite fruit is [[pick2::fruits]]
+  Sandra's favorite fruit is [[pick2::fruits]]

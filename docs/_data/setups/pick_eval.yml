@@ -1,5 +1,6 @@
-name: Pick and Eval value lists
+name: Picking and Evaluation
 code: |
-  filterManager.install(closet.recipes.setList())
-  filterManager.install(closet.recipes.pick())
-  filterManager.install(closet.recipes.pickIndex({ tagname: 'picki' }))
+  filterManager.install(
+    closet.recipes.pick({ tagname: 'pick' }),
+    closet.recipes.pickIndex({ tagname: 'pi' }),
+  )

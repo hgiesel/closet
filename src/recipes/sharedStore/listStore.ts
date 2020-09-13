@@ -1,5 +1,4 @@
-import type { Registrar } from '../types'
-import { Stylizer } from '../stylizer'
+import type { Registrar, TagNode, Internals, Eval } from '../types'
 
 import {
     SharedStore,
@@ -47,105 +46,85 @@ export const setListRecipe = <T extends Record<string, unknown>>({
     },
 )
 
+const defaultPostprocess = <T extends Record<string, unknown>>(
+    value: string,
+    _valueList: string[],
+): Eval<T, string> => (
+    _tag: TagNode,
+    _internals: Internals<T>,
+): string => value
+
 export const pickRecipe = <T extends Record<string, unknown>>({
     tagname = 'pick',
     storeId = 'lists',
-    stylizer = Stylizer.make(),
-    separator = { sep: ';' },
-    innerSeparator = { sep: ',' },
+    postprocess = defaultPostprocess,
 } = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     listStoreTemplate(
         storeId,
         (tag, internals) => (listStore) => {
-            const result = []
+            const key = tag.values
+            const valueList = listStore.getList(key)
+            const pickedKey = `pick:${tag.fullKey}:${tag.occur}:${tagname}:picked`
 
-            for (const [key, options = '1', uniq = ''] of tag.values) {
-                const valueList = listStore.getList(key)
-                const pickedKey = `pick:${tag.fullKey}:${tag.occur}:${tagname}:picked`
+            const index = internals.memory.lazy(pickedKey, () => {
+                const ints = intAlgorithm(0, valueList.length)
+                const stopper = intStop(0, valueList.length)
 
-                const indices = internals.memory.lazy(pickedKey, () => {
-                    const indices = []
+                // tag.num is used to decide uniqList
+                const filter = Boolean(tag.num /* 0 is falsy */)
+                const filterKey = `pick:${tag.fullKey}:${tagname}:uniqList:${tag.num}`
 
-                    const amount = Number(options)
+                const uniqList: number[] = filter
+                    ? internals.memory.over(
+                        filterKey,
+                        (uniqHash: Record<string, number[]>): Record<string, number[]> => {
+                            if (!Object.prototype.hasOwnProperty.call(uniqHash, key)) {
+                                uniqHash[key] = []
+                            }
 
-                    const ints = intAlgorithm(0, valueList.length)
-                    const stopper = intStop(0, valueList.length)
+                            return uniqHash
+                        },
+                        {},
+                    )[key]
+                    : []
 
-                    const filter = Boolean(uniq)
-                    const filterKey = `pick:${tag.fullKey}:${tagname}:uniqList:${uniq}`
+                const generator = numberGenerator(
+                    ints,
+                    filter,
+                    uniqList,
+                    stopper,
+                )
 
-                    const uniqList: number[] = filter
-                        ? internals.memory.over(
-                            filterKey,
-                            (uniqHash: Record<string, number[]>): Record<string, number[]> => {
-                                if (!Object.prototype.hasOwnProperty.call(uniqHash, key)) {
-                                    uniqHash[key] = []
-                                }
-
-                                return uniqHash
-                            },
-                            {},
-                        )[key]
-                        : []
-
-                    const generator = numberGenerator(
-                        ints,
-                        filter,
-                        uniqList,
-                        stopper,
-                    )
-
-                    for (const index of generator) {
-                        indices.push(index)
-
-                        if (indices.length >= amount) {
-                            break
-                        }
-                    }
-
-                    return indices
-                })
-
-                for (const index of indices) {
-                    result.push(valueList[index])
+                for (const index of generator) {
+                    return index
                 }
-            }
+            })
 
-            return stylizer.stylize(result)
+            return postprocess(
+                Number.isInteger(index)
+                    ? valueList[index as number]
+                    : '',
+                valueList,
+            )(tag, internals as any)
         },
-    ), {
-        separators: [separator, innerSeparator],
-    },
+    ),
 )
 
 export const pickIndexRecipe = <T extends Record<string, unknown>>({
     tagname = 'pick',
     storeId = 'lists',
-    stylizer = Stylizer.make(),
-    separator = { sep: ';' /* same as separtor for pick */ },
-    innerSeparator = { sep: ':', trim: true },
+    postprocess = defaultPostprocess,
 } = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     listStoreTemplate(
         storeId,
-        (tag, _internals) => (listStore) => {
-            const result = []
+        (tag, internals) => (listStore) => {
+            const key = tag.values
+            const valueList = listStore.getList(key)
+            const numIndex = Number(tag.num ?? 0)
 
-            for (const [storeKey, numIndexString = '0'] of tag.values) {
-                const valueList = listStore.getList(storeKey)
-                const numIndex = Number(numIndexString)
-
-                if (Number.isNaN(numIndex)) {
-                    continue
-                }
-
-                result.push(valueList[numIndex])
-            }
-
-            return stylizer.stylizeFull(result)
+            return postprocess(valueList[numIndex] ?? '', valueList)(tag, internals as any)
         },
-    ), {
-        separators: [separator, innerSeparator],
-    },
+    ),
 )

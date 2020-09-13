@@ -1,7 +1,7 @@
 ---
 layout: doc
 title: Evaluating values
-nav_order: 4
+nav_order: 5
 permalink: /generation/evaluation
 parent: Generation
 ---

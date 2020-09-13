@@ -1,0 +1,7 @@
+name: Picking as a template
+code: |
+  <!--
+  [[spec1::[[setl::v::1||2||3]]]]
+  [[spec2::[[setl::v::3||5||8]]]]
+  [[spec3::[[setl::v::-2||8||6]]]]
+  -->[[pi::v]] + [[pi1::v]] = [[pi2::v]] 

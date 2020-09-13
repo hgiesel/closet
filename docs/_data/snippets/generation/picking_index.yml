@@ -1,0 +1,6 @@
+name: Picking with indices
+code: |
+  Peter's favorite fruit is [[pi::fruits[[setl::fruits::apple||banana||grapefruit]]]].
+  Susan's favorite fruit is [[pi2::fruits]].
+  Daniel's favorite fruit is [[pi1::fruits]].
+  Alan's favorite fruit is [[pi1::fruits]], as well.

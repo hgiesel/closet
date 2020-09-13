@@ -1,7 +1,7 @@
 ---
 layout: doc
 title: Picking values
-nav_order: 3
+nav_order: 2
 permalink: /generation/picking
 parent: Generation
 ---

@@ -10,8 +10,11 @@ import { appendStyleTag, getImages, imageLoadCallback, svgKeyword, svgCss } from
 
 export const rectKeyword = 'occlusionRenderRect'
 
-const renderRects = <T extends Record<string, unknown>>(entry: AftermathEntry<T>, { template, cache, environment }: AftermathInternals<T>) => {
-    const images = (template.textFragments as any).flatMap(getImages)
+const renderRects = <T extends Record<string, unknown>>(
+    entry: AftermathEntry<T>,
+    { template, cache, environment }: AftermathInternals<T>,
+) => {
+    const images = template.textFragments.flatMap(getImages)
     const rects = cache.get<RectDefinition[]>(entry.keyword, [])
 
     if (!environment.post(svgKeyword, () => true, false)) {

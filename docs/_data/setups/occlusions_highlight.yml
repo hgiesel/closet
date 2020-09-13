@@ -2,7 +2,7 @@ name: Occlusions with highlighting border
 code: |
   const backProperties = {
     fill: 'transparent',
-    strokeWidth: '3px',
+    strokeWidth: '2px',
     stroke: 'red',
   }
 

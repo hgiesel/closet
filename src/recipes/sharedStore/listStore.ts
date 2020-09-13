@@ -4,8 +4,6 @@ import { Stylizer } from '../stylizer'
 import {
     SharedStore,
     storeTemplate,
-    defaultSeparator,
-    defaultInnerSeparator
 } from './storeTemplate'
 
 import {
@@ -30,8 +28,8 @@ const listStoreTemplate = storeTemplate(ListStore)
 export const setListRecipe = <T extends Record<string, unknown>>({
     tagname = 'setl',
     storeId = 'lists',
-    separator = defaultSeparator,
-    innerSeparator = defaultInnerSeparator,
+    separator = { sep: '::' },
+    innerSeparator = { sep: '||' },
 } = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     listStoreTemplate(
@@ -49,14 +47,12 @@ export const setListRecipe = <T extends Record<string, unknown>>({
     },
 )
 
-const pickSeparator = { 'sep': '::' }
-
 export const pickRecipe = <T extends Record<string, unknown>>({
     tagname = 'pick',
     storeId = 'lists',
     stylizer = Stylizer.make(),
-    separator = pickSeparator,
-    innerSeparator = defaultInnerSeparator,
+    separator = { sep: ';' },
+    innerSeparator = { sep: ',' },
 } = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     listStoreTemplate(
@@ -64,43 +60,56 @@ export const pickRecipe = <T extends Record<string, unknown>>({
         (tag, internals) => (listStore) => {
             const result = []
 
-            if (tag.values.length < 2) {
-                return ''
-            }
+            for (const [key, options = '1', uniq = ''] of tag.values) {
+                const valueList = listStore.getList(key)
+                const pickedKey = `pick:${tag.fullKey}:${tag.occur}:${tagname}:picked`
 
-            const [
-                key,
-                options,
-                uniq = [],
-            ] = tag.values
+                const indices = internals.memory.lazy(pickedKey, () => {
+                    const indices = []
 
-            const valueList = listStore.getList(key[0])
-            const pickedKey = `pick:${tag.fullKey}:${tag.occur}:${tagname}:picked`
+                    const amount = Number(options)
 
-            const indices = internals.memory.lazy(pickedKey, () => {
-                const indices = []
+                    const ints = intAlgorithm(0, valueList.length)
+                    const stopper = intStop(0, valueList.length)
 
-                const amount = Number(options[0]) ?? 1
+                    const filter = Boolean(uniq)
+                    const filterKey = `pick:${tag.fullKey}:${tagname}:uniqList:${uniq}`
 
-                const ints = intAlgorithm(0, valueList.length)
-                const stopper = intStop(0, valueList.length)
-                const filter = Boolean(uniq)
+                    const uniqList: number[] = filter
+                        ? internals.memory.over(
+                            filterKey,
+                            (uniqHash: Record<string, number[]>): Record<string, number[]> => {
+                                if (!Object.prototype.hasOwnProperty.call(uniqHash, key)) {
+                                    uniqHash[key] = []
+                                }
 
-                const generator = numberGenerator(ints, filter, [], stopper)
+                                return uniqHash
+                            },
+                            {},
+                        )[key]
+                        : []
 
-                for (const index of generator) {
-                    indices.push(index)
+                    const generator = numberGenerator(
+                        ints,
+                        filter,
+                        uniqList,
+                        stopper,
+                    )
 
-                    if (indices.length >= amount) {
-                        break
+                    for (const index of generator) {
+                        indices.push(index)
+
+                        if (indices.length >= amount) {
+                            break
+                        }
                     }
+
+                    return indices
+                })
+
+                for (const index of indices) {
+                    result.push(valueList[index])
                 }
-
-                return indices
-            })
-
-            for (const index of indices) {
-                result.push(valueList[index])
             }
 
             return stylizer.stylize(result)
@@ -114,7 +123,7 @@ export const pickIndexRecipe = <T extends Record<string, unknown>>({
     tagname = 'pick',
     storeId = 'lists',
     stylizer = Stylizer.make(),
-    separator = { sep: ',' },
+    separator = { sep: ';' /* same as separtor for pick */ },
     innerSeparator = { sep: ':', trim: true },
 } = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
@@ -123,7 +132,7 @@ export const pickIndexRecipe = <T extends Record<string, unknown>>({
         (tag, _internals) => (listStore) => {
             const result = []
 
-            for (const [storeKey, numIndexString] of tag.values) {
+            for (const [storeKey, numIndexString = '0'] of tag.values) {
                 const valueList = listStore.getList(storeKey)
                 const numIndex = Number(numIndexString)
 

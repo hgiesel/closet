@@ -2,9 +2,6 @@ import type { TagNode, Internals } from '../types'
 
 import { Storage } from '../../filterManager/storage'
 
-export const defaultSeparator = { sep: '::' }
-export const defaultInnerSeparator = { sep: '||' }
-
 export class SharedStore<T> extends Storage<T> {
     /**
      * Values in here are accessed with:

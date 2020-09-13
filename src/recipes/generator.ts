@@ -17,8 +17,8 @@ export const numberGenerator = function*(
         const randomValue = gen()
 
         if (!filter || !banDomain.includes(randomValue)) {
-            yield randomValue
             banDomain.push(randomValue)
+            yield randomValue
         }
 
         tries++

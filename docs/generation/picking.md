@@ -39,4 +39,4 @@ When picking this way, the same value can be caught multiple times without any i
 
 This is especially useful, if you want to specify a template, and only provide the different values.
 
-{% include codeDisplay.md content=generation.picking_template setups="default_clozes,defining_lists,pick_eval" buttons=buttons.threeCards %}
+{% include codeDisplay.md content=generation.picking_template setups="debug,defining_lists,pick_eval" buttons=buttons.threeCards %}

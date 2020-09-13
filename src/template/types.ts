@@ -8,6 +8,7 @@ export enum Status {
     Ready,
     NotReady,
     ContainsTags,
+    ContinueTags,
 }
 
 export interface ProcessorOutput {

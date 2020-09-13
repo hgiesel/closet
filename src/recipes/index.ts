@@ -28,6 +28,7 @@ import { defRecipe } from './meta'
 import {
     cloze,
     multipleChoice,
+    specification,
     mingle,
     sort,
     jumble,
@@ -52,10 +53,11 @@ export const recipes: Recipes = {
     pickIndex: pickIndexRecipe,
 
     debug: debugRecipe,
-    meta: defRecipe,
+    define: defRecipe,
 
     cloze: cloze,
     multipleChoice: multipleChoice,
+    specification: specification,
 
     mingle: mingle,
     sort: sort,

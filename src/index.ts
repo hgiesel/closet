@@ -27,17 +27,16 @@ export type Filter<P extends Record<string, unknown>> = FilterType<TagNode, Inte
 export type WeakFilter<P extends Record<string, unknown>> = WeakFilterType<TagNode, Internals<P>>
 export type { FilterResult, WeakFilterResult, FilterApi } from './filterManager/filters'
 
-const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => filterResult.ready
-    ? {
-        status: filterResult.containsTags
-            ? Status.ContainsTags
-            : Status.Ready,
-        result: filterResult.result,
-    }
-    : {
-        status: Status.NotReady,
-        result: null,
-    }
+const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => ({
+    status: filterResult.containsTags
+    ? filterResult.ready
+        ? Status.ContinueTags
+        : Status.ContainsTags
+    : filterResult.ready
+        ? Status.Ready
+        : Status.NotReady,
+    result: filterResult.result,
+})
 
 const fillDataOptions = (partial: Partial<DataOptions>): DataOptions => ({
     separators: partial.separators ?? [],

@@ -29,7 +29,13 @@ const matcher = (tag: TagNode) => (match: string, p1: string) => {
     }
 }
 
-export const defRecipe = () => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
+export const defRecipe = (options: {
+    tagname?: string,
+} = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
+    const {
+        tagname = 'def',
+    } = options
+
     const innerOptions = { separators: [{ sep: '::' }] }
 
     const defFilter = (tag: TagNode): WeakFilterResult => {
@@ -50,9 +56,9 @@ export const defRecipe = () => <T extends Record<string, unknown>>(registrar: Re
         registrar.register(definedTag, innerFilter, innerOptions)
 
         return {
-            result: '',
+            ready: true,
         }
     }
 
-    registrar.register('def', defFilter, defOptions)
+    registrar.register(tagname, defFilter, defOptions)
 }

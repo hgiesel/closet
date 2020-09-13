@@ -82,15 +82,17 @@ export class TagNode implements ASTNode, Filterable {
 
         const useCapture = tagProcessor.getOptions().capture
 
+        const innerEvaluate = (node: ASTNode, index: number) => node.evaluate(
+            parser,
+            tagAccessor,
+            [...tagPath, index],
+        )
+
         if (!useCapture) {
             this.innerNodes.splice(
                 0,
                 this.innerNodes.length,
-                ...this.innerNodes.flatMap((node: ASTNode, index: number) => node.evaluate(
-                    parser,
-                    tagAccessor,
-                    [...tagPath, index],
-                )),
+                ...this.innerNodes.flatMap(innerEvaluate),
             )
         }
 
@@ -113,6 +115,8 @@ export class TagNode implements ASTNode, Filterable {
                 return [new TextNode(filterOutput.result as string)]
             case Status.ContainsTags:
                 return parser.rawParse(filterOutput.result as string)
+            case Status.ContinueTags:
+                return parser.rawParse(filterOutput.result as string).flatMap(innerEvaluate)
         }
     }
 }

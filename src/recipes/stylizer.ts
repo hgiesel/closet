@@ -1,6 +1,6 @@
 import { id } from './utils'
 
-type StringFunction = (v: string) => string
+type StringFunction = (v: string, ...a: any[]) => string
 type StringPlusFunction = (v: string, i: number, ...a: any[]) => string
 
 export class Stylizer {
@@ -31,9 +31,22 @@ export class Stylizer {
     }
 
     stylize(input: string[], ...args: unknown[][]): string {
-        return this.processor(input
-            .flatMap((v: string, i: number, l: string[]) => this.mapper(v, i, ...args.map(arg => arg[i]), l))
-            .join(this.separator)
+        return this.processor(
+            input
+                .flatMap((v: string, i: number, l: string[]) =>
+                    this.mapper(v, i, ...args.map(arg => arg[i]), l))
+                .join(this.separator),
+        )
+    }
+
+    /* improved version of stylize */
+    stylizeFull(input: string[], mapArgs: unknown[][] = [], processArgs: unknown[] = []): string {
+        return this.processor(
+            input
+                .flatMap((v: string, i: number, l: string[]) =>
+                    this.mapper(v, i, ...mapArgs.map(arg => arg[i]), l))
+                .join(this.separator),
+            ...processArgs,
         )
     }
 }

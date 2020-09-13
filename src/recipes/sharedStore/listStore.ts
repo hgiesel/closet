@@ -143,7 +143,7 @@ export const pickIndexRecipe = <T extends Record<string, unknown>>({
                 result.push(valueList[numIndex])
             }
 
-            return stylizer.stylize(result)
+            return stylizer.stylizeFull(result)
         },
     ), {
         separators: [separator, innerSeparator],

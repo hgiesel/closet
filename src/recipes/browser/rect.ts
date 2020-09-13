@@ -49,28 +49,9 @@ const processProps = (rest: string[], overwriteProps = {}): RectProperties => {
     return Object.assign(propObject, overwriteProps)
 }
 
-const inactiveRect = <T extends Record<string, unknown>>({ fullKey, values }: TagNode, { cache }: Internals<T>) => {
-    const [x = 0, y = 0, width = 50, height = width, ...rest] = values
-
-    cache.over(
-        rectKeyword,
-        (rectList: RectDefinition[]) => rectList.push([
-            'rect',
-            false,
-            fullKey,
-            Number(x),
-            Number(y),
-            Number(width),
-            Number(height),
-            processProps(rest),
-        ]),
-        [],
-    )
-
-    return { ready: true }
-}
-
-const makeContextRects = (inactiveProps: RectProperties) => <T extends Record<string, unknown>>(
+const makeRects = (
+    props: RectProperties,
+) => <T extends Record<string, unknown>>(
     { fullKey, values }: TagNode,
     { cache, aftermath }: Internals<T>,
 ) => {
@@ -86,33 +67,7 @@ const makeContextRects = (inactiveProps: RectProperties) => <T extends Record<st
             Number(y),
             Number(width),
             Number(height),
-            processProps(rest, inactiveProps),
-        ]),
-        [],
-    )
-
-    aftermath.registerIfNotExists(rectKeyword, renderRects as any)
-
-    return { ready: true }
-}
-
-const makeActiveRects = (activeProps: RectProperties) => <T extends Record<string, unknown>>(
-    { fullKey, values }: TagNode,
-    { cache, aftermath }: Internals<T>,
-) => {
-    const [x = 0, y = 0, width = 50, height = width, ...rest] = values
-
-    cache.over(
-        rectKeyword,
-        (rectList: RectDefinition[]) => rectList.push([
-            'rect',
-            true,
-            fullKey,
-            Number(x),
-            Number(y),
-            Number(width),
-            Number(height),
-            processProps(rest, activeProps)
+            processProps(rest, props),
         ]),
         [],
     )
@@ -128,26 +83,33 @@ const rectPublicApi = <T extends FlashcardPreset>(
 ): Recipe<T> => (options: {
     tagname?: string,
 
-    front?: WeakFilter<T>,
-    back?: WeakFilter<T>,
+    front?: (props: RectProperties) => WeakFilter<T>,
+    back?: (props: RectProperties) => WeakFilter<T>,
 
     separator?: WeakSeparator,
     flashcardTemplate?: FlashcardTemplate<T>,
 
-    activeProps?: RectProperties,
-    inactiveProps?: RectProperties,
+    frontProperties?: RectProperties,
+    backProperties?: RectProperties,
+    contextProperties?: RectProperties,
 } = {}) => {
+    const hide: RectProperties = {
+        fill: 'transparent',
+        stroke: 'transparent',
+    }
+
     const {
         tagname = 'rect',
 
-        front = makeActiveRects,
-        back = inactiveRect,
+        front = makeRects,
+        back = makeRects,
 
         separator = { sep: ',' },
         flashcardTemplate = makeFlashcardTemplate(),
 
-        activeProps = { fill: 'salmon', stroke: 'yellow' },
-        inactiveProps = {},
+        frontProperties = { fill: 'salmon', stroke: 'yellow' },
+        backProperties = hide,
+        contextProperties = {},
     } = options
 
     const rectSeparators = { separators: [separator] }
@@ -155,10 +117,10 @@ const rectPublicApi = <T extends FlashcardPreset>(
 
     return rectRecipe(
         tagname,
-        (front as any)(activeProps),
-        back,
-        inactiveRect,
-        makeContextRects(inactiveProps),
+        (front as any)(frontProperties),
+        back(backProperties),
+        makeRects(hide),
+        makeRects(contextProperties),
         rectSeparators,
     )
 }

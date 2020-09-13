@@ -1,7 +1,13 @@
 name: Formulas for without context
 code: |
+  <!--
+  [[spec1::[[setl::q::Distance Formula]]]]
+  [[spec2::[[setl::q::Midpoint Formula]]]]
+  [[spec3::[[setl::q::Slope Formula]]]]
+  -->What is the [[pi::q]]?
   [[c0::<img src="/assets/images/formulas.png" />]]
-  <!-- 
+  <!--
   [[rect1::120,106,614,58]]
   [[rect2::120,190,614,91]]
-  [[rect3::120,320,614,94]] -->
+  [[rect3::120,320,614,94]]
+  -->

@@ -15,7 +15,10 @@
 }
 
 a[href="//github.com/hgiesel/closet/"] {
-    padding-right: 30px;
+    padding-right: 3rem;
+
+    // overwrite just-the-docs so GitHub link can contain image
+    overflow: visible;
 
     &:after {
         content: url(https://github.githubassets.com/images/modules/logos_page/Octocat.png);

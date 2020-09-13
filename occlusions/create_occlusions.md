@@ -2,7 +2,7 @@
 layout: doc
 title: Create occlusions
 nav_order: 2
-permalink: /occlusions/create_occlusions
+permalink: /occlusions/create-occlusions
 parent: Image Occlusions
 ---
 

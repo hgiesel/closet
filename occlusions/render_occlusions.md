@@ -2,7 +2,7 @@
 layout: doc
 title: Render occlusions
 nav_order: 2
-permalink: /occlusions/render_occlusions
+permalink: /occlusions/render-occlusions
 parent: Image Occlusions
 ---
 

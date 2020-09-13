@@ -1,0 +1,10 @@
+name: Picking and Evaluation with padding
+code: |
+  const postprocess = (value, valueList) => (tag) => {
+    return value.padEnd(valueList.reduce((accu, value) => Math.max(accu, value.length), 0), ' ')
+  }
+
+  filterManager.install(
+    closet.recipes.pick({ tagname: 'ppick', postprocess }),
+    closet.recipes.pickIndex({ tagname: 'ppi', postprocess }),
+  )

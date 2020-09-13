@@ -1,0 +1,5 @@
+name: Definining lists
+code: |
+  filterManager.install(
+    closet.recipes.setList({ tagname: 'setl' }),
+  )

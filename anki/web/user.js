@@ -10,6 +10,8 @@ function userLogic() {
 }
 
 var initCloset = () => {
+    const before = window.performance.now()
+
     for (const [elements, memoryMap, filterManager] of userLogic()) {
         closet.BrowserTemplate
             .makeFromNodes(elements)
@@ -17,6 +19,9 @@ var initCloset = () => {
 
         memoryMap.writeBack()
     }
+
+    const after = window.performance.now()
+    window.closetRenderTime = after - before
 }
 
 if (['complete', 'loaded', 'interactive'].includes(document.readyState)) {

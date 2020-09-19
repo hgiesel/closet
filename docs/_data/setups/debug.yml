@@ -1,14 +1,23 @@
 name: Debug features
-documentation: |
-  Test
-versions:
-  - name: v1
-    note: This is the note
-    support:
-      from: v0.0.0
-    code: |
-      filterManager.install(
-        closet.recipes.debug(),
-        closet.recipes.define({ tagname: 'def' }),
-        closet.recipes.specification.hide({ tagname: 'spec' }),
-      )
+code: |
+  filterManager.install(
+    closet.recipes.debug(),
+    closet.recipes.define({ tagname: 'def' }),
+    closet.recipes.specification.hide({ tagname: 'spec' }),
+  )
+
+## Example of new syntax
+# name: Debug features
+# documentation: |
+#   Test
+# versions:
+#   - name: v1
+#     note: This is the note
+#     support:
+#       from: v0.0.0
+#     code: |
+#       filterManager.install(
+#         closet.recipes.debug(),
+#         closet.recipes.define({ tagname: 'def' }),
+#         closet.recipes.specification.hide({ tagname: 'spec' }),
+#       )

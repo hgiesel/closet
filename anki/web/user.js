@@ -1,6 +1,9 @@
 var side = '$$side'
 var cardType = '$$cardType'
 var tagsFull = '$$tagsFull'
+var cFade = side === 'front'
+    ? qFade
+    : aFade
 
 var initCloset = () => {
     const preset = closet.anki.preset(cardType, tagsFull, side)
@@ -28,5 +31,6 @@ var closetLoaded = setInterval(() => {
   if (window.closet && window.Persistence) {
     clearInterval(closetLoaded)
     initCloset()
+    $('.hidden-closet').fadeTo(cFade, 1)
   }
 }, 5)

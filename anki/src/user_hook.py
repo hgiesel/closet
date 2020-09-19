@@ -94,7 +94,7 @@ def setup_user_script():
             'js',
             storage.version if storage.version else default_version,
             storage.description if storage.description is not None else default_description,
-            'into_template',
+            'into_template', # has to be into_template, because it contains {{Cards}} and {{Tags}}
             storage.conditions if storage.conditions is not None else [],
             editWithSetup,
         ),

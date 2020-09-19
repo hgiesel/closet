@@ -45,7 +45,7 @@ def setup_script():
             'js',
             version,
             description,
-            'into_template',
+            storage.position if storage.position is not None else 'external',
             storage.conditions if storage.conditions is not None else [],
             closet_source,
         ),

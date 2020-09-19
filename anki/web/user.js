@@ -2,14 +2,14 @@ var side = '$$side'
 var cardType = '$$cardType'
 var tagsFull = '$$tagsFull'
 
-var preset = closet.anki.preset(cardType, tagsFull, side)
-var chooseMemory = closet.anki.persistenceInterface(side)
-
-function userLogic() {
-    $$editableCode
-}
-
 var initCloset = () => {
+    const preset = closet.anki.preset(cardType, tagsFull, side)
+    const chooseMemory = closet.anki.persistenceInterface(side)
+
+    function userLogic() {
+        $$editableCode
+    }
+
     const before = window.performance.now()
 
     for (const [elements, memoryMap, filterManager] of userLogic()) {
@@ -24,9 +24,9 @@ var initCloset = () => {
     window.closetRenderTime = after - before
 }
 
-if (['complete', 'loaded', 'interactive'].includes(document.readyState)) {
+var closetLoaded = setInterval(() => {
+  if (window.closet && window.Persistence) {
+    clearInterval(closetLoaded)
     initCloset()
-}
-else {
-    document.addEventListener('DOMContentLoaded', initCloset)
-}
+  }
+}, 5)

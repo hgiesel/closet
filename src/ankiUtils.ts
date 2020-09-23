@@ -111,7 +111,7 @@ export const getQaChildNodes = (): ChildNodeSpan[] | null => {
 }
 
 export const cleanup = (): void => {
-    for (const element of Array.from(document.getElementsByClassName('hidden-closet'))) {
+    for (const element of Array.from(document.getElementsByClassName('closet--hidden'))) {
         (element as HTMLElement).style.opacity = '1'
     }
 }

@@ -16,8 +16,11 @@ export const numberGenerator = function*(
     while (!prematureStop(banDomain) && tries < maxTries) {
         const randomValue = gen()
 
-        if (!filter || !banDomain.includes(randomValue)) {
-            banDomain.push(randomValue)
+        if (!banDomain.includes(randomValue)) {
+            if (filter) {
+                banDomain.push(randomValue)
+            }
+
             yield randomValue
         }
 

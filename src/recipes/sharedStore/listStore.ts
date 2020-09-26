@@ -17,6 +17,16 @@ class ListStore extends SharedStore<string[]> {
         this.set(storeKey, list)
     }
 
+    overwriteList(storeKey: string, newList: string[], fromIndex: number = 0): void {
+        const list = this.getList(storeKey)
+
+        for (let i = 0; i < newList.length; i++) {
+            list[fromIndex + i] = newList[i]
+        }
+
+        this.setList(storeKey, list)
+    }
+
     getList(storeKey: string): string[] {
         return this.get(storeKey, [])
     }
@@ -43,7 +53,12 @@ export const setListRecipe = <T extends Record<string, unknown>>({
 
             const theKey = key[0]
 
-            listStore.setList(theKey, values)
+            if (tag.num === null) {
+                listStore.setList(theKey, values)
+            }
+            else {
+                listStore.overwriteList(theKey, values, tag.num)
+            }
         },
     ), {
         separators: [separator, innerSeparator],
@@ -73,7 +88,7 @@ export const pickRecipe = <T extends Record<string, unknown>>({
             const pickedKey = `pick:${tag.fullKey}:${tag.occur}:${tagname}:picked`
 
             const index = internals.memory.lazy(pickedKey, () => {
-                const ints = intAlgorithm(0, valueList.length)
+                const algorithm = intAlgorithm(0, valueList.length)
                 const stopper = intStop(0, valueList.length)
 
                 // tag.num is used to decide uniqList
@@ -94,10 +109,21 @@ export const pickRecipe = <T extends Record<string, unknown>>({
                     )[key]
                     : []
 
+                const emptyIndices = Array.from(valueList)
+                    .reduce((accu: number[], value: string | undefined, index: number): number[] => {
+                        if (value === undefined) {
+                            accu.push(index)
+                        }
+
+                        return accu
+                    }, [])
+
+                const banList = uniqList.concat(emptyIndices)
+
                 const generator = numberGenerator(
-                    ints,
+                    algorithm,
                     filter,
-                    uniqList,
+                    banList,
                     stopper,
                 )
 
@@ -125,7 +151,8 @@ export const pickIndexRecipe = <T extends Record<string, unknown>>({
     listStoreTemplate(
         storeId,
         (tag, internals) => (listStore) => {
-            const key = tag.values
+            const key = tag.values || /* in case it is '' */ 'default'
+
             const valueList = listStore.getList(key)
             const numIndex = Number(tag.num ?? 0)
 

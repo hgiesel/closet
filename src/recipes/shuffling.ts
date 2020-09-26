@@ -1,8 +1,9 @@
-import type { TagNode, Registrar, Internals } from './types'
+import type { TagNode, Registrar, Internals, Eval } from './types'
 
 import { Stylizer } from './stylizer'
-import { sequencer } from './sequencer'
+import { acrossTag, withinTag } from './sequencer'
 import { topUp } from './sortInStrategies'
+
 
 export const shufflingRecipe = ({
     tagname = 'mix',
@@ -10,16 +11,18 @@ export const shufflingRecipe = ({
     sortInStrategy = topUp,
 } = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const shuffleFilter = (tag: TagNode, internals: Internals<T>) => {
-        const unitId = `${tag.fullKey}:${tag.fullOccur}`
-        const sequenceId = tag.num ? tag.fullKey : unitId
+        const sequence = tag.num
+            ? acrossTag
+            : withinTag
 
-        const maybeValues = sequencer(
-            unitId,
-            sequenceId,
+        const getValues: Eval<T, string[]> = ({ values }: TagNode): string[] => values ?? []
+
+        const shuffler: Eval<T, string[] | void> = sequence(
+            getValues as any,
             sortInStrategy,
-            ({ values }: TagNode, _interals: Internals<T>): string[] => values ?? [],
-        )(tag, internals)
+        ) as Eval<T, string[] | void>
 
+        const maybeValues = shuffler(tag, internals)
         if (maybeValues) {
             return stylizer.stylize(maybeValues)
         }

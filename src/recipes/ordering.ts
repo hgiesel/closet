@@ -14,7 +14,7 @@ export const orderingRecipe = ({
 } = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const ordFilter = (tag: TagNode, { deferred, cache, memory }: Internals<T>) => {
         /**
-         * @param tag.values must contain lists of sequence ids (!), not tagnames
+         * @param tag.values must contain lists of *sequence ids* (!), not tagnames
          *
          * ordOccupiedKey in cache:
          * - shuffled nums which are already used

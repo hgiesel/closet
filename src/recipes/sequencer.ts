@@ -109,7 +109,7 @@ const sequenceTemplate = <T extends Record<string, unknown>>(
     tag: TagNode,
     internals: Internals<T>,
 ): V[] | void => {
-    const sequencesKey = `sequences`
+    const sequencesKey = 'sequences'
     // in cache: list of all sequences
 
     const [

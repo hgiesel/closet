@@ -5,6 +5,11 @@ import { topUp } from './sortInStrategies'
 import { TagSelector } from './utils'
 
 
+const adjustOptions = {
+    priority: 35 /* must be higher than sequencers 15 */,
+    persistent: true,
+}
+
 export const orderingRecipe = ({
     tagname = 'ord',
 
@@ -15,33 +20,32 @@ export const orderingRecipe = ({
 } = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const ordFilter = (tag: TagNode, { deferred, cache, memory }: Internals<T>) => {
         /**
-         * @param tag.values must contain lists of *sequence ids* (!), not tagnames
-         *
-         * ordOccupiedKey in cache:
-         * - shuffled nums which are already used
-         * - cannot belong to multiple ords at once
+         * @param tag.values must contain lists of *tag selectors* for sequence ids
          */
 
+        const sequencesKey = 'sequences'
+        const sequences = new Set<string>(cache.get(sequencesKey, []))
+
         for (const [idx, cmd] of tag.values.entries()) {
-            const ordOccupiedKey = `${tag.key}:ord:occupied:${idx}`
-
-            // TODO
-            // const selectors = cmd.map(TagSelector.make)
-            const toBeOrdered = cmd
-                .filter((v: string) => !cache.get<string[]>(ordOccupiedKey, []).includes(v))
-
-            cache.fold(ordOccupiedKey, (v: string[]) => v.concat(toBeOrdered), [])
-
-            const orderSet = new Set<string>(toBeOrdered)
+            const selectors = cmd.map(TagSelector.make)
             const ordKey = `${tag.key}:${tag.fullOccur}:ord:${idx}`
 
-            deferred.register(ordKey, () => {
-                const orderKeys = Array.from(orderSet)
-                const shuffleKeys = orderKeys.map((ok: string) => `${ok}:shuffle`)
+            const adjustOrder = () => {
+                const remainingSequences = Array.from(sequences)
+                const activeSequences = remainingSequences.filter((sequenceId: string) => {
+                    if (selectors.some((selector: TagSelector) => selector.checkTagIdentifier(sequenceId))) {
+                        sequences.delete(sequenceId)
+                        return true
+                    }
 
-                for (const [idx, ok] of orderKeys.entries()) {
-                    const shuffleKey = shuffleKeys[idx]
-                    const waitingSetKey = `${ok}:waitingSet`
+                    return false
+                })
+
+                const activeShuffleKeys = activeSequences.map((sequenceId: string) => `${sequenceId}:shuffle`)
+
+                for (const [index, sequenceId] of activeSequences.entries()) {
+                    const shuffleKey = activeShuffleKeys[index]
+                    const waitingSetKey = `${sequenceId}:waitingSet`
 
                     deferred.block(shuffleKey)
 
@@ -51,7 +55,7 @@ export const orderingRecipe = ({
                         continue
                     }
 
-                    const presetShuffle = shuffleKeys.reduce((accu: number[], sk: string) => {
+                    const presetShuffle = activeShuffleKeys.reduce((accu: number[], sk: string) => {
                         const nextShuffleOrder = memory.get(sk, [])
                         return accu.length < nextShuffleOrder.length
                             ? nextShuffleOrder
@@ -68,23 +72,18 @@ export const orderingRecipe = ({
                     // order mix items
                     cache.fold(shuffleKey, (vs: string[]) => sortWithIndices(vs, toppedUpIndices), [])
 
-                    // remove mixKey from ord pool
-                    orderSet.delete(ok)
-
                     // possibly update with longer sort order
                     cache.set(ordKey, toppedUpIndices)
                     memory.set(shuffleKey, toppedUpIndices)
                 }
 
                 // need to remove ord deferred because it is persistent
-                if (orderSet.size === 0) {
+                if (sequences.size === 0) {
                     deferred.unregister(ordKey)
                 }
-            }, {
-                priority: 35 /* must be higher than sequencers 15 */,
-                persistent: true,
-            })
+            }
 
+            deferred.register(ordKey, adjustOrder, adjustOptions)
         }
 
         return { ready: true }

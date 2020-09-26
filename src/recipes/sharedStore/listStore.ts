@@ -1,4 +1,5 @@
 import type { Registrar, TagNode, Internals, Eval } from '../types'
+import type { CardPreset } from '../flashcard/flashcardTemplate'
 
 import {
     SharedStore,
@@ -142,6 +143,23 @@ export const pickRecipe = <T extends Record<string, unknown>>({
     ),
 )
 
+const pickIndex = <T extends Record<string, unknown>>(
+    getValue: (valueList: string[]) => Eval<T, string>,
+    postprocess: (value: string, valueList: string[]) => Eval<T, string>,
+) => (
+    tag: TagNode,
+    internals: Internals<T>,
+) => (
+    listStore: ListStore
+): string => {
+    const key = tag.values || /* in case it is '' */ 'default'
+
+    const valueList = listStore.getList(key)
+    const value = getValue(valueList)(tag, internals)
+
+    return postprocess(value, valueList)(tag, internals as any)
+}
+
 export const pickIndexRecipe = <T extends Record<string, unknown>>({
     tagname = 'pick',
     storeId = 'lists',
@@ -150,13 +168,29 @@ export const pickIndexRecipe = <T extends Record<string, unknown>>({
     tagname,
     listStoreTemplate(
         storeId,
-        (tag, internals) => (listStore) => {
-            const key = tag.values || /* in case it is '' */ 'default'
+        pickIndex(
+            (list: string[]) => (tag: TagNode, _internals: Internals<T>): string => list[Number(tag.num) || 0],
+            postprocess,
+        ) as any,
+    ),
+)
 
-            const valueList = listStore.getList(key)
-            const numIndex = Number(tag.num ?? 0)
+export const pickCardNumber = <T extends CardPreset>({
+    tagname = 'pick',
+    storeId = 'lists',
+    postprocess = defaultPostprocess,
+} = {}) => (registrar: Registrar<T>) => registrar.register(
+    tagname,
+    listStoreTemplate(
+        storeId,
+        pickIndex(
+            (list: string[]) => (_tag: TagNode, internals: Internals<T>): string => {
+                const indexedValue: string | undefined = list[internals.preset.cardNumber as number]
+                const result: string = indexedValue ?? list[0] ?? ''
 
-            return postprocess(valueList[numIndex] ?? '', valueList)(tag, internals as any)
-        },
+                return result
+            },
+            postprocess,
+        ) as any,
     ),
 )

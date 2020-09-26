@@ -37,9 +37,13 @@ export const setListRecipe = <T extends Record<string, unknown>>({
             const [
                 key,
                 values,
-            ] = tag.values
+            ] = tag.values.length === 2
+                ? tag.values
+                : [['default'], tag.values[0]]
 
-            listStore.setList(key[0], values)
+            const theKey = key[0]
+
+            listStore.setList(theKey, values)
         },
     ), {
         separators: [separator, innerSeparator],
@@ -63,7 +67,8 @@ export const pickRecipe = <T extends Record<string, unknown>>({
     listStoreTemplate(
         storeId,
         (tag, internals) => (listStore) => {
-            const key = tag.values
+            const key = tag.values || /* in case it is '' */ 'default'
+
             const valueList = listStore.getList(key)
             const pickedKey = `pick:${tag.fullKey}:${tag.occur}:${tagname}:picked`
 

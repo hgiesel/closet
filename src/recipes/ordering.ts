@@ -28,31 +28,46 @@ export const orderingRecipe = ({
 
             cache.fold(ordOccupiedKey, (v: string[]) => v.concat(toBeOrdered), [])
 
-            const orderKeys = new Set(toBeOrdered)
+            const orderSet = new Set<string>(toBeOrdered)
             const ordKey = `${tag.key}:${tag.fullOccur}:ord:${idx}`
 
             deferred.register(ordKey, () => {
-                for (const ok of orderKeys) {
-                    deferred.block(`${ok}:shuffle`)
+                const orderKeys = Array.from(orderSet)
+                const shuffleKeys = orderKeys.map((ok: string) => `${ok}:shuffle`)
 
-                    const waitingSet = cache.get<Set<string>>(`${ok}:waitingSet`, new Set())
-                    const shuffleKey = `${ok}:shuffle`
+                for (const [idx, ok] of orderKeys.entries()) {
+                    const shuffleKey = shuffleKeys[idx]
+                    const waitingSetKey = `${ok}:waitingSet`
+
+                    deferred.block(shuffleKey)
+
+                    const waitingSet = cache.get<Set<string>>(waitingSetKey, new Set())
 
                     if (waitingSet.size !== 0) {
                         continue
                     }
 
+                    const presetShuffle = shuffleKeys.reduce((accu: number[], sk: string) => {
+                        const nextShuffleOrder = memory.get(sk, [])
+                        return accu.length < nextShuffleOrder.length
+                            ? nextShuffleOrder
+                            : accu
+                    }, [])
+
                     const shuffleItems = cache.get<string[]>(shuffleKey, [])
+
                     const toppedUpIndices = sortInStrategy(
-                        cache.get<number[]>(ordKey, memory.get<number[]>(shuffleKey, [])),
+                        cache.get<number[]>(ordKey, presetShuffle),
                         shuffleItems.length,
                     )
+
+                    console.log('toppedup', toppedUpIndices, presetShuffle)
 
                     // order mix items
                     cache.fold(shuffleKey, (vs: string[]) => sortWithIndices(vs, toppedUpIndices), [])
 
                     // remove mixKey from ord pool
-                    orderKeys.delete(ok)
+                    orderSet.delete(ok)
 
                     // possibly update with longer sort order
                     cache.set(ordKey, toppedUpIndices)
@@ -60,7 +75,7 @@ export const orderingRecipe = ({
                 }
 
                 // need to remove ord deferred because it is persistent
-                if (orderKeys.size === 0) {
+                if (orderSet.size === 0) {
                     deferred.unregister(ordKey)
                 }
             }, {

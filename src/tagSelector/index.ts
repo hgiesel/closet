@@ -1,11 +1,14 @@
 import { Grammar, Parser } from 'nearley'
 import grammar from './grammar'
 
-export type TagPredicate = (key: string, num: number | null | undefined, occur: number | null) => boolean
+import { keySeparationPattern } from '../template/parser/tagBuilder'
 
-const tagSelectorGrammar = Grammar.fromCompiled(grammar)
 
-export const parseTagSelector = (selector: string): TagPredicate => {
+type TagPredicate = (key: string, num: number | null | undefined, occur: number | null) => boolean
+
+const tagPredicateGrammar = Grammar.fromCompiled(grammar)
+
+const parseTagSelector = (selector: string): TagPredicate => {
     /**
      * `TagPredicate` can be used in three ways:
      * 1. pred(key, num, fullOccur)
@@ -20,7 +23,7 @@ export const parseTagSelector = (selector: string): TagPredicate => {
      * passing in null for `occur` means to ignore the occurrence numbers (always true)
      */
 
-    const parser = new Parser(tagSelectorGrammar)
+    const parser = new Parser(tagPredicateGrammar)
 
     try {
         const parsed = parser.feed(selector).results
@@ -34,5 +37,39 @@ export const parseTagSelector = (selector: string): TagPredicate => {
     catch (e) {
         console.error('Tag selector failed to parse: ', e)
         return () => false
+    }
+}
+
+export class TagSelector {
+    predicate: TagPredicate
+
+    protected constructor(selector: string) {
+        this.predicate =  parseTagSelector(selector)
+    }
+
+    static make(selector: string) {
+        return new TagSelector(selector)
+    }
+
+    check(key: string, num: number | null, occur: number | null = null) {
+        return this.predicate(key, num, occur)
+    }
+
+    checkFullKey(key: string, occur: number | null = null) {
+        return this.predicate(key, undefined, occur)
+    }
+
+    checkTagIdentifier(identifier: string) {
+        const match = identifier.match(keySeparationPattern)
+
+        if (!match) {
+            return false
+        }
+
+        const key = match[1]
+        const num = match[2].length > 0 ? Number(match[2]) : null
+        const occur = match[3] ? Number(match[3]) : null
+
+        return this.predicate(key, num, occur)
     }
 }

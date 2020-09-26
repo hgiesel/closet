@@ -21,7 +21,7 @@ export {
 export { Stylizer } from './src/recipes/stylizer'
 
 export {
-    parseTagSelector
+    TagSelector,
 } from './src/tagSelector'
 
 export {

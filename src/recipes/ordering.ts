@@ -2,6 +2,7 @@ import type { TagNode, Registrar, Internals } from './types'
 
 import { sortWithIndices } from './utils'
 import { topUp } from './sortInStrategies'
+import { TagSelector } from './utils'
 
 
 export const orderingRecipe = ({
@@ -24,6 +25,8 @@ export const orderingRecipe = ({
         for (const [idx, cmd] of tag.values.entries()) {
             const ordOccupiedKey = `${tag.key}:ord:occupied:${idx}`
 
+            // TODO
+            // const selectors = cmd.map(TagSelector.make)
             const toBeOrdered = cmd
                 .filter((v: string) => !cache.get<string[]>(ordOccupiedKey, []).includes(v))
 

@@ -4,6 +4,7 @@ export const constant = <T,U>(x: T) => (_y: U) => x
 
 export { keyPattern } from '../template/parser/tokenizer'
 export { keySeparationPattern } from '../template/parser/tagBuilder'
+export { TagSelector } from '../tagSelector'
 
 export const zeroWidthSpace = "​"
 

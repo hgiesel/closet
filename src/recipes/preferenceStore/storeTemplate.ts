@@ -1,6 +1,6 @@
 import type { TagNode, Internals } from '../types'
 
-import { TagSelector } from '../../tagSelector'
+import { TagSelector } from '../utils'
 
 
 export const defaultSeparator = { sep: ';' }
@@ -18,26 +18,25 @@ export class PreferenceStore<T> {
      * not make a shared value, for that see `SharedStore` (TODO)
      */
 
-    predicates: [TagSelector, T][]
+    selectors: [TagSelector, T][]
     defaultValue: T
 
     constructor(defaultValue: T) {
         this.defaultValue = defaultValue
-        this.predicates = []
+        this.selectors = []
     }
 
     protected set(selector: string, value: T): void {
-        this.predicates.unshift([TagSelector.make(selector), value])
+        this.selectors.unshift([TagSelector.make(selector), value])
     }
 
     get(key: string, num: number, fullOccur: number): T {
-        for (const [predicate, value] of this.predicates) {
-            if (predicate.check(key, num, fullOccur)) {
-                return value
-            }
-        }
+        const found = this.selectors
+            .find(([selector]) => selector.check(key, num, fullOccur))
 
-        return this.defaultValue
+        return found
+            ? found[1]
+            : this.defaultValue
     }
 }
 

@@ -109,7 +109,20 @@ const sequenceTemplate = <T extends Record<string, unknown>>(
     tag: TagNode,
     internals: Internals<T>,
 ): V[] | void => {
-    const [uid, sequenceId] = makeKeywords(tag, internals)
+    const sequencesKey = `sequences`
+    // in cache: list of all sequences
+
+    const [
+        uid,
+        sequenceId,
+    ] = makeKeywords(tag, internals)
+
+    internals.cache.over(sequencesKey, (sequences: string[]) => {
+        if (!sequences.includes(sequenceId)) {
+            sequences.push(sequenceId)
+        }
+    }, [])
+
     return sequencer(uid, sequenceId, sortIn, getValues)(tag, internals)
 }
 

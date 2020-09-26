@@ -14,7 +14,7 @@ start -> allStar {% id %}
 allStar -> %allStar {% () => () => true %}
 
 pattern -> key num occur {%
-    ([keyPattern, numPred, occurPred]) => (key: string, num: number | null | undefined, fullOccur: number) => {
+    ([keyPattern, numPred, occurPred]) => (key: string, num: number | null | undefined, fullOccur: number | null) => {
         if (typeof num === 'undefined') {
             const match = key.match(keySeparationPattern)
 
@@ -123,7 +123,9 @@ multiple -> %digits %multiplierSeq %digits {%
 #################################
 
 occur -> (%occurSep occurPredicate):? {%
-    ([pred]) => pred ? pred[1] : () => true
+    ([pred]) => pred
+        ? (occur: number | null) => occur === null ? true : pred[1](occur)
+        : () => true
 %}
 
 occurPredicate -> numDigits {% id %}

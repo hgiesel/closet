@@ -3,6 +3,7 @@ import type { TagNode, Registrar, Internals } from './types'
 import { sortWithIndices } from './utils'
 import { topUp } from './sortInStrategies'
 
+
 export const orderingRecipe = ({
     tagname = 'ord',
 
@@ -60,8 +61,6 @@ export const orderingRecipe = ({
                         cache.get<number[]>(ordKey, presetShuffle),
                         shuffleItems.length,
                     )
-
-                    console.log('toppedup', toppedUpIndices, presetShuffle)
 
                     // order mix items
                     cache.fold(shuffleKey, (vs: string[]) => sortWithIndices(vs, toppedUpIndices), [])

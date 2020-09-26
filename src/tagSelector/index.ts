@@ -1,7 +1,7 @@
 import { Grammar, Parser } from 'nearley'
 import grammar from './grammar'
 
-export type TagPredicate = (key: string, num: number | null | undefined, occur: number) => boolean
+export type TagPredicate = (key: string, num: number | null | undefined, occur: number | null) => boolean
 
 const tagSelectorGrammar = Grammar.fromCompiled(grammar)
 
@@ -12,14 +12,12 @@ export const parseTagSelector = (selector: string): TagPredicate => {
      * 2. pred(fullKey, undefined, occur)
      * 3. pred(fullKey, undefined, fullOccur)
      *
-     * all of those combinations:
+     * all of the following combinations uniquely identifies tags:
      * 1. (key, num, fullOccur)
      * 2. (fullKey, fullOccur)
      * 3. (fullKey, occur)
-     * uniquely identifies tags
      *
-     * I try to uniformly use the first of those options,
-     * but it allows all three
+     * passing in null for `occur` means to ignore the occurrence numbers (always true)
      */
 
     const parser = new Parser(tagSelectorGrammar)

@@ -1,4 +1,4 @@
-import { interspliceChildNodes, ChildNodeSpan } from './browserTemplate'
+import { interspliceChildNodes, ChildNodeSpan } from '../browser'
 
 
 // https://github.com/SimonLammer/anki-persistence#usage
@@ -108,10 +108,4 @@ export const getQaChildNodes = (): ChildNodeSpan[] | null => {
             v.id !== 'anki-am' /* anki asset manager support */
         )
     })
-}
-
-export const cleanup = (): void => {
-    for (const element of Array.from(document.getElementsByClassName('closet--hidden'))) {
-        (element as HTMLElement).style.opacity = '1'
-    }
 }

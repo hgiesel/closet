@@ -1,7 +1,7 @@
-import type { TagRenderer } from './template'
-import type { ASTNode } from './template/nodes'
+import type { TagRenderer } from '../template'
+import type { ASTNode } from '../template/nodes'
 
-import { Template } from './template'
+import { Template } from '../template'
 
 
 // negative result implies invalid idx
@@ -309,5 +309,12 @@ export class BrowserTemplate extends Template {
 
     renderToNodes(tagRenderer: TagRenderer): void {
         super.render(tagRenderer, (t: string[]) => t.forEach((text: string, index: number) => setText(this.inputs[index], text)))
+    }
+}
+
+const delayKeyword = 'closet--delay'
+export const cleanup = (): void => {
+    for (const element of Array.from(document.getElementsByClassName(delayKeyword))) {
+        (element as HTMLElement).style.opacity = '1'
     }
 }

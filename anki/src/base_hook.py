@@ -52,8 +52,8 @@ def setup_script():
 
         setter = lambda id, script: True,
 
-        store = ['enabled', 'conditions'],
-        readonly = ['name', 'code', 'type', 'version', 'position', 'description'],
+        store = ['enabled', 'position', 'conditions'],
+        readonly = ['name', 'code', 'type', 'version', 'description'],
 
         label = lambda id, storage: 'Closet Source Code',
         reset = False,

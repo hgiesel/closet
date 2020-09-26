@@ -5,7 +5,7 @@ export {
 } from './src/version'
 
 export { Template } from './src/template'
-export { BrowserTemplate } from './src/browserTemplate'
+export { BrowserTemplate } from './src/browser'
 
 export { FilterManager } from './src'
 export { Parser } from './src/template/parser'
@@ -31,8 +31,17 @@ export {
     sequencers,
 } from './src/recipes'
 
-export {
-    browser,
+/////////////////////////
+
+import {
+    browser as recipesBrowser,
 } from './src/recipes/browser'
 
-export * as anki from './src/ankiUtils'
+import { cleanup } from './src/browser'
+
+export const browser = {
+    ...recipesBrowser,
+    cleanup,
+}
+
+export * as anki from './src/anki'

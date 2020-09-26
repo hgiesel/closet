@@ -34,7 +34,7 @@ var closetLoaded = setInterval(() => {
             console.error(e)
         }
         finally {
-            closet.anki.cleanup()
+            closet.browser.cleanup()
         }
     }
 }, 5)

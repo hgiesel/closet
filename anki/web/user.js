@@ -24,17 +24,17 @@ var initCloset = () => {
     window.closetRenderTime = after - before
 }
 
-var closetLoaded = setInterval(() => {
-    if (globalThis.closet && globalThis.Persistence) {
-        clearInterval(closetLoaded)
-        try {
-            initCloset()
-        }
-        catch(e) {
-            console.error(e)
-        }
-        finally {
-            closet.browser.cleanup()
-        }
+var tryLoadCloset = (callback) => {
+    if (Object.hasOwnProperty.call(globalThis, 'closet') && Object.hasOwnProperty.call(globalThis, 'Persistence')) {
+        closet.anki.load(callback)
+        return true
     }
-}, 5)
+    return false
+}
+
+if (!tryLoadCloset(initCloset)) {
+    var closetLoaded = setInterval(() => tryLoadCloset(()=> {
+        initCloset()
+        clearInterval(closetLoaded)
+    }), 5)
+}

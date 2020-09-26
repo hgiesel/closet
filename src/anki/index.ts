@@ -1,4 +1,4 @@
-import { interspliceChildNodes, ChildNodeSpan } from '../browser'
+import { interspliceChildNodes, ChildNodeSpan, cleanup } from '../browser'
 
 
 // https://github.com/SimonLammer/anki-persistence#usage
@@ -105,7 +105,19 @@ export const getQaChildNodes = (): ChildNodeSpan[] | null => {
         value: (v: any) => (
             v.tagName !== 'STYLE' &&
             v.tagName !== 'SCRIPT' &&
-            v.id !== 'anki-am' /* anki asset manager support */
+            v.id !== 'anki-am' /* Asset Manager support */
         )
     })
+}
+
+export const load = (callback: () => void): void => {
+    try {
+        callback()
+    }
+    catch(e) {
+        console.error(e)
+    }
+    finally {
+        cleanup()
+    }
 }

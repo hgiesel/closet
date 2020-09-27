@@ -1,6 +1,19 @@
-export {
+import {
     setListRecipe,
-    pickRecipe,
+} from './setList'
+
+import {
+    pickRandomRecipe,
     pickIndexRecipe,
     pickCardNumberRecipe,
-} from './listStore'
+} from './pickers'
+
+
+const sharedStore = {
+    setList: setListRecipe,
+    pick: pickRandomRecipe,
+    pickIndex: pickIndexRecipe,
+    pickCardNumber: pickCardNumberRecipe,
+}
+
+export default sharedStore

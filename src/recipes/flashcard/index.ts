@@ -26,10 +26,14 @@ export const prepareFlashcardRecipes = ([show, hide, reveal]: Triple<Recipe<Flas
     reveal: reveal,
 })
 
-export const cloze = prepareFlashcardRecipes(clozeRecipes as Triple<Recipe<FlashcardPreset>>)
-export const multipleChoice = prepareFlashcardRecipes(multipleChoiceRecipes as Triple<Recipe<FlashcardPreset>>)
-export const specification = prepareFlashcardRecipes(specRecipes as Triple<Recipe<FlashcardPreset>>)
+const flashcard = {
+    cloze: prepareFlashcardRecipes(clozeRecipes as Triple<Recipe<FlashcardPreset>>),
+    multipleChoice: prepareFlashcardRecipes(multipleChoiceRecipes as Triple<Recipe<FlashcardPreset>>),
+    specification: prepareFlashcardRecipes(specRecipes as Triple<Recipe<FlashcardPreset>>),
 
-export const mingle = prepareFlashcardRecipes(mingleRecipes as Triple<Recipe<FlashcardPreset>>)
-export const sort = prepareFlashcardRecipes(sortRecipes as Triple<Recipe<FlashcardPreset>>)
-export const jumble = prepareFlashcardRecipes(jumbleRecipes as Triple<Recipe<FlashcardPreset>>)
+    mingle: prepareFlashcardRecipes(mingleRecipes as Triple<Recipe<FlashcardPreset>>),
+    sort: prepareFlashcardRecipes(sortRecipes as Triple<Recipe<FlashcardPreset>>),
+    jumble: prepareFlashcardRecipes(jumbleRecipes as Triple<Recipe<FlashcardPreset>>),
+}
+
+export default flashcard

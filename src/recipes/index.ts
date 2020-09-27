@@ -10,29 +10,12 @@ import { orderingRecipe } from './ordering'
 import { generateIntegerRecipe, generateRealRecipe } from './generator'
 import { styleRecipe, processRecipe } from './stylizing'
 
-import {
-    activateRecipe,
-    deactivateRecipe,
-    setNumberRecipe,
-} from './preferenceStore'
-
-import {
-    setListRecipe,
-    pickRecipe,
-    pickIndexRecipe,
-} from './sharedStore'
+import preferenceStore from './preferenceStore'
+import sharedStore from './sharedStore'
+import flashcard from './flashcard'
 
 import { debugRecipe } from './debug'
 import { defRecipe } from './meta'
-
-import {
-    cloze,
-    multipleChoice,
-    specification,
-    mingle,
-    sort,
-    jumble,
-} from './flashcard'
 
 export const recipes: Recipes = {
     shuffle: shufflingRecipe,
@@ -44,24 +27,12 @@ export const recipes: Recipes = {
     process: processRecipe,
     stylize: styleRecipe,
 
-    activate: activateRecipe,
-    deactivate: deactivateRecipe,
-    setNumber: setNumberRecipe,
-
-    setList: setListRecipe,
-    pick: pickRecipe,
-    pickIndex: pickIndexRecipe,
+    ...preferenceStore,
+    ...sharedStore,
+    ...flashcard,
 
     debug: debugRecipe,
     define: defRecipe,
-
-    cloze: cloze,
-    multipleChoice: multipleChoice,
-    specification: specification,
-
-    mingle: mingle,
-    sort: sort,
-    jumble: jumble,
 }
 
 ////////////////////////////////////

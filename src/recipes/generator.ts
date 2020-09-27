@@ -8,15 +8,16 @@ export const numberGenerator = function*(
     filter: boolean,
     banDomain: number[] = [],
     prematureStop: (banDomain: number[]) => boolean = () => false,
-): Generator<number, void, unknown> {
+): Generator<number, number[], unknown> {
+    const filteredValues: number[] = []
     let tries = 0
 
     while (!prematureStop(banDomain) && tries < maxTries) {
         const randomValue = gen()
 
-        if (!banDomain.includes(randomValue)) {
+        if (!banDomain.includes(randomValue) && !filteredValues.includes(randomValue)) {
             if (filter) {
-                banDomain.push(randomValue)
+                filteredValues.push(randomValue)
             }
 
             yield randomValue
@@ -24,6 +25,8 @@ export const numberGenerator = function*(
 
         tries++
     }
+
+    return filteredValues
 }
 
 export const intAlgorithm = (min: number, max: number): NumberGenAlgorithm => () => min + Math.floor(Math.random() * (max - min))

@@ -104,8 +104,11 @@ const pickRandom = (
             stopper,
         )
 
-        for (const index of generator) {
-            return index
+        const picked = generator.next()
+
+        if (!picked.done) {
+            uniqList.push(picked.value)
+            return picked.value
         }
     })
 

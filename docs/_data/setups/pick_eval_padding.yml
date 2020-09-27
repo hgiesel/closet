@@ -7,4 +7,5 @@ code: |
   filterManager.install(
     closet.recipes.pick({ tagname: 'ppick', postprocess }),
     closet.recipes.pickIndex({ tagname: 'ppi', postprocess }),
+    closet.recipes.pickCardNumber({ tagname: 'psel', postprocess }),
   )

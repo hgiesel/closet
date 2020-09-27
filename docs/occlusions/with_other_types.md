@@ -1,6 +1,6 @@
 ---
 layout: doc
-title: Using occlusions with other effects
+title: Using occlusions with clozes and shuffling
 nav_order: 4
 permalink: /occlusions/with-other-types
 parent: Image Occlusions

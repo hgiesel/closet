@@ -2,7 +2,7 @@
 export const versionInfo = [
     0 /* MAJOR */,
     1 /* MINOR */,
-    3 /* PATCH */,
+    4 /* PATCH */,
 ]
 
 export const prereleaseInfo = [

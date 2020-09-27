@@ -24,8 +24,15 @@ var initCloset = () => {
     window.closetRenderTime = after - before
 }
 
+var closetIsReady = () => {
+    return globalThis.hasOwnProperty('Persistence') &&
+        globalThis.hasOwnProperty('closet') &&
+        globalThis.closet.hasOwnProperty('anki') &&
+        globalThis.closet.anki.hasOwnProperty('load')
+}
+
 var tryLoadCloset = (callback) => {
-    if (Object.hasOwnProperty.call(globalThis, 'closet') && Object.hasOwnProperty.call(globalThis, 'Persistence')) {
+    if (closetIsReady()) {
         closet.anki.load(callback)
         return true
     }

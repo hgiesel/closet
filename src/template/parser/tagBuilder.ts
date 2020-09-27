@@ -3,7 +3,7 @@ import { ASTNode, TagNode } from '../nodes'
 /**
  * works with keys, but also with tag identifier
  */
-export const keySeparationPattern = /^((?:[a-zA-Z_\/]|%\w)+)(\d*)(?::(\d+))?$/u
+export const keySeparationPattern = /^((?:[a-zA-Z_/]|%\w)+)(\d*)(?::(\d+))?$/u
 
 const getAndInc = (map: Map<string, number>, key: string): number => {
     const result = (map.get(key) ?? -1) + 1

@@ -9,7 +9,7 @@ export class ListStore extends SharedStore<string[]> {
         this.set(storeKey, list)
     }
 
-    overwriteList(storeKey: string, newList: string[], fromIndex: number = 0): void {
+    overwriteList(storeKey: string, newList: string[], fromIndex = 0): void {
         const list = this.getList(storeKey)
 
         for (let i = 0; i < newList.length; i++) {

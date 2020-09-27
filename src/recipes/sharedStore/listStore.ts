@@ -160,7 +160,9 @@ const pickIndex = <T extends Record<string, unknown>>(
     return postprocess(value, valueList)(tag, internals as any)
 }
 
-export const pickIndexRecipe = <T extends Record<string, unknown>>({
+const pickIndexTemplate = <T extends Record<string, unknown>>(
+    picker: (list: string[]) => Eval<T, string>,
+) => ({
     tagname = 'pick',
     storeId = 'lists',
     postprocess = defaultPostprocess,
@@ -169,28 +171,26 @@ export const pickIndexRecipe = <T extends Record<string, unknown>>({
     listStoreTemplate(
         storeId,
         pickIndex(
-            (list: string[]) => (tag: TagNode, _internals: Internals<T>): string => list[Number(tag.num) || 0],
+            picker as any,
             postprocess,
         ) as any,
     ),
 )
 
-export const pickCardNumber = <T extends CardPreset>({
-    tagname = 'pick',
-    storeId = 'lists',
-    postprocess = defaultPostprocess,
-} = {}) => (registrar: Registrar<T>) => registrar.register(
-    tagname,
-    listStoreTemplate(
-        storeId,
-        pickIndex(
-            (list: string[]) => (_tag: TagNode, internals: Internals<T>): string => {
-                const indexedValue: string | undefined = list[internals.preset.cardNumber as number]
-                const result: string = indexedValue ?? list[0] ?? ''
+const pickNum = (list: string[]) => <T extends Record<string, unknown>>(
+    tag: TagNode,
+    _internals: Internals<T>,
+): string => list[Number(tag.num) || 0]
 
-                return result
-            },
-            postprocess,
-        ) as any,
-    ),
-)
+const pickCardNumber = (list: string[]) => <T extends Record<string, unknown>>(
+    _tag: TagNode,
+    internals: Internals<T>,
+): string => {
+    const indexedValue: string | undefined = list[internals.preset.cardNumber as number]
+    const result: string = indexedValue ?? list[0] ?? ''
+
+    return result
+}
+
+export const pickIndexRecipe = pickIndexTemplate(pickNum)
+export const pickCardNumberRecipe = pickIndexTemplate(pickCardNumber)

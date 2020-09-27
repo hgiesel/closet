@@ -3,4 +3,5 @@ code: |
   filterManager.install(
     closet.recipes.pick({ tagname: 'pick' }),
     closet.recipes.pickIndex({ tagname: 'pi' }),
+    closet.recipes.pickCardNumber({ tagname: 'sel' }),
   )

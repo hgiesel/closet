@@ -1,10 +1,10 @@
 ---
 layout: tester
-title: Try it yourself!
+title: Try out Closet!
 nav_order: 10
 permalink: /tester
 ---
 
-# Browser editor
+# Test Closet Inside Your Browser
 
 {% include tester.html %}

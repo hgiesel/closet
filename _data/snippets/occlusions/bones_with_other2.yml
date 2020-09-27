@@ -1,0 +1,19 @@
+name: Bones occlusion with picking
+code: |
+  <img src="/assets/images/cranial-bones.png" />
+  <!--
+  [[recth1::326,78,587,144]]
+  [[recth2::117,283,574,274]]
+  [[recth3::78,666,500,265]]
+  [[recth4::1656,48,617,165]]
+  [[recth5::1973,391,495,252]]
+  [[recth6::1952,1179,509,283]]
+
+  [[setl1::[[c0::Frontal bone]]: vertically oriented [[c0::squamous]] part, and the horizontally oriented [[c0::orbital]] part.]]
+  [[setl2::[[c0::Sphenoid bone]]: in front of the [[c0::basilar]] part of the [[c0::occipital]] bone]]
+  [[setl3::[[c0::Ethmoid bone]]: separates the [[c0::nasal cavity]] from the brain.]]
+  [[setl4::[[c0::Parietal bone]]: each bone is roughly [[c0::quadrilateral]] in form]]
+  [[setl5::[[c0::Temporal bone]]: situated at the sides and base of the skull, and lateral to the [[c0::temporal lobes]] of the [[c0::cerebral cortex]].]]
+  [[setl6::[[c0::Occipital bone]]: is [[c0::trapezoidal]] in shape.]]
+  -->
+  [[sel]]

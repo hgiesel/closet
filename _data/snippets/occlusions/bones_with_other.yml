@@ -1,4 +1,4 @@
-name: Bones occlusion with other example
+name: Bones occlusion with shuffling
 code: |
   <img src="/assets/images/cranial-bones.png" />
   <!--
@@ -11,7 +11,7 @@ code: |
   -->
   [[mix1::[[c1::Frontal bone]]: vertically oriented [[c1::squamous]] part, and the horizontally oriented [[c1::orbital]] part.]]
   [[mix1::[[c2::Sphenoid bone]]: in front of the [[c2::basilar]] part of the [[c2::occipital]] bone]]
-  [[mix1::[[c3::Ethmoid bone]]: separates the [[c3::nasal cavity]]from the brain.]]
+  [[mix1::[[c3::Ethmoid bone]]: separates the [[c3::nasal cavity]] from the brain.]]
   [[mix1::[[c4::Parietal bone]]: each bone is roughly [[c4::quadrilateral]] in form]]
   [[mix1::[[c5::Temporal bone]]: situated at the sides and base of the skull, and lateral to the [[c5::temporal lobes]] of the [[c5::cerebral cortex]].]]
   [[mix1::[[c6::Occipital bone]]: is [[c6::trapezoidal]] in shape.]]

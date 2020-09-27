@@ -45,7 +45,8 @@
   },
   "dependencies": {
     "moo": "^0.5.1",
-    "nearley": "^2.19.6"
+    "nearley": "^2.19.6",
+    "terser": "^5.3.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",

@@ -10,7 +10,7 @@ const adjustOptions = {
     persistent: true,
 }
 
-export const orderingRecipe = ({
+const orderingRecipe = ({
     tagname = 'ord',
 
     separator = ',',
@@ -91,3 +91,9 @@ export const orderingRecipe = ({
 
     registrar.register(tagname, ordFilter, { separators: [cmdSeparator, separator] })
 }
+
+const ordering = {
+    order: orderingRecipe,
+}
+
+export default ordering

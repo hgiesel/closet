@@ -5,11 +5,10 @@ export interface Recipes {
     [propName: string]: Recipe<any> | FlashcardRecipes
 }
 
-import { shufflingRecipe } from './shuffling'
-import { orderingRecipe } from './ordering'
-import { generateIntegerRecipe, generateRealRecipe } from './generator'
-import { styleRecipe, processRecipe } from './stylizing'
-
+import shuffling from './shuffling'
+import ordering from './ordering'
+import generating from './generating'
+import stylizing from './stylizing'
 import preferenceStore from './preferenceStore'
 import sharedStore from './sharedStore'
 import flashcard from './flashcard'
@@ -18,15 +17,10 @@ import { debugRecipe } from './debug'
 import { defRecipe } from './meta'
 
 export const recipes: Recipes = {
-    shuffle: shufflingRecipe,
-    order: orderingRecipe,
-
-    generateInteger: generateIntegerRecipe,
-    generateReal: generateRealRecipe,
-
-    process: processRecipe,
-    stylize: styleRecipe,
-
+    ...shuffling,
+    ...ordering,
+    ...generating,
+    ...stylizing,
     ...preferenceStore,
     ...sharedStore,
     ...flashcard,

@@ -5,7 +5,7 @@ import { acrossTag, withinTag } from './sequencer'
 import { topUp } from './sortInStrategies'
 
 
-export const shufflingRecipe = ({
+const shufflingRecipe = ({
     tagname = 'mix',
     stylizer = Stylizer.make(),
     sortInStrategy = topUp,
@@ -30,3 +30,9 @@ export const shufflingRecipe = ({
 
     registrar.register(tagname, shuffleFilter, { separators: ['||'] })
 }
+
+const shuffling = {
+    shuffle: shufflingRecipe,
+}
+
+export default shuffling

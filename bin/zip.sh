@@ -7,8 +7,8 @@ cd "$DIR/anki"
 zip -r "$DIR/build/$addon_id.ankiaddon" \
   *".py" \
   "manifest.json" \
-  "gui/"* \
-  "gui/forms/"* \
-  "icons/"* \
-  "src/"* \
+  "gui/"*".py" \
+  "gui/forms/"*".py" \
+  "icons/"*".png" \
+  "src/"*".py" \
   "web/"*

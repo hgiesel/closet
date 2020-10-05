@@ -7,8 +7,13 @@ import {
 } from '../utils'
 
 export const keyPattern = /(?:[a-zA-Z_/]|%\w)+\d*/u
-const outerTextPattern = /[\s\S]+?(?=\[\[|$)/u
-const innerTextPattern = /[\s\S]+?(?=\[\[|\]\])/u
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
+const escapeRegExp = (str: string): string =>
+    str.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
+
+const outerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(TAG_OPEN)}|$)`, 'u')
+const innerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(TAG_OPEN)}|${escapeRegExp(TAG_CLOSE)})`, 'u')
 
 // img tags are parsed via HTML (!)
 export const templateTokenizer = moo.states({

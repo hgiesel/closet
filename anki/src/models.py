@@ -1,17 +1,26 @@
-from aqt import QDialogButtonBox, qconnect
-from aqt.models import Models
 from aqt.gui_hooks import models_did_init_buttons
+from aqt import mw
 
-from anki.hooks import wrap
 from anki.lang import _
+
+from .utils import delimiters
+from ..gui.model_settings import ModelSettings
+
+
+def set_settings(
+    occlude_shortcut: dict,
+):
+    delimiters.value = occlude_shortcut
 
 def on_closet(models):
     current_row: int = models.form.modelsList.currentRow()
-    current_id: int = models.models[current_row].id
-    current_notetype = models.mm.get(current_id)
+    model_id: int = models.models[current_row].id
 
-    from aqt.utils import showText
-    showText(str(current_notetype))
+    delimiters.model_id = model_id
+    dialog = ModelSettings(mw, set_settings)
+
+    dialog.setupUi(delimiters.value)
+    return dialog.exec_()
 
 def init_closet_button(buttons, models):
     buttons.append((

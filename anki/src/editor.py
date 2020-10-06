@@ -15,7 +15,7 @@ from aqt.gui_hooks import (
     editor_will_munge_html,
 )
 
-from .utils import occlude_keyword
+from .utils import occlude_shortcut
 
 addon_package = mw.addonManager.addonFromModule(__name__)
 mw.addonManager.setWebExports(__name__, r"web/.*(css|js)")
@@ -104,7 +104,7 @@ def add_occlusion_button(buttons, editor):
     file_path = dirname(realpath(__file__))
     icon_path = Path(file_path, '..', 'icons', 'occlude.png')
 
-    shortcut_as_text = QKeySequence(mw.pm.profile.get(occlude_keyword, 'Ctrl+O')).toString(QKeySequence.NativeText)
+    shortcut_as_text = QKeySequence(occlude_shortcut.value).toString(QKeySequence.NativeText)
 
     occlusion_button = editor._addButton(
         str(icon_path.absolute()),
@@ -116,11 +116,9 @@ def add_occlusion_button(buttons, editor):
     buttons.insert(-1, occlusion_button)
 
 def add_occlusion_shortcut(cuts, editor):
-    occludeShortcut = mw.pm.profile.get(occlude_keyword, 'Ctrl+O')
+    cuts.append((occlude_shortcut.value, lambda: toggle_occlusion_mode(editor)))
 
-    cuts.append((occludeShortcut, lambda: toggle_occlusion_mode(editor)))
-
-def remove_occlusion_code(txt, editor):
+def remove_occlusion_code(txt, _editor):
     return without_occlusion_code(txt)
 
 def init_editor():

@@ -1,11 +1,11 @@
 from pathlib import Path
 from os.path import dirname, realpath
+from re import match
 
-from aqt import mw
-from anki.hooks import addHook
+from aqt import mw, dialogs
 from aqt.utils import showInfo
 
-from .utils import find_addon_by_name
+from .utils import find_addon_by_name, delimiters
 from .version import version
 
 
@@ -23,18 +23,25 @@ if am:
     ami = __import__(am).src.lib.interface
     amr = __import__(am).src.lib.registrar
 
-def get_closet_source():
+def get_closet_source(model_id: int):
     filepath = Path(dirname(realpath(__file__)), '..', 'web', 'closet.js')
 
+    delimiters.model_id = model_id
+    delims = delimiters.value
+
     with open(filepath, mode='r', encoding='utf-8') as file:
-        return file.read().strip()
+        original = file.read().strip()
+        return (
+            original
+            .replace('TAG_OPEN="[["', f'TAG_OPEN="{delims["tag_open"]}"')
+            .replace('TAG_CLOSE="]]"', f'TAG_CLOSE="{delims["tag_close"]}"')
+            .replace('ARG_SEP="::"', f'ARG_SEP="{delims["arg_sep"]}"')
+        )
 
 def setup_script():
     if not am:
         showInfo('Closet requires Asset Manager to be installed.')
         return
-
-    closet_source = get_closet_source()
 
     amr.make_and_register_interface(
         tag = base_tag,
@@ -47,7 +54,7 @@ def setup_script():
             description,
             storage.position if storage.position is not None else 'external',
             storage.conditions if storage.conditions is not None else [],
-            closet_source,
+            get_closet_source(id),
         ),
 
         setter = lambda id, script: True,
@@ -57,19 +64,21 @@ def setup_script():
 
         label = lambda id, storage: 'Closet Source Code',
         reset = False,
+
+        autodelete = lambda id, storage: not match(r'^\d+$', id),
     )
 
 def install_script():
     if not am:
         return
 
-    meta_script = ami.make_meta_script(
-        base_tag,
-        base_id,
-    )
-
     # insert the script for every model
     for model_id in mw.col.models.ids():
+        meta_script = ami.make_meta_script(
+            base_tag,
+            str(model_id),
+        )
+
         amr.register_meta_script(
             model_id,
             meta_script,

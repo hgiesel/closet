@@ -10,7 +10,7 @@ elif [[ -d "$HOME/.local/share/AnkiDev/addons21" ]]; then
   declare target="$HOME/.local/share/AnkiDev/addons21/$addon_name"
 
 elif [[ $(uname) = 'Darwin' ]]; then
-  declare target="$HOME/Library/Application\ Support/Anki2/addons21/$addon_name"
+  declare target="$HOME/Library/Application Support/Anki2/addons21/$addon_name"
 
 elif [[ $(uname) = 'Linux' ]]; then
   declare target="$HOME/.local/share/Anki2/addons21/$addon_name"

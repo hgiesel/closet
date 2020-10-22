@@ -52,12 +52,6 @@ def get_scripts() -> Tuple[str, str, str]:
                     setup_file.read().strip(),
                 ]
 
-def get_closet_source() -> str:
-    filepath = Path(dirname(realpath(__file__)), '..', 'web', 'closet.js')
-
-    with open(filepath, mode='r', encoding='utf-8') as file:
-        return file.read().strip()
-
 def setup_user_script():
     if not am:
         return
@@ -109,9 +103,6 @@ def setup_user_script():
     )
 
 def install_user_script():
-    mw.col.media.trash_files(['_closet.js'])
-    mw.col.media.write_data('_closet.js', get_closet_source().encode())
-
     if not am:
         return
 

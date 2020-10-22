@@ -5,17 +5,6 @@
 // - rewrite to TS
 // - drop support for _default key
 
-export interface AnkiPersistence {
-    clear: () => void
-        getItem(key: string): unknown
-    getItem(): unknown
-    setItem(key: string, value: unknown): void
-        setItem(value: unknown): void
-        removeItem(key: string): void
-        removeItem(): void
-        isAvailable(): boolean
-}
-
 type JSON =
     | null
     | boolean
@@ -23,6 +12,95 @@ type JSON =
     | string
     | JSON[]
     | { [prop: string]: JSON }
+
+export interface AnkiPersistence {
+    clear: () => void
+    getItem(key: string): JSON
+    setItem(key: string, value: JSON): void
+    removeItem(key: string): void
+    isAvailable(): boolean
+}
+
+const _persistenceKey = 'github.com/hgiesel/closet'
+
+// used in android, iOS, web
+class Persistence_sessionStorage implements AnkiPersistence {
+    _isAvailable = false
+
+    constructor() {
+        if (typeof(globalThis.sessionStorage) === 'object') {
+            this._isAvailable = true
+        }
+    }
+
+    clear() {
+        for (var i = 0; i < sessionStorage.length; i++) {
+            var k = sessionStorage.key(i)
+
+            if (k && k.indexOf(_persistenceKey) === 0) {
+                sessionStorage.removeItem(k as string)
+                i--
+            }
+        }
+    }
+
+    setItem(key: string, value: JSON) {
+        sessionStorage.setItem(_persistenceKey + key, JSON.stringify(value))
+    }
+
+    getItem(key: string): JSON {
+        const item = sessionStorage.getItem(_persistenceKey + key) ?? 'null'
+        return JSON.parse(item)
+    }
+
+    removeItem(key: string) {
+        sessionStorage.removeItem(_persistenceKey + key)
+    }
+
+    isAvailable() {
+        return this._isAvailable
+    }
+}
+
+// used in windows, linux, mac
+class Persistence_windowKey implements AnkiPersistence {
+    _isAvailable = false
+    obj: Record<string, any>
+
+    constructor(persistentKey: string) {
+        this.obj = (globalThis as any)[persistentKey]
+
+        if (typeof(this.obj) === 'object') {
+            this._isAvailable = true
+        }
+
+        if (this.obj[_persistenceKey] === undefined) {
+            this.clear()
+        }
+    }
+
+    clear() {
+        this.obj[_persistenceKey] = {}
+    }
+
+    setItem(key: string, value: JSON) {
+        this.obj[_persistenceKey][key] = value
+    }
+
+    getItem(key: string) {
+        return this.obj[_persistenceKey][key] == undefined
+            ? null
+            : this.obj[_persistenceKey][key]
+    }
+
+    removeItem(key: string) {
+        delete this.obj[_persistenceKey][key]
+    }
+
+    isAvailable() {
+        return this._isAvailable
+    }
+}
 
 const initPersistence = (): AnkiPersistence => {
     /**
@@ -38,84 +116,13 @@ const initPersistence = (): AnkiPersistence => {
      * iOS       |       YES      |       -       |       NO        |
      */
 
-    const _persistenceKey = 'github.com/hgiesel/closet'
 
-    // used in android, iOS, web
-    const Persistence_sessionStorage = function() {
-        let isAvailable = false
-        try {
-            if (typeof(globalThis.sessionStorage) === 'object') {
-                isAvailable = true
-                this.clear = function() {
-                    for (var i = 0; i < sessionStorage.length; i++) {
-                        var k = sessionStorage.key(i)
-                        if (k.indexOf(_persistenceKey) == 0) {
-                            sessionStorage.removeItem(k)
-                            i--
-                        }
-                    }
-                }
-
-                this.setItem = function(key: string, value: JSON) {
-                    sessionStorage.setItem(_persistenceKey + key, JSON.stringify(value))
-                }
-
-                this.getItem = function(key: string) {
-                    return JSON.parse(sessionStorage.getItem(_persistenceKey + key))
-                }
-
-                this.removeItem = function(key: string) {
-                    sessionStorage.removeItem(_persistenceKey + key)
-                }
-            }
-        } catch(err) {}
-
-        this.isAvailable = function() {
-            return isAvailable
-        }
-    }
-
-    // used in windows, linux, mac
-    const Persistence_windowKey = function(persistentKey: string) {
-        const obj = globalThis[persistentKey]
-        let isAvailable = false
-
-        if (typeof(obj) === 'object') {
-            isAvailable = true
-
-            this.clear = function() {
-                obj[_persistenceKey] = {}
-            }
-
-            this.setItem = function(key: string, value: JSON) {
-                obj[_persistenceKey][key] = value
-            }
-
-            this.getItem = function(key: string) {
-                return obj[_persistenceKey][key] == undefined
-                    ? null
-                    : obj[_persistenceKey][key]
-            }
-
-            this.removeItem = function(key: string) {
-                delete obj[_persistenceKey][key]
-            }
-
-            if (obj[_persistenceKey] == undefined) {
-                this.clear()
-            }
-        }
-
-        this.isAvailable = function() {
-            return isAvailable
-        }
-    }
     // android, iOS, web
-    const persistence = new Persistence_sessionStorage()
+    let persistence = new Persistence_sessionStorage()
 
     if (!persistence.isAvailable()) {
         // windows, mac (2.0)
-        globalThis.Persistence = new Persistence_windowKey("py")
+        persistence = new Persistence_windowKey("py")
     }
 
     if (!persistence.isAvailable()) {
@@ -129,7 +136,7 @@ const initPersistence = (): AnkiPersistence => {
             (titleContentIndex - titleStartIndex) < 10
         ) {
             // linux, mac (2.1)
-            globalThis.Persistence = new Persistence_windowKey("qt")
+            persistence = new Persistence_windowKey("qt")
         }
     }
 

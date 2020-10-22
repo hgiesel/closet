@@ -1,9 +1,7 @@
 import * as moo from 'moo'
 
 import {
-    TAG_OPEN,
-    TAG_CLOSE,
-    ARG_SEP,
+    delimiters,
 } from '../utils'
 
 export const keyPattern = /(?:[a-zA-Z_/]|%\w)+\d*/u
@@ -12,14 +10,14 @@ export const keyPattern = /(?:[a-zA-Z_/]|%\w)+\d*/u
 const escapeRegExp = (str: string): string =>
     str.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
 
-const outerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(TAG_OPEN)}|$)`, 'u')
-const innerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(TAG_OPEN)}|${escapeRegExp(TAG_CLOSE)})`, 'u')
+const outerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(delimiters.TAG_OPEN)}|$)`, 'u')
+const innerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(delimiters.TAG_OPEN)}|${escapeRegExp(delimiters.TAG_CLOSE)})`, 'u')
 
 // img tags are parsed via HTML (!)
 export const templateTokenizer = moo.states({
     main: {
         tagopen: {
-            match: TAG_OPEN,
+            match: delimiters.TAG_OPEN,
             push: 'key',
         },
         text: {
@@ -33,22 +31,22 @@ export const templateTokenizer = moo.states({
             match: keyPattern,
         },
         sep: {
-            match: ARG_SEP,
+            match: delimiters.ARG_SEP,
             next: 'intag',
         },
         tagclose: {
-            match: TAG_CLOSE,
+            match: delimiters.TAG_CLOSE,
             pop: 1,
         },
     },
 
     intag: {
         tagopen: {
-            match: TAG_OPEN,
+            match: delimiters.TAG_OPEN,
             push: 'key',
         },
         tagclose: {
-            match: TAG_CLOSE,
+            match: delimiters.TAG_CLOSE,
             pop: 1,
         },
         text: {

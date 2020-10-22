@@ -1,4 +1,4 @@
-import { TAG_OPEN, TAG_CLOSE, ARG_SEP } from '../../template/utils'
+import { delimiters } from '../../template/utils'
 
 const ns = 'http://www.w3.org/2000/svg'
 
@@ -235,7 +235,7 @@ export class Rect implements Shape {
     }
 
     toText(): string {
-        return `${TAG_OPEN}${this.labelText}${ARG_SEP}${this.x.toFixed()},${this.y.toFixed()},${this.width.toFixed()},${this.height.toFixed()}${TAG_CLOSE}`
+        return `${delimiters.TAG_OPEN}${this.labelText}${delimiters.ARG_SEP}${this.x.toFixed()},${this.y.toFixed()},${this.width.toFixed()},${this.height.toFixed()}${delimiters.TAG_CLOSE}`
     }
 
     /////////////////// on both

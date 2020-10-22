@@ -9,6 +9,7 @@ export { BrowserTemplate } from './src/browser'
 
 export { FilterManager } from './src'
 export { Parser } from './src/template/parser'
+export { setDelimiters } from './src/template/utils'
 
 export {
     keyPattern,

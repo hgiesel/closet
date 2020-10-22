@@ -1,6 +1,14 @@
-export const TAG_OPEN = '[['
-export const TAG_CLOSE = ']]'
-export const ARG_SEP = '::'
+export const delimiters = {
+    TAG_OPEN: '[[',
+    ARG_SEP: '::',
+    TAG_CLOSE: ']]',
+}
+
+export const setDelimiters = (open: string, sep: string, close: string): void => {
+    delimiters.TAG_OPEN = open
+    delimiters.ARG_SEP = sep
+    delimiters.TAG_CLOSE = close
+}
 
 export function *intersperse2d<T>(lists: T[][], delim: T): Generator<T, void, unknown> {
     let first = true

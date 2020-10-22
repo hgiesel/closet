@@ -4,9 +4,7 @@ import type { Parser } from './parser'
 import type { TagAccessor, TagPath, RoundInfo } from './types'
 
 import {
-    TAG_OPEN,
-    TAG_CLOSE,
-    ARG_SEP,
+    delimiters,
 } from './utils'
 
 import { splitValues, weakSeparatorToSeparator } from './separator'
@@ -69,7 +67,7 @@ export class TagNode implements ASTNode, Filterable {
     }
 
     toString(): string {
-        return `${TAG_OPEN}${this.fullKey}${ARG_SEP}${this.valuesText}${TAG_CLOSE}`
+        return `${delimiters.TAG_OPEN}${this.fullKey}${delimiters.ARG_SEP}${this.valuesText}${delimiters.TAG_CLOSE}`
     }
 
     isReady(): boolean {

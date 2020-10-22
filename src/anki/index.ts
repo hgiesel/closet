@@ -1,21 +1,6 @@
 import { interspliceChildNodes, ChildNodeSpan, cleanup } from '../browser'
+import { persistence } from './persistence'
 
-
-// https://github.com/SimonLammer/anki-persistence#usage
-export interface AnkiPersistence {
-    clear: () => void
-    getItem(key: string): unknown
-    getItem(): unknown
-    setItem(key: string, value: unknown): void
-    setItem(value: unknown): void
-    removeItem(key: string): void
-    removeItem(): void
-    isAvailable(): boolean
-}
-
-interface ClosetPersistence {
-    Persistence: AnkiPersistence
-}
 
 interface ClosetSideHash {
     closetCardHash: number
@@ -54,14 +39,10 @@ export const persistenceInterface = (side: 'front' | 'back', label: string) => (
      * @param label: should identify the context where persistence is used
      */
 
-    const persistence = (globalThis as typeof globalThis & Partial<ClosetPersistence>).Persistence ?? null
     const currentHash = (globalThis as typeof globalThis & Partial<ClosetSideHash>).closetCardHash ?? null
 
     const getPersistentMap = (): Map<string, unknown> => {
-        if (
-            !persistence ||
-            !persistence.isAvailable()
-        ) {
+        if (!persistence.isAvailable()) {
             // Persistence is not available, fallback to no memory
             return new Map()
         }
@@ -83,10 +64,7 @@ export const persistenceInterface = (side: 'front' | 'back', label: string) => (
     const map = getPersistentMap()
 
     const setPersistentMap = (): void => {
-        if (
-            persistence &&
-            persistence.isAvailable()
-        ) {
+        if (persistence.isAvailable()) {
             const persistentData = Array.from(map.entries())
 
             persistence.setItem(memoryKey, persistentData)

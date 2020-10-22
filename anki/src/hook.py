@@ -1,9 +1,9 @@
 from string import Template
 from typing import Tuple
+from pathlib import Path
+from os.path import dirname, realpath
 
 from aqt import mw
-from anki.hooks import addHook
-from aqt.utils import showInfo
 
 from .utils import find_addon_by_name
 
@@ -11,7 +11,7 @@ from .utils import find_addon_by_name
 default_version = 'v0.1'
 default_description = '''This is the configuration of how Closet will behave.
 To get inspiration you can visit the homepage: closetengine.com.'''
-default_name = 'Closet User Code'
+default_name = 'Closet Setup'
 
 script_name = 'ClosetUser'
 user_tag = f'{script_name}Tag'
@@ -37,9 +37,6 @@ def indent_lines(text: str, indent_size: int) -> str:
     ])
 
 def get_scripts() -> Tuple[str, str, str]:
-    from pathlib import Path
-    from os.path import dirname, realpath
-
     filepath = dirname(realpath(__file__))
 
     user_filepath = Path(filepath, '..', 'web', 'user.js')
@@ -54,6 +51,12 @@ def get_scripts() -> Tuple[str, str, str]:
                     edit_file.read().strip(),
                     setup_file.read().strip(),
                 ]
+
+def get_closet_source() -> str:
+    filepath = Path(dirname(realpath(__file__)), '..', 'web', 'closet.js')
+
+    with open(filepath, mode='r', encoding='utf-8') as file:
+        return file.read().strip()
 
 def setup_user_script():
     if not am:
@@ -106,6 +109,9 @@ def setup_user_script():
     )
 
 def install_user_script():
+    mw.col.media.trash_files(['_closet.js'])
+    mw.col.media.write_data('_closet.js', get_closet_source().encode())
+
     if not am:
         return
 

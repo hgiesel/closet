@@ -1,4 +1,4 @@
-import { interspliceChildNodes, ChildNodeSpan, cleanup } from '../browser'
+import { interspliceChildNodes, ChildNodeSpan } from '../browser'
 import { persistence } from './persistence'
 
 
@@ -101,14 +101,11 @@ export const getQaChildNodes = (): ChildNodeSpan[] | null => {
     })
 }
 
-export const load = (callback: () => void): void => {
-    try {
-        callback()
-    }
-    catch(e) {
-        console.error(e)
-    }
-    finally {
-        cleanup()
-    }
+export const load = (callback: () => void): number => {
+    const before = window.performance.now()
+
+    callback()
+
+    const after = window.performance.now()
+    return after - before
 }

@@ -10,8 +10,6 @@ var initCloset = () => {
         $$editableCode
     }
 
-    const before = window.performance.now()
-
     for (const [elements, memoryMap, filterManager] of userLogic()) {
         closet.BrowserTemplate
             .makeFromNodes(elements)
@@ -19,31 +17,10 @@ var initCloset = () => {
 
         memoryMap.writeBack()
     }
-
-    const after = window.performance.now()
-    window.closetRenderTime = after - before
 }
 
-var closetIsReady = () => {
-    const has = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
-
-    return has(globalThis, 'Persistence') &&
-        has(globalThis, 'closet') &&
-        has(globalThis.closet, 'anki') &&
-        has(globalThis.closet.anki, 'load')
-}
-
-var tryLoadCloset = (callback) => {
-    if (closetIsReady()) {
-        closet.anki.load(callback)
-        return true
-    }
-    return false
-}
-
-if (!tryLoadCloset(initCloset)) {
-    var closetLoaded = setInterval(() => tryLoadCloset(()=> {
-        initCloset()
-        clearInterval(closetLoaded)
-    }), 5)
-}
+import('/_closet.js')
+    .catch(error => console.error('An error happened while loading Closet', error))
+    .then(() => closet.anki.load(initCloset))
+    .then(time => console.info(`Closet executed in ${time}ms.`))
+    .catch(error => console.error('An error happened while executing Closet', error))

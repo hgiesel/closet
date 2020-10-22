@@ -14,6 +14,6 @@ def init():
     setup_user_script()
     profile_did_open.append(install_user_script)
 
-    init_models_dialog()
+    # init_models_dialog()
     init_editor()
     init_addon_manager()

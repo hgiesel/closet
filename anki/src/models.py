@@ -8,9 +8,9 @@ from ..gui.model_settings import ModelSettings
 
 
 def set_settings(
-    occlude_shortcut: dict,
+    new_delimiters: dict,
 ):
-    delimiters.value = occlude_shortcut
+    delimiters.value = new_delimiters
 
 def on_closet(models):
     current_row: int = models.form.modelsList.currentRow()

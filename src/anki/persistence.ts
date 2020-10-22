@@ -5,7 +5,7 @@
 // - rewrite to TS
 // - drop support for _default key
 
-type JSON =
+export type JSON =
     | null
     | boolean
     | number
@@ -21,6 +21,7 @@ export interface AnkiPersistence {
     isAvailable(): boolean
 }
 
+
 const _persistenceKey = 'github.com/hgiesel/closet'
 
 // used in android, iOS, web
@@ -28,8 +29,13 @@ class Persistence_sessionStorage implements AnkiPersistence {
     _isAvailable = false
 
     constructor() {
-        if (typeof(globalThis.sessionStorage) === 'object') {
-            this._isAvailable = true
+        try {
+            if (typeof(globalThis.sessionStorage) === 'object') {
+                this._isAvailable = true
+            }
+        }
+        catch {
+            // sessionStorage is disabled inside of 'data:' URLs
         }
     }
 
@@ -70,9 +76,11 @@ class Persistence_windowKey implements AnkiPersistence {
     constructor(persistentKey: string) {
         this.obj = (globalThis as any)[persistentKey]
 
-        if (typeof(this.obj) === 'object') {
-            this._isAvailable = true
+        if (typeof(this.obj) !== 'object') {
+            return
         }
+
+        this._isAvailable = true
 
         if (this.obj[_persistenceKey] === undefined) {
             this.clear()

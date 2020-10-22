@@ -1,5 +1,5 @@
 import { interspliceChildNodes, ChildNodeSpan } from '../browser'
-import { persistence } from './persistence'
+import { persistence, JSON } from './persistence'
 
 
 interface ClosetSideHash {
@@ -67,7 +67,7 @@ export const persistenceInterface = (side: 'front' | 'back', label: string) => (
         if (persistence.isAvailable()) {
             const persistentData = Array.from(map.entries())
 
-            persistence.setItem(memoryKey, persistentData)
+            persistence.setItem(memoryKey, persistentData as JSON)
         }
     }
 

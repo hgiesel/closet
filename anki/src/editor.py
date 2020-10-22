@@ -17,6 +17,7 @@ from aqt.gui_hooks import (
 
 from .utils import occlude_shortcut
 
+
 addon_package = mw.addonManager.addonFromModule(__name__)
 mw.addonManager.setWebExports(__name__, r"web/.*(css|js)")
 

@@ -36,7 +36,6 @@ def indent_lines(text: str, indent_size: int) -> str:
         in text.split('\n')
     ])
 
-
 def get_scripts() -> Tuple[str, str, str]:
     from pathlib import Path
     from os.path import dirname, realpath
@@ -55,7 +54,6 @@ def get_scripts() -> Tuple[str, str, str]:
                     edit_file.read().strip(),
                     setup_file.read().strip(),
                 ]
-
 
 def setup_user_script():
     if not am:

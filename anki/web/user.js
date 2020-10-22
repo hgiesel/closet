@@ -4,7 +4,7 @@ var tagsFull = '$$tagsFull'
 
 var initCloset = () => {
     const preset = closet.anki.preset(cardType, tagsFull, side)
-    const chooseMemory = closet.anki.persistenceInterface(side)
+    const chooseMemory = closet.anki.persistenceInterface(side, document.getElementById('qa').innerHTML)
 
     function userLogic() {
         $$editableCode
@@ -25,10 +25,12 @@ var initCloset = () => {
 }
 
 var closetIsReady = () => {
-    return globalThis.hasOwnProperty('Persistence') &&
-        globalThis.hasOwnProperty('closet') &&
-        globalThis.closet.hasOwnProperty('anki') &&
-        globalThis.closet.anki.hasOwnProperty('load')
+    const has = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
+
+    return has(globalThis, 'Persistence') &&
+        has(globalThis, 'closet') &&
+        has(globalThis.closet, 'anki') &&
+        has(globalThis.closet.anki, 'load')
 }
 
 var tryLoadCloset = (callback) => {

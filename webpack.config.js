@@ -7,18 +7,9 @@ const terserOptions = /* order is important it seems (?) */ {
     },
     ecma: 8,
 
-    mangle: true,
     compress: {
-        drop_console: true,
+        pure_funcs: ['console.log'],
     },
-    module: false,
-    nameCache: null /* or specify a name cache object */,
-    keep_classnames: true,
-    keep_fnames: true,
-    ie8: false,
-    safari10: false,
-    toplevel: false,
-    warnings: false,
 }
 
 module.exports = (env, argv) => {

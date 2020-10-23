@@ -1,14 +1,19 @@
-import { interspliceChildNodes, ChildNodeSpan } from '../browser'
-import { persistence, JSON } from './persistence'
+import type { JSON } from './persistence'
+import type { FilterManager } from '..'
+
+import { interspliceChildNodes, BrowserTemplate, ChildNodeSpan } from '../browser'
+import { persistence } from './persistence'
 
 
 interface ClosetSideHash {
     closetCardHash: number
 }
 
+type CardSide = 'front' | 'back'
+
 const getCardNumber = (textNum: string): number => Number(textNum.match(/[0-9]*$/))
 
-export const preset = (cardType: string, tagsFull: string, side: 'front' | 'back') => ({
+const preset = (cardType: string, tagsFull: string, side: CardSide) => ({
     card: cardType,
     cardNumber: getCardNumber(cardType),
     tagsFull: tagsFull,
@@ -34,7 +39,7 @@ const hashCode = (plain: string): number => {
     return hash
 }
 
-export const persistenceInterface = (side: 'front' | 'back', label: string) => (memoryKey: string): MemoryMap => {
+const persistenceInterface = (side: 'front' | 'back', label: string) => (memoryKey: string): MemoryMap => {
     /**
      * @param label: should identify the context where persistence is used
      */
@@ -101,11 +106,44 @@ export const getQaChildNodes = (): ChildNodeSpan[] | null => {
     })
 }
 
-export const load = (callback: () => void): number => {
+
+type SetupOutput<T extends Record<string, unknown>> = [
+    Element[],
+    MemoryMap,
+    FilterManager<T>,
+]
+
+type UserLogic<T extends Record<string, unknown>> = (
+    closet: unknown,
+    preset: unknown,
+    chooseMemory: unknown,
+) => SetupOutput<T>[]
+
+const load = <T extends Record<string, unknown>>(
+    elements: Element[],
+    memoryMap: MemoryMap,
+    filterManager: FilterManager<T>,
+): number => {
     const before = window.performance.now()
+    BrowserTemplate
+        .makeFromNodes(elements)
+        .renderToNodes(filterManager)
 
-    callback()
-
+    memoryMap.writeBack()
     const after = window.performance.now()
+
     return after - before
+}
+export const init = <T extends Record<string, unknown>>(
+    closet: unknown,
+    logic: UserLogic<T>,
+    cardType: string,
+    tagsFull: string,
+    side: CardSide,
+): number[] => {
+    const userPreset = preset(cardType, tagsFull, side)
+    const chooseMemory = persistenceInterface(side, document.getElementById('qa')?.innerHTML ?? '')
+
+    return logic(closet, userPreset, chooseMemory)
+        .map((value: SetupOutput<T>) => load(...value))
 }

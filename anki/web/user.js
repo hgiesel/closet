@@ -1,27 +1,22 @@
-var side = '$$side'
-var cardType = '$$cardType'
-var tagsFull = '$$tagsFull'
-
-var initCloset = () => {
-    const preset = closet.anki.preset(cardType, tagsFull, side)
-    const chooseMemory = closet.anki.persistenceInterface(side, document.getElementById('qa').innerHTML)
-
-    function userLogic() {
-        $$editableCode
-    }
-
-    for (const [elements, memoryMap, filterManager] of userLogic()) {
-        closet.BrowserTemplate
-            .makeFromNodes(elements)
-            .renderToNodes(filterManager)
-
-        memoryMap.writeBack()
-    }
+function userLogic(
+    closet,
+    preset,
+    chooseMemory,
+) {
+    $$editableCode
 }
 
-import('./_closet.js')
-    .catch(error => console.error('An error happened while loading Closet', error))
-    .then(() => closet.anki.load(initCloset))
-    .then(time => console.info(`Closet executed in ${time}ms.`))
-    .then(() => closet.browser.cleanup())
-    .catch(error => console.error('An error happened while executing Closet', error))
+import(globalThis.ankiPlatform === 'desktop' ? '/_closet.js' : './_closet.js')
+    .then((closet) => {
+        try {
+            const time = closet.anki.init(closet, userLogic, '$$cardType', '$$tagsFull', '$$side')
+            console.info(`Closet executed in ${time}ms.`)
+        }
+        catch (error) {
+            console.error('An error occured while executing Closet:', error)
+        }
+        finally {
+            closet.browser.cleanup()
+        }
+    })
+    .catch((error) => console.error('An error occured while loading Closet:', error))

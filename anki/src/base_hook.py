@@ -23,14 +23,6 @@ if am:
     ami = __import__(am).src.lib.interface
     amr = __import__(am).src.lib.registrar
 
-def get_closet_source(model_id: int) -> str:
-    filepath = Path(dirname(realpath(__file__)), '..', 'web', 'closet.js')
-
-    delimiters.model_id = model_id
-    delims = delimiters.value
-
-    with open(filepath, mode='r', encoding='utf-8') as file:
-        return file.read().strip()
 
 def setup_script():
     if not am:

@@ -8,7 +8,7 @@ const terserOptions = /* order is important it seems (?) */ {
     ecma: 8,
 
     compress: {
-        pure_funcs: ['console.log'],
+        drop_console: true,
     },
 }
 

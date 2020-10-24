@@ -78,7 +78,7 @@ def setup_script() -> None:
         getter = lambda id, storage: ami.make_script_v2(
             name = storage.name if storage.name is not None else default_name,
             enabled = storage.enabled if storage.enabled is not None else True,
-            type = 'esm',
+            type = 'js',
             label = 'closet',
             version = storage.version if storage.version is not None else default_version,
             description = storage.description if storage.description is not None else default_description,
@@ -97,7 +97,7 @@ def setup_script() -> None:
         reset = lambda id, storage: ami.make_script_v2(
             name = storage.name if storage.name else default_name,
             enabled = storage.enabled if storage.enabled else True,
-            type = 'esm',
+            type = 'js',
             label = 'closet',
             version = storage.version if storage.version else default_version,
             description = storage.description if storage.description is not None else default_description,

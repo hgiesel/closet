@@ -6,7 +6,7 @@ function userLogic(
     $$editableCode
 }
 
-import(globalThis.ankiPlatform === 'desktop' ? '/_closet.js' : './_closet.js')
+import(globalThis.ankiPlatform === 'desktop' ? '/__closet.js' : './__closet.js')
     .then((closet) => {
         try {
             const times = closet.anki.init(closet, userLogic, '$$cardType', '$$tagsFull', '$$side')

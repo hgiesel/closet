@@ -18,16 +18,12 @@ class ModelSettings(QDialog):
 
         self.layout().setSizeConstraint(QLayout.SetFixedSize)
 
-    def setupUi(self, delimiters: dict):
-        self.ui.openingTag.setText(delimiters['tag_open'])
-        self.ui.closingTag.setText(delimiters['tag_close'])
-        self.ui.argumentSeparator.setText(delimiters['arg_sep'])
+    def setupUi(self, closet_enabled: bool):
+        self.ui.closetEnabled.setChecked(closet_enabled)
 
     def accept(self):
-        self.callback({
-            'tag_open': self.ui.openingTag.text(),
-            'tag_close': self.ui.closingTag.text(),
-            'arg_sep': self.ui.argumentSeparator.text(),
-        })
+        self.callback(
+            self.ui.closetEnabled.isChecked(),
+        )
 
         super().accept()

@@ -61,10 +61,8 @@ class ModelConfig:
             # same behavior as Collection.remove_config
             pass
 
-occlude_shortcut = ProfileConfig('closetOcclusionShortcut', 'Ctrl+O')
+# whether to hook closet into Asset Manager
+closet_enabled = ModelConfig('closetEnable', True)
 
-delimiters = ModelConfig('closetCustomDelimiter', {
-    'tag_open': '[[',
-    'tag_close': ']]',
-    'arg_sep': '::',
-})
+# shortcut in Editor
+occlude_shortcut = ProfileConfig('closetOcclusionShortcut', 'Ctrl+O')

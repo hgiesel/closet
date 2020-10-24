@@ -3,23 +3,23 @@ from aqt import mw
 
 from anki.lang import _
 
-from .utils import delimiters
+from .utils import closet_enabled
 from ..gui.model_settings import ModelSettings
 
 
 def set_settings(
-    new_delimiters: dict,
+    enabled: bool,
 ):
-    delimiters.value = new_delimiters
+    closet_enabled.value = enabled
 
 def on_closet(models):
     current_row: int = models.form.modelsList.currentRow()
     model_id: int = models.models[current_row].id
 
-    delimiters.model_id = model_id
+    closet_enabled.model_id = model_id
     dialog = ModelSettings(mw, set_settings)
 
-    dialog.setupUi(delimiters.value)
+    dialog.setupUi(closet_enabled.value)
     return dialog.exec_()
 
 def init_closet_button(buttons, models):

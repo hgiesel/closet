@@ -5,7 +5,7 @@ from os.path import dirname, realpath
 
 from aqt import mw
 
-from .utils import find_addon_by_name
+from .utils import find_addon_by_name, closet_enabled
 
 
 default_version = 'v0.1'
@@ -33,18 +33,6 @@ def indent_lines(text: str, indent_size: int) -> str:
         for line
         in text.split('\n')
     ])
-
-def get_closet_source() -> str:
-    filepath = Path(dirname(realpath(__file__)), '..', 'web', 'closet.js')
-
-    with open(filepath, mode='r', encoding='utf-8') as file:
-        return file.read().strip()
-
-def update_closet() -> None:
-    # for some reason, esm modules with single leading underscore
-    # get their underscore cut off when trying to import them
-    mw.col.media.trash_files(['_closet.js', '__closet.js'])
-    mw.col.media.write_data('_closet.js', get_closet_source().encode())
 
 def get_scripts() -> Tuple[str, str, str]:
     filepath = dirname(realpath(__file__))
@@ -114,20 +102,22 @@ def setup_script() -> None:
         )
     )
 
+def model_has_closet_enabled(model_id: int) -> bool:
+    closet_enabled.model_id = model_id
+    return closet_enabled.value
+
 def install_script():
     if not am:
         return
-
-    update_closet()
 
     pass_meta_script = ami.make_meta_script(
         user_tag,
         f"{script_name}_id",
     )
 
-    # insert the script for every model
-    for model_id in mw.col.models.ids():
+    # insert the script for every enabled models
+    for mid in filter(model_has_closet_enabled, mw.col.models.ids()):
         amr.register_meta_script(
-            model_id,
+            mid,
             pass_meta_script,
         )

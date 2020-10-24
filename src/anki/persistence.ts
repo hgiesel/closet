@@ -49,8 +49,8 @@ class Persistence_sessionStorage implements AnkiPersistence {
     }
 
     clear() {
-        for (var i = 0; i < sessionStorage.length; i++) {
-            var k = sessionStorage.key(i)
+        for (let i = 0; i < sessionStorage.length; i++) {
+            const k = sessionStorage.key(i)
 
             if (k && k.indexOf(_persistenceKey) === 0) {
                 sessionStorage.removeItem(k as string)

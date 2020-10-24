@@ -9,8 +9,8 @@ function userLogic(
 import(globalThis.ankiPlatform === 'desktop' ? '/_closet.js' : './_closet.js')
     .then((closet) => {
         try {
-            const time = closet.anki.init(closet, userLogic, '$$cardType', '$$tagsFull', '$$side')
-            console.info(`Closet executed in ${time}ms.`)
+            const times = closet.anki.init(closet, userLogic, '$$cardType', '$$tagsFull', '$$side')
+            console.info(`Closet executed in ${times.map(t => t.toFixed(3))}ms.`)
         }
         catch (error) {
             console.error('An error occured while executing Closet:', error)

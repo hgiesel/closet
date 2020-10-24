@@ -44,7 +44,7 @@ def update_closet() -> None:
     # for some reason, esm modules with single leading underscore
     # get their underscore cut off when trying to import them
     mw.col.media.trash_files(['_closet.js', '__closet.js'])
-    mw.col.media.write_data('__closet.js', get_closet_source().encode())
+    mw.col.media.write_data('_closet.js', get_closet_source().encode())
 
 def get_scripts() -> Tuple[str, str, str]:
     filepath = dirname(realpath(__file__))

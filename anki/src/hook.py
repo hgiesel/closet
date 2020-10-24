@@ -17,9 +17,7 @@ script_name = 'ClosetUser'
 user_tag = f'{script_name}Tag'
 user_id = f'{script_name}Id'
 
-am = find_addon_by_name('Asset Manager')
-
-if am:
+if am := find_addon_by_name('Asset Manager'):
     ami = __import__(am).src.lib.interface
     amr = __import__(am).src.lib.registrar
 
@@ -43,8 +41,10 @@ def get_closet_source() -> str:
         return file.read().strip()
 
 def update_closet() -> None:
-    mw.col.media.trash_files(['_closet.js'])
-    mw.col.media.write_data('_closet.js', get_closet_source().encode())
+    # for some reason, esm modules with single leading underscore
+    # get their underscore cut off when trying to import them
+    mw.col.media.trash_files(['_closet.js', '__closet.js'])
+    mw.col.media.write_data('__closet.js', get_closet_source().encode())
 
 def get_scripts() -> Tuple[str, str, str]:
     filepath = dirname(realpath(__file__))
@@ -75,15 +75,16 @@ def setup_script() -> None:
     amr.make_and_register_interface(
         tag = user_tag,
 
-        getter = lambda id, storage: ami.make_script(
-            storage.name if storage.name is not None else default_name,
-            storage.enabled if storage.enabled is not None else True,
-            'js',
-            storage.version if storage.version is not None else default_version,
-            storage.description if storage.description is not None else default_description,
-            'into_template',
-            storage.conditions if storage.conditions is not None else [],
-            storage.code if storage.code is not None else editWithSetup,
+        getter = lambda id, storage: ami.make_script_v2(
+            name = storage.name if storage.name is not None else default_name,
+            enabled = storage.enabled if storage.enabled is not None else True,
+            type = 'esm',
+            label = 'closet',
+            version = storage.version if storage.version is not None else default_version,
+            description = storage.description if storage.description is not None else default_description,
+            position = 'into_template',
+            conditions = storage.conditions if storage.conditions is not None else [],
+            code = storage.code if storage.code is not None else editWithSetup,
         ),
 
         setter = lambda id, script: True,
@@ -93,15 +94,16 @@ def setup_script() -> None:
 
         label = lambda id, storage: default_name,
 
-        reset = lambda id, storage: ami.make_script(
-            storage.name if storage.name else default_name,
-            storage.enabled if storage.enabled else True,
-            'js',
-            storage.version if storage.version else default_version,
-            storage.description if storage.description is not None else default_description,
-            'into_template', # has to be into_template, because it contains {{Cards}} and {{Tags}}
-            storage.conditions if storage.conditions is not None else [],
-            editWithSetup,
+        reset = lambda id, storage: ami.make_script_v2(
+            name = storage.name if storage.name else default_name,
+            enabled = storage.enabled if storage.enabled else True,
+            type = 'esm',
+            label = 'closet',
+            version = storage.version if storage.version else default_version,
+            description = storage.description if storage.description is not None else default_description,
+            position = 'into_template', # has to be into_template, because it contains {{Cards}} and {{Tags}}
+            conditions = storage.conditions if storage.conditions is not None else [],
+            code = editWithSetup,
         ),
 
         generator = lambda id, storage, model, tmpl, pos: DoubleTemplate(user).substitute(

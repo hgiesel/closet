@@ -18,8 +18,7 @@ user_tag = f'{script_name}Tag'
 user_id = f'{script_name}Id'
 
 if am := find_addon_by_name('Asset Manager'):
-    ami = __import__(am).src.lib.interface
-    amr = __import__(am).src.lib.registrar
+    lib = __import__(am).src.lib
 
 class DoubleTemplate(Template):
     delimiter = '$$'
@@ -60,10 +59,10 @@ def setup_script() -> None:
         setupCode=setup,
     )
 
-    amr.make_and_register_interface(
+    lib.make_and_register_interface(
         tag = user_tag,
 
-        getter = lambda id, storage: ami.make_script_v2(
+        getter = lambda id, storage: lib.make_script_v2(
             name = storage.name if storage.name is not None else default_name,
             enabled = storage.enabled if storage.enabled is not None else True,
             type = 'js',
@@ -82,7 +81,7 @@ def setup_script() -> None:
 
         label = lambda id, storage: default_name,
 
-        reset = lambda id, storage: ami.make_script_v2(
+        reset = lambda id, storage: lib.make_script_v2(
             name = storage.name if storage.name else default_name,
             enabled = storage.enabled if storage.enabled else True,
             type = 'js',
@@ -110,14 +109,14 @@ def install_script():
     if not am:
         return
 
-    pass_meta_script = ami.make_meta_script(
+    pass_meta_script = lib.make_meta_script(
         user_tag,
         f"{script_name}_id",
     )
 
     # insert the script for every enabled models
     for mid in filter(model_has_closet_enabled, mw.col.models.ids()):
-        amr.register_meta_script(
+        lib.register_meta_script(
             mid,
             pass_meta_script,
         )

@@ -8,7 +8,7 @@ export const tagBuilder = new TagBuilder()
 %}
 
 @preprocessor typescript
-@lexer templateTokenizer
+@lexer tokenizer
 
 #################################
 

@@ -2,13 +2,13 @@ import type { TagBuilderSettings } from './tagBuilder'
 import type { ASTNode } from '../nodes'
 
 import { Grammar, Parser as NearleyParser } from 'nearley'
-import grammar from './grammar'
+import getGrammar from './grammar'
 
 import { TextNode, DocSeparatorNode } from '../nodes'
 import { intersperse2d } from '../utils'
 import { tagBuilder } from './grammar'
 
-const templateGrammar = Grammar.fromCompiled(grammar)
+const templateGrammar = Grammar.fromCompiled(getGrammar)
 
 const coreParse = (text: string): ASTNode[][] => {
     const parser = new NearleyParser(templateGrammar)

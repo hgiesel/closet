@@ -9,8 +9,8 @@ fi
 ################ TEMPLATE
 
 declare template="$DIR/template/parser/grammar"
-declare template_source="$template.ne"
-declare template_target="$template.ts"
+declare template_source="${template}.ne"
+declare template_target="${template}.ts"
 
 nearleyc "$template_source" > "$template_target"
 
@@ -42,9 +42,9 @@ sed -i.bak -e "s/$old_lexer/$export_lexer/" "$template_target"
 
 ################ TAG SELECTOR
 
-declare tagSelector="$DIR/tagSelector/grammar" 
-declare tagSelector_source="$tagSelector.ne" 
-declare tagSelector_target="$tagSelector.ts"
+declare tagSelector="$DIR/tagSelector/grammar"
+declare tagSelector_source="${tagSelector}.ne"
+declare tagSelector_target="${tagSelector}.ts"
 
 nearleyc "$tagSelector_source" > "$tagSelector_target"
 
@@ -57,5 +57,5 @@ sed -i.bak -e "s/$type_invalid_lexer/$type_forced_lexer/" "$tagSelector_target"
 
 ################ CLEANUP
 
-rm "$template_target.bak"
-rm "$tagSelector_target.bak"
+rm -f "$template_target.bak"
+rm -f "$tagSelector_target.bak"

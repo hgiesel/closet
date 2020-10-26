@@ -1,5 +1,6 @@
 import type { TagRenderer } from '../template'
 import type { ASTNode } from '../template/nodes'
+import type { Delimiters } from '../template/parser/tokenizer/delimiters'
 
 import { Template } from '../template'
 
@@ -294,17 +295,17 @@ export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate)
 export class BrowserTemplate extends Template {
     inputs: Array<Element | Text | ChildNodeSpan | string>
 
-    protected constructor(text: string[], preparsed: ASTNode[] | null, inputs: Array<Element | Text | ChildNodeSpan | string>) {
-        super(text, preparsed)
+    protected constructor(text: string[], preparsed: ASTNode[] | null, inputs: Array<Element | Text | ChildNodeSpan | string>, delimiters?: Delimiters) {
+        super(text, preparsed, delimiters)
         this.inputs = inputs
     }
 
-    static makeFromNode = (input: Element | Text | ChildNodeSpan | string): BrowserTemplate => {
-        return new BrowserTemplate([getText(input, false)], null, [input])
+    static makeFromNode = (input: Element | Text | ChildNodeSpan | string, delimiters?: Delimiters): BrowserTemplate => {
+        return new BrowserTemplate([getText(input, false)], null, [input], delimiters)
     }
 
-    static makeFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>): BrowserTemplate => {
-        return new BrowserTemplate(inputs.map(input => getText(input, false)), null, inputs)
+    static makeFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>, delimiters?: Delimiters): BrowserTemplate => {
+        return new BrowserTemplate(inputs.map(input => getText(input, false)), null, inputs, delimiters)
     }
 
     renderToNodes(tagRenderer: TagRenderer): void {

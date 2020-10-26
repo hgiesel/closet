@@ -1,5 +1,6 @@
 import type { MemoryMap } from './persistence'
 import type { FilterManager } from '..'
+import type { Delimiters } from '../template/parser/tokenizer/delimiters'
 
 import { interspliceChildNodes, BrowserTemplate, ChildNodeSpan } from '../browser'
 import { persistenceInterface } from './persistence'
@@ -41,11 +42,15 @@ export const getQaChildNodes = (): ChildNodeSpan[] | null => {
     })
 }
 
+interface SetupOptions {
+    delimiters: Delimiters,
+}
 
 type SetupOutput<T extends Record<string, unknown>> = [
     Element[],
     MemoryMap,
     FilterManager<T>,
+    SetupOptions?,
 ]
 
 type UserLogic<T extends Record<string, unknown>> = (
@@ -58,10 +63,11 @@ const load = <T extends Record<string, unknown>>(
     elements: Element[],
     memoryMap: MemoryMap,
     filterManager: FilterManager<T>,
+    options?: SetupOptions,
 ): number => {
     const before = window.performance.now()
     BrowserTemplate
-        .makeFromNodes(elements)
+        .makeFromNodes(elements, options?.delimiters)
         .renderToNodes(filterManager)
 
     memoryMap.writeBack()

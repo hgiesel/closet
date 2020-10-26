@@ -1,6 +1,8 @@
+import type { Lexer } from 'moo'
+
 import { compile } from 'moo'
 
-export const tagSelectorTokenizer = compile({
+export const tagSelectorTokenizer: Lexer = compile({
     text: {
         match: /[a-zA-Z_]+/u,
     },

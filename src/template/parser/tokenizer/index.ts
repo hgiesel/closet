@@ -1,7 +1,7 @@
-import type { Delimiters } from '../utils'
+import type { Delimiters } from './delimiters'
+import type { Lexer } from 'moo'
 
-import * as moo from 'moo'
-
+import { states } from 'moo'
 
 export const keyPattern = /(?:[a-zA-Z_/]|%\w)+\d*/u
 
@@ -9,12 +9,12 @@ export const keyPattern = /(?:[a-zA-Z_/]|%\w)+\d*/u
 const escapeRegExp = (str: string): string =>
     str.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
 
-export const tokenizer = (delimiters: Delimiters): any => {
+export const makeLexer = (delimiters: Delimiters): Lexer => {
     const outerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(delimiters.open)}|$)`, 'u')
     const innerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(delimiters.open)}|${escapeRegExp(delimiters.close)})`, 'u')
 
     // img tags are parsed via HTML (!)
-    const lexer = moo.states({
+    return states({
         main: {
             tagopen: {
                 match: delimiters.open,
@@ -54,7 +54,5 @@ export const tokenizer = (delimiters: Delimiters): any => {
                 lineBreaks: true,
             },
         },
-    })
-
-    return Object.assign(lexer, delimiters)
+    }) as Lexer
 }

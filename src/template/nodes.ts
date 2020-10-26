@@ -3,9 +3,9 @@ import type { Separator, WeakSeparator } from './separator'
 import type { Parser } from './parser'
 import type { TagAccessor, TagPath, RoundInfo } from './types'
 
-import {
-    delimiters,
-} from './utils'
+import type {
+    Delimiters,
+} from './parser/tokenizer/delimiters'
 
 import { splitValues, weakSeparatorToSeparator } from './separator'
 import { Status } from './types'
@@ -25,6 +25,7 @@ export class TagNode implements ASTNode, Filterable {
     readonly num: number | null
     readonly fullOccur: number
     readonly occur: number
+    readonly delimiters: Delimiters
     readonly innerNodes: ASTNode[]
 
     protected _separators: Separator[] = []
@@ -35,6 +36,7 @@ export class TagNode implements ASTNode, Filterable {
         num: number | null,
         fullOccur: number,
         occur: number,
+        delimiters: Delimiters,
         innerNodes: ASTNode[],
     ) {
         this.fullKey = fullKey
@@ -42,6 +44,7 @@ export class TagNode implements ASTNode, Filterable {
         this.num = num
         this.fullOccur = fullOccur
         this.occur = occur
+        this.delimiters = delimiters
 
         this.innerNodes = innerNodes
     }
@@ -67,7 +70,7 @@ export class TagNode implements ASTNode, Filterable {
     }
 
     toString(): string {
-        return `${delimiters.TAG_OPEN}${this.fullKey}${delimiters.ARG_SEP}${this.valuesText}${delimiters.TAG_CLOSE}`
+        return `${this.delimiters.open}${this.fullKey}${this.delimiters.sep}${this.valuesText}${this.delimiters.close}`
     }
 
     isReady(): boolean {

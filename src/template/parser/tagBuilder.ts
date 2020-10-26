@@ -1,4 +1,5 @@
 import type { ASTNode } from '../nodes'
+import type { Delimiters } from './tokenizer/delimiters'
 
 import { TagNode } from '../nodes'
 
@@ -18,8 +19,10 @@ const getAndInc = (map: Map<string, number>, key: string): number => {
 export type TagBuilderSettings = [Map<string, number>, Map<string, number>]
 
 class TagBuilder {
+    /** These settings being non-null must be enforced during usage */
     protected tagCounter: Map<string, number> | null = null
     protected tagCounterFull: Map<string, number> | null = null
+    protected delimiters: Delimiters | null = null
 
     protected increment(fullKey: string, key: string): [number, number] {
         return [
@@ -43,12 +46,14 @@ class TagBuilder {
             occur,
         ] = this.increment(fullKey, key)
 
-        return new TagNode(fullKey, key, num, fullOccur, occur, innerNodes)
+        return new TagNode(fullKey, key, num, fullOccur, occur, this.delimiters as Delimiters, innerNodes)
     }
 
-    push(settings: TagBuilderSettings): void {
+    push(settings: TagBuilderSettings, delimiters: Delimiters): void {
         this.tagCounterFull = settings[0]
         this.tagCounter = settings[1]
+
+        this.delimiters = delimiters
     }
 }
 

@@ -1,9 +1,3 @@
-export interface Delimiters {
-    open: string
-    sep: string
-    close: string
-}
-
 export function *intersperse2d<T>(lists: T[][], delim: T): Generator<T, void, unknown> {
     let first = true
 

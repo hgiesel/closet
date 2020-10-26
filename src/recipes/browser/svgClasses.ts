@@ -1,4 +1,4 @@
-import { delimiters } from '../../template/utils'
+import type { Delimiters } from '../../template/parser/tokenizer/delimiters'
 
 const ns = 'http://www.w3.org/2000/svg'
 
@@ -26,7 +26,7 @@ export interface Shape {
     readjust(forSVG: SVG): void
 
     toDefinition(): ShapeDefinition
-    toText(): string
+    toText(delimiters: Delimiters): string
 }
 
 export class SVG {
@@ -234,8 +234,8 @@ export class Rect implements Shape {
         return ['rect', undefined, this.labelText, this.x, this.y, this.width, this.height, {}]
     }
 
-    toText(): string {
-        return `${delimiters.TAG_OPEN}${this.labelText}${delimiters.ARG_SEP}${this.x.toFixed()},${this.y.toFixed()},${this.width.toFixed()},${this.height.toFixed()}${delimiters.TAG_CLOSE}`
+    toText(delimiters: Delimiters): string {
+        return `${delimiters.open}${this.labelText}${delimiters.sep}${this.x.toFixed()},${this.y.toFixed()},${this.width.toFixed()},${this.height.toFixed()}${delimiters.close}`
     }
 
     /////////////////// on both

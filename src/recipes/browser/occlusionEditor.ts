@@ -1,4 +1,4 @@
-import type { Registrar, TagNode, Internals } from '../types'
+import type { Registrar, TagNode, Internals, AftermathEntry, AftermathInternals } from '../types'
 import { id } from '../utils'
 
 import { SVG, Shape, ShapeDefinition, Rect } from './svgClasses'
@@ -8,6 +8,7 @@ import { appendStyleTag, getImages, getHighestNum, getOffsets, imageLoadCallback
 
 import { setupMenu, enableAsMenuTrigger, menuCss } from './menu'
 import { rectKeyword } from './rect'
+
 
 const clickInsideShape = (
     draw: SVG,
@@ -97,10 +98,13 @@ const occlusionLeftClick = (draw: SVG, event: MouseEvent) => {
     }
 }
 
-type ShapeHandler = (shapes: Shape[], draw: SVG) => void
-type ShapeFilter = (shapes: ShapeDefinition[], draw: SVG) => ShapeDefinition[]
+type PartialShapeHandler = (shapes: Shape[], draw: SVG) => void
+type ShapeHandler = <T extends Record<string, unknown>>(entry: AftermathEntry<T>, internals: AftermathInternals<T>) => PartialShapeHandler
 
-export const wrapForOcclusion = (draw: SVG, acceptHandler: ShapeHandler) => {
+type PartialShapeFilter = (shapes: ShapeDefinition[], draw: SVG) => ShapeDefinition[]
+type ShapeFilter= <T extends Record<string, unknown>>(entry: AftermathEntry<T>, internals: AftermathInternals<T>) => PartialShapeFilter
+
+export const wrapForOcclusion = (draw: SVG, acceptHandler: PartialShapeHandler) => {
     const occlusionClick = (event: MouseEvent) => {
         if (event.button === 0 /* left mouse button */) {
             occlusionLeftClick(draw, event)
@@ -127,8 +131,8 @@ export const wrapForOcclusion = (draw: SVG, acceptHandler: ShapeHandler) => {
 }
 
 
-const defaultAcceptHandler: ShapeHandler = (shapes) => navigator.clipboard.writeText(shapes
-    .map(shape => shape.toText())
+const defaultAcceptHandler: ShapeHandler = (_entry, internals) => (shapes) => navigator.clipboard.writeText(shapes
+    .map(shape => shape.toText(internals.template.parser.delimiters))
     .join('\n')
 )
 
@@ -150,14 +154,14 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
     const {
         tagname = keyword,
         acceptHandler = defaultAcceptHandler,
-        existingShapesFilter = id,
+        existingShapesFilter = () => id,
         shapeKeywords = [rectKeyword],
     } = options
 
     const occlusionMakerFilter = (_tag: TagNode, internals: Internals<T>) => {
         const images = internals.template.textFragments.flatMap(getImages)
 
-        internals.aftermath.registerIfNotExists(keyword, () => {
+        internals.aftermath.registerIfNotExists(keyword, (entry, internals) => {
             if (!internals.environment.post(occlusionMakerCssKeyword, () => true, false)) {
                 appendStyleTag(menuCss)
                 appendStyleTag(occlusionCss)
@@ -184,7 +188,7 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
                     shapeType,
                     /* active */,
                     ...rest
-                ] of existingShapesFilter(existingShapes, draw)) {
+                ] of existingShapesFilter(entry as any, internals)(existingShapes, draw)) {
 
                     let labelTxt = null,
                         x = null,
@@ -215,7 +219,7 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
                     }
                 }
 
-                wrapForOcclusion(draw, acceptHandler)
+                wrapForOcclusion(draw, acceptHandler(entry as any, internals))
             }
 
             for (const srcUrl of images) {

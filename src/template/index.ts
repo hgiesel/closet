@@ -1,5 +1,6 @@
 import type { ASTNode } from './nodes'
 import type { TagAccessor } from './types'
+import type { Delimiters } from './parser/tokenizer/delimiters'
 
 import { nodesAreReady } from './nodes'
 import { Parser } from './parser'
@@ -55,9 +56,6 @@ const stringifyNodes = (nodes: ASTNode[]): string[] => {
     return result
 }
 
-import { Grammar } from 'nearley'
-import getGrammar from './parser/grammar'
-import { tokenizer } from './parser/tokenizer'
 
 export class Template {
     readonly textFragments: string[]
@@ -65,27 +63,18 @@ export class Template {
 
     readonly nodes: ASTNode[]
 
-    protected constructor(fragments: string[], preparsed: ASTNode[] | null) {
-        const lexer = tokenizer({
-            open: '[[',
-            sep: '::',
-            close: ']]',
-        })
-
-        const templateGrammar = Grammar.fromCompiled(getGrammar(lexer))
-
+    protected constructor(fragments: string[], preparsed: ASTNode[] | null, delimiters?: Delimiters) {
         this.textFragments = fragments
-        this.parser = new Parser(templateGrammar)
-
+        this.parser = new Parser(delimiters)
         this.nodes = preparsed ?? this.parser.parse(fragments)
     }
 
-    static make(text: string) {
-        return new Template([text], null)
+    static make(text: string, delimiters?: Delimiters) {
+        return new Template([text], null, delimiters)
     }
 
-    static makeFromFragments(texts: string[]) {
-        return new Template(texts, null)
+    static makeFromFragments(texts: string[], delimiters?: Delimiters) {
+        return new Template(texts, null, delimiters)
     }
 
     render(tagRenderer: TagRenderer, cb?: (t: string[]) => void): string[] {

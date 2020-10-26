@@ -1,8 +1,7 @@
 @{%
 import { TextNode } from '../nodes'
-import { tagBuilder } from '../tagBuilder'
 
-export const tagBuilder = new TagBuilder()
+import { tagBuilder } from './tagBuilder'
 %}
 
 @preprocessor typescript

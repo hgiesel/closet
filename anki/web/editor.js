@@ -89,7 +89,7 @@ var EditorCloset = {
             EditorCloset.clearOcclusionMode()
         }
         else {
-            import('./__closet.js')
+            import('/__closet.js')
                 .then(
                     EditorCloset.setupOcclusionEditor,
                     error => console.error('Could not load Closet:', error),

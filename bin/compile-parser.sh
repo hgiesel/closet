@@ -8,8 +8,9 @@ fi
 
 ################ TEMPLATE
 
-declare template_source="$DIR/template/parser/grammar.ne"
-declare template_target="$DIR/template/parser/grammar.ts"
+declare template="$DIR/template/parser/grammar"
+declare template_source="$template.ne"
+declare template_target="$template.ts"
 
 nearleyc "$template_source" > "$template_target"
 
@@ -17,32 +18,33 @@ nearleyc "$template_source" > "$template_target"
 
 declare remove_import="import { templateTokenizer } from './tokenizer'"
 
-sed -i "s#$remove_import##" "$template_target"
+sed -i.bak -e "s#$remove_import##" "$template_target"
 
 declare open_grammar='const grammar: Grammar = {'
 declare new_open_grammar='const makeGrammar = (tokenizer: NearleyLexer): Grammar => {'
 
-sed -i "s/$open_grammar/$new_open_grammar\n$open_grammar/" "$template_target"
+sed -i.bak -e "s/$open_grammar/$new_open_grammar\n$open_grammar/" "$template_target"
 
 declare close_grammar='ParserStart: "start",'
 declare new_close_grammar='return grammar'
 
-sed -i "s/$close_grammar/$close_grammar\n};\n$new_close_grammar/" "$template_target"
+sed -i.bak -e "s/$close_grammar/$close_grammar\n};\n$new_close_grammar/" "$template_target"
 
 declare old_export='export default grammar;'
 declare new_export='export default makeGrammar;'
 
-sed -i "s/$old_export/$new_export/" "$template_target"
+sed -i.bak -e "s/$old_export/$new_export/" "$template_target"
 
 declare old_lexer='interface NearleyLexer {'
 declare export_lexer='export interface NearleyLexer {'
 
-sed -i "s/$old_lexer/$export_lexer/" "$template_target"
+sed -i.bak -e "s/$old_lexer/$export_lexer/" "$template_target"
 
 ################ TAG SELECTOR
 
-declare tagSelector_source="$DIR/tagSelector/grammar.ne" 
-declare tagSelector_target="$DIR/tagSelector/grammar.ts"
+declare tagSelector="$DIR/tagSelector/grammar" 
+declare tagSelector_source="$tagSelector.ne" 
+declare tagSelector_target="$tagSelector.ts"
 
 nearleyc "$tagSelector_source" > "$tagSelector_target"
 
@@ -51,4 +53,9 @@ nearleyc "$tagSelector_source" > "$tagSelector_target"
 declare type_invalid_lexer='Lexer: tagSelectorTokenizer,'
 declare type_forced_lexer='Lexer: tagSelectorTokenizer as unknown as NearleyLexer,'
 
-sed -i "s/$type_invalid_lexer/$type_forced_lexer/" "$tagSelector_target"
+sed -i.bak -e "s/$type_invalid_lexer/$type_forced_lexer/" "$tagSelector_target"
+
+################ CLEANUP
+
+rm "$template_target.bak"
+rm "$tagSelector_target.bak"

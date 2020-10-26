@@ -22,7 +22,6 @@
     "build:main": "run-s compile:parser pack:main",
     "build:docs": "run-s compile:parser create-favicon pack:docs",
     "build:anki": "run-s compile:parser compile:anki pack:anki",
-    "setup-test": "bin/setup-test.sh",
     "pack:main": "webpack -p",
     "pack:docs": "webpack -p --env.destination=docs",
     "pack:anki": "rollup -c --configAnki",

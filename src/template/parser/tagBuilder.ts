@@ -1,4 +1,7 @@
-import { ASTNode, TagNode } from '../nodes'
+import type { ASTNode } from '../nodes'
+
+import { TagNode } from '../nodes'
+
 
 /**
  * works with keys, but also with tag identifier
@@ -14,7 +17,7 @@ const getAndInc = (map: Map<string, number>, key: string): number => {
 
 export type TagBuilderSettings = [Map<string, number>, Map<string, number>]
 
-export class TagBuilder {
+class TagBuilder {
     protected tagCounter: Map<string, number> | null = null
     protected tagCounterFull: Map<string, number> | null = null
 
@@ -48,3 +51,6 @@ export class TagBuilder {
         this.tagCounter = settings[1]
     }
 }
+
+// singleton
+export const tagBuilder = new TagBuilder()

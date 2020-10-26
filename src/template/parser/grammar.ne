@@ -1,8 +1,6 @@
 @{%
 import { TextNode } from '../nodes'
-
-import { templateTokenizer } from './tokenizer'
-import { TagBuilder } from './tagBuilder'
+import { tagBuilder } from '../tagBuilder'
 
 export const tagBuilder = new TagBuilder()
 %}

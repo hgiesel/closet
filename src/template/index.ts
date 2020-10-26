@@ -55,6 +55,10 @@ const stringifyNodes = (nodes: ASTNode[]): string[] => {
     return result
 }
 
+import { Grammar } from 'nearley'
+import getGrammar from './parser/grammar'
+import { tokenizer } from './parser/tokenizer'
+
 export class Template {
     readonly textFragments: string[]
     readonly parser: Parser
@@ -62,8 +66,16 @@ export class Template {
     readonly nodes: ASTNode[]
 
     protected constructor(fragments: string[], preparsed: ASTNode[] | null) {
+        const lexer = tokenizer({
+            open: '[[',
+            sep: '::',
+            close: ']]',
+        })
+
+        const templateGrammar = Grammar.fromCompiled(getGrammar(lexer))
+
         this.textFragments = fragments
-        this.parser = new Parser()
+        this.parser = new Parser(templateGrammar)
 
         this.nodes = preparsed ?? this.parser.parse(fragments)
     }

@@ -1,14 +1,11 @@
 import type { TagBuilderSettings } from './tagBuilder'
 import type { ASTNode } from '../nodes'
 
-import { Grammar, Parser as NearleyParser } from 'nearley'
-import getGrammar from './grammar'
+import { Parser as NearleyParser } from 'nearley'
 
 import { TextNode, DocSeparatorNode } from '../nodes'
 import { intersperse2d } from '../utils'
-import { tagBuilder } from './grammar'
-
-const templateGrammar = Grammar.fromCompiled(getGrammar)
+import { tagBuilder } from './tagBuilder'
 
 const coreParse = (text: string): ASTNode[][] => {
     const parser = new NearleyParser(templateGrammar)
@@ -47,6 +44,7 @@ export enum BaseDepth {
 
 export class Parser {
     tagBuilderSettings: TagBuilderSettings = [new Map(), new Map()]
+    tokenizer
 
     parse (texts: string[]): ASTNode[] {
         tagBuilder.push(this.tagBuilderSettings)

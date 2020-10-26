@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-declare DIR="$(cd "$(dirname "$0")/../anki" && pwd -P)"
-declare addon_name="ClosetForAnkiDev"
-declare customdir=''
+DIR="$(cd "$(dirname "$0")/../anki" && pwd -P)"
+addon_name="ClosetForAnkiDev"
+customdir=''
 
 if [[ -d "$customdir" ]]; then
-  declare target="$customdir/$addon_name"
+  target="$customdir/$addon_name"
 
 elif [[ -d "$HOME/.local/share/AnkiDev/addons21" ]]; then
-  declare target="$HOME/.local/share/AnkiDev/addons21/$addon_name"
+  target="$HOME/.local/share/AnkiDev/addons21/$addon_name"
 
 elif [[ $(uname) = 'Darwin' ]]; then
-  declare target="$HOME/Library/Application Support/Anki2/addons21/$addon_name"
+  target="$HOME/Library/Application Support/Anki2/addons21/$addon_name"
 
 elif [[ $(uname) = 'Linux' ]]; then
-  declare target="$HOME/.local/share/Anki2/addons21/$addon_name"
+  target="$HOME/.local/share/Anki2/addons21/$addon_name"
 
 else
   echo 'Unknown platform'

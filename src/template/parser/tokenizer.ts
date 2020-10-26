@@ -1,8 +1,7 @@
+import type { Delimiters } from '../utils'
+
 import * as moo from 'moo'
 
-import {
-    delimiters,
-} from '../utils'
 
 export const keyPattern = /(?:[a-zA-Z_/]|%\w)+\d*/u
 
@@ -10,48 +9,52 @@ export const keyPattern = /(?:[a-zA-Z_/]|%\w)+\d*/u
 const escapeRegExp = (str: string): string =>
     str.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
 
-const outerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(delimiters.TAG_OPEN)}|$)`, 'u')
-const innerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(delimiters.TAG_OPEN)}|${escapeRegExp(delimiters.TAG_CLOSE)})`, 'u')
+export const tokenizer = (delimiters: Delimiters): any => {
+    const outerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(delimiters.open)}|$)`, 'u')
+    const innerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(delimiters.open)}|${escapeRegExp(delimiters.close)})`, 'u')
 
-// img tags are parsed via HTML (!)
-export const templateTokenizer = moo.states({
-    main: {
-        tagopen: {
-            match: delimiters.TAG_OPEN,
-            push: 'key',
+    // img tags are parsed via HTML (!)
+    const lexer = moo.states({
+        main: {
+            tagopen: {
+                match: delimiters.open,
+                push: 'key',
+            },
+            text: {
+                match: outerTextPattern,
+                lineBreaks: true,
+            },
         },
-        text: {
-            match: outerTextPattern,
-            lineBreaks: true,
-        },
-    },
 
-    key: {
-        keyname: {
-            match: keyPattern,
+        key: {
+            keyname: {
+                match: keyPattern,
+            },
+            sep: {
+                match: delimiters.sep,
+                next: 'intag',
+            },
+            tagclose: {
+                match: delimiters.close,
+                pop: 1,
+            },
         },
-        sep: {
-            match: delimiters.ARG_SEP,
-            next: 'intag',
-        },
-        tagclose: {
-            match: delimiters.TAG_CLOSE,
-            pop: 1,
-        },
-    },
 
-    intag: {
-        tagopen: {
-            match: delimiters.TAG_OPEN,
-            push: 'key',
+        intag: {
+            tagopen: {
+                match: delimiters.open,
+                push: 'key',
+            },
+            tagclose: {
+                match: delimiters.close,
+                pop: 1,
+            },
+            text: {
+                match: innerTextPattern,
+                lineBreaks: true,
+            },
         },
-        tagclose: {
-            match: delimiters.TAG_CLOSE,
-            pop: 1,
-        },
-        text: {
-            match: innerTextPattern,
-            lineBreaks: true,
-        },
-    },
-})
+    })
+
+    return Object.assign(lexer, delimiters)
+}

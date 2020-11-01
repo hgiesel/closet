@@ -21,7 +21,8 @@ To help you debug, I need some information. I have two suggestions for you to he
 1. You download the [AnkiWebView Inspector](https://ankiweb.net/shared/info/31746032)
 1. Open a card which doesn't work in the reviewer, right-click on the card, and select "Inspect". This will open a tab to the right. 
 1. In this tab, select "Console", however usually it is automatically selected.
-1. Look for an error message. If there is none, try typing in `initCloset()` and click enter, and see if there is now an error message
+1. Look for an error message, or other kind of output.
+1. If there is none, try typing in `import('./__closet.js').then(console.log)` and click enter.
 1. Take a screenshot of the error (or absence of it), and upload it here.
 
 #### Method 2

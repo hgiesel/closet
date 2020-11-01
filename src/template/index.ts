@@ -87,14 +87,17 @@ export class Template {
         let ready = false
 
         for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
-            console.groupCollapsed(`Iteration ${i}`)
+            console.groupCollapsed(`Iteration ${i}`, nodes)
             const iterationInfo: IterationInfo = {
                 iteration: i,
             }
 
             const tagAccessor = tagRenderer.makeAccessor(templateInfo, iterationInfo)
 
-            nodes = nodes.flatMap((node: ASTNode, index: number) => node.evaluate(this.parser, tagAccessor, [index]))
+            nodes = nodes.flatMap((
+                node: ASTNode,
+                index: number,
+            ) => node.evaluate(this.parser, tagAccessor, [index]))
             ready = nodes.reduce(nodesAreReady, true)
 
             tagRenderer.finishIteration(templateInfo, iterationInfo)

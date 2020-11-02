@@ -20,16 +20,16 @@ const closetInit = (closet) => {
 }
 
 const closetInitialize = (closet) => {
-    try {
-        if (globalThis.closetImmediately) {
-            closetInit(closet)
-        }
-        else {
+    if (globalThis.closetImmediately || !globalThis._updatingQA) {
+        closetInit(closet)
+    }
+    else {
+        try {
             onShownHook.push(() => closetInit(closet))
         }
-    }
-    catch {
-        closetInit(closet)
+        catch {
+            closetInit(closet)
+        }
     }
 }
 

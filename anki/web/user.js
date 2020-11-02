@@ -21,11 +21,11 @@ const closetInit = (closet) => {
 
 const closetInitialize = (closet) => {
     try {
-        if (globalThis.closetAfterShown) {
-            onShownHook.push(() => closetInit(closet))
+        if (globalThis.closetImmediately) {
+            closetInit(closet)
         }
         else {
-            closetInit(closet)
+            onShownHook.push(() => closetInit(closet))
         }
     }
     catch {

@@ -25,6 +25,7 @@
     "pack:main": "webpack -p",
     "pack:docs": "webpack -p --env.destination=docs",
     "pack:anki": "rollup -c --configAnki",
+    "pack:anki:dev": "rollup -c --configAnki --configDev",
     "watch": "run-p watch-docs watch-main watch-anki",
     "watch:main": "run-s compile:parser pack:watch:main",
     "watch:docs": "run-s compile:parser pack:watch:docs",

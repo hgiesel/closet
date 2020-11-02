@@ -4,6 +4,11 @@ import typescript from '@rollup/plugin-typescript'
 import babel from '@rollup/plugin-babel'
 import { terser } from "rollup-plugin-terser"
 
+const babelOptions = {
+    exclude: 'node_modules/**',
+    babelHelpers: 'bundled',
+}
+
 const terserOptions = {
     output: {
         comments: false,
@@ -14,17 +19,12 @@ const terserOptions = {
     },
 }
 
-const babelOptions = {
-    exclude: 'node_modules/**',
-    babelHelpers: 'bundled',
-}
-
 /**
  * available configs:
  *  (none)
  *  --configAnki
  *  --configWeb
- *  --configWebDev
+ *  --configDev
  */
 
 export default args => {
@@ -32,18 +32,23 @@ export default args => {
         ? 'anki/web/closet.js'
         : 'build/closet.js'
 
+    const plugins = [
+        nodeResolve(),
+        commonjs(),
+        typescript(),
+        babel(babelOptions),
+    ]
+
+    if (!args.configDev) {
+        plugins.push(terser(terserOptions))
+    }
+
     return {
         input: 'index.ts',
         output: {
             file,
             format: 'esm'
         },
-        plugins: [
-            nodeResolve(),
-            commonjs(),
-            typescript(),
-            babel(babelOptions),
-            terser(terserOptions),
-        ],
+        plugins,
     }
 }

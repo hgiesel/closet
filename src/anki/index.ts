@@ -76,7 +76,8 @@ const load = <T extends Record<string, unknown>>(
     return after - before
 }
 
-const init = <T extends Record<string, unknown>>(
+// Export for legacy support
+export const init = <T extends Record<string, unknown>>(
     closet: unknown,
     logic: UserLogic<T>,
     cardType: string,

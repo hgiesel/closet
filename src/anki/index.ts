@@ -116,21 +116,41 @@ export const initialize = <T extends Record<string, unknown>>(
     tagsFull: string,
     side: CardSide,
 ) => {
+    /**
+     * insertion methods
+     */
+    const naked = () => logInit(closet, logic, cardType, tagsFull, side)
+
+    // Only works on Desktop as far as I know
+    const viaShownHook = () => (globalThis as any).onShownHook.push(naked)
+    // Works when MathJax is available in globalThis, might be the case on iOS (?)
+    const viaMathJaxQueue = () => (globalThis as any).MathJax.Hub.Queue(naked)
+
+    // This is interesting, if you do not care for MathJax whatsoever
     if ((globalThis as any).closetImmediately) {
-        logInit(closet, logic, cardType, tagsFull, side)
+        naked()
     }
     else {
         try {
+            /**
+             * This check is important for Desktop
+             * Pushing to shownHook only makes sense, if it has not been cleared yet
+             * The clearing happens in the last task in the MathJax main queue
+             */
             if ((globalThis as any).MathJax.Hub.queue.running > 0) {
-                (globalThis as any).onShownHook.push(() => logInit(closet, logic, cardType, tagsFull, side))
+                try {
+                    viaShownHook()
+                }
+                catch {
+                    viaMathJaxQueue()
+                }
             }
             else {
-                (globalThis as any).MathJax.Hub.Queue([logInit, closet, logic, cardType, tagsFull, side])
+                viaMathJaxQueue()
             }
         }
         catch {
-            logInit(closet, logic, cardType, tagsFull, side)
+            naked()
         }
     }
 }
-

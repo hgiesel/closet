@@ -2,7 +2,7 @@ import type { MemoryMap } from './persistence'
 import type { FilterManager } from '..'
 import type { Delimiters } from '../template/parser/tokenizer/delimiters'
 
-import { interspliceChildNodes, BrowserTemplate, ChildNodeSpan } from '../browser'
+import { interspliceChildNodes, BrowserTemplate, ChildNodeSpan, cleanup } from '../browser'
 import { persistenceInterface } from './persistence'
 
 
@@ -76,7 +76,7 @@ const load = <T extends Record<string, unknown>>(
     return after - before
 }
 
-export const init = <T extends Record<string, unknown>>(
+const init = <T extends Record<string, unknown>>(
     closet: unknown,
     logic: UserLogic<T>,
     cardType: string,
@@ -89,3 +89,48 @@ export const init = <T extends Record<string, unknown>>(
     return logic(closet, userPreset, chooseMemory)
         .map((value: SetupOutput<T>) => load(...value))
 }
+
+const logInit = <T extends Record<string, unknown>>(
+    closet: any,
+    logic: UserLogic<T>,
+    cardType: string,
+    tagsFull: string,
+    side: CardSide,
+) => {
+    try {
+        const times = init(closet, logic, cardType, tagsFull, side)
+        console.info(`Closet executed in ${times.map((t: number) => t.toFixed(3))}ms.`)
+    }
+    catch (error) {
+        console.error('An error occured while executing Closet:', error)
+    }
+    finally {
+        cleanup()
+    }
+}
+
+export const initialize = <T extends Record<string, unknown>>(
+    closet: any,
+    logic: UserLogic<T>,
+    cardType: string,
+    tagsFull: string,
+    side: CardSide,
+) => {
+    if ((globalThis as any).closetImmediately) {
+        logInit(closet, logic, cardType, tagsFull, side)
+    }
+    else {
+        try {
+            if ((globalThis as any).MathJax.Hub.queue.running > 0) {
+                (globalThis as any).onShownHook.push(() => logInit(closet, logic, cardType, tagsFull, side))
+            }
+            else {
+                (globalThis as any).MathJax.Hub.Queue([logInit, closet, logic, cardType, tagsFull, side])
+            }
+        }
+        catch {
+            logInit(closet, logic, cardType, tagsFull, side)
+        }
+    }
+}
+

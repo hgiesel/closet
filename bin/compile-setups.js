@@ -87,8 +87,6 @@ fs.readdir(setupsDirectory, (_err, setupFiles) => {
             const doc = yaml.safeLoad(content, {
                 filename: setupFile,
             })
-
-            console.log(JSON.stringify(doc, null, 0))
         })
     }
 })

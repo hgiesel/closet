@@ -87,7 +87,8 @@ export class Template {
         let ready = false
 
         for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
-            console.groupCollapsed(`Iteration ${i}`, nodes)
+            console.log(`Iteration ${i}`, nodes)
+
             const iterationInfo: IterationInfo = {
                 iteration: i,
             }
@@ -101,7 +102,6 @@ export class Template {
             ready = nodes.reduce(nodesAreReady, true)
 
             tagRenderer.finishIteration(templateInfo, iterationInfo)
-            console.groupEnd()
         }
 
         const result = stringifyNodes(nodes)

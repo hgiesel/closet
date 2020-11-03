@@ -15,7 +15,10 @@ const terserOptions = {
     },
 
     compress: {
-        pure_funcs: ['console.log'],
+        pure_funcs: [
+            'console.log',
+            'devLog' /* used in delayAction */,
+        ],
     },
 }
 

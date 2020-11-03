@@ -8,6 +8,13 @@ import { persistenceInterface } from './persistence'
 
 type CardSide = 'front' | 'back'
 
+interface AnkiBuiltins {
+    MathJax: any
+    _updatingQA: boolean
+    closetImmediately: boolean
+    onShownHook: Function[]
+}
+
 const getCardNumber = (textNum: string): number => Number(textNum.match(/[0-9]*$/))
 
 const preset = (cardType: string, tagsFull: string, side: CardSide) => ({
@@ -110,6 +117,69 @@ const logInit = <T extends Record<string, unknown>>(
     }
 }
 
+export const devLog = (text: string) => {
+    document.getElementById('qa')?.appendChild(document.createTextNode(text))
+}
+
+const delayAction = (callback: () => void) => {
+    // Only works on Desktop as far as I know
+    const viaShownHook = () => (globalThis as typeof globalThis & AnkiBuiltins).onShownHook.push(callback)
+    // Works when MathJax is available in globalThis, desktop, or mobile
+    // const viaMathJaxQueue = () => (globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.Queue(callback)
+
+    if ((globalThis as typeof globalThis & AnkiBuiltins).closetImmediately) {
+        /**
+         * This is interesting, if you do not care for MathJax whatsoever
+         */
+        callback()
+        devLog('Option 1')
+    }
+    else {
+        try {
+            /**
+             * This check is important for Desktop
+             * Pushing to shownHook only makes sense, if it has not been cleared yet
+             * After the clearing _updatingQA is set to false
+             * Additionally _updatingQA exists on Mobile, to suit a different purpose
+             */
+            if ((globalThis as typeof globalThis & AnkiBuiltins)._updatingQA) {
+                try {
+                    /**
+                     * On desktop, if MathJax takes long
+                     */
+                    viaShownHook()
+                    devLog(`Option 2: ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue)}}`)
+                }
+                catch (e) {
+                    /**
+                     * On mobile, as there is no onShownHook
+                     */
+                    // This break mobile atm
+                    // viaMathJaxQueue()
+                    callback()
+                    devLog(`Option 3; ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue)}}; ${e}`)
+                }
+            }
+            else {
+                /**
+                 * On desktop, or mobile, if MathJax finishes quickly
+                 */
+                // This break mobile atm
+                // viaMathJaxQueue()
+                callback()
+                devLog(`Option 4; ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue)}}`)
+            }
+        }
+        catch (e) {
+            /**
+             * On web, as there is neither _updatingQA nor MathJax
+             */
+            callback()
+            devLog(`Option 5; ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax)}; ${e}`)
+        }
+    }
+}
+
 export const initialize = <T extends Record<string, unknown>>(
     closet: any,
     logic: UserLogic<T>,
@@ -117,41 +187,5 @@ export const initialize = <T extends Record<string, unknown>>(
     tagsFull: string,
     side: CardSide,
 ) => {
-    /**
-     * insertion methods
-     */
-    const naked = () => logInit(closet, logic, cardType, tagsFull, side)
-
-    // Only works on Desktop as far as I know
-    const viaShownHook = () => (globalThis as any).onShownHook.push(naked)
-    // Works when MathJax is available in globalThis, might be the case on iOS (?)
-    const viaMathJaxQueue = () => (globalThis as any).MathJax.Hub.Queue(naked)
-
-    // This is interesting, if you do not care for MathJax whatsoever
-    if ((globalThis as any).closetImmediately) {
-        naked()
-    }
-    else {
-        try {
-            /**
-             * This check is important for Desktop
-             * Pushing to shownHook only makes sense, if it has not been cleared yet
-             * The clearing happens in the last task in the MathJax main queue
-             */
-            if ((globalThis as any).MathJax.Hub.queue.running > 0) {
-                try {
-                    viaShownHook()
-                }
-                catch {
-                    viaMathJaxQueue()
-                }
-            }
-            else {
-                viaMathJaxQueue()
-            }
-        }
-        catch {
-            naked()
-        }
-    }
+    delayAction(() => logInit(closet, logic, cardType, tagsFull, side))
 }

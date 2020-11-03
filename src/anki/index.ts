@@ -17,7 +17,16 @@ interface AnkiBuiltins {
 
 const getCardNumber = (textNum: string): number => Number(textNum.match(/[0-9]*$/))
 
-const preset = (cardType: string, tagsFull: string, side: CardSide) => ({
+interface DefaultPreset {
+    card: string
+    cardNumber: number
+    tagsFull: string
+    tags: string[]
+    side: CardSide
+    [key: string]: unknown
+}
+
+const preset = (cardType: string, tagsFull: string, side: CardSide): DefaultPreset => ({
     card: cardType,
     cardNumber: getCardNumber(cardType),
     tagsFull: tagsFull,
@@ -61,9 +70,9 @@ type SetupOutput<T extends Record<string, unknown>> = [
 ]
 
 type UserLogic<T extends Record<string, unknown>> = (
-    closet: unknown,
-    preset: unknown,
-    chooseMemory: unknown,
+    closet: NodeModule,
+    preset: T,
+    chooseMemory: (memoryKey: string) => MemoryMap,
 ) => SetupOutput<T>[]
 
 const load = <T extends Record<string, unknown>>(
@@ -84,9 +93,9 @@ const load = <T extends Record<string, unknown>>(
 }
 
 // Export for legacy support
-export const init = <T extends Record<string, unknown>>(
-    closet: unknown,
-    logic: UserLogic<T>,
+export const init = (
+    closet: NodeModule,
+    logic: UserLogic<DefaultPreset>,
     cardType: string,
     tagsFull: string,
     side: CardSide,
@@ -95,16 +104,16 @@ export const init = <T extends Record<string, unknown>>(
     const chooseMemory = persistenceInterface(side, document.getElementById('qa')?.innerHTML ?? '')
 
     return logic(closet, userPreset, chooseMemory)
-        .map((value: SetupOutput<T>) => load(...value))
+        .map((value: SetupOutput<DefaultPreset>) => load(...value))
 }
 
-const logInit = <T extends Record<string, unknown>>(
-    closet: any,
-    logic: UserLogic<T>,
+const logInit = (
+    closet: NodeModule,
+    logic: UserLogic<DefaultPreset>,
     cardType: string,
     tagsFull: string,
     side: CardSide,
-) => {
+): void => {
     try {
         const times = init(closet, logic, cardType, tagsFull, side)
         console.info(`Closet executed in ${times.map((t: number) => t.toFixed(3))}ms.`)
@@ -117,11 +126,11 @@ const logInit = <T extends Record<string, unknown>>(
     }
 }
 
-export const devLog = (text: string) => {
+export const devLog = (text: string): void => {
     document.getElementById('qa')?.appendChild(document.createTextNode(text))
 }
 
-const delayAction = (callback: () => void) => {
+const delayAction = (callback: () => void): void => {
     // Only works on Desktop as far as I know
     const viaShownHook = () => (globalThis as typeof globalThis & AnkiBuiltins).onShownHook.push(callback)
     // Works when MathJax is available in globalThis, desktop, or mobile
@@ -180,12 +189,13 @@ const delayAction = (callback: () => void) => {
     }
 }
 
-export const initialize = <T extends Record<string, unknown>>(
-    closet: any,
-    logic: UserLogic<T>,
+export const initialize = (
+    closet: NodeModule,
+    logic: UserLogic<DefaultPreset>,
     cardType: string,
     tagsFull: string,
     side: CardSide,
-) => {
+): NodeModule => {
     delayAction(() => logInit(closet, logic, cardType, tagsFull, side))
+    return closet
 }

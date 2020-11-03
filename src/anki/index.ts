@@ -12,7 +12,7 @@ interface AnkiBuiltins {
     MathJax: any
     _updatingQA: boolean
     closetImmediately: boolean
-    onShownHook: Function[]
+    onShownHook: Array<() => void>
 }
 
 const getCardNumber = (textNum: string): number => Number(textNum.match(/[0-9]*$/))

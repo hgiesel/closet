@@ -1,3 +1,12 @@
+.closet--log {
+  color: black;
+  background-color: rgb(255, 147, 40);
+
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
 .closet--delay {
   opacity: 0;
 }

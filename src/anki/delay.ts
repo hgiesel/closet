@@ -7,20 +7,66 @@ interface AnkiBuiltins {
     onShownHook: Array<() => void>
 }
 
-enum InitMode {
-    Raw,
-    ViaShownHook,
-    ViaMathJaxQueue,
+enum InitDescription {
+    ClosetImmediately = 1,
+    DesktopShownHook,
+    MobileMathJax,
+    DesktopMobileLate,
+    Web,
 }
 
-const delayChoice = (): [number, InitMode, unknown[]] => {
+const stringifyDescription = (description: InitDescription): string => {
+    switch(description) {
+        case InitDescription.ClosetImmediately:
+            return 'You have set the variable globalThis.closetImmediately.'
+        case InitDescription.DesktopShownHook:
+            return (
+                'Closet executes while MathJax is still rendering. ' +
+                'You are on AnkiDesktop. ' +
+                'The action will be pushed onto onShownHook.'
+            )
+        case InitDescription.MobileMathJax:
+            return (
+                'Closet executes while MathJax is still rendering. ' +
+                'You are on AnkiMobile. ' +
+                'The action will be enqueued on MathJax.Hub.Queue.'
+            )
+        case InitDescription.DesktopMobileLate:
+            return (
+                'Closet executes after MathJax finished rendering. ' +
+                'The action will be executed immediatley.'
+            )
+        case InitDescription.Web:
+            return (
+                'You are on AnkiWeb, which does not have MathJax. ' +
+                'The action will be executed immediatley.'
+            )
+        default:
+            return (
+                'No Description found. ' +
+                'This should never happen.'
+            )
+    }
+}
+
+type InitMode = (cb: () => void) => void
+
+const initModes: Record<string, InitMode> = {
+    raw: (callback) => callback(),
+    // Only works on Desktop as far as I know
+    viaShownHook: (callback) => (globalThis as typeof globalThis & AnkiBuiltins).onShownHook.push(callback),
+    // Works when MathJax is available in globalThis, desktop, or mobile
+    viaMathJaxQueue: (callback) => (globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.Queue(callback)
+}
+
+const delayChoice = (): [InitMode, InitDescription, unknown[]] => {
     if ((globalThis as typeof globalThis & AnkiBuiltins).closetImmediately) {
         /**
          * This is interesting, if you do not care for MathJax whatsoever
          */
         return [
-            1,
-            InitMode.Raw,
+            initModes.raw,
+            InitDescription.ClosetImmediately,
             [],
         ]
     }
@@ -30,11 +76,13 @@ const delayChoice = (): [number, InitMode, unknown[]] => {
              * This check is important for Desktop
              * Pushing to shownHook only makes sense, if it has not been cleared yet
              * After the clearing _updatingQA is set to false
-             * Additionally _updatingQA exists on Mobile, to suit a different purpose
+             * Additionally _updatingQA exists on Mobile, however not shown hook
              */
-            const mathJaxQueue = (globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue
 
-            if ((globalThis as typeof globalThis & AnkiBuiltins)._updatingQA) {
+            const mathJaxQueue = (globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue
+            const mathJaxIsCurrentlyExecuting = (globalThis as typeof globalThis & AnkiBuiltins)._updatingQA
+
+            if (mathJaxIsCurrentlyExecuting) {
                 const maybeOnShownHook = (globalThis as typeof globalThis & AnkiBuiltins).onShownHook
 
                 if (maybeOnShownHook) {
@@ -42,8 +90,8 @@ const delayChoice = (): [number, InitMode, unknown[]] => {
                      * On desktop, if MathJax takes long
                      */
                     return [
-                        2,
-                        InitMode.ViaShownHook, [
+                        initModes.viaShownHook,
+                        InitDescription.DesktopShownHook, [
                             JSON.stringify(maybeOnShownHook),
                             JSON.stringify(mathJaxQueue),
                         ],
@@ -55,8 +103,8 @@ const delayChoice = (): [number, InitMode, unknown[]] => {
                      * TODO should be mathjax queue, but breaks mobile
                      */
                     return [
-                        3,
-                        InitMode.Raw, [
+                        initModes.viaMathJaxQueue,
+                        InitDescription.MobileMathJax, [
                             JSON.stringify(mathJaxQueue),
                         ],
                     ]
@@ -68,8 +116,8 @@ const delayChoice = (): [number, InitMode, unknown[]] => {
                  * TODO This break mobile atm, used to use viaMathJaxQueue())
                  */
                 return [
-                    4,
-                    InitMode.Raw, [
+                    initModes.raw,
+                    InitDescription.DesktopMobileLate, [
                         JSON.stringify(mathJaxQueue),
                     ],
                 ]
@@ -80,8 +128,8 @@ const delayChoice = (): [number, InitMode, unknown[]] => {
              * On web, as there is neither _updatingQA nor MathJax
              */
             return [
-                5,
-                InitMode.Raw, [
+                initModes.raw,
+                InitDescription.Web, [
                     error,
                 ],
             ]
@@ -90,34 +138,12 @@ const delayChoice = (): [number, InitMode, unknown[]] => {
 }
 
 export const delayAction = (callback: () => void): void => {
-    // Only works on Desktop as far as I know
-    const viaShownHook = () => (globalThis as typeof globalThis & AnkiBuiltins).onShownHook.push(callback)
-    // Works when MathJax is available in globalThis, desktop, or mobile
-    const viaMathJaxQueue = () => (globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.Queue(callback)
-
     let [
-        no,
         choice,
+        description,
         logs
     ] = delayChoice()
 
-    ankiLog(`Init option ${no}`, ...logs)
-
-    switch (choice) {
-        case InitMode.Raw:
-            callback()
-            break
-
-        case InitMode.ViaShownHook:
-            viaShownHook()
-            break
-
-        case InitMode.ViaMathJaxQueue:
-            viaMathJaxQueue()
-            break
-
-        default:
-            callback()
-            break
-    }
+    ankiLog(`Init mode ${description}`, stringifyDescription(description), ...logs)
+    choice(callback)
 }

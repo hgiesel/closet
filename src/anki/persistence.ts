@@ -1,3 +1,5 @@
+import { ankiLog } from './utils'
+
 // This code is based on
 // https://github.com/SimonLammer/anki-persistence
 //
@@ -120,6 +122,7 @@ class Persistence_windowKey implements AnkiPersistence {
 }
 
 const initPersistence = (): AnkiPersistence => {
+    let persistence
     /**
      *   client  | sessionStorage | persistentKey | useful location |
      * ----------|----------------|---------------|-----------------|
@@ -135,28 +138,38 @@ const initPersistence = (): AnkiPersistence => {
 
 
     // android, iOS, web
-    let persistence = new Persistence_sessionStorage()
-
-    if (!persistence.isAvailable()) {
-        // windows, mac (2.0)
-        persistence = new Persistence_windowKey("py")
+    persistence = new Persistence_sessionStorage()
+    if (persistence.isAvailable()) {
+        ankiLog('Used Persistence sessionStorage implementation')
+        return persistence
     }
 
-    if (!persistence.isAvailable()) {
-        // if titleStartIndex > 0, window.location is useful
-        const titleStartIndex = globalThis.location.toString().indexOf('title')
-        const titleContentIndex = globalThis.location.toString().indexOf('main', titleStartIndex)
-
-        if (
-            titleStartIndex > 0 &&
-            titleContentIndex > 0 &&
-            (titleContentIndex - titleStartIndex) < 10
-        ) {
-            // linux, mac (2.1)
-            persistence = new Persistence_windowKey("qt")
-        }
+    // windows, mac (2.0)
+    persistence = new Persistence_windowKey("py")
+    if (persistence.isAvailable()) {
+        ankiLog('Used Persistence windowKey py implementation')
+        return persistence
     }
 
+    // if titleStartIndex > 0, window.location is useful
+    const titleStartIndex = location
+        .toString()
+        .indexOf('title')
+    const titleContentIndex = location
+        .toString()
+        .indexOf('main', titleStartIndex)
+
+    if (
+        titleStartIndex > 0 &&
+        titleContentIndex > 0 &&
+        (titleContentIndex - titleStartIndex) < 10
+    ) {
+        // linux, mac (2.1)
+        ankiLog('Used Persistence windowKey qt implementation')
+        return new Persistence_windowKey("qt")
+    }
+
+    ankiLog('Defaulted to Persistence windowKey implementation')
     return persistence
 }
 

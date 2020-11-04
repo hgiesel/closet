@@ -17,7 +17,7 @@ const terserOptions = {
     compress: {
         pure_funcs: [
             'console.log',
-            'devLog' /* used in delayAction */,
+            'ankiLog' /* defined in src/anki/utils.ts */,
         ],
     },
 }

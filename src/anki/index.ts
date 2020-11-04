@@ -4,6 +4,7 @@ import type { Delimiters } from '../template/parser/tokenizer/delimiters'
 
 import { interspliceChildNodes, BrowserTemplate, ChildNodeSpan, cleanup } from '../browser'
 import { persistenceInterface } from './persistence'
+import { ankiLog } from './utils'
 
 
 type CardSide = 'front' | 'back'
@@ -126,10 +127,6 @@ const logInit = (
     }
 }
 
-export const devLog = (text: string): void => {
-    document.getElementById('qa')?.appendChild(document.createTextNode(text))
-}
-
 const delayAction = (callback: () => void): void => {
     // Only works on Desktop as far as I know
     const viaShownHook = () => (globalThis as typeof globalThis & AnkiBuiltins).onShownHook.push(callback)
@@ -141,7 +138,7 @@ const delayAction = (callback: () => void): void => {
          * This is interesting, if you do not care for MathJax whatsoever
          */
         callback()
-        devLog('Option 1')
+        ankiLog('Option 1')
     }
     else {
         try {
@@ -157,7 +154,7 @@ const delayAction = (callback: () => void): void => {
                      * On desktop, if MathJax takes long
                      */
                     viaShownHook()
-                    devLog(`Option 2: ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue)}}`)
+                    ankiLog(`Option 2: ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue)}}`)
                 }
                 catch (e) {
                     /**
@@ -166,7 +163,7 @@ const delayAction = (callback: () => void): void => {
                     // This break mobile atm
                     // viaMathJaxQueue()
                     callback()
-                    devLog(`Option 3; ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue)}}; ${e}`)
+                    ankiLog(`Option 3; ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue)}}; ${e}`)
                 }
             }
             else {
@@ -176,7 +173,7 @@ const delayAction = (callback: () => void): void => {
                 // This break mobile atm
                 // viaMathJaxQueue()
                 callback()
-                devLog(`Option 4; ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue)}}`)
+                ankiLog(`Option 4; ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue)}}`)
             }
         }
         catch (e) {
@@ -184,7 +181,7 @@ const delayAction = (callback: () => void): void => {
              * On web, as there is neither _updatingQA nor MathJax
              */
             callback()
-            devLog(`Option 5; ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax)}; ${e}`)
+            ankiLog(`Option 5; ${JSON.stringify((globalThis as typeof globalThis & AnkiBuiltins).MathJax)}; ${e}`)
         }
     }
 }

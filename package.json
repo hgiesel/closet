@@ -22,6 +22,7 @@
     "build:main": "run-s compile:parser pack:main",
     "build:docs": "run-s compile:parser create-favicon pack:docs",
     "build:anki": "run-s compile:parser compile:anki pack:anki",
+    "build:anki:dev": "run-s compile:parser compile:anki pack:anki:dev",
     "pack:main": "webpack -p",
     "pack:docs": "webpack -p --env.destination=docs",
     "pack:anki": "rollup -c --configAnki",
@@ -38,8 +39,9 @@
     "dev:docs": "run-p serve:docs watch:docs",
     "dev:anki": "run-s watch:anki",
     "link": "bin/link.sh -c",
-    "zip": "run-s build:anki zip:sub",
     "zip:sub": "bin/zip.sh",
+    "zip": "run-s build:anki zip:sub",
+    "zip:dev": "run-s build:anki:dev zip:sub",
     "test": "jest",
     "lint": "eslint . --ext .ts"
   },

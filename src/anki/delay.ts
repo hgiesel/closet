@@ -114,7 +114,6 @@ const delayChoice = (): [InitMode, InitDescription, unknown[]] => {
                 else {
                     /**
                      * On mobile, as there is no onShownHook
-                     * TODO should be mathjax queue, but breaks mobile
                      */
                     return [
                         initModes.viaMathJaxQueue,

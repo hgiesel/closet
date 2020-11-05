@@ -77,7 +77,7 @@ export class Template {
         return new Template(texts, null, delimiters)
     }
 
-    render(tagRenderer: TagRenderer, cb?: (t: string[]) => void): string[] {
+    render(tagRenderer: TagRenderer, callback: (t: string[]) => void = () => {}): string[] {
         const templateInfo: TemplateInfo = {
             template: this,
             parser: this.parser,
@@ -87,8 +87,6 @@ export class Template {
         let ready = false
 
         for (let i = 0; i < MAX_ITERATIONS && !ready; i++) {
-            console.log(`Iteration ${i}`, nodes)
-
             const iterationInfo: IterationInfo = {
                 iteration: i,
             }
@@ -106,10 +104,7 @@ export class Template {
 
         const result = stringifyNodes(nodes)
 
-        if (cb) {
-            cb(result)
-        }
-
+        callback(result)
         tagRenderer.finishRun(templateInfo, { result: result })
 
         return result

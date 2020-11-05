@@ -29,13 +29,13 @@ const parseTagSelector = (selector: string): TagPredicate => {
         const parsed = parser.feed(selector).results
 
         if (parsed.length > 1) {
-            console.error('Tag selector is ambiguous: ', selector, parsed)
+            console.log('Tag selector is ambiguous: ', selector, parsed)
         }
 
         return parsed[0]
     }
     catch (e) {
-        console.error('Tag selector failed to parse: ', e)
+        console.log('Tag selector failed to parse: ', e)
         return () => false
     }
 }

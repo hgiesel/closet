@@ -21,9 +21,7 @@ const coreParse = (text: string, grammar: Grammar): ASTNode[][] => {
         return result
     }
     catch (e) {
-        console.error(`Error parsing text:`, e)
-        console.info('Default to Trivial Base Tag')
-
+        console.log(`Will default to Trivial Base Tag, due to error parsing text:`, e)
         return [[new TextNode(text)]]
     }
 }
@@ -32,7 +30,7 @@ const mainParse = (text: string, grammar: Grammar): ASTNode[] => {
     const parsed = coreParse(text, grammar)
 
     if (parsed.length > 1) {
-        console.error('Ambiguous template grammar')
+        console.log('Ambiguous template grammar')
     }
 
     return parsed[0]

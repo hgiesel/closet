@@ -97,10 +97,10 @@ const logInit = (
 ): void => {
     try {
         const times = init(closet, logic, cardType, tagsFull, side)
-        console.info(`Closet executed in ${times.map((t: number) => t.toFixed(3))}ms.`)
+        console.log(`Closet executed in ${times.map((t: number) => t.toFixed(3))}ms.`)
     }
     catch (error) {
-        console.error('An error occured while executing Closet:', error)
+        console.log('An error occured while executing Closet:', error)
         ankiLog('An error occured while executing Closet', error)
     }
     finally {
@@ -116,7 +116,14 @@ export const initialize = (
     side: CardSide,
 ): NodeModule => {
     ankiLog('Before delayAction')
-    delayAction(() => logInit(closet, logic, cardType, tagsFull, side))
+
+    try {
+        delayAction(() => logInit(closet, logic, cardType, tagsFull, side))
+    }
+    catch (error) {
+        ankiLog('Error during delayAction execution.', error)
+    }
+
     ankiLog('After delayAction')
     return closet
 }

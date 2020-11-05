@@ -1,5 +1,6 @@
 import { ankiLog } from './utils'
 
+
 interface AnkiBuiltins {
     MathJax: any
     _updatingQA: boolean
@@ -59,6 +60,18 @@ const initModes: Record<string, InitMode> = {
     viaMathJaxQueue: (callback) => (globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.Queue(callback)
 }
 
+const getMathJaxQueue = (): Record<string, any> => {
+    return (globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue
+}
+
+const getMathJaxQueueForPrinting = (): Record<string, any> => {
+    const mathJaxQueue = getMathJaxQueue()
+    const mathJaxPrintable = Object.assign({}, mathJaxQueue)
+    mathJaxPrintable.queue = mathJaxPrintable.queue.map(String)
+
+    return mathJaxPrintable
+}
+
 const delayChoice = (): [InitMode, InitDescription, unknown[]] => {
     if ((globalThis as typeof globalThis & AnkiBuiltins).closetImmediately) {
         /**
@@ -79,8 +92,9 @@ const delayChoice = (): [InitMode, InitDescription, unknown[]] => {
              * Additionally _updatingQA exists on Mobile, however not shown hook
              */
 
-            const mathJaxQueue = (globalThis as typeof globalThis & AnkiBuiltins).MathJax.Hub.queue
             const mathJaxIsCurrentlyExecuting = (globalThis as typeof globalThis & AnkiBuiltins)._updatingQA
+            const mathJaxQueue = getMathJaxQueueForPrinting()
+
 
             if (mathJaxIsCurrentlyExecuting) {
                 const maybeOnShownHook = (globalThis as typeof globalThis & AnkiBuiltins).onShownHook
@@ -92,7 +106,7 @@ const delayChoice = (): [InitMode, InitDescription, unknown[]] => {
                     return [
                         initModes.viaShownHook,
                         InitDescription.DesktopShownHook, [
-                            JSON.stringify(maybeOnShownHook),
+                            JSON.stringify(maybeOnShownHook.map(String)),
                             JSON.stringify(mathJaxQueue),
                         ],
                     ]
@@ -113,7 +127,6 @@ const delayChoice = (): [InitMode, InitDescription, unknown[]] => {
             else {
                 /**
                  * On desktop, or mobile, if MathJax finishes quickly
-                 * TODO This break mobile atm, used to use viaMathJaxQueue())
                  */
                 return [
                     initModes.raw,
@@ -144,6 +157,24 @@ export const delayAction = (callback: () => void): void => {
         logs
     ] = delayChoice()
 
-    ankiLog(`Init mode ${description}`, stringifyDescription(description), ...logs)
+    ankiLog(
+        `Init mode ${description}`,
+        stringifyDescription(description),
+        ...logs,
+    )
+
     choice(callback)
+
+    try {
+        ankiLog(
+            'MathJax.Hub.Queue after execution: ' +
+            JSON.stringify(getMathJaxQueueForPrinting())
+        )
+    }
+    catch (error) {
+        ankiLog(
+            'MathJax.Hub.Queue after execution seems corrupted.',
+            error,
+        )
+    }
 }

@@ -77,7 +77,7 @@ export class Template {
         return new Template(texts, null, delimiters)
     }
 
-    render(tagRenderer: TagRenderer, callback: (t: string[]) => void = () => {}): string[] {
+    render(tagRenderer: TagRenderer, callback: (t: string[]) => void = () => {/* do nothing */}): string[] {
         const templateInfo: TemplateInfo = {
             template: this,
             parser: this.parser,

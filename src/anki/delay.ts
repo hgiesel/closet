@@ -150,7 +150,7 @@ const delayChoice = (): [InitMode, InitDescription, unknown[]] => {
 }
 
 export const delayAction = (callback: () => void): void => {
-    let [
+    const [
         choice,
         description,
         logs

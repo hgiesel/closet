@@ -164,17 +164,4 @@ export const delayAction = (callback: () => void): void => {
     )
 
     choice(callback)
-
-    try {
-        ankiLog(
-            'MathJax.Hub.Queue after execution: ' +
-            JSON.stringify(getMathJaxQueueForPrinting())
-        )
-    }
-    catch (error) {
-        ankiLog(
-            'MathJax.Hub.Queue after execution seems corrupted.',
-            error,
-        )
-    }
 }

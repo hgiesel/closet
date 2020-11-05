@@ -15,9 +15,10 @@ const terserOptions = {
     },
 
     compress: {
+        drop_console: true,
         pure_funcs: [
-            'console.log',
             'ankiLog' /* defined in src/anki/utils.ts */,
+            'stringifyDescription',
         ],
     },
 }

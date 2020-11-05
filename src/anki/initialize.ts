@@ -78,7 +78,6 @@ export const init = (
     tagsFull: string,
     side: CardSide,
 ): number[] => {
-    ankiLog('In init()')
     const userPreset = preset(cardType, tagsFull, side)
     const chooseMemory = persistenceInterface(side, document.getElementById('qa')?.innerHTML ?? '')
 
@@ -115,15 +114,6 @@ export const initialize = (
     tagsFull: string,
     side: CardSide,
 ): NodeModule => {
-    ankiLog('Before delayAction')
-
-    try {
-        delayAction(() => logInit(closet, logic, cardType, tagsFull, side))
-    }
-    catch (error) {
-        ankiLog('Error during delayAction execution.', error)
-    }
-
-    ankiLog('After delayAction')
+    delayAction(() => logInit(closet, logic, cardType, tagsFull, side))
     return closet
 }

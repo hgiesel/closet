@@ -2,7 +2,7 @@
 versionInfo = [
     0, # MAJOR
     2, # MINOR
-    4, # PATCH
+    5, # PATCH
 ]
 
 prereleaseInfo = [

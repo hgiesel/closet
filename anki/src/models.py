@@ -3,7 +3,7 @@ from aqt import mw
 
 from anki.lang import _
 
-from .utils import closet_enabled
+from .utils import closet_enabled, closet_version_per_model
 from ..gui.model_settings import ModelSettings
 
 
@@ -17,9 +17,11 @@ def on_closet(models):
     model_id: int = models.models[current_row].id
 
     closet_enabled.model_id = model_id
+    closet_version_per_model.model_id = model_id
+
     dialog = ModelSettings(mw, set_settings)
 
-    dialog.setupUi(closet_enabled.value)
+    dialog.setupUi(closet_enabled.value, closet_version_per_model.value)
     return dialog.exec_()
 
 def init_closet_button(buttons, models):

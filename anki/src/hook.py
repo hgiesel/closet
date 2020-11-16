@@ -5,7 +5,13 @@ from os.path import dirname, realpath
 
 from aqt import mw
 
-from .utils import find_addon_by_name, closet_enabled
+from .utils import (
+    closet_enabled,
+    closet_version_per_model,
+    find_addon_by_name,
+)
+
+from .version import version
 
 
 default_version = 'v0.1'
@@ -59,6 +65,18 @@ def setup_script() -> None:
         setupCode=setup,
     )
 
+    def generate_code(id, storage, model, tmpl, pos) -> str:
+        closet_version_per_model.model_name = model
+        closet_version_per_model.value = version
+
+        return DoubleTemplate(user).substitute(
+            editableCode=indent_lines(storage.code if storage.code is not None else editWithSetup, 4),
+            cardType='{{Card}}',
+            tagsFull='{{Tags}}',
+            side='front' if pos == 'question' else 'back',
+        )
+
+
     lib.make_and_register_interface(
         tag = user_tag,
 
@@ -93,12 +111,7 @@ def setup_script() -> None:
             code = editWithSetup,
         ),
 
-        generator = lambda id, storage, model, tmpl, pos: DoubleTemplate(user).substitute(
-            editableCode=indent_lines(storage.code if storage.code is not None else editWithSetup, 4),
-            cardType='{{Card}}',
-            tagsFull='{{Tags}}',
-            side='front' if pos == 'question' else 'back',
-        )
+        generator = generate_code,
     )
 
 def model_has_closet_enabled(model_id: int) -> bool:

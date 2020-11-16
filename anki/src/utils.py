@@ -39,11 +39,20 @@ class ModelConfig:
         self.default = default
 
     @property
-    def model_id(self):
+    def model_id(self) -> int:
         return self.model['id']
 
     @model_id.setter
     def model_id(self, model_id: int):
+        self.model = mw.col.models.get(model_id)
+
+    @property
+    def model_name(self) -> str:
+        return self.model['name']
+
+    @model_name.setter
+    def model_name(self, model_name: str):
+        model_id = mw.col.models.id_for_name(model_name)
         self.model = mw.col.models.get(model_id)
 
     @property
@@ -63,6 +72,9 @@ class ModelConfig:
 
 # whether to hook closet into Asset Manager
 closet_enabled = ModelConfig('closetEnable', True)
+
+# for preserving closet versions in the media folder
+closet_version_per_model = ModelConfig('closetVersion', 'N.A.')
 
 # shortcut in Editor
 occlude_shortcut = ProfileConfig('closetOcclusionShortcut', 'Ctrl+O')

@@ -35,7 +35,6 @@ def include_closet_code(webcontent, context):
     if not isinstance(context, Editor):
         return
 
-    webcontent.js.append(f'/_addons/{addon_package}/web/closet.js')
     webcontent.js.append(f'/_addons/{addon_package}/web/editor.js')
     webcontent.css.append(f'/_addons/{addon_package}/web/editor.css')
 

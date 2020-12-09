@@ -2,15 +2,6 @@ from typing import Any
 from aqt import mw
 
 
-def flatmap(f, xs):
-    ys = []
-
-    for x in xs:
-        ys.extend(f(x))
-
-    return ys
-
-
 def find_addon_by_name(addon_name):
     for name in mw.addonManager.allAddons():
         if mw.addonManager.addonName(name) == addon_name:

@@ -17,11 +17,9 @@ from .version import version
 default_version = "v0.1"
 default_description = """This is the configuration of how Closet will behave.
 To get inspiration you can visit the homepage: closetengine.com."""
-default_name = "Closet Setup"
 
 script_name = "ClosetUser"
-user_tag = f"{script_name}Tag"
-user_id = f"{script_name}Id"
+script_tag = f"{script_name}Script"
 
 if am := find_addon_by_name("Asset Manager"):
     lib = __import__(am).src.lib
@@ -55,6 +53,22 @@ def get_scripts() -> Tuple[str, str, str]:
                     setup_file.read().strip(),
                 ]
 
+default_name = "Closet Setup"
+
+def get_versioned_name(mid: int) -> str:
+    closet_version_per_model.model_id = mid
+    installed_version = closet_version_per_model.value
+
+    try:
+        installed_version = mw.col.models.get(mid)['closetVersion']
+    except KeyError:
+        installed_version = None
+
+    return f"Closet {version}" + (
+        ""
+        if not installed_version or installed_version == version
+        else f" ({installed_version} is inserted currently!)"
+    )
 
 def setup_script() -> None:
     if not am:
@@ -67,6 +81,7 @@ def setup_script() -> None:
     )
 
     def generate_code(id, storage, model, tmpl, pos) -> str:
+        print('generate code!!!!!!!!!!!!!!!')
         closet_version_per_model.model_name = model
         closet_version_per_model.value = version
 
@@ -80,7 +95,7 @@ def setup_script() -> None:
         )
 
     lib.make_and_register_interface(
-        tag=user_tag,
+        tag=script_tag,
         getter=lambda id, storage: lib.make_script_v2(
             name=storage.name if storage.name is not None else default_name,
             enabled=storage.enabled if storage.enabled is not None else True,
@@ -97,7 +112,7 @@ def setup_script() -> None:
         setter=lambda id, script: True,
         store=["enabled", "code", "version", "conditions", "description"],
         readonly=["name", "type", "position"],
-        label=lambda id, storage: default_name,
+        label=lambda id, storage: get_versioned_name(int(id)),
         reset=lambda id, storage: lib.make_script_v2(
             name=storage.name if storage.name else default_name,
             enabled=storage.enabled if storage.enabled else True,
@@ -120,17 +135,17 @@ def model_has_closet_enabled(model_id: int) -> bool:
     return closet_enabled.value
 
 
-def install_script():
+def install_script() -> None:
     if not am:
         return
 
-    pass_meta_script = lib.make_meta_script(
-        user_tag,
-        f"{script_name}_id",
-    )
-
     # insert the script for every enabled models
     for mid in filter(model_has_closet_enabled, mw.col.models.ids()):
+        pass_meta_script = lib.make_meta_script(
+            script_tag,
+            str(mid),
+        )
+
         lib.register_meta_script(
             mid,
             pass_meta_script,

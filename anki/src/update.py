@@ -10,7 +10,7 @@ from aqt import mw
 from anki.models import NoteType
 
 from .version import version
-from .utils import flatmap
+from .utils import closet_version_per_model
 
 
 def get_source(source_name: str) -> Callable[[], str]:
@@ -29,17 +29,15 @@ closet_file_regex = r"^__closet-(.*)\.(.*)$"
 
 
 def try_get_closet_version(model: NoteType) -> List[str]:
-    try:
-        return [model["closetVersion"]]
-    except KeyError:
-        return []
+    closet_version_per_model.model = model
+    return closet_version_per_model.value
 
 
 def update_closet() -> None:
     if not (basepath := mw.col.media.dir()):
         return None
 
-    active_closets = set(flatmap(try_get_closet_version, mw.col.models.all()))
+    active_closets = set(map(try_get_closet_version, mw.col.models.all()))
 
     # Avoid using Anki deletion API, so they do not end up in trash
     for file in glob(str(Path(basepath, closet_file_glob))):

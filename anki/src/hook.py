@@ -18,8 +18,7 @@ default_version = "v0.1"
 default_description = """This is the configuration of how Closet will behave.
 To get inspiration you can visit the homepage: closetengine.com."""
 
-script_name = "ClosetUser"
-script_tag = f"{script_name}Script"
+script_tag = f"ClosetUserScript"
 
 if am := find_addon_by_name("Asset Manager"):
     lib = __import__(am).src.lib
@@ -81,11 +80,11 @@ def setup_script() -> None:
     )
 
     def generate_code(id, storage, model, tmpl, pos) -> str:
-        print('generate code!!!!!!!!!!!!!!!')
         closet_version_per_model.model_name = model
         closet_version_per_model.value = version
 
         return DoubleTemplate(user).substitute(
+            version=version,
             editableCode=indent_lines(
                 storage.code if storage.code is not None else editWithSetup, 4
             ),

@@ -123,6 +123,7 @@ def add_occlusion_button(buttons, editor):
         str(icon_path.absolute()),
         "occlude",
         f"Put all fields into occlusion mode ({shortcut_as_text})",
+        disables=False,
     )
 
     editor._links["occlude"] = toggle_occlusion_mode

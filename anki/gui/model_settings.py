@@ -28,9 +28,13 @@ class ModelSettings(QDialog):
         self.ui.closetEnabled.setChecked(closet_enabled)
 
         uptodate = closet_version == version
-        uptodate_text = '(up-to-date)' if uptodate else f'(the add-on is on version {version})'
+        uptodate_text = (
+            "(up-to-date)" if uptodate else f"(the add-on is on version {version})"
+        )
 
-        self.ui.versionLabel.setText(f'Inserted Closet: {closet_version} {uptodate_text}')
+        self.ui.versionLabel.setText(
+            f"Inserted Closet: {closet_version} {uptodate_text}"
+        )
 
     def accept(self):
         self.callback(

@@ -15,7 +15,9 @@ class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName("Settings")
         Settings.resize(452, 124)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Settings.sizePolicy().hasHeightForWidth())
@@ -29,7 +31,9 @@ class Ui_Settings(object):
         self.gridLayout.addWidget(self.line, 2, 0, 1, 2)
         self.buttonBox = QtWidgets.QDialogButtonBox(Settings)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok
+        )
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 3, 1, 1, 2)
         self.attribution = QtWidgets.QLabel(Settings)
@@ -53,8 +57,20 @@ class Ui_Settings(object):
     def retranslateUi(self, Settings):
         _translate = QtCore.QCoreApplication.translate
         Settings.setWindowTitle(_translate("Settings", "Closet For Anki Settings"))
-        self.attribution.setText(_translate("Settings", "<html><head/><body><p>Occlusion icon is the <a href=\"https://icons8.com/icons/set/picture-in-picture\"><span style=\" text-decoration: underline; color:#419cff;\">Picture in Picture icon</span></a> by <a href=\"https://icons8.com\"><span style=\" text-decoration: underline; color:#419cff;\">Icons8</span></a></p></body></html>"))
-        self.occludeLabel.setToolTip(_translate("Settings", "<html><head/><body><p><br/></p></body></html>"))
+        self.attribution.setText(
+            _translate(
+                "Settings",
+                '<html><head/><body><p>Occlusion icon is the <a href="https://icons8.com/icons/set/picture-in-picture"><span style=" text-decoration: underline; color:#419cff;">Picture in Picture icon</span></a> by <a href="https://icons8.com"><span style=" text-decoration: underline; color:#419cff;">Icons8</span></a></p></body></html>',
+            )
+        )
+        self.occludeLabel.setToolTip(
+            _translate("Settings", "<html><head/><body><p><br/></p></body></html>")
+        )
         self.occludeLabel.setText(_translate("Settings", "Shortcut for occlusion mode"))
-        self.occludeShortcut.setToolTip(_translate("Settings", "<html><head/><body><p>(default: &quot;Ctrl+O&quot;)</p></body></html>"))
+        self.occludeShortcut.setToolTip(
+            _translate(
+                "Settings",
+                "<html><head/><body><p>(default: &quot;Ctrl+O&quot;)</p></body></html>",
+            )
+        )
         self.versionInfo.setText(_translate("Settings", "VERSION_INFO"))

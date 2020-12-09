@@ -15,7 +15,9 @@ class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName("Settings")
         Settings.resize(247, 110)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Settings.sizePolicy().hasHeightForWidth())
@@ -47,6 +49,10 @@ class Ui_Settings(object):
         _translate = QtCore.QCoreApplication.translate
         Settings.setWindowTitle(_translate("Settings", "Closet Per Model Settings"))
         self.cancelButton.setText(_translate("Settings", "Cancel"))
-        self.closetEnabled.setText(_translate("Settings", "Enable Closet (for Asset Manager)"))
+        self.closetEnabled.setText(
+            _translate("Settings", "Enable Closet (for Asset Manager)")
+        )
         self.saveButton.setText(_translate("Settings", "Save"))
-        self.versionLabel.setText(_translate("Settings", "Current inserted Closet version"))
+        self.versionLabel.setText(
+            _translate("Settings", "Current inserted Closet version")
+        )

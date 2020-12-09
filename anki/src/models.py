@@ -12,6 +12,7 @@ def set_settings(
 ):
     closet_enabled.value = enabled
 
+
 def on_closet(models):
     current_row: int = models.form.modelsList.currentRow()
     model_id: int = models.models[current_row].id
@@ -24,13 +25,17 @@ def on_closet(models):
     dialog.setupUi(closet_enabled.value, closet_version_per_model.value)
     return dialog.exec_()
 
+
 def init_closet_button(buttons, models):
-    buttons.append((
-        _("Closet..."),
-        lambda: on_closet(models),
-    ))
+    buttons.append(
+        (
+            _("Closet..."),
+            lambda: on_closet(models),
+        )
+    )
 
     return buttons
+
 
 def init_models_dialog():
     models_did_init_buttons.append(init_closet_button)

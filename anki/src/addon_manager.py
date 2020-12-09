@@ -10,11 +10,13 @@ def set_settings(
 ):
     occlude_shortcut.value = shortcut
 
+
 def show_settings():
     dialog = Settings(mw, set_settings)
 
     dialog.setupUi(occlude_shortcut.value)
     return dialog.exec_()
+
 
 def init_addon_manager():
     mw.addonManager.setConfigAction(__name__, show_settings)

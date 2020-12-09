@@ -10,12 +10,14 @@ def flatmap(f, xs):
 
     return ys
 
+
 def find_addon_by_name(addon_name):
     for name in mw.addonManager.allAddons():
         if mw.addonManager.addonName(name) == addon_name:
             return name
 
     return None
+
 
 class ProfileConfig:
     """Can be used for profile-specific settings"""
@@ -39,6 +41,7 @@ class ProfileConfig:
             # same behavior as Collection.remove_config
             pass
 
+
 class ModelConfig:
     """Can be used for model-specific settings"""
 
@@ -48,7 +51,7 @@ class ModelConfig:
 
     @property
     def model_id(self) -> int:
-        return self.model['id']
+        return self.model["id"]
 
     @model_id.setter
     def model_id(self, model_id: int):
@@ -56,7 +59,7 @@ class ModelConfig:
 
     @property
     def model_name(self) -> str:
-        return self.model['name']
+        return self.model["name"]
 
     @model_name.setter
     def model_name(self, model_name: str):
@@ -78,11 +81,12 @@ class ModelConfig:
             # same behavior as Collection.remove_config
             pass
 
+
 # whether to hook closet into Asset Manager
-closet_enabled = ModelConfig('closetEnable', True)
+closet_enabled = ModelConfig("closetEnable", True)
 
 # for preserving closet versions in the media folder
-closet_version_per_model = ModelConfig('closetVersion', 'N.A.')
+closet_version_per_model = ModelConfig("closetVersion", "N.A.")
 
 # shortcut in Editor
-occlude_shortcut = ProfileConfig('closetOcclusionShortcut', 'Ctrl+O')
+occlude_shortcut = ProfileConfig("closetOcclusionShortcut", "Ctrl+O")

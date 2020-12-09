@@ -21,7 +21,10 @@ from .utils import occlude_shortcut
 addon_package = mw.addonManager.addonFromModule(__name__)
 mw.addonManager.setWebExports(__name__, r"web/.*(css|js)")
 
-occlusion_container_pattern = re.compile(r'<div class="closet__occlusion-container">(<img.*?>).*?</div>')
+occlusion_container_pattern = re.compile(
+    r'<div class="closet__occlusion-container">(<img.*?>).*?</div>'
+)
+
 
 def without_occlusion_code(txt):
     if match := re.search(occlusion_container_pattern, txt):
@@ -31,26 +34,29 @@ def without_occlusion_code(txt):
 
     return txt
 
+
 def include_closet_code(webcontent, context):
     if not isinstance(context, Editor):
         return
 
-    webcontent.js.append(f'/_addons/{addon_package}/web/editor.js')
-    webcontent.css.append(f'/_addons/{addon_package}/web/editor.css')
+    webcontent.js.append(f"/_addons/{addon_package}/web/editor.js")
+    webcontent.css.append(f"/_addons/{addon_package}/web/editor.css")
+
 
 def process_occlusion_index_text(index_text: str):
-    return [] if len(index_text) == 0 else [int(text) for text in index_text.split(',')]
+    return [] if len(index_text) == 0 else [int(text) for text in index_text.split(",")]
+
 
 def fill_matching_field(editor, current_index):
     for index, (name, item) in enumerate(editor.note.items()):
-        match = re.search(r'\d+$', name)
+        match = re.search(r"\d+$", name)
 
         if (
-            match and
-            int(match[0]) == current_index and
-
+            match
+            and int(match[0]) == current_index
+            and
             # TODO anki behavior for empty fields is kinda weird right now:
-            item in ['', '<br>']
+            item in ["", "<br>"]
         ):
             js = (
                 f'pycmd("key:{index}:{editor.note.id}:active");'
@@ -59,34 +65,37 @@ def fill_matching_field(editor, current_index):
 
             editor.web.eval(js)
 
+
 def add_occlusion_messages(handled, message, context):
     if isinstance(context, Editor):
 
-        if message.startswith('copyToClipboard'):
-            text = message.split(':', 1)[1]
+        if message.startswith("copyToClipboard"):
+            text = message.split(":", 1)[1]
             mw.app.clipboard().setText(text)
 
             return (True, None)
 
-        if message.startswith('clearOcclusionMode'):
-            _, field_index, txt = message.split(':', 2)
+        if message.startswith("clearOcclusionMode"):
+            _, field_index, txt = message.split(":", 2)
             repl = without_occlusion_code(txt)
-            repl_escaped = repl.replace(r'"', r'\"')
+            repl_escaped = repl.replace(r'"', r"\"")
 
-            context.web.eval(f'pycmd("key:{field_index}:{context.note.id}:{repl_escaped}")')
+            context.web.eval(
+                f'pycmd("key:{field_index}:{context.note.id}:{repl_escaped}")'
+            )
 
             return (True, repl)
 
-        if message.startswith('oldOcclusions'):
-            _, src, index_text = message.split(':', 2)
+        if message.startswith("oldOcclusions"):
+            _, src, index_text = message.split(":", 2)
             indices = process_occlusion_index_text(index_text)
 
             context._old_occlusion_indices = indices
 
             return (True, None)
 
-        if message.startswith('newOcclusions'):
-            _, src, index_text = message.split(':', 2)
+        if message.startswith("newOcclusions"):
+            _, src, index_text = message.split(":", 2)
             indices = process_occlusion_index_text(index_text)
 
             fill_indices = set(indices).difference(set(context._old_occlusion_indices))
@@ -97,29 +106,36 @@ def add_occlusion_messages(handled, message, context):
 
     return handled
 
+
 def toggle_occlusion_mode(editor):
-    editor.web.eval('EditorCloset.toggleOcclusionMode()')
+    editor.web.eval("EditorCloset.toggleOcclusionMode()")
+
 
 def add_occlusion_button(buttons, editor):
     file_path = dirname(realpath(__file__))
-    icon_path = Path(file_path, '..', 'icons', 'occlude.png')
+    icon_path = Path(file_path, "..", "icons", "occlude.png")
 
-    shortcut_as_text = QKeySequence(occlude_shortcut.value).toString(QKeySequence.NativeText)
+    shortcut_as_text = QKeySequence(occlude_shortcut.value).toString(
+        QKeySequence.NativeText
+    )
 
     occlusion_button = editor._addButton(
         str(icon_path.absolute()),
-        'occlude',
-        f'Put all fields into occlusion mode ({shortcut_as_text})',
+        "occlude",
+        f"Put all fields into occlusion mode ({shortcut_as_text})",
     )
 
-    editor._links['occlude'] = toggle_occlusion_mode
+    editor._links["occlude"] = toggle_occlusion_mode
     buttons.insert(-1, occlusion_button)
+
 
 def add_occlusion_shortcut(cuts, editor):
     cuts.append((occlude_shortcut.value, lambda: toggle_occlusion_mode(editor)))
 
+
 def remove_occlusion_code(txt, _editor):
     return without_occlusion_code(txt)
+
 
 def init_editor():
     webview_will_set_content.append(include_closet_code)

@@ -19,7 +19,7 @@ class Settings(QDialog):
 
     def setupUi(self, occlude_shortcut: str):
         self.ui.occludeShortcut.setKeySequence(QKeySequence(occlude_shortcut))
-        self.ui.versionInfo.setText(f'Closet {version}')
+        self.ui.versionInfo.setText(f"Closet {version}")
 
     def accept(self):
         occlude_shortcut = self.ui.occludeShortcut.keySequence().toString()

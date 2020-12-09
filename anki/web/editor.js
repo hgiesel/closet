@@ -89,11 +89,13 @@ var EditorCloset = {
             EditorCloset.clearOcclusionMode()
         }
         else {
-            import('/__closet.js')
-                .then(
-                    EditorCloset.setupOcclusionEditor,
-                    error => console.log('Could not load Closet:', error),
-                )
+            pycmd('closetVersion', (versionString) => {
+                import(`/__closet-${versionString}.js`)
+                    .then(
+                        EditorCloset.setupOcclusionEditor,
+                        error => console.log('Could not load Closet:', error),
+                    )
+            })
         }
     },
 }

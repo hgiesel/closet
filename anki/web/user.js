@@ -13,7 +13,7 @@ var getAnkiPrefix = () => globalThis.ankiPlatform === 'desktop'
     ? 'https://appassets.androidplatform.net'
     : '.'
 
-var closetPromise = import(`${getAnkiPrefix()}/__closet.js`)
+var closetPromise = import(`${getAnkiPrefix()}/__closet-$$version.js`)
     .then(
         closet => closet.anki.initialize(closet, closetUserLogic, '$$cardType', '$$tagsFull', '$$side'),
         error => console.log('An error occured while loading Closet:', error),

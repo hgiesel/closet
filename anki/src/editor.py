@@ -16,6 +16,7 @@ from aqt.gui_hooks import (
 )
 
 from .utils import occlude_shortcut
+from .version import version
 
 
 addon_package = mw.addonManager.addonFromModule(__name__)
@@ -68,6 +69,9 @@ def fill_matching_field(editor, current_index):
 
 def add_occlusion_messages(handled, message, context):
     if isinstance(context, Editor):
+
+        if message.startswith("closetVersion"):
+            return (True, version)
 
         if message.startswith("copyToClipboard"):
             text = message.split(":", 1)[1]

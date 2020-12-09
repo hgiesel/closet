@@ -4,11 +4,21 @@ function closetUserLogic(
     chooseMemory,
 ) {
     $$editableCode
+    return output
 }
 
-var closetPromise = import(globalThis.ankiPlatform === 'desktop' ? '/__closet.js' : './__closet.js')
+var getAnkiPrefix = () => globalThis.ankiPlatform === 'desktop'
+    ? ''
+    : globalThis.AnkiDroidJS
+    ? 'https://appassets.androidplatform.net'
+    : '.'
+
+var closetPromise = import(`${getAnkiPrefix()}/__closet.js`)
     .then(
         closet => closet.anki.initialize(closet, closetUserLogic, '$$cardType', '$$tagsFull', '$$side'),
         error => console.log('An error occured while loading Closet:', error),
     ).catch(error => console.log('An error occured while executing Closet:', error))
 
+if (globalThis.onUpdateHook) {
+    onUpdateHook.push(() => closetPromise)
+}

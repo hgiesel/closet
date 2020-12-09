@@ -10,7 +10,7 @@ $$setupCode
 
 /* end of setup */
 
-return [[
+const output = [[
     elements,
     memoryMap,
     filterManager,

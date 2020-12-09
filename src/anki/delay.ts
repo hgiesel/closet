@@ -40,6 +40,7 @@ const stringifyDescription = (description: InitDescription): string => {
         case InitDescription.Web:
             return (
                 'You are on AnkiWeb, which does not have MathJax. ' +
+                'Alternatively, you are on platform with MathJax 3. ' +
                 'The action will be executed immediatley.'
             )
         default:
@@ -95,7 +96,6 @@ const delayChoice = (): [InitMode, InitDescription, unknown[]] => {
             const mathJaxIsCurrentlyExecuting = (globalThis as typeof globalThis & AnkiBuiltins)._updatingQA
             const mathJaxQueue = getMathJaxQueueForPrinting()
 
-
             if (mathJaxIsCurrentlyExecuting) {
                 const maybeOnShownHook = (globalThis as typeof globalThis & AnkiBuiltins).onShownHook
 
@@ -138,6 +138,7 @@ const delayChoice = (): [InitMode, InitDescription, unknown[]] => {
         catch (error) {
             /**
              * On web, as there is neither _updatingQA nor MathJax
+             * Or on a platform with MathJax 3, as MathJax does not have queue property
              */
             return [
                 initModes.raw,

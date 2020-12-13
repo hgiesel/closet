@@ -52,14 +52,16 @@ def get_scripts() -> Tuple[str, str, str]:
                     setup_file.read().strip(),
                 ]
 
+
 default_name = "Closet Setup"
+
 
 def get_versioned_name(mid: int) -> str:
     closet_version_per_model.model_id = mid
     installed_version = closet_version_per_model.value
 
     try:
-        installed_version = mw.col.models.get(mid)['closetVersion']
+        installed_version = mw.col.models.get(mid)["closetVersion"]
     except KeyError:
         installed_version = None
 
@@ -68,6 +70,7 @@ def get_versioned_name(mid: int) -> str:
         if not installed_version or installed_version == version
         else f" ({installed_version} is inserted currently!)"
     )
+
 
 def setup_script() -> None:
     if not am:

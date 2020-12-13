@@ -143,7 +143,7 @@ const copyTemplateTextAsLink = () => {
         : '')
 
     navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}${link}`)
-        .then(() => console.info('Successfully copied to clipboard'))
+        .then(() => console.log('Successfully copied to clipboard'))
     window.location.replace(link)
 }
 

@@ -1,3 +1,5 @@
+from typing import List
+
 import re
 from pathlib import Path
 from os.path import dirname, realpath
@@ -15,7 +17,7 @@ from aqt.gui_hooks import (
     editor_will_munge_html,
 )
 
-from .utils import occlude_shortcut
+from .utils import occlude_shortcut, occlusion_behavior
 from .version import version
 
 
@@ -48,23 +50,63 @@ def process_occlusion_index_text(index_text: str):
     return [] if len(index_text) == 0 else [int(text) for text in index_text.split(",")]
 
 
-def fill_matching_field(editor, current_index):
+def make_insertion_js(field_index: int, note_id: int, text: str) -> str:
+    escaped = text.replace('"', '"').replace("\\", "\\\\")
+
+    cmd = (
+        f'pycmd("key:{field_index}:{note_id}:{text}");\n'
+        f'document.querySelector("#f{field_index}").innerHTML = "{escaped}";'
+    )
+    print("cmd", cmd)
+    return cmd
+
+
+def replace_or_prefix_old_occlusion_text(old_text: str, new_text: str) -> str:
+    occlusion_block_regex = r"\[#!autogen.*#\]"
+
+    new_as_html = "<br>".join(new_text.splitlines())
+    replacement = f"[#!autogen {new_as_html} #]"
+
+    subbed, number_of_subs = re.subn(occlusion_block_regex, replacement, old_text)
+
+    return subbed if number_of_subs > 0 else f"{replacement}<br>{old_text}"
+
+
+def insert_into_zero_indexed(editor, text: str) -> None:
+    for index, (name, item) in enumerate(editor.note.items()):
+        match = re.search(r"\d+$", name)
+
+        if not match or int(match[0]) != 0:
+            continue
+
+        get_content_js = f'document.querySelector("#f{index}").innerHTML;'
+
+        editor.web.evalWithCallback(
+            get_content_js,
+            lambda old_text: editor.web.eval(
+                make_insertion_js(
+                    index,
+                    editor.note.id,
+                    replace_or_prefix_old_occlusion_text(old_text, text),
+                )
+            ),
+        )
+        break
+
+
+def fill_matching_fields(editor, indices: List[int]) -> None:
     for index, (name, item) in enumerate(editor.note.items()):
         match = re.search(r"\d+$", name)
 
         if (
-            match
-            and int(match[0]) == current_index
-            and
+            not match
+            or int(match[0]) not in indices
             # TODO anki behavior for empty fields is kinda weird right now:
-            item in ["", "<br>"]
+            or item not in ["", "<br>"]
         ):
-            js = (
-                f'pycmd("key:{index}:{editor.note.id}:active");'
-                f'document.querySelector("#f{index}").innerHTML = "active";'
-            )
+            continue
 
-            editor.web.eval(js)
+        editor.web.eval(make_insertion_js(index, editor.note.id, "active"))
 
 
 def add_occlusion_messages(handled, message, context):
@@ -73,9 +115,13 @@ def add_occlusion_messages(handled, message, context):
         if message.startswith("closetVersion"):
             return (True, version)
 
-        if message.startswith("copyToClipboard"):
+        if message.startswith("occlusionText"):
             text = message.split(":", 1)[1]
-            mw.app.clipboard().setText(text)
+
+            if occlusion_behavior.value == "autopaste":
+                insert_into_zero_indexed(context, text)
+            else:  # occlusion_behavior.value == 'copy':
+                mw.app.clipboard().setText(text)
 
             return (True, None)
 
@@ -103,8 +149,7 @@ def add_occlusion_messages(handled, message, context):
             indices = process_occlusion_index_text(index_text)
 
             fill_indices = set(indices).difference(set(context._old_occlusion_indices))
-            for index in fill_indices:
-                fill_matching_field(context, index)
+            fill_matching_fields(context, fill_indices)
 
             return (True, None)
 

@@ -33,6 +33,12 @@ class ProfileConfig:
             pass
 
 
+# shortcut in Editor
+occlude_shortcut = ProfileConfig("closetOcclusionShortcut", "Ctrl+O")
+
+# what happens if occlusions are accepted
+occlusion_behavior = ProfileConfig("closetOcclusionAcceptBehavior", "autopaste")
+
 class ModelConfig:
     """Can be used for model-specific settings"""
 
@@ -79,5 +85,3 @@ closet_enabled = ModelConfig("closetEnable", True)
 # for preserving closet versions in the media folder
 closet_version_per_model = ModelConfig("closetVersion", "N.A.")
 
-# shortcut in Editor
-occlude_shortcut = ProfileConfig("closetOcclusionShortcut", "Ctrl+O")

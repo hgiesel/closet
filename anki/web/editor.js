@@ -19,7 +19,7 @@ var EditorCloset = {
 
             const imageSrc = draw.image.src.match(EditorCloset.imageSrcPattern)[1]
 
-            pycmd(`copyToClipboard:${shapeText}`)
+            pycmd(`occlusionText:${shapeText}`)
             pycmd(`newOcclusions:${imageSrc}:${newIndices.join(',')}`)
 
             EditorCloset.clearOcclusionMode()

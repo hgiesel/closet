@@ -6,18 +6,10 @@ layout: default
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/themes/prism-tomorrow.min.css" integrity="sha256-xevuwyBEb2ZYh4nDhj0g3Z/rDBnM569hg9Vq6gEw/Sg=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/prism.min.js" integrity="sha256-YZQM6/hLBZYkb01VYf17isoQM4qpaOP+aX96hhYrWhg=" crossorigin="anonymous"></script>
 
-{% assign hasDevJs = site.static_files | where: "basename", "dev" | size %}
-{% if hasDevJs == 1 %}
-  {% assign codefilename = "dev" %}
-{% else %}
-  {% assign codefilename = "main" %}
-{% endif %}
-
 <link rel="stylesheet" href="/assets/css/main.css"/>
 <link rel="stylesheet" href="/assets/css/codeDisplay.css"/>
 
-<script src="/assets/js/{{ codefilename }}.js"></script>
-<script defer>
+<script>
   {% include js/prismSetup.js %}
   {% include js/docButtons.js %}
 </script>

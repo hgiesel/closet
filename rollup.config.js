@@ -23,14 +23,15 @@ const terserOptions = {
 /**
  * available configs:
  *  (none)
+ *  --configDocs
  *  --configAnki
- *  --configWeb
  *  --configDev
  */
-
 export default args => {
     const file = args.configAnki
         ? 'anki/web/closet.js'
+        : args.configDocs
+        ? 'docs/assets/js/closet.js'
         : 'build/closet.js'
 
     const plugins = [
@@ -48,7 +49,8 @@ export default args => {
         input: 'index.ts',
         output: {
             file,
-            format: 'esm'
+            name: 'closet',
+            format: args.configDocs ? 'iife' : 'esm',
         },
         plugins,
     }

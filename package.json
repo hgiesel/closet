@@ -21,8 +21,8 @@
     "prepare": "run-p compile:setups compile:parser compile:anki create-favicon",
 
     "pack": "run-p pack:main pack:docs pack:anki",
-    "pack:main": "webpack -p",
-    "pack:docs": "webpack -p --env.destination=docs",
+    "pack:main": "rollup",
+    "pack:docs": "rollup -c --configDocs",
     "pack:anki": "rollup -c --configAnki",
     "pack:anki:dev": "rollup -c --configAnki --configDev",
 
@@ -32,9 +32,9 @@
     "build:anki": "run-s compile:parser compile:anki pack:anki",
     "build:anki:dev": "run-s compile:parser compile:anki pack:anki:dev",
 
-    "pack:watch:main": "webpack -d",
-    "pack:watch:docs": "webpack -d --env.destination=docs",
-    "pack:watch:anki": "webpack -d --env.destination=anki",
+    "pack:watch:main": "rollup -w -c --configDev",
+    "pack:watch:docs": "rollup -w -c --configDocs --configDev",
+    "pack:watch:anki": "rollup -w -c --configAnki --configDev",
 
     "watch": "run-s compile:parser compile:anki create-favicon watch:main watch:docs watch:anki",
     "watch:main": "run-s compile:parser pack:watch:main",

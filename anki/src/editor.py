@@ -68,7 +68,12 @@ def replace_or_prefix_old_occlusion_text(old_html: str, new_text: str) -> str:
 
     subbed, number_of_subs = re.subn(occlusion_block_regex, replacement, old_html)
 
-    return subbed if number_of_subs > 0 else f"{replacement}<br>{old_html}"
+    if number_of_subs > 0:
+        return subbed
+    elif old_html in ["", "<br>"]:
+        return replacement
+    else:
+        return f"{replacement}<br>{old_html}"
 
 
 def insert_into_zero_indexed(editor, text: str) -> None:

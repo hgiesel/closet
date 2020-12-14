@@ -54,8 +54,8 @@ var EditorCloset = {
         EditorCloset.occlusionEditorTarget = editorOcclusion(filterManager.registrar)
 
         filterManager.install(
-            closet.browser.recipes.rect.show({ tagname: 'rect' }),
-            closet.browser.recipes.rect.hide({ tagname: 'recth' }),
+            closet.browser.recipes.rect.hide({ tagname: 'rect' }),
+            closet.browser.recipes.rect.show({ tagname: 'rects' }),
             closet.browser.recipes.rect.reveal({ tagname: 'rectr' }),
         )
 
@@ -67,23 +67,25 @@ var EditorCloset = {
     },
 
     clearOcclusionMode: () => {
-        let field_idx = 0
 
-        while (true) {
-            const field = document.getElementById(`f${field_idx}`)
+        const fieldsWithOcclusionContainer = function*() {
+            let field_idx = 0
+            let field = null
 
-            if (!field) {
-                break
+            while (field = document.getElementById(`f${field_idx}`)) {
+                if (field.innerHTML.includes('<div class="closet-occlusion-container">')) {
+                    yield [field_idx, field]
+                }
+                field_idx++
             }
-
-            else if (field.innerHTML.includes('<div class="closet-occlusion-container">')) {
-                pycmd(`clearOcclusionMode:${field_idx}:${field.innerHTML}`, (repl) => {
-                    field.innerHTML = repl
-                })
-            }
-
-            field_idx++
         }
+
+        const fields = Array.from(fieldsWithOcclusionContainer())
+        EditorCloset.occlusionEditorTarget.dispatchEvent(new Event('reject'))
+
+        fields.forEach(([index, field]) => {
+            pycmd(`key:${index}:${currentNoteId}:${field.innerHTML}`)
+        })
 
         EditorCloset.occlusionEditorTarget = null
         EditorCloset.occlusionMode = false

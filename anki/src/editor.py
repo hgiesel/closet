@@ -29,15 +29,6 @@ occlusion_container_pattern = re.compile(
 )
 
 
-def without_occlusion_code(txt: str) -> str:
-    if match := re.search(occlusion_container_pattern, txt):
-        rawImage = match[1]
-
-        return re.sub(occlusion_container_pattern, rawImage, txt)
-
-    return txt
-
-
 def include_closet_code(webcontent, context) -> None:
     if not isinstance(context, Editor):
         return
@@ -129,17 +120,6 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
 
             return (True, None)
 
-        if message.startswith("clearOcclusionMode"):
-            _, field_index, txt = message.split(":", 2)
-            repl = without_occlusion_code(txt)
-            repl_escaped = repl.replace(r'"', r"\"")
-
-            context.web.eval(
-                f'pycmd("key:{field_index}:{context.note.id}:{repl_escaped}")'
-            )
-
-            return (True, repl)
-
         if message.startswith("oldOcclusions"):
             _, src, index_text = message.split(":", 2)
             indices = process_occlusion_index_text(index_text)
@@ -187,13 +167,19 @@ def add_occlusion_shortcut(cuts, editor):
     cuts.append((occlude_shortcut.value, lambda: toggle_occlusion_mode(editor)))
 
 
-def remove_occlusion_code(txt, _editor):
-    return without_occlusion_code(txt)
+def remove_occlusion_code(txt: str, _editor) -> str:
+    if match := re.search(occlusion_container_pattern, txt):
+        rawImage = match[1]
+
+        return re.sub(occlusion_container_pattern, rawImage, txt)
+
+    return txt
 
 
 def init_editor():
     webview_will_set_content.append(include_closet_code)
     webview_did_receive_js_message.append(add_occlusion_messages)
+
     editor_did_init_buttons.append(add_occlusion_button)
     editor_did_init_shortcuts.append(add_occlusion_shortcut)
     editor_will_munge_html.append(remove_occlusion_code)

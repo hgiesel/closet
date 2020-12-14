@@ -1,7 +1,8 @@
 name: Make occlusions
 code: |
+  globalThis.target = closet.browser.recipes.occlusionEditor()(filterManager.registrar)
+
   filterManager.install(
-    closet.browser.recipes.occlusionEditor(),
     closet.browser.recipes.rect.show({ tagname: 'rect' }),
     closet.browser.recipes.rect.reveal({ tagname: 'rectr' }),
     closet.browser.recipes.rect.hide({ tagname: 'recth' }),

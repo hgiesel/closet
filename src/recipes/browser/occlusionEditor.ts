@@ -41,7 +41,7 @@ const clickInsideShape = (
 const makeInteractive = (
     draw: SVG,
     newRect: Rect,
-) => {
+): void => {
     const reverser = reverseEffects(window.getComputedStyle(draw.image))
     newRect.rect.addEventListener('mousemove', adaptCursor(reverser, newRect))
 
@@ -62,6 +62,42 @@ const makeInteractive = (
 
     draw.append(newRect)
 }
+
+const initShape = (
+    draw: SVG,
+    shape: ShapeDefinition,
+): void => {
+    let labelTxt = null,
+        x = null,
+        y = null,
+        width = null,
+        height = null,
+        newRect = null
+
+    const [shapeType, /* active */, ...rest] = shape
+
+    switch (shapeType) {
+        case 'rect':
+            [
+                labelTxt,
+                x,
+                y,
+                width,
+                height,
+            ] = rest
+
+            newRect = Rect.make(draw)
+            newRect.labelText = labelTxt
+            newRect.pos = [x, y, width, height]
+
+            makeInteractive(draw, newRect)
+            break
+
+        default:
+            // no other shapes yet
+    }
+}
+
 
 const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
     const reverser = reverseEffects(window.getComputedStyle(draw.image))
@@ -104,7 +140,7 @@ type ShapeHandler = <T extends Record<string, unknown>>(entry: AftermathEntry<T>
 type PartialShapeFilter = (shapes: ShapeDefinition[], draw: SVG) => ShapeDefinition[]
 type ShapeFilter= <T extends Record<string, unknown>>(entry: AftermathEntry<T>, internals: AftermathInternals<T>) => PartialShapeFilter
 
-export const wrapForOcclusion = (draw: SVG, acceptHandler: PartialShapeHandler) => {
+export const wrapForOcclusion = (draw: SVG, acceptEvent: () => void) => {
     const occlusionClick = (event: MouseEvent) => {
         if (event.button === 0 /* left mouse button */) {
             occlusionLeftClick(draw, event)
@@ -113,15 +149,15 @@ export const wrapForOcclusion = (draw: SVG, acceptHandler: PartialShapeHandler) 
 
     draw.svg.addEventListener('mousedown', occlusionClick)
 
-    const acceptEvent = (event: MouseEvent) => {
+    const acceptEventHandler = (event: MouseEvent) => {
         event.preventDefault()
-        acceptHandler(draw.getElements(), draw)
+        acceptEvent()
     }
 
     const occlusionMenu = setupMenu('occlusion-menu', [{
         label: 'Accept occlusions',
         itemId: 'occlusion-accept',
-        clickEvent: acceptEvent,
+        clickEvent: acceptEventHandler,
     }, {
         label: 'Close Menu',
         itemId: 'close-occlusion-menu',
@@ -131,10 +167,15 @@ export const wrapForOcclusion = (draw: SVG, acceptHandler: PartialShapeHandler) 
 }
 
 
-const defaultAcceptHandler: ShapeHandler = (_entry, internals) => (shapes) => navigator.clipboard.writeText(shapes
-    .map(shape => shape.toText(internals.template.parser.delimiters))
-    .join('\n')
-)
+const defaultAcceptHandler: ShapeHandler = (_entry, internals) => (shapes) => {
+    // window needs active focus for thi
+    navigator.clipboard.writeText(shapes
+        .map(shape => shape.toText(internals.template.parser.delimiters))
+        .join('\n')
+    ).catch(() => console.log('Window needs active focus for copying to clipboard'))
+}
+
+const defaultRejectHandler: ShapeHandler = () => (_shapes: Shape[], draw: SVG) => draw.cleanup()
 
 const occlusionCss = `
 .closet__occlusion-container {
@@ -146,14 +187,17 @@ const occlusionMakerCssKeyword = 'occlusionMakerCss'
 export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options: {
     tagname?: string,
     acceptHandler?: ShapeHandler,
+    rejectHandler?: ShapeHandler,
     existingShapesFilter?: ShapeFilter,
     shapeKeywords?: string[],
 } = {})=> (registrar: Registrar<T>) => {
     const keyword = 'makeOcclusions'
+    const target = new EventTarget()
 
     const {
         tagname = keyword,
         acceptHandler = defaultAcceptHandler,
+        rejectHandler = defaultRejectHandler,
         existingShapesFilter = () => id,
         shapeKeywords = [rectKeyword],
     } = options
@@ -184,42 +228,21 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
             const callback = (event: Event) => {
                 const draw = SVG.wrapImage(event.target as HTMLImageElement)
 
-                for (const [
-                    shapeType,
-                    /* active */,
-                    ...rest
-                ] of existingShapesFilter(entry as any, internals)(existingShapes, draw)) {
+                existingShapesFilter(entry as any, internals)(existingShapes, draw)
+                    .forEach((definition: ShapeDefinition) => initShape(draw, definition))
 
-                    let labelTxt = null,
-                        x = null,
-                        y = null,
-                        width = null,
-                        height = null,
-                        newRect = null
-
-                    switch (shapeType) {
-                        case 'rect':
-                            [
-                                labelTxt,
-                                x,
-                                y,
-                                width,
-                                height,
-                            ] = rest
-
-                            newRect = Rect.make(draw)
-                            newRect.labelText = labelTxt
-                            newRect.pos = [x, y, width, height]
-
-                            makeInteractive(draw, newRect)
-                            break
-
-                        default:
-                            // no other shapes yet
-                    }
+                const acceptEvent = () => {
+                    acceptHandler(entry as any, internals)(draw.getElements(), draw)
                 }
 
-                wrapForOcclusion(draw, acceptHandler(entry as any, internals))
+                const rejectEvent = () => {
+                    rejectHandler(entry as any, internals)(draw.getElements(), draw)
+                }
+
+                target.addEventListener('accept', acceptEvent)
+                target.addEventListener('reject', rejectEvent)
+
+                wrapForOcclusion(draw, acceptEvent)
             }
 
             for (const srcUrl of images) {
@@ -231,4 +254,5 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
     }
 
     registrar.register(tagname, occlusionMakerFilter)
+    return target
 }

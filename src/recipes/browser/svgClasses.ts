@@ -127,6 +127,11 @@ export class SVG {
             }
         })
     }
+
+    cleanup(): void {
+        const image = this.container.removeChild(this.image)
+        this.container.replaceWith(image)
+    }
 }
 
 export class Rect implements Shape {

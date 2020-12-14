@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple, Any
 
 import re
 from pathlib import Path
@@ -29,7 +29,7 @@ occlusion_container_pattern = re.compile(
 )
 
 
-def without_occlusion_code(txt):
+def without_occlusion_code(txt: str) -> str:
     if match := re.search(occlusion_container_pattern, txt):
         rawImage = match[1]
 
@@ -38,7 +38,7 @@ def without_occlusion_code(txt):
     return txt
 
 
-def include_closet_code(webcontent, context):
+def include_closet_code(webcontent, context) -> None:
     if not isinstance(context, Editor):
         return
 
@@ -46,30 +46,31 @@ def include_closet_code(webcontent, context):
     webcontent.css.append(f"/_addons/{addon_package}/web/editor.css")
 
 
-def process_occlusion_index_text(index_text: str):
+def process_occlusion_index_text(index_text: str) -> List[int]:
     return [] if len(index_text) == 0 else [int(text) for text in index_text.split(",")]
 
 
 def make_insertion_js(field_index: int, note_id: int, text: str) -> str:
-    escaped = text.replace('"', '"').replace("\\", "\\\\")
+    escaped = text.replace("\\", "\\\\").replace('"', '\\"')
 
     cmd = (
-        f'pycmd("key:{field_index}:{note_id}:{text}");\n'
+        f'pycmd("key:{field_index}:{note_id}:{escaped}"); '
         f'document.querySelector("#f{field_index}").innerHTML = "{escaped}";'
     )
-    print("cmd", cmd)
     return cmd
 
 
-def replace_or_prefix_old_occlusion_text(old_text: str, new_text: str) -> str:
-    occlusion_block_regex = r"\[#!autogen.*#\]"
+def replace_or_prefix_old_occlusion_text(
+    old_html: str, new_text: str
+) -> str:
+    occlusion_block_regex = r"\[#!autogen.*?#\]"
 
-    new_as_html = "<br>".join(new_text.splitlines())
-    replacement = f"[#!autogen {new_as_html} #]"
+    new_html = "<br>".join(new_text.splitlines())
+    replacement = f"[#!autogen {new_html} #]"
 
-    subbed, number_of_subs = re.subn(occlusion_block_regex, replacement, old_text)
+    subbed, number_of_subs = re.subn(occlusion_block_regex, replacement, old_html)
 
-    return subbed if number_of_subs > 0 else f"{replacement}<br>{old_text}"
+    return subbed if number_of_subs > 0 else f"{replacement}<br>{old_html}"
 
 
 def insert_into_zero_indexed(editor, text: str) -> None:
@@ -83,11 +84,11 @@ def insert_into_zero_indexed(editor, text: str) -> None:
 
         editor.web.evalWithCallback(
             get_content_js,
-            lambda old_text: editor.web.eval(
+            lambda old_html: editor.web.eval(
                 make_insertion_js(
                     index,
                     editor.note.id,
-                    replace_or_prefix_old_occlusion_text(old_text, text),
+                    replace_or_prefix_old_occlusion_text(old_html, text),
                 )
             ),
         )
@@ -106,10 +107,10 @@ def fill_matching_fields(editor, indices: List[int]) -> None:
         ):
             continue
 
-        editor.web.eval(make_insertion_js(index, editor.note.id, "active"))
+        editor.web.eval(make_insertion_js(index, editor.note.id, "active", "active"))
 
 
-def add_occlusion_messages(handled, message, context):
+def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, Any]:
     if isinstance(context, Editor):
 
         if message.startswith("closetVersion"):

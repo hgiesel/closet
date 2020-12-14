@@ -60,9 +60,7 @@ def make_insertion_js(field_index: int, note_id: int, text: str) -> str:
     return cmd
 
 
-def replace_or_prefix_old_occlusion_text(
-    old_html: str, new_text: str
-) -> str:
+def replace_or_prefix_old_occlusion_text(old_html: str, new_text: str) -> str:
     occlusion_block_regex = r"\[#!autogen.*?#\]"
 
     new_html = "<br>".join(new_text.splitlines())

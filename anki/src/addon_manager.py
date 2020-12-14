@@ -2,19 +2,21 @@ from aqt import mw
 
 from ..gui.settings import Settings
 
-from .utils import occlude_shortcut
+from .utils import occlude_shortcut, occlusion_behavior
 
 
 def set_settings(
     shortcut: str,
+    behavior: str,
 ):
     occlude_shortcut.value = shortcut
+    occlusion_behavior.value = behavior
 
 
 def show_settings():
     dialog = Settings(mw, set_settings)
 
-    dialog.setupUi(occlude_shortcut.value)
+    dialog.setupUi(occlude_shortcut.value, occlusion_behavior.value)
     return dialog.exec_()
 
 

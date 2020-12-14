@@ -4,6 +4,18 @@ var EditorCloset = {
     occlusionMode: false,
     occlusionEditorTarget: null,
 
+    setActive: (target) => {
+        EditorCloset.occlusionEditorTarget = target
+        EditorCloset.occlusionMode = true
+        pycmd('occlusionEditorActive')
+    },
+
+    setInactive: () => {
+        EditorCloset.occlusionEditorTarget = null
+        EditorCloset.occlusionMode = false
+        pycmd('occlusionEditorInactive')
+    },
+
     setupOcclusionEditor: (closet) => {
         const elements = ['[[makeOcclusions]]'].concat(...document.body.querySelectorAll('.field'))
 
@@ -50,8 +62,7 @@ var EditorCloset = {
         })
 
         const filterManager = closet.FilterManager.make()
-
-        EditorCloset.occlusionEditorTarget = editorOcclusion(filterManager.registrar)
+        const target = editorOcclusion(filterManager.registrar)
 
         filterManager.install(
             closet.browser.recipes.rect.hide({ tagname: 'rect' }),
@@ -63,11 +74,10 @@ var EditorCloset = {
             .makeFromNodes(elements)
             .render(filterManager)
 
-        EditorCloset.occlusionMode = true
+        EditorCloset.setActive(target)
     },
 
     clearOcclusionMode: () => {
-
         const fieldsWithOcclusionContainer = function*() {
             let field_idx = 0
             let field = null
@@ -87,8 +97,7 @@ var EditorCloset = {
             pycmd(`key:${index}:${currentNoteId}:${field.innerHTML}`)
         })
 
-        EditorCloset.occlusionEditorTarget = null
-        EditorCloset.occlusionMode = false
+        EditorCloset.setInactive()
     },
 
     toggleOcclusionMode: () => {

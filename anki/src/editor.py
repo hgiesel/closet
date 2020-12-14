@@ -6,7 +6,7 @@ from os.path import dirname, realpath
 
 from anki.hooks import wrap
 
-from aqt import mw
+from aqt import mw, dialogs
 from aqt.qt import QKeySequence
 from aqt.editor import Editor
 from aqt.gui_hooks import (
@@ -15,6 +15,7 @@ from aqt.gui_hooks import (
     editor_did_init_buttons,
     editor_did_init_shortcuts,
     editor_will_munge_html,
+    add_cards_will_add_note,
 )
 
 from .utils import occlude_shortcut, occlusion_behavior
@@ -101,7 +102,7 @@ def fill_matching_fields(editor, indices: List[int]) -> None:
         ):
             continue
 
-        editor.web.eval(make_insertion_js(index, editor.note.id, "active", "active"))
+        editor.web.eval(make_insertion_js(index, editor.note.id, "active"))
 
 
 def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, Any]:
@@ -110,7 +111,7 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
         if message.startswith("closetVersion"):
             return (True, version)
 
-        if message.startswith("occlusionText"):
+        elif message.startswith("occlusionText"):
             text = message.split(":", 1)[1]
 
             if occlusion_behavior.value == "autopaste":
@@ -120,7 +121,7 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
 
             return (True, None)
 
-        if message.startswith("oldOcclusions"):
+        elif message.startswith("oldOcclusions"):
             _, src, index_text = message.split(":", 2)
             indices = process_occlusion_index_text(index_text)
 
@@ -128,13 +129,21 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
 
             return (True, None)
 
-        if message.startswith("newOcclusions"):
+        elif message.startswith("newOcclusions"):
             _, src, index_text = message.split(":", 2)
             indices = process_occlusion_index_text(index_text)
 
             fill_indices = set(indices).difference(set(context._old_occlusion_indices))
             fill_matching_fields(context, fill_indices)
 
+            return (True, None)
+
+        elif message == "occlusionEditorActive":
+            context.occlusion_editor_active = True
+            return (True, None)
+
+        elif message == "occlusionEditorInactive":
+            context.occlusion_editor_active = False
             return (True, None)
 
     return handled
@@ -145,6 +154,8 @@ def toggle_occlusion_mode(editor):
 
 
 def add_occlusion_button(buttons, editor):
+    editor.occlusion_editor_active = False
+
     file_path = dirname(realpath(__file__))
     icon_path = Path(file_path, "..", "icons", "occlude.png")
 
@@ -176,6 +187,20 @@ def remove_occlusion_code(txt: str, _editor) -> str:
     return txt
 
 
+def check_if_occlusion_editor_open(problem, note):
+    addcards = dialogs._dialogs["AddCards"][1]
+    occlusion_problem = (
+        (
+            "Closet Occlusion Editor is still open.<br>"
+            "Please accept or reject the occlusions."
+        )
+        if addcards.editor.occlusion_editor_active
+        else None
+    )
+
+    return problem or occlusion_problem
+
+
 def init_editor():
     webview_will_set_content.append(include_closet_code)
     webview_did_receive_js_message.append(add_occlusion_messages)
@@ -183,3 +208,5 @@ def init_editor():
     editor_did_init_buttons.append(add_occlusion_button)
     editor_did_init_shortcuts.append(add_occlusion_shortcut)
     editor_will_munge_html.append(remove_occlusion_code)
+
+    add_cards_will_add_note.append(check_if_occlusion_editor_open)

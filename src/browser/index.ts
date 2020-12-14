@@ -313,7 +313,7 @@ export class BrowserTemplate extends Template {
     }
 }
 
-const delayKeyword = 'closet--delay'
+const delayKeyword = 'closet-delay'
 export const cleanup = (): void => {
     for (const element of Array.from(document.getElementsByClassName(delayKeyword))) {
         (element as HTMLElement).style.visibility = 'visible'

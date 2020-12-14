@@ -1,6 +1,9 @@
 var EditorCloset = {
     imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,
 
+    occlusionMode: false,
+    occlusionEditorTarget: null,
+
     setupOcclusionEditor: (closet) => {
         const elements = ['[[makeOcclusions]]'].concat(...document.body.querySelectorAll('.field'))
 
@@ -47,8 +50,10 @@ var EditorCloset = {
         })
 
         const filterManager = closet.FilterManager.make()
+
+        EditorCloset.occlusionEditorTarget = editorOcclusion(filterManager.registrar)
+
         filterManager.install(
-            editorOcclusion,
             closet.browser.recipes.rect.show({ tagname: 'rect' }),
             closet.browser.recipes.rect.hide({ tagname: 'recth' }),
             closet.browser.recipes.rect.reveal({ tagname: 'rectr' }),
@@ -61,7 +66,6 @@ var EditorCloset = {
         EditorCloset.occlusionMode = true
     },
 
-    occlusionMode: false,
     clearOcclusionMode: () => {
         let field_idx = 0
 
@@ -72,7 +76,7 @@ var EditorCloset = {
                 break
             }
 
-            else if (field.innerHTML.includes('<div class="closet__occlusion-container">')) {
+            else if (field.innerHTML.includes('<div class="closet-occlusion-container">')) {
                 pycmd(`clearOcclusionMode:${field_idx}:${field.innerHTML}`, (repl) => {
                     field.innerHTML = repl
                 })
@@ -81,6 +85,7 @@ var EditorCloset = {
             field_idx++
         }
 
+        EditorCloset.occlusionEditorTarget = null
         EditorCloset.occlusionMode = false
     },
 

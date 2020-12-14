@@ -89,24 +89,24 @@ img {
   max-width: 100% !important;
 }
 
-.closet__occlusion-container {
+.closet-occlusion-container {
   display: inline-block;
   position: relative;
 }
 
-.closet__occlusion-container > * {
+.closet-occlusion-container > * {
   display: block;
 
   margin-left: auto;
   margin-right: auto;
 }
 
-.closet__occlusion-container > svg {
+.closet-occlusion-container > svg {
   position: absolute;
   top: 0;
 }
 
-.closet__occlusion-shape > text {
+.closet-occlusion-container__shape > text {
   text-anchor: middle;
   dominant-baseline: central;
   pointer-events: none;

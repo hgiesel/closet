@@ -178,7 +178,7 @@ const defaultAcceptHandler: ShapeHandler = (_entry, internals) => (shapes) => {
 const defaultRejectHandler: ShapeHandler = () => (_shapes: Shape[], draw: SVG) => draw.cleanup()
 
 const occlusionCss = `
-.closet__occlusion-container {
+.closet-occlusion-container {
   outline: 3px dotted hotpink;
 }`
 
@@ -242,7 +242,10 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
                 target.addEventListener('accept', acceptEvent)
                 target.addEventListener('reject', rejectEvent)
 
-                wrapForOcclusion(draw, acceptEvent)
+                wrapForOcclusion(draw, () => {
+                    target.dispatchEvent(new Event('accept'))
+                    acceptEvent()
+                })
             }
 
             for (const srcUrl of images) {

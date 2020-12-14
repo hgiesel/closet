@@ -25,7 +25,7 @@ addon_package = mw.addonManager.addonFromModule(__name__)
 mw.addonManager.setWebExports(__name__, r"web/.*(css|js)")
 
 occlusion_container_pattern = re.compile(
-    r'<div class="closet__occlusion-container">(<img.*?>).*?</div>'
+    r'<div class="closet-occlusion-container">(<img.*?>).*?</div>'
 )
 
 

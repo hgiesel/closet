@@ -2,11 +2,11 @@
     visibility: hidden;
 }
 
-.closet--delay {
+.closet-delay {
   visibility: hidden;
 }
 
-.closet--log {
+.closet-log {
   color: black;
   background-color: rgb(255, 147, 40);
 

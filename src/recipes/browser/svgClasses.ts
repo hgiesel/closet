@@ -73,7 +73,7 @@ export class SVG {
         svg.style.transform = imageStyle.getPropertyValue('transform')
 
         container.appendChild(svg)
-        container.classList.add('closet__occlusion-container')
+        container.classList.add('closet-occlusion-container')
 
         return new SVG(container, image, svg)
     }
@@ -164,8 +164,8 @@ export class Rect implements Shape {
 
         container.appendChild(rect)
         container.appendChild(label)
-        container.classList.add('closet__occlusion-shape')
-        container.classList.add('closet__occlusion_rect')
+        container.classList.add('closet-occlusion-container__shape')
+        container.classList.add('closet-occlusion-container__rect')
 
         container.tabIndex = -1
 

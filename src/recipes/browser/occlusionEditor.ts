@@ -242,10 +242,7 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
                 target.addEventListener('accept', acceptEvent)
                 target.addEventListener('reject', rejectEvent)
 
-                wrapForOcclusion(draw, () => {
-                    target.dispatchEvent(new Event('accept'))
-                    acceptEvent()
-                })
+                wrapForOcclusion(draw, () => target.dispatchEvent(new Event('accept')))
             }
 
             for (const srcUrl of images) {

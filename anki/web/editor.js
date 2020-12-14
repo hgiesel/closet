@@ -78,6 +78,11 @@ var EditorCloset = {
     },
 
     clearOcclusionMode: () => {
+        if (!EditorCloset.occlusionMode) {
+            console.log('Tried to clear already cleared occlusion mode')
+            return
+        }
+
         const fieldsWithOcclusionContainer = function*() {
             let field_idx = 0
             let field = null

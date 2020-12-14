@@ -17,6 +17,7 @@ from aqt.gui_hooks import (
     editor_will_munge_html,
     add_cards_will_add_note,
 )
+from aqt.utils import shortcut
 
 from .utils import occlude_shortcut, occlusion_behavior
 from .version import version
@@ -159,9 +160,7 @@ def add_occlusion_button(buttons, editor):
     file_path = dirname(realpath(__file__))
     icon_path = Path(file_path, "..", "icons", "occlude.png")
 
-    shortcut_as_text = QKeySequence(occlude_shortcut.value).toString(
-        QKeySequence.NativeText
-    )
+    shortcut_as_text = shortcut(QKeySequence(occlude_shortcut.value).toString())
 
     occlusion_button = editor._addButton(
         str(icon_path.absolute()),
@@ -175,7 +174,7 @@ def add_occlusion_button(buttons, editor):
 
 
 def add_occlusion_shortcut(cuts, editor):
-    cuts.append((occlude_shortcut.value, lambda: toggle_occlusion_mode(editor)))
+    cuts.append((occlude_shortcut.value, lambda: toggle_occlusion_mode(editor), True))
 
 
 def remove_occlusion_code(txt: str, _editor) -> str:
@@ -187,12 +186,19 @@ def remove_occlusion_code(txt: str, _editor) -> str:
     return txt
 
 
+def turn_of_occlusion_editor_if_in_field(editor, field):
+    if editor.occlusion_editor_active:
+        editor.web.eval("EditorCloset.clearOcclusionMode()")
+
+
 def check_if_occlusion_editor_open(problem, note):
     addcards = dialogs._dialogs["AddCards"][1]
+    shortcut_as_text = shortcut(QKeySequence(occlude_shortcut.value).toString())
+
     occlusion_problem = (
         (
             "Closet Occlusion Editor is still open.<br>"
-            "Please accept or reject the occlusions."
+            f'Please accept by right-clicking and selecting "Accept" or reject the occlusions by using {shortcut_as_text}.'
         )
         if addcards.editor.occlusion_editor_active
         else None
@@ -208,5 +214,8 @@ def init_editor():
     editor_did_init_buttons.append(add_occlusion_button)
     editor_did_init_shortcuts.append(add_occlusion_shortcut)
     editor_will_munge_html.append(remove_occlusion_code)
+    Editor._onHtmlEdit = wrap(
+        Editor._onHtmlEdit, turn_of_occlusion_editor_if_in_field, "before"
+    )
 
     add_cards_will_add_note.append(check_if_occlusion_editor_open)

@@ -24,14 +24,11 @@ export const sum = <T extends Record<string, unknown>>(
     optionsTrue?: Record<string, unknown>,
     optionsFalse?: Record<string, unknown>,
 } = {}) => (registrar: Registrar<T>) => {
-    const tagnameTrue = `${tagname}:${wrapId}:true`
     const tagnameFalse = `${tagname}:${wrapId}:false`
+    const tagnameTrue = `${tagname}:${wrapId}:true`
 
-    setTagnames(optionsTrue, [tagnameTrue])
-    setTagnames(optionsFalse, [tagnameFalse])
-
-    recipeFalse(optionsFalse)(registrar)
-    recipeTrue(optionsTrue)(registrar)
+    recipeFalse(setTagnames(optionsFalse, [tagnameFalse]))(registrar)
+    recipeTrue(setTagnames(optionsTrue, [tagnameTrue]))(registrar)
 
     const sumFilter = (
         tag: TagNode,
@@ -80,24 +77,18 @@ export const sumFour = <T extends Record<string, unknown>>(
     const tagnameZero = `${tagname}:${wrapId}:zero`
     const tagnameTwo = `${tagname}:${wrapId}:two`
 
-    setTagnames(optionsZero, [tagnameZero])
-    setTagnames(optionsOne, [tagnameZero])
-
     sum(recipeZero, recipeOne, predicateOne)({
         tagname: tagnameZero,
 
-        optionsFalse: optionsZero,
-        optionsTrue: optionsOne,
+        optionsFalse: setTagnames(optionsZero, [tagnameZero]),
+        optionsTrue: setTagnames(optionsOne, [tagnameZero]),
     })(registrar)
-
-    setTagnames(optionsTwo, [tagnameTwo])
-    setTagnames(optionsThree, [tagnameTwo])
 
     sum(recipeTwo, recipeThree, predicateOne)({
         tagname: tagnameTwo,
 
-        optionsFalse: optionsTwo,
-        optionsTrue: optionsThree,
+        optionsFalse: setTagnames(optionsTwo, [tagnameTwo]),
+        optionsTrue: setTagnames(optionsThree, [tagnameTwo]),
     })(registrar)
 
     const sumFourFilter = (

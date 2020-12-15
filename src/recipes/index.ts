@@ -1,8 +1,7 @@
 import type { Recipe } from './types'
-import type { FlashcardRecipes } from './flashcard'
 
 export interface Recipes {
-    [propName: string]: Recipe<any> | FlashcardRecipes
+    [propName: string]: Recipe<any>
 }
 
 import shuffling from './shuffling'

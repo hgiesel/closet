@@ -4,11 +4,11 @@ interface WithInternalKeyword {
     keyInternal: string,
 }
 
-export const defaultTagnameGetter = (o: RecipeOptions) => Object.prototype.hasOwnProperty.call(o, 'tagname')
+export const defaultTagnameGetter = (o: RecipeOptions): string[] => Object.prototype.hasOwnProperty.call(o, 'tagname')
     ? [o['tagname']]
     : []
 
-export const defaultTagnameSetter = (o: RecipeOptions, newNames: string[]) => o['tagname'] = newNames[0]
+export const defaultTagnameSetter = (o: RecipeOptions, newNames: string[]): RecipeOptions => ({ ...o, tagname: newNames[0] })
 
 const defaultWrapId = 'wrapped'
 
@@ -38,8 +38,7 @@ export const wrap = <T extends Record<string, unknown>>(
         return internalKeyword
     })
 
-    setTagnames(options, alteredTagnames)
-    mainRecipe(options)(registrar)
+    mainRecipe(setTagnames(options, alteredTagnames))(registrar)
 
     const wrapFilter = (tag: TagNode, inter: Internals<T>) => {
         const internalKeyword = keywordMap.get(tag.key)

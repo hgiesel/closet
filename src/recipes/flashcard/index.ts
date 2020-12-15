@@ -1,4 +1,4 @@
-import type { Recipe, Triple } from '../types'
+import type { Recipe } from '../types'
 import type { FlashcardPreset } from './flashcardTemplate'
 
 import { clozeRecipes } from './clozes'
@@ -20,20 +20,14 @@ export interface FlashcardRecipes {
     reveal: Recipe<FlashcardPreset>
 }
 
-export const prepareFlashcardRecipes = ([show, hide, reveal]: Triple<Recipe<FlashcardPreset>>): FlashcardRecipes => ({
-    show: show,
-    hide: hide,
-    reveal: reveal,
-})
-
 const flashcard = {
-    cloze: prepareFlashcardRecipes(clozeRecipes as Triple<Recipe<FlashcardPreset>>),
-    multipleChoice: prepareFlashcardRecipes(multipleChoiceRecipes as Triple<Recipe<FlashcardPreset>>),
-    specification: prepareFlashcardRecipes(specRecipes as Triple<Recipe<FlashcardPreset>>),
+    cloze: clozeRecipes,
+    multipleChoice: multipleChoiceRecipes,
+    specification: specRecipes,
 
-    mingle: prepareFlashcardRecipes(mingleRecipes as Triple<Recipe<FlashcardPreset>>),
-    sort: prepareFlashcardRecipes(sortRecipes as Triple<Recipe<FlashcardPreset>>),
-    jumble: prepareFlashcardRecipes(jumbleRecipes as Triple<Recipe<FlashcardPreset>>),
+    mingle: mingleRecipes,
+    sort: sortRecipes,
+    jumble: jumbleRecipes,
 }
 
 export default flashcard

@@ -27,11 +27,8 @@ export const product = <T extends Record<string, unknown>>(
     const tagnameTrue = `${tagname}:${wrapId}:fst`
     const tagnameFalse = `${tagname}:${wrapId}:snd`
 
-    setTagnames(optionsFirst, [tagnameTrue])
-    setTagnames(optionsSecond, [tagnameFalse])
-
-    recipeFirst(optionsFirst)(registrar)
-    recipeSecond(optionsSecond)(registrar)
+    recipeFirst(setTagnames(optionsFirst, [tagnameTrue]))(registrar)
+    recipeSecond(setTagnames(optionsSecond, [tagnameFalse]))(registrar)
 
     const productFilter = (
         tag: TagNode,

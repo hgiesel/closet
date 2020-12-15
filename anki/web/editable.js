@@ -1,17 +1,13 @@
 const elements = closet.anki.getQaChildNodes()
-const memoryMap = chooseMemory('closet__1')
-const memory = memoryMap.map
+const memory = chooseMemory('closet__1')
+const filterManager = closet.FilterManager.make(preset, memory.map)
 
-const filterManager = closet.FilterManager.make(preset, memory)
+const output = [[
+    elements,
+    memory,
+    filterManager,
+]]
 
 /* here goes the setup - change it to fit your own needs */
 
 $$setupCode
-
-/* end of setup */
-
-const output = [[
-    elements,
-    memoryMap,
-    filterManager,
-]]

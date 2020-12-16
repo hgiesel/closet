@@ -5,9 +5,10 @@ from pathlib import Path
 from os.path import dirname, realpath
 
 from anki.hooks import wrap
+from anki.consts import MODEL_STD, MODEL_CLOZE
 
 from aqt import mw, dialogs
-from aqt.qt import QKeySequence
+from aqt.qt import QKeySequence, Qt
 from aqt.editor import Editor
 from aqt.gui_hooks import (
     webview_will_set_content,
@@ -19,8 +20,15 @@ from aqt.gui_hooks import (
 )
 from aqt.utils import shortcut
 
-from .utils import occlude_shortcut, occlusion_behavior
-from .version import version
+from ..utils import closet_enabled, occlude_shortcut, occlusion_behavior
+from ..version import version
+
+from .simulate_typing import (
+    insert_into_zero_indexed,
+    fill_matching_fields,
+    escape_js_text,
+)
+from .text_wrap import top_index, incremented_index
 
 
 addon_package = mw.addonManager.addonFromModule(__name__)
@@ -41,69 +49,6 @@ def include_closet_code(webcontent, context) -> None:
 
 def process_occlusion_index_text(index_text: str) -> List[int]:
     return [] if len(index_text) == 0 else [int(text) for text in index_text.split(",")]
-
-
-def make_insertion_js(field_index: int, note_id: int, text: str) -> str:
-    escaped = text.replace("\\", "\\\\").replace('"', '\\"')
-
-    cmd = (
-        f'pycmd("key:{field_index}:{note_id}:{escaped}"); '
-        f'document.querySelector("#f{field_index}").innerHTML = "{escaped}";'
-    )
-    return cmd
-
-
-def replace_or_prefix_old_occlusion_text(old_html: str, new_text: str) -> str:
-    occlusion_block_regex = r"\[#!autogen.*?#\]"
-
-    new_html = "<br>".join(new_text.splitlines())
-    replacement = f"[#!autogen {new_html} #]"
-
-    subbed, number_of_subs = re.subn(occlusion_block_regex, replacement, old_html)
-
-    if number_of_subs > 0:
-        return subbed
-    elif old_html in ["", "<br>"]:
-        return replacement
-    else:
-        return f"{replacement}<br>{old_html}"
-
-
-def insert_into_zero_indexed(editor, text: str) -> None:
-    for index, (name, item) in enumerate(editor.note.items()):
-        match = re.search(r"\d+$", name)
-
-        if not match or int(match[0]) != 0:
-            continue
-
-        get_content_js = f'document.querySelector("#f{index}").innerHTML;'
-
-        editor.web.evalWithCallback(
-            get_content_js,
-            lambda old_html: editor.web.eval(
-                make_insertion_js(
-                    index,
-                    editor.note.id,
-                    replace_or_prefix_old_occlusion_text(old_html, text),
-                )
-            ),
-        )
-        break
-
-
-def fill_matching_fields(editor, indices: List[int]) -> None:
-    for index, (name, item) in enumerate(editor.note.items()):
-        match = re.search(r"\d+$", name)
-
-        if (
-            not match
-            or int(match[0]) not in indices
-            # TODO anki behavior for empty fields is kinda weird right now:
-            or item not in ["", "<br>"]
-        ):
-            continue
-
-        editor.web.eval(make_insertion_js(index, editor.note.id, "active"))
 
 
 def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, Any]:
@@ -158,7 +103,7 @@ def add_occlusion_button(buttons, editor):
     editor.occlusion_editor_active = False
 
     file_path = dirname(realpath(__file__))
-    icon_path = Path(file_path, "..", "icons", "occlude.png")
+    icon_path = Path(file_path, "..", "..", "icons", "occlude.png")
 
     shortcut_as_text = shortcut(QKeySequence(occlude_shortcut.value).toString())
 
@@ -186,12 +131,37 @@ def remove_occlusion_code(txt: str, _editor) -> str:
     return txt
 
 
-def turn_of_occlusion_editor_if_in_field(editor, field):
+def turn_of_occlusion_editor_if_in_field(editor, _field):
     if editor.occlusion_editor_active:
         editor.web.eval("EditorCloset.clearOcclusionMode()")
 
 
-def check_if_occlusion_editor_open(problem, note):
+def on_cloze(editor, _old) -> None:
+    model = editor.note.model()
+
+    # This will not overwrite standard clozes
+    if model["type"] == MODEL_CLOZE:
+        return _old(editor)
+
+    closet_enabled.model = model
+    if not closet_enabled.value:
+        return _old(editor)
+
+    open = "[[c"
+    middle = "::"
+
+    func = (
+        top_index if mw.app.keyboardModifiers() & Qt.AltModifier else incremented_index
+    )
+    index = func(editor, open, middle)
+
+    prefix = escape_js_text(f"{open}{index}{middle}")
+    suffix = escape_js_text("]]")
+
+    editor.web.eval(f'wrap("{prefix}", "{suffix}");')
+
+
+def check_if_occlusion_editor_open(problem, _note):
     addcards = dialogs._dialogs["AddCards"][1]
     shortcut_as_text = shortcut(QKeySequence(occlude_shortcut.value).toString())
 
@@ -214,8 +184,10 @@ def init_editor():
     editor_did_init_buttons.append(add_occlusion_button)
     editor_did_init_shortcuts.append(add_occlusion_shortcut)
     editor_will_munge_html.append(remove_occlusion_code)
+
     Editor._onHtmlEdit = wrap(
         Editor._onHtmlEdit, turn_of_occlusion_editor_if_in_field, "before"
     )
+    Editor.onCloze = wrap(Editor.onCloze, on_cloze, "around")
 
     add_cards_will_add_note.append(check_if_occlusion_editor_open)

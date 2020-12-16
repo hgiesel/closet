@@ -1,0 +1,70 @@
+from typing import List
+
+import re
+
+
+def escape_js_text(text: str) -> str:
+    return text.replace("\\", "\\\\").replace('"', '\\"').replace("'", "\\'")
+
+
+def make_insertion_js(field_index: int, note_id: int, text: str) -> str:
+    escaped = escape_js_text(text)
+
+    cmd = (
+        f'pycmd("key:{field_index}:{note_id}:{escaped}"); '
+        f'document.querySelector("#f{field_index}").innerHTML = "{escaped}";'
+    )
+    return cmd
+
+
+def replace_or_prefix_old_occlusion_text(old_html: str, new_text: str) -> str:
+    occlusion_block_regex = r"\[#!autogen.*?#\]"
+
+    new_html = "<br>".join(new_text.splitlines())
+    replacement = f"[#!autogen {new_html} #]"
+
+    subbed, number_of_subs = re.subn(occlusion_block_regex, replacement, old_html)
+
+    if number_of_subs > 0:
+        return subbed
+    elif old_html in ["", "<br>"]:
+        return replacement
+    else:
+        return f"{replacement}<br>{old_html}"
+
+
+def insert_into_zero_indexed(editor, text: str) -> None:
+    for index, (name, item) in enumerate(editor.note.items()):
+        match = re.search(r"\d+$", name)
+
+        if not match or int(match[0]) != 0:
+            continue
+
+        get_content_js = f'document.querySelector("#f{index}").innerHTML;'
+
+        editor.web.evalWithCallback(
+            get_content_js,
+            lambda old_html: editor.web.eval(
+                make_insertion_js(
+                    index,
+                    editor.note.id,
+                    replace_or_prefix_old_occlusion_text(old_html, text),
+                )
+            ),
+        )
+        break
+
+
+def fill_matching_fields(editor, indices: List[int]) -> None:
+    for index, (name, item) in enumerate(editor.note.items()):
+        match = re.search(r"\d+$", name)
+
+        if (
+            not match
+            or int(match[0]) not in indices
+            # TODO anki behavior for empty fields is kinda weird right now:
+            or item not in ["", "<br>"]
+        ):
+            continue
+
+        editor.web.eval(make_insertion_js(index, editor.note.id, "active"))

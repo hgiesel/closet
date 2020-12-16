@@ -17,66 +17,69 @@ var EditorCloset = {
     },
 
     setupOcclusionEditor: (closet) => {
-        const elements = ['[[makeOcclusions]]'].concat(...document.body.querySelectorAll('.field'))
+        pycmd('occlusionOptions', ([enabled, maxOcclusions]) => {
+            if (!enabled) {
+                return
+            }
 
-        const acceptHandler = (_entry, internals) => (shapes, draw) => {
-            const imageSrc = draw.image.src.match(EditorCloset.imageSrcPattern)[1]
+            const elements = ['[[makeOcclusions]]']
+                .concat(...document.body.querySelectorAll('.field'))
 
-            const newIndices = [...new Set(shapes
-                .map(shape => shape.labelText)
-                .map(label => label.match(closet.keySeparationPattern))
-                .filter(match => match)
-                .map(match => Number(match[2]))
-                .filter(maybeNumber => !Number.isNaN(maybeNumber))
-            )]
+            const acceptHandler = (_entry, internals) => (shapes, draw) => {
+                const imageSrc = draw.image.src.match(EditorCloset.imageSrcPattern)[1]
 
-            pycmd(`newOcclusions:${imageSrc}:${newIndices.join(',')}`)
+                const newIndices = [...new Set(shapes
+                    .map(shape => shape.labelText)
+                    .map(label => label.match(closet.keySeparationPattern))
+                    .filter(match => match)
+                    .map(match => Number(match[2]))
+                    .filter(maybeNumber => !Number.isNaN(maybeNumber))
+                )]
 
-            const shapeText = shapes
-                .map(shape => shape.toText(internals.template.parser.delimiters))
-                .join("\n")
+                pycmd(`newOcclusions:${imageSrc}:${newIndices.join(',')}`)
 
-
-            pycmd(`occlusionText:${shapeText}`)
-
-            EditorCloset.clearOcclusionMode()
-        }
-
-        const existingShapesFilter = () => (shapeDefs, draw) => {
-            const indices = [...new Set(shapeDefs
-                .map(shape => shape[2])
-                .map(label => label.match(closet.keySeparationPattern))
-                .filter(match => match)
-                .map(match => Number(match[2]))
-                .filter(maybeNumber => !Number.isNaN(maybeNumber))
-            )]
-
-            const imageSrc = draw.image.src.match(EditorCloset.imageSrcPattern)[1]
-            pycmd(`oldOcclusions:${imageSrc}:${indices.join(',')}`)
-
-            return shapeDefs
-        }
+                const shapeText = shapes
+                    .map(shape => shape.toText(internals.template.parser.delimiters))
+                    .join("\n")
 
 
-        const editorOcclusion = closet.browser.recipes.occlusionEditor({
-            acceptHandler,
-            existingShapesFilter,
+                pycmd(`occlusionText:${shapeText}`)
+
+                EditorCloset.clearOcclusionMode()
+            }
+
+            const existingShapesFilter = () => (shapeDefs, draw) => {
+                const indices = [...new Set(shapeDefs
+                    .map(shape => shape[2])
+                    .map(label => label.match(closet.keySeparationPattern))
+                    .filter(match => match)
+                    .map(match => Number(match[2]))
+                    .filter(maybeNumber => !Number.isNaN(maybeNumber))
+                )]
+
+                const imageSrc = draw.image.src.match(EditorCloset.imageSrcPattern)[1]
+                pycmd(`oldOcclusions:${imageSrc}:${indices.join(',')}`)
+
+                return shapeDefs
+            }
+
+            const editorOcclusion = closet.browser.recipes.occlusionEditor({
+                maxOcclusions,
+                acceptHandler,
+                existingShapesFilter,
+            })
+
+            const filterManager = closet.FilterManager.make()
+            const target = editorOcclusion(filterManager.registrar)
+
+            filterManager.install(closet.browser.recipes.rect({ tagname: 'rect' }))
+
+            closet.BrowserTemplate
+                .makeFromNodes(elements)
+                .render(filterManager)
+
+            EditorCloset.setActive(target)
         })
-
-        const filterManager = closet.FilterManager.make()
-        const target = editorOcclusion(filterManager.registrar)
-
-        filterManager.install(
-            closet.browser.recipes.rect.hide({ tagname: 'rect' }),
-            closet.browser.recipes.rect.show({ tagname: 'rects' }),
-            closet.browser.recipes.rect.reveal({ tagname: 'rectr' }),
-        )
-
-        closet.BrowserTemplate
-            .makeFromNodes(elements)
-            .render(filterManager)
-
-        EditorCloset.setActive(target)
     },
 
     clearOcclusionMode: () => {

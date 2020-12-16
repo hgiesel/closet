@@ -72,9 +72,16 @@ export const makeFlashcardTemplate = <T extends FlashcardPreset>(
 
 export const ellipsis = constant('[...]')
 
+interface FlashcardRecipe<T extends Record<string, unknown>> extends Recipe<T> {
+    (options?: Record<string, unknown>): (filters: Registrar<T>) => void,
+    hide: Recipe<T>,
+    show: Recipe<T>,
+    reveal: Recipe<T>,
+}
+
 export const generateFlashcardRecipes = <T extends FlashcardPreset>(
     publicApi: (front: InactiveBehavior<T>, back: InactiveBehavior<T>) => Recipe<T>
-): Recipe<T> => {
+): FlashcardRecipe<T> => {
     const hide = publicApi(id2, id2)
     const show = publicApi(id, id)
     const reveal = publicApi(id2, id)
@@ -95,13 +102,10 @@ export const generateFlashcardRecipes = <T extends FlashcardPreset>(
         [hide, hideOptions],
         [show, showOptions],
         [reveal, revealOptions],
-    ])
+    ]) as FlashcardRecipe<T>
 
-    // @ts-ignore
     col.hide = hide
-    // @ts-ignore
     col.show = show
-    // @ts-ignore
     col.reveal = reveal
 
     return col

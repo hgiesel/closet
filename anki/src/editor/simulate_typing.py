@@ -55,16 +55,26 @@ def insert_into_zero_indexed(editor, text: str) -> None:
         break
 
 
-def fill_matching_fields(editor, indices: List[int]) -> None:
+def activate_matching_fields(editor, indices: List[int]) -> List[bool]:
+    founds = [False for index in indices]
+
     for index, (name, item) in enumerate(editor.note.items()):
         match = re.search(r"\d+$", name)
 
-        if (
-            not match
-            or int(match[0]) not in indices
-            # TODO anki behavior for empty fields is kinda weird right now:
-            or item not in ["", "<br>"]
-        ):
+        if not match:
+            continue
+
+        matched = int(match[0])
+
+        if matched not in indices:
+            continue
+
+        founds[indices.index(matched)] = True
+
+        # TODO anki behavior for empty fields is kinda weird right now:
+        if item not in ["", "<br>"]:
             continue
 
         editor.web.eval(make_insertion_js(index, editor.note.id, "active"))
+
+    return founds

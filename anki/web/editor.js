@@ -20,9 +20,7 @@ var EditorCloset = {
         const elements = ['[[makeOcclusions]]'].concat(...document.body.querySelectorAll('.field'))
 
         const acceptHandler = (_entry, internals) => (shapes, draw) => {
-            const shapeText = shapes
-                .map(shape => shape.toText(internals.template.parser.delimiters))
-                .join("\n")
+            const imageSrc = draw.image.src.match(EditorCloset.imageSrcPattern)[1]
 
             const newIndices = [...new Set(shapes
                 .map(shape => shape.labelText)
@@ -32,10 +30,14 @@ var EditorCloset = {
                 .filter(maybeNumber => !Number.isNaN(maybeNumber))
             )]
 
-            const imageSrc = draw.image.src.match(EditorCloset.imageSrcPattern)[1]
+            pycmd(`newOcclusions:${imageSrc}:${newIndices.join(',')}`)
+
+            const shapeText = shapes
+                .map(shape => shape.toText(internals.template.parser.delimiters))
+                .join("\n")
+
 
             pycmd(`occlusionText:${shapeText}`)
-            pycmd(`newOcclusions:${imageSrc}:${newIndices.join(',')}`)
 
             EditorCloset.clearOcclusionMode()
         }

@@ -25,7 +25,7 @@ from ..version import version
 
 from .simulate_typing import (
     insert_into_zero_indexed,
-    fill_matching_fields,
+    activate_matching_fields,
     escape_js_text,
 )
 from .text_wrap import top_index, incremented_index
@@ -57,16 +57,6 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
         if message.startswith("closetVersion"):
             return (True, version)
 
-        elif message.startswith("occlusionText"):
-            text = message.split(":", 1)[1]
-
-            if occlusion_behavior.value == "autopaste":
-                insert_into_zero_indexed(context, text)
-            else:  # occlusion_behavior.value == 'copy':
-                mw.app.clipboard().setText(text)
-
-            return (True, None)
-
         elif message.startswith("oldOcclusions"):
             _, src, index_text = message.split(":", 2)
             indices = process_occlusion_index_text(index_text)
@@ -80,7 +70,17 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
             indices = process_occlusion_index_text(index_text)
 
             fill_indices = set(indices).difference(set(context._old_occlusion_indices))
-            fill_matching_fields(context, fill_indices)
+            could_fill = activate_matching_fields(context, fill_indices)
+
+            return (True, could_fill)
+
+        elif message.startswith("occlusionText"):
+            text = message.split(":", 1)[1]
+
+            if occlusion_behavior.value == "autopaste":
+                insert_into_zero_indexed(context, text)
+            else:  # occlusion_behavior.value == 'copy':
+                mw.app.clipboard().setText(text)
 
             return (True, None)
 

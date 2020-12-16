@@ -1,6 +1,6 @@
 import re
 
-from .simulate_typing import fill_matching_fields
+from .simulate_typing import activate_matching_fields
 
 
 def get_base_top(editor, prefix: str, suffix: str) -> int:
@@ -28,15 +28,15 @@ def get_incremented_index(editor, prefix: str, suffix: str) -> int:
     return base_top + 1
 
 
-def fill_matching_field(indexer):
+def activate_matching_field(indexer):
     def get_value(editor, prefix: str, suffix: str) -> int:
         current_index = indexer(editor, prefix, suffix)
-        fill_matching_fields(editor, [current_index])
+        was_filled = activate_matching_fields(editor, [current_index])[0]
 
-        return current_index
+        return current_index if was_filled else 0
 
     return get_value
 
 
-top_index = fill_matching_field(get_top_index)
-incremented_index = fill_matching_field(get_incremented_index)
+top_index = activate_matching_field(get_top_index)
+incremented_index = activate_matching_field(get_incremented_index)

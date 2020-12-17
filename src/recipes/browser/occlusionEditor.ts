@@ -98,17 +98,14 @@ const initShape = (
     }
 }
 
-
 const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
     const reverser = reverseEffects(window.getComputedStyle(draw.image))
     const [downX, downY] = reverser(getOffsets(event))
 
     const newRect = Rect.make()
+    const nextNum = draw.getNextNum(event)
 
-    const labels = draw.getLabels()
-    const currentNum = Math.max(1, getHighestNum(labels) + (event.altKey ? 0 : 1))
-
-    newRect.labelText = `rect${currentNum}`
+    newRect.labelText = `rect${nextNum}`
     newRect.pos = [downX, downY, 0, 0]
 
     makeInteractive(draw, newRect)
@@ -125,13 +122,11 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
 const occlusionLeftClick = (draw: SVG, event: MouseEvent) => {
     event.preventDefault()
 
-    if ((event.target as Element).nodeName !== 'svg') {
-        clickInsideShape(draw, event)
-    }
+    const click = ((event.target as Element).nodeName !== 'svg')
+        ? clickInsideShape
+        : clickOutsideShape
 
-    else {
-        clickOutsideShape(draw, event)
-    }
+    click(draw, event)
 }
 
 type PartialShapeHandler = (shapes: Shape[], draw: SVG) => void
@@ -186,6 +181,7 @@ const occlusionMakerCssKeyword = 'occlusionMakerCss'
 
 export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options: {
     tagname?: string,
+    maxOcclusions?: number,
     acceptHandler?: ShapeHandler,
     rejectHandler?: ShapeHandler,
     existingShapesFilter?: ShapeFilter,
@@ -196,6 +192,7 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
 
     const {
         tagname = keyword,
+        maxOcclusions = 500,
         acceptHandler = defaultAcceptHandler,
         rejectHandler = defaultRejectHandler,
         existingShapesFilter = () => id,
@@ -227,6 +224,7 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
 
             const callback = (event: Event) => {
                 const draw = SVG.wrapImage(event.target as HTMLImageElement)
+                draw.setMaxOcclusions(maxOcclusions)
 
                 existingShapesFilter(entry as any, internals)(existingShapes, draw)
                     .forEach((definition: ShapeDefinition) => initShape(draw, definition))

@@ -1,5 +1,8 @@
 import type { Delimiters } from '../../template/parser/tokenizer/delimiters'
 
+import { getHighestNum } from './utils'
+
+
 const ns = 'http://www.w3.org/2000/svg'
 
 export type RectProperty = 'rx' | 'ry' | 'fill' | 'fillOpacity' | 'stroke' | 'strokeOpacity' | 'strokeWidth'
@@ -36,6 +39,7 @@ export class SVG {
 
     protected constrainedFactorX = 1
     protected constrainedFactorY = 1
+    protected maxOcclusions = 500
 
     protected elements: Shape[] = []
     protected resizer: any /* ResizeObserver */
@@ -126,6 +130,25 @@ export class SVG {
                 return true
             }
         })
+    }
+
+    setMaxOcclusions(maxOcclusions: number) {
+        this.maxOcclusions = maxOcclusions
+    }
+
+    getNextNum(event: MouseEvent): number {
+        const increment = event.altKey ? 0 : 1
+
+        const maybeCurrentNum = Math.max(
+            1,
+            getHighestNum(this.getLabels()) + increment,
+        )
+
+        const currentNum = maybeCurrentNum > this.maxOcclusions
+            ? 0
+            : maybeCurrentNum
+
+        return currentNum
     }
 
     cleanup(): void {

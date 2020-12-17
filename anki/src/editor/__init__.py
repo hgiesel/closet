@@ -109,7 +109,7 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
             _, src, index_text = message.split(":", 2)
             indices = process_occlusion_index_text(index_text)
 
-            fill_indices = set(indices).difference(set(editor._old_occlusion_indices))
+            fill_indices = list(set(indices).difference(set(editor._old_occlusion_indices)))
             could_fill = activate_matching_fields(editor, fill_indices)
 
             return (True, could_fill)

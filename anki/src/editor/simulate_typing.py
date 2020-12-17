@@ -7,6 +7,10 @@ def escape_js_text(text: str) -> str:
     return text.replace("\\", "\\\\").replace('"', '\\"').replace("'", "\\'")
 
 
+def text_is_empty(editor, text) -> bool:
+    return editor.mungeHTML(text) == ""
+
+
 def make_insertion_js(field_index: int, note_id: int, text: str) -> str:
     escaped = escape_js_text(text)
 
@@ -17,7 +21,7 @@ def make_insertion_js(field_index: int, note_id: int, text: str) -> str:
     return cmd
 
 
-def replace_or_prefix_old_occlusion_text(old_html: str, new_text: str) -> str:
+def replace_or_prefix_old_occlusion_text(editor, old_html: str, new_text: str) -> str:
     occlusion_block_regex = r"\[#!autogen.*?#\]"
 
     new_html = "<br>".join(new_text.splitlines())
@@ -27,7 +31,7 @@ def replace_or_prefix_old_occlusion_text(old_html: str, new_text: str) -> str:
 
     if number_of_subs > 0:
         return subbed
-    elif old_html in ["", "<br>"]:
+    elif text_is_empty(editor, old_html):
         return replacement
     else:
         return f"{replacement}<br>{old_html}"
@@ -48,7 +52,7 @@ def insert_into_zero_indexed(editor, text: str) -> None:
                 make_insertion_js(
                     index,
                     editor.note.id,
-                    replace_or_prefix_old_occlusion_text(old_html, text),
+                    replace_or_prefix_old_occlusion_text(editor, old_html, text),
                 )
             ),
         )
@@ -72,7 +76,7 @@ def activate_matching_fields(editor, indices: List[int]) -> List[bool]:
         founds[indices.index(matched)] = True
 
         # TODO anki behavior for empty fields is kinda weird right now:
-        if item not in ["", "<br>"]:
+        if not text_is_empty(editor, item):
             continue
 
         editor.web.eval(make_insertion_js(index, editor.note.id, "active"))

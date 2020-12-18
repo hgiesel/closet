@@ -81,6 +81,7 @@ class ModelConfig:
 
 
 # whether to hook closet into Asset Manager
+# needs to enabled in order to use closet buttons + shortcuts in editor
 closet_enabled = ModelConfig("closetEnable", True)
 
 # for preserving closet versions in the media folder

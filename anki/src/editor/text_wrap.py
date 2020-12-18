@@ -1,6 +1,6 @@
 import re
 
-from .simulate_typing import activate_matching_fields
+from ..simulate_typing import activate_matching_fields
 
 
 def get_base_top(editor, prefix: str, suffix: str) -> int:

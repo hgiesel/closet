@@ -3,12 +3,12 @@ from typing import List
 import re
 
 
-def escape_js_text(text: str) -> str:
-    return text.replace("\\", "\\\\").replace('"', '\\"').replace("'", "\\'")
-
-
 def text_is_empty(editor, text) -> bool:
     return editor.mungeHTML(text) == ""
+
+
+def escape_js_text(text: str) -> str:
+    return text.replace("\\", "\\\\").replace('"', '\\"').replace("'", "\\'")
 
 
 def make_insertion_js(field_index: int, note_id: int, text: str) -> str:

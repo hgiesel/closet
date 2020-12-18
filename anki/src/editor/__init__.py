@@ -1,3 +1,5 @@
+from typing import List
+
 import re
 from pathlib import Path
 from os.path import dirname, realpath
@@ -87,15 +89,46 @@ def add_occlusion_button(buttons, editor):
     buttons.insert(-1, occlusion_button)
 
 
-def add_closet_select(buttons, editor):
-    pass
+modes = [
+    ["Cloze", "c", "Cloze the text"],
+    ["Mult. Choice", "mc", "Make a multiple choice question"],
+    ["Sort Task", "sort", "Assign the sort elements to their correct place"],
+    ["Shuffle", "mix", "Randomly shuffle the designated elements"],
+    ["Order", "ord", "Maintain a certain order among shuffled elements"],
+]
+
+
+def wrap_as_option(name: str, code: str, tooltip: str, shortcut_text: str) -> str:
+    return f'<option title="{tooltip} ({shortcut(shortcut_text)})">{name} [{code}]</option>'
+
+
+def add_closet_mode_select(buttons, editor):
+    modes_as_options: List[str] = list(
+        map(
+            lambda mode: wrap_as_option(
+                mode[1][0], mode[1][1], mode[1][2], f"Ctrl+{mode[0]}"
+            ),
+            enumerate(modes),
+        )
+    )
+
+    modes_as_html = "\n".join(modes_as_options)
+
+    closet_mode_select = f"""
+<select
+    id="closetMode"
+    class="closet-select-mode"
+    onchange="pycmd(`closetMode:${{this.selectedIndex}}`)"
+>{modes_as_html}</select>"""
+
+    buttons.insert(-1, closet_mode_select)
 
 
 def add_buttons(buttons, editor):
     editor.occlusion_editor_active = False
 
     add_occlusion_button(buttons, editor)
-    add_closet_select(buttons, editor)
+    add_closet_mode_select(buttons, editor)
 
 
 def add_occlusion_shortcut(cuts, editor):

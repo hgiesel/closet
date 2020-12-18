@@ -1,3 +1,8 @@
 img {
   max-width: 100% !important;
 }
+
+.closet-select-mode {
+  /* sligthly below top */
+  vertical-align: 20%;
+}

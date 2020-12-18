@@ -13,21 +13,62 @@ from aqt.gui_hooks import (
     editor_did_init_shortcuts,
     editor_will_munge_html,
 )
-from aqt.utils import shortcut
+from aqt.utils import shortcut, showInfo
 
-from ..utils import closet_enabled, occlude_shortcut
+from ..utils import closet_enabled, closet_version_per_model, occlude_shortcut
 from ..simulate_typing import escape_js_text
 
 from .text_wrap import top_index, incremented_index
 
 
+# code 0 field is optional
+trailing_number = re.compile(r"[123456789]\d*$")
+
+
+def get_max_code_field(editor) -> int:
+    number_suffixes = map(
+        lambda item: trailing_number.search(item[0]), editor.note.items()
+    )
+    indices = [suffix[0] for suffix in number_suffixes if suffix]
+    sorted_indices = sorted(set([int(index) for index in indices]))
+
+    max = 0
+    for index, value in enumerate(sorted_indices):
+        # probably skipped an index
+        if value != index + 1:
+            break
+
+        max = value
+
+    return max
+
+
 def toggle_occlusion_mode(editor):
-    editor.web.eval("EditorCloset.toggleOcclusionMode()")
+    model = editor.note.model()
+
+    closet_enabled.model = model
+    closet_version_per_model.model = model
+
+    if (
+        not closet_enabled.value
+        or closet_version_per_model.value == closet_version_per_model.default
+    ):
+        showInfo(
+            "This note type does not seem to support Closet. "
+            "Closet needs to be inserted into the card templates using Asset Manager, or you can download a note type which already supports Closet. "
+        )
+        editor.web.eval("EditorCloset.setInactive()")
+        return
+
+    escaped_version = escape_js_text(closet_version_per_model.value)
+    max_code_fields = get_max_code_field(editor)
+
+    editor.web.eval(
+        f'EditorCloset.toggleOcclusionMode("{escaped_version}", {max_code_fields})'
+    )
 
 
 def add_occlusion_button(buttons, editor):
-    editor.occlusion_editor_active = False
-
     file_path = dirname(realpath(__file__))
     icon_path = Path(file_path, "..", "..", "icons", "occlude.png")
 
@@ -37,11 +78,24 @@ def add_occlusion_button(buttons, editor):
         str(icon_path.absolute()),
         "occlude",
         f"Put all fields into occlusion mode ({shortcut_as_text})",
+        id="closetOcclude",
         disables=False,
+        toggleable=True,
     )
 
     editor._links["occlude"] = toggle_occlusion_mode
     buttons.insert(-1, occlusion_button)
+
+
+def add_closet_select(buttons, editor):
+    pass
+
+
+def add_buttons(buttons, editor):
+    editor.occlusion_editor_active = False
+
+    add_occlusion_button(buttons, editor)
+    add_closet_select(buttons, editor)
 
 
 def add_occlusion_shortcut(cuts, editor):
@@ -93,7 +147,7 @@ def on_cloze(editor, _old) -> None:
 
 
 def init_editor():
-    editor_did_init_buttons.append(add_occlusion_button)
+    editor_did_init_buttons.append(add_buttons)
     editor_did_init_shortcuts.append(add_occlusion_shortcut)
     editor_will_munge_html.append(remove_occlusion_code)
 

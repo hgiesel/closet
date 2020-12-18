@@ -29,28 +29,6 @@ def include_closet_code(webcontent, context) -> None:
     webcontent.css.append(f"/_addons/{addon_package}/web/editor.css")
 
 
-# code 0 field is optional
-trailing_number = re.compile(r"[123456789]\d*$")
-
-
-def get_max_code_field(editor) -> int:
-    number_suffixes = map(
-        lambda item: trailing_number.search(item[0]), editor.note.items()
-    )
-    indices = [suffix[0] for suffix in number_suffixes if suffix]
-    sorted_indices = sorted(set([int(index) for index in indices]))
-
-    max = 0
-    for index, value in enumerate(sorted_indices):
-        # probably skipped an index
-        if value != index + 1:
-            break
-
-        max = value
-
-    return max
-
-
 def process_occlusion_index_text(index_text: str) -> List[int]:
     return [] if len(index_text) == 0 else [int(text) for text in index_text.split(",")]
 
@@ -59,35 +37,7 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
     if isinstance(context, Editor):
         editor: Editor = context
 
-        if message == "closetVersion":
-            return (True, version)
-
-        elif message == "occlusionOptions":
-            model = editor.note.model()
-
-            closet_enabled.model = model
-            closet_version_per_model.model = model
-
-            if (
-                not closet_enabled.value
-                or closet_version_per_model.value == closet_version_per_model.default
-            ):
-                showInfo(
-                    "This note type does not seem to support Closet. "
-                    "Closet needs to be inserted into the card templates using Asset Manager, or you can download a note type which already supports Closet. "
-                )
-
-                return (True, [False, -1])
-
-            return (
-                True,
-                [
-                    True,
-                    get_max_code_field(editor),
-                ],
-            )
-
-        elif message.startswith("oldOcclusions"):
+        if message.startswith("oldOcclusions"):
             _, src, index_text = message.split(":", 2)
             indices = process_occlusion_index_text(index_text)
 

@@ -115,4 +115,9 @@ var EditorCloset = {
                 )
         }
     },
+
+    /**************** CLOSET MODE ****************/
+    setClosetMode: (mode) => {
+        document.getElementById("closetMode").selectedIndex = mode
+    },
 }

@@ -74,6 +74,12 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
             editor.occlusion_editor_active = False
             return (True, None)
 
+        elif message.startswith("closetMode"):
+            _, mode = message.split(":", 1)
+            editor.closet_mode = int(mode)
+
+            return (True, None)
+
     return handled
 
 

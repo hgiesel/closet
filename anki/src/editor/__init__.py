@@ -90,11 +90,16 @@ def add_occlusion_button(buttons, editor):
 
 
 modes = [
-    ["Cloze", "c", "Cloze the text"],
-    ["Mult. Choice", "mc", "Make a multiple choice question"],
-    ["Sort Task", "sort", "Assign the sort elements to their correct place"],
-    ["Shuffle", "mix", "Randomly shuffle the designated elements"],
-    ["Order", "ord", "Maintain a certain order among shuffled elements"],
+    ["Cloze", "c", "Cloze the text", "flashcard"],
+    ["Mult. Choice", "mc", "Make a multiple choice question", "flashcard"],
+    [
+        "Sort Task",
+        "sort",
+        "Assign the sort elements to their correct place",
+        "flashcard",
+    ],
+    ["Shuffle", "mix", "Randomly shuffle the designated elements", "free"],
+    ["Order", "ord", "Maintain a certain order among shuffled elements", "none"],
 ]
 
 
@@ -126,13 +131,28 @@ def add_closet_mode_select(buttons, editor):
 
 def add_buttons(buttons, editor):
     editor.occlusion_editor_active = False
+    editor.closet_mode = 0
 
     add_occlusion_button(buttons, editor)
     add_closet_mode_select(buttons, editor)
 
 
+def set_closet_mode(editor, index: int):
+    cmd = f"EditorCloset.setClosetMode({index})"
+
+    editor.web.eval(cmd)
+    editor.closet_mode = index
+
+
 def add_occlusion_shortcut(cuts, editor):
     cuts.append((occlude_shortcut.value, lambda: toggle_occlusion_mode(editor), True))
+
+    def add_closet_mode_shortcut(index):
+        shortcut_ = f"Ctrl+{index + 1}"
+        cuts.append((shortcut_, lambda: set_closet_mode(editor, index), True))
+
+    for index, _ in enumerate(modes):
+        add_closet_mode_shortcut(index)
 
 
 occlusion_container_pattern = re.compile(
@@ -165,13 +185,18 @@ def on_cloze(editor, _old) -> None:
     if not closet_enabled.value:
         return _old(editor)
 
-    open = "[[c"
+    current_mode = modes[editor.closet_mode]
+
+    code = current_mode[1]
+    type_ = current_mode[3]
+
+    open = f"[[{code}"
     middle = "::"
 
     func = (
         top_index if mw.app.keyboardModifiers() & Qt.AltModifier else incremented_index
     )
-    index = func(editor, open, middle)
+    index = func(type_)(editor, open, middle)
 
     prefix = escape_js_text(f"{open}{index}{middle}")
     suffix = escape_js_text("]]")

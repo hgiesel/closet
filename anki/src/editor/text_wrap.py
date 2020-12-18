@@ -38,5 +38,23 @@ def activate_matching_field(indexer):
     return get_value
 
 
-top_index = activate_matching_field(get_top_index)
-incremented_index = activate_matching_field(get_incremented_index)
+def no_index(_editor, _prefix: str, _suffix: str) -> str:
+    return ""
+
+
+def top_index(type_):
+    if type_ == "free":
+        return get_top_index
+    elif type_ == "flashcard":
+        return activate_matching_field(get_top_index)
+    else:  # type_ == "none":
+        return no_index
+
+
+def incremented_index(type_):
+    if type_ == "free":
+        return get_incremented_index
+    elif type_ == "flashcard":
+        return activate_matching_field(get_incremented_index)
+    else:  # type_ == "none":
+        return no_index

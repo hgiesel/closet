@@ -12,4 +12,5 @@ zip -r "$DIR/build/$addon_id.ankiaddon" \
   "icons/"*".png" \
   "src/"*".py" \
   "src/editor/"*".py" \
+  "src/webview/"*".py" \
   "web/"*

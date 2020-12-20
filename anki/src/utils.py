@@ -1,11 +1,18 @@
-from typing import Any
+from typing import Any, Optional
+
+from types import ModuleType
+from importlib import import_module
+
 from aqt import mw
 
 
-def find_addon_by_name(addon_name):
+def find_addon_by_name(addon_name: str) -> Optional[ModuleType]:
     for name in mw.addonManager.allAddons():
         if mw.addonManager.addonName(name) == addon_name:
-            return name
+            try:
+                return import_module(name)
+            except ModuleNotFoundError:
+                pass
 
     return None
 

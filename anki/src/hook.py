@@ -1,5 +1,6 @@
-from string import Template
 from typing import Tuple
+
+from string import Template
 from pathlib import Path
 from os.path import dirname, realpath
 
@@ -21,7 +22,7 @@ To get inspiration you can visit the homepage: closetengine.com."""
 script_tag = f"ClosetUserScript"
 
 if am := find_addon_by_name("Asset Manager"):
-    lib = __import__(am).src.lib
+    lib = am.src.lib
 
 
 class DoubleTemplate(Template):

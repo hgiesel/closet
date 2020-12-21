@@ -1,9 +1,12 @@
-from typing import Any, Optional
+from typing import Any, Optional, Literal
 
 from types import ModuleType
 from importlib import import_module
 
 from aqt import mw
+
+
+AcceptBehaviors = Literal["copy", "autopaste"]
 
 
 def find_addon_by_name(addon_name: str) -> Optional[ModuleType]:
@@ -45,6 +48,9 @@ occlude_shortcut = ProfileConfig("closetOcclusionShortcut", "Ctrl+O")
 
 # what happens if occlusions are accepted
 occlusion_behavior = ProfileConfig("closetOcclusionAcceptBehavior", "autopaste")
+
+# default max height for images in editor in px
+max_height = ProfileConfig("closetImageMaxHeight", 350)
 
 
 class ModelConfig:

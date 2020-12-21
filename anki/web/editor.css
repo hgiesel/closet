@@ -1,5 +1,6 @@
 img {
   max-width: 100% !important;
+  max-height: var(--closet-max-height);
 }
 
 .closet-select-mode {

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>497</width>
-    <height>160</height>
+    <height>191</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,24 +20,27 @@
    <string>Closet For Anki Settings</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="3" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="Line" name="line">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QLabel" name="attribution">
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Occlusion icon is the &lt;a href=&quot;https://icons8.com/icons/set/picture-in-picture&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#419cff;&quot;&gt;Picture in Picture icon&lt;/span&gt;&lt;/a&gt; by &lt;a href=&quot;https://icons8.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#419cff;&quot;&gt;Icons8&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   <item row="5" column="1" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="versionInfo">
+   <item row="3" column="0" colspan="2">
+    <widget class="QLabel" name="attribution">
      <property name="text">
-      <string>VERSION_INFO</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Occlusion icon is the &lt;a href=&quot;https://icons8.com/icons/set/picture-in-picture&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#419cff;&quot;&gt;Picture in Picture icon&lt;/span&gt;&lt;/a&gt; by &lt;a href=&quot;https://icons8.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#419cff;&quot;&gt;Icons8&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -48,13 +51,10 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   <item row="5" column="0">
+    <widget class="QLabel" name="versionInfo">
+     <property name="text">
+      <string>VERSION_INFO</string>
      </property>
     </widget>
    </item>
@@ -65,6 +65,13 @@
      </property>
      <property name="text">
       <string>Shortcut for occlusion mode</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Behavior on accepting occlusions</string>
      </property>
     </widget>
    </item>
@@ -82,10 +89,20 @@
      </item>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Behavior on accepting occlusions</string>
+      <string>Default max-height for images</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QSpinBox" name="maxHeight">
+     <property name="suffix">
+      <string>px</string>
+     </property>
+     <property name="maximum">
+      <number>9999</number>
      </property>
     </widget>
    </item>

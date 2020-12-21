@@ -17,14 +17,16 @@ class Settings(QDialog):
         self.ui.setupUi(self)
 
         self.cb = callback
-
         self.layout().setSizeConstraint(QLayout.SetFixedSize)
 
-    def setupUi(self, occlude_shortcut: str, occlude_accept_behavior: str) -> None:
+    def setupUi(
+        self, occlude_shortcut: str, occlude_accept_behavior: str, max_height: int
+    ) -> None:
         self.ui.occludeShortcut.setKeySequence(QKeySequence(occlude_shortcut))
         self.ui.occlusionAcceptBehavior.setCurrentIndex(
             behaviors.index(occlude_accept_behavior)
         )
+        self.ui.maxHeight.setValue(max_height)
 
         self.ui.versionInfo.setText(f"Closet {version}")
 
@@ -33,6 +35,7 @@ class Settings(QDialog):
         occlude_accept_behavior = behaviors[
             self.ui.occlusionAcceptBehavior.currentIndex()
         ]
+        max_height = self.ui.maxHeight.value()
 
-        self.cb(occlude_shortcut, occlude_accept_behavior)
+        self.cb(occlude_shortcut, occlude_accept_behavior, max_height)
         super().accept()

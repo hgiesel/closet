@@ -130,7 +130,7 @@ export const enableAsMenuTrigger = (menu: HTMLElement, where: EventTarget) => {
     })
 }
 
-export const setupMenu = (menuName: string, menuItems: MenuItem[]) => {
+export const setupMenu = (menuName: string, menuItems: MenuItem[]): HTMLElement => {
     const menu = constructMenu(menuName, menuItems)
 
     document.body.insertAdjacentElement('beforeend', menu)

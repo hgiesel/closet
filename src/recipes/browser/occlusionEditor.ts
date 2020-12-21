@@ -1,10 +1,11 @@
 import type { Registrar, TagNode, Internals, AftermathEntry, AftermathInternals } from '../types'
+import type { MenuItem } from './menuConstruction'
 import { id } from '../utils'
 
 import { SVG, Shape, ShapeDefinition, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
 import { reverseEffects } from './scaleZoom'
-import { appendStyleTag, getImages, getHighestNum, getOffsets, imageLoadCallback, svgKeyword, svgCss } from './utils'
+import { appendStyleTag, getImages, getOffsets, imageLoadCallback, svgKeyword, svgCss } from './utils'
 
 import { setupMenu, enableAsMenuTrigger, menuCss } from './menu'
 import { rectKeyword } from './rect'
@@ -129,27 +130,21 @@ const occlusionLeftClick = (draw: SVG, event: MouseEvent) => {
     click(draw, event)
 }
 
+type MenuHandler = (menu: MenuItem[]) => MenuItem[]
+
 type PartialShapeHandler = (shapes: Shape[], draw: SVG) => void
 type ShapeHandler = <T extends Record<string, unknown>>(entry: AftermathEntry<T>, internals: AftermathInternals<T>) => PartialShapeHandler
 
 type PartialShapeFilter = (shapes: ShapeDefinition[], draw: SVG) => ShapeDefinition[]
 type ShapeFilter= <T extends Record<string, unknown>>(entry: AftermathEntry<T>, internals: AftermathInternals<T>) => PartialShapeFilter
 
-export const wrapForOcclusion = (draw: SVG, acceptEvent: () => void) => {
-    const occlusionClick = (event: MouseEvent) => {
-        if (event.button === 0 /* left mouse button */) {
-            occlusionLeftClick(draw, event)
-        }
-    }
-
-    draw.svg.addEventListener('mousedown', occlusionClick)
-
+const makeOcclusionMenu = (target: EventTarget, setupOcclusionMenu: MenuHandler): HTMLElement => {
     const acceptEventHandler = (event: MouseEvent) => {
         event.preventDefault()
-        acceptEvent()
+        target.dispatchEvent(new Event('accept'))
     }
 
-    const occlusionMenu = setupMenu('occlusion-menu', [{
+    const occlusionMenu = setupOcclusionMenu([{
         label: 'Accept occlusions',
         itemId: 'occlusion-accept',
         clickEvent: acceptEventHandler,
@@ -158,9 +153,20 @@ export const wrapForOcclusion = (draw: SVG, acceptEvent: () => void) => {
         itemId: 'close-occlusion-menu',
     }])
 
-    enableAsMenuTrigger(occlusionMenu, draw.svg)
+    return setupMenu('occlusion-menu', occlusionMenu)
 }
 
+const wrapForOcclusion = (draw: SVG, menu: HTMLElement): void => {
+    const occlusionClick = (event: MouseEvent) => {
+        if (event.button === 0 /* left mouse button */) {
+            occlusionLeftClick(draw, event)
+        }
+    }
+
+    draw.svg.addEventListener('mousedown', occlusionClick)
+
+    enableAsMenuTrigger(menu, draw.svg)
+}
 
 const defaultAcceptHandler: ShapeHandler = (_entry, internals) => (shapes) => {
     // window needs active focus for thi
@@ -184,6 +190,7 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
     maxOcclusions?: number,
     acceptHandler?: ShapeHandler,
     rejectHandler?: ShapeHandler,
+    setupOcclusionMenu?: MenuHandler,
     existingShapesFilter?: ShapeFilter,
     shapeKeywords?: string[],
 } = {})=> (registrar: Registrar<T>) => {
@@ -195,6 +202,7 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
         maxOcclusions = 500,
         acceptHandler = defaultAcceptHandler,
         rejectHandler = defaultRejectHandler,
+        setupOcclusionMenu = id,
         existingShapesFilter = () => id,
         shapeKeywords = [rectKeyword],
     } = options
@@ -240,7 +248,8 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
                 target.addEventListener('accept', acceptEvent)
                 target.addEventListener('reject', rejectEvent)
 
-                wrapForOcclusion(draw, () => target.dispatchEvent(new Event('accept')))
+                const menu = makeOcclusionMenu(target, setupOcclusionMenu)
+                wrapForOcclusion(draw, menu)
             }
 
             for (const srcUrl of images) {

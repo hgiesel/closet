@@ -1,6 +1,7 @@
 export interface MenuItem {
     label: string
     itemId: string
+    html?: boolean
     clickEvent?: (event: MouseEvent) => void
     sub?: MenuItem[]
 }
@@ -9,7 +10,13 @@ const processMenuItem = (item: MenuItem) => {
     const liElement = document.createElement('li')
     const aElement = document.createElement('a')
 
-    aElement.innerText = item.label
+    if (item.html) {
+        aElement.innerHTML = item.label
+    }
+    else {
+        aElement.innerText = item.label
+    }
+
     aElement.id = item.itemId
     aElement.classList.add('context-menu-item')
 
@@ -37,7 +44,7 @@ const processMenuItems = (items: MenuItem[]) => {
     return ulElement
 }
 
-export const constructMenu = (menuId: string, items: MenuItem[]) => {
+export const constructMenu = (menuId: string, items: MenuItem[]): HTMLElement => {
     const navElement = document.createElement('nav')
     navElement.classList.add('context-menu')
     navElement.id = menuId

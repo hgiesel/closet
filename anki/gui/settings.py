@@ -8,10 +8,8 @@ behaviors = ["autopaste", "copy"]
 
 
 class Settings(QDialog):
-    def __init__(self, mw, callback):
-        super().__init__(parent=mw)
-
-        self.mw = mw
+    def __init__(self, parent, callback):
+        super().__init__(parent=parent)
 
         self.ui = Ui_Settings()
         self.ui.setupUi(self)

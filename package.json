@@ -6,7 +6,7 @@
     "url": "https://github.com/hgiesel"
   },
   "license": "GPL-3.0",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "browser": "index.ts",
   "repository": {
     "type": "git",

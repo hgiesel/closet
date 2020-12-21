@@ -1,8 +1,8 @@
 // NOTE should be same as under ../anki/src/utils.py
 export const versionInfo = [
     0 /* MAJOR */,
-    2 /* MINOR */,
-    5 /* PATCH */,
+    3 /* MINOR */,
+    0 /* PATCH */,
 ]
 
 export const prereleaseInfo = [

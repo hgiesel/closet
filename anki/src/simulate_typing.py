@@ -3,7 +3,7 @@ from typing import List
 import re
 
 
-def text_is_empty(editor, text) -> bool:
+def is_text_empty(editor, text) -> bool:
     return editor.mungeHTML(text) == ""
 
 
@@ -11,11 +11,11 @@ def escape_js_text(text: str) -> str:
     return text.replace("\\", "\\\\").replace('"', '\\"').replace("'", "\\'")
 
 
-def make_insertion_js(field_index: int, note_id: int, text: str) -> str:
+def make_insertion_js(field_index: int, text: str) -> str:
     escaped = escape_js_text(text)
 
     cmd = (
-        f'pycmd("key:{field_index}:{note_id}:{escaped}"); '
+        f'pycmd("key:{field_index}:${{currentNoteId}}:{escaped}"); '
         f'document.querySelector("#f{field_index}").innerHTML = "{escaped}";'
     )
     return cmd
@@ -31,7 +31,7 @@ def replace_or_prefix_old_occlusion_text(editor, old_html: str, new_text: str) -
 
     if number_of_subs > 0:
         return subbed
-    elif text_is_empty(editor, old_html):
+    elif is_text_empty(editor, old_html):
         return replacement
     else:
         return f"{replacement}<br>{old_html}"
@@ -51,7 +51,6 @@ def insert_into_zero_indexed(editor, text: str) -> None:
             lambda old_html: editor.web.eval(
                 make_insertion_js(
                     index,
-                    editor.note.id,
                     replace_or_prefix_old_occlusion_text(editor, old_html, text),
                 )
             ),
@@ -76,9 +75,9 @@ def activate_matching_fields(editor, indices: List[int]) -> List[bool]:
         founds[indices.index(matched)] = True
 
         # TODO anki behavior for empty fields is kinda weird right now:
-        if not text_is_empty(editor, item):
+        if not is_text_empty(editor, item):
             continue
 
-        editor.web.eval(make_insertion_js(index, editor.note.id, "active"))
+        editor.web.eval(make_insertion_js(index, "active"))
 
     return founds

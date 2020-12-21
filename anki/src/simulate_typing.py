@@ -22,10 +22,10 @@ def make_insertion_js(field_index: int, note_id: int, text: str) -> str:
 
 
 def replace_or_prefix_old_occlusion_text(editor, old_html: str, new_text: str) -> str:
-    occlusion_block_regex = r"\[#!autogen.*?#\]"
+    occlusion_block_regex = r"\[#!occlusions.*?#\]"
 
     new_html = "<br>".join(new_text.splitlines())
-    replacement = f"[#!autogen {new_html} #]"
+    replacement = f"[#!occlusions {new_html} #]"
 
     subbed, number_of_subs = re.subn(occlusion_block_regex, replacement, old_html)
 

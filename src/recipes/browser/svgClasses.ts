@@ -37,8 +37,8 @@ export class SVG {
     readonly image: HTMLImageElement
     readonly svg: SVGElement
 
-    protected constrainedFactorX = 1
-    protected constrainedFactorY = 1
+    protected scaleFactorX = 1
+    protected scaleFactorY = 1
     protected maxOcclusions = 500
 
     protected elements: Shape[] = []
@@ -56,8 +56,8 @@ export class SVG {
     }
 
     protected setScaleFactors() {
-        this.constrainedFactorX = this.image.width / this.image.naturalWidth
-        this.constrainedFactorY = this.image.height / this.image.naturalHeight
+        this.scaleFactorX = this.image.width / this.image.naturalWidth
+        this.scaleFactorY = this.image.height / this.image.naturalHeight
     }
 
     static wrapImage(image: HTMLImageElement): SVG {
@@ -84,8 +84,8 @@ export class SVG {
 
     get scaleFactors(): [number, number] {
         return [
-            this.constrainedFactorX,
-            this.constrainedFactorY,
+            this.scaleFactorX,
+            this.scaleFactorY,
         ]
     }
 
@@ -162,22 +162,24 @@ export class Rect implements Shape {
     readonly rect: SVGRectElement
     readonly label: SVGTextElement
 
-    protected scalingFactorX: number
-    protected scalingFactorY: number
+    protected scaleFactorX = 1
+    protected scaleFactorY = 1
 
     protected constructor(
         container: SVGElement,
         rect: SVGRectElement,
         label: SVGTextElement,
-        scalingFactorX: number,
-        scalingFactorY: number,
+        scaleFactorX: number,
+        scaleFactorY: number,
     ) {
         this.container = container
         this.rect = rect
         this.label = label
 
-        this.scalingFactorX = scalingFactorX
-        this.scalingFactorY = scalingFactorY
+        this.setScaleFactors(
+            scaleFactorX,
+            scaleFactorY,
+        )
     }
 
     static make(forSVG?: SVG): Rect {
@@ -193,11 +195,11 @@ export class Rect implements Shape {
         container.tabIndex = -1
 
         const [
-            scalingFactorX,
-            scalingFactorY,
+            scaleFactorX,
+            scaleFactorY,
         ] = forSVG ? forSVG.scaleFactors : [1, 1]
 
-        const theRect = new Rect(container, rect, label, scalingFactorX, scalingFactorY)
+        const theRect = new Rect(container, rect, label, scaleFactorX, scaleFactorY)
 
         theRect.x = 0
         theRect.y = 0
@@ -212,21 +214,21 @@ export class Rect implements Shape {
 
     static wrap(rect: SVGRectElement, forSVG?: SVG): Rect {
         const [
-            scalingFactorX,
-            scalingFactorY,
+            scaleFactorX,
+            scaleFactorY,
         ] = forSVG ? forSVG.scaleFactors : [1, 1]
 
         return new Rect(
             rect.parentElement as unknown as SVGElement,
             rect,
             rect.nextSibling as SVGTextElement,
-            scalingFactorX,
-            scalingFactorY,
+            scaleFactorX,
+            scaleFactorY,
         )
     }
 
     prop(attr: RectProperty, value: string) {
-        this[attr] = value
+        (this[attr] as any) = value
     }
 
     remove(): void {
@@ -241,13 +243,25 @@ export class Rect implements Shape {
         return this.rect
     }
 
-    readjust(forSVG?: SVG) {
+    setScaleFactors(x: number, y: number): void {
+        this.scaleFactorX = x
+        this.scaleFactorY = y
+    }
+
+    readjust(forSVG?: SVG): [number, number] {
         const scaleFactors = forSVG
             ? forSVG.scaleFactors
             : [1, 1]
 
-        this.scalingFactorX = scaleFactors[0]
-        this.scalingFactorY = scaleFactors[1]
+        const saveX = this.scaleFactorX
+        const saveY = this.scaleFactorY
+
+        this.setScaleFactors(
+            scaleFactors[0],
+            scaleFactors[1],
+        )
+
+        return [saveX, saveY]
     }
 
     resize(forSVG?: SVG) {
@@ -259,11 +273,34 @@ export class Rect implements Shape {
     }
 
     toDefinition(): RectDefinition {
-        return ['rect', undefined, this.labelText, this.x, this.y, this.width, this.height, {}]
+        return [
+            'rect',
+            undefined,
+            this.labelText,
+            this.x,
+            this.y,
+            this.width,
+            this.height,
+            {},
+        ]
     }
 
     toText(delimiters: Delimiters): string {
         return `${delimiters.open}${this.labelText}${delimiters.sep}${this.x.toFixed()},${this.y.toFixed()},${this.width.toFixed()},${this.height.toFixed()}${delimiters.close}`
+    }
+
+    fontSizeUpdate(): void {
+        const [
+            saveX,
+            saveY,
+        ] = this.readjust()
+
+        const fontSizeEstimate = Math.max(0.1, Math.min(32,
+            0.4 * ((this.width + this.height) / 2 - (2 * this.strokeWidth)),
+        ))
+
+        this.fontSize = fontSizeEstimate
+        this.setScaleFactors(saveX, saveY)
     }
 
     /////////////////// on both
@@ -293,69 +330,76 @@ export class Rect implements Shape {
         ]
     }
 
+    /////////////////// internal functions, take care when using
+
     get x(): number {
-        return Number(this.rect.getAttributeNS(null, 'x')) / this.scalingFactorX
+        return Number(this.rect.getAttributeNS(null, 'x')) / this.scaleFactorX
     }
     set x(i: number) {
-        const scaledX = i * this.scalingFactorX
+        const scaledX = i * this.scaleFactorX
         this.rect.setAttributeNS(null, 'x', String(scaledX))
-        this.label.setAttributeNS(null, 'x', String((scaledX + this.width / 2 * this.scalingFactorX)))
+        this.label.setAttributeNS(null, 'x', String((scaledX + this.width / 2 * this.scaleFactorX)))
     }
 
     get y(): number {
-        return Number(this.rect.getAttributeNS(null, 'y')) / this.scalingFactorY
+        return Number(this.rect.getAttributeNS(null, 'y')) / this.scaleFactorY
     }
     set y(i: number) {
-        const scaledY = i * this.scalingFactorY
+        const scaledY = i * this.scaleFactorY
         this.rect.setAttributeNS(null, 'y', String(scaledY))
-        this.label.setAttributeNS(null, 'y', String((scaledY + this.height / 2 * this.scalingFactorY)))
+        this.label.setAttributeNS(null, 'y', String((scaledY + this.height / 2 * this.scaleFactorY)))
     }
 
     get width(): number {
-        return Number(this.rect.getAttributeNS(null, 'width')) / this.scalingFactorX
+        return Number(this.rect.getAttributeNS(null, 'width')) / this.scaleFactorX
     }
     set width(i: number) {
-        const stringified = String(Math.max(10, i) * this.scalingFactorX)
+        const stringified = String(Math.max(10, i) * this.scaleFactorX)
         this.rect.setAttributeNS(null, 'width', stringified)
         this.label.setAttributeNS(null, 'width', stringified)
+        this.fontSizeUpdate()
     }
 
     get height(): number {
-        return Number(this.rect.getAttributeNS(null, 'height')) / this.scalingFactorY
+        return Number(this.rect.getAttributeNS(null, 'height')) / this.scaleFactorY
     }
     set height(i: number) {
-        const stringified = String(Math.max(10, i) * this.scalingFactorY)
+        const stringified = String(Math.max(10, i) * this.scaleFactorY)
         this.rect.setAttributeNS(null, 'height', stringified)
         this.label.setAttributeNS(null, 'height', stringified)
+        this.fontSizeUpdate()
     }
 
     /////////////////// on rect
 
-    set rx(i: number | string) { this.rect.setAttributeNS(null, 'rx', String(i)) }
-    get rx(): number | string { return Number(this.rect.getAttributeNS(null, 'rx')) }
+    set rx(i: number) { this.rect.setAttributeNS(null, 'rx', String(i)) }
+    get rx(): number { return Number(this.rect.getAttributeNS(null, 'rx')) }
 
-    set ry(i: number | string) { this.rect.setAttributeNS(null, 'ry', String(i)) }
-    get ry(): number | string { return Number(this.rect.getAttributeNS(null, 'ry')) }
+    set ry(i: number) { this.rect.setAttributeNS(null, 'ry', String(i)) }
+    get ry(): number { return Number(this.rect.getAttributeNS(null, 'ry')) }
 
     set fill(color: string) { this.rect.setAttributeNS(null, 'fill', color) }
     get fill(): string { return this.rect.getAttributeNS(null, 'fill') ?? ''}
 
-    set fillOpacity(i: number | string) { this.rect.setAttributeNS(null, 'fill-opacity', String(i)) }
-    get fillOpacity(): number | string { return Number(this.rect.getAttributeNS(null, 'fill-opacity')) }
+    set fillOpacity(i: number) { this.rect.setAttributeNS(null, 'fill-opacity', String(i)) }
+    get fillOpacity(): number { return Number(this.rect.getAttributeNS(null, 'fill-opacity')) }
 
     set stroke(color: string) { this.rect.setAttributeNS(null, 'stroke', color) } 
     get stroke(): string { return this.rect.getAttributeNS(null, 'stroke') ?? '' }
 
-    set strokeOpacity(i: number | string) { this.rect.setAttributeNS(null, 'stroke-opacity', String(i)) }
-    get strokeOpacity(): number | string { return Number(this.rect.getAttributeNS(null, 'stroke-opacity')) }
+    set strokeOpacity(i: number) { this.rect.setAttributeNS(null, 'stroke-opacity', String(i)) }
+    get strokeOpacity(): number { return Number(this.rect.getAttributeNS(null, 'stroke-opacity')) }
 
-    set strokeWidth(i: number | string) { this.rect.setAttributeNS(null, 'stroke-width', String(i)) }
-    get strokeWidth(): number | string { return Number(this.rect.getAttributeNS(null, 'stroke-width')) }
+    set strokeWidth(i: number) { this.rect.setAttributeNS(null, 'stroke-width', String(i)) }
+    get strokeWidth(): number { return Number(this.rect.getAttributeNS(null, 'stroke-width')) }
 
     /////////////////// on label
 
     set labelText(txt: string) { this.label.innerHTML = txt }
     get labelText(): string { return this.label.innerHTML }
+
+    set fontSize(i: number) { this.label.setAttributeNS(null, 'font-size', String(i)) }
+    get fontSize(): number { return Number(this.label.getAttributeNS(null, 'font-size')) }
 
     getLabel(): string {
         return this.labelText

@@ -1,3 +1,8 @@
+/** tweening **/
+var rushInOut = (x) => {
+  return 2.388 * x - 4.166 * Math.pow(x, 2) + 2.77 * Math.pow(x, 3)
+}
+
 var EditorCloset = {
     imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,
 
@@ -46,6 +51,21 @@ var EditorCloset = {
             EditorCloset.clearOcclusionMode()
         }
 
+        const setupOcclusionMenu = (menu) => {
+            menu.splice(1, 0, {
+                label: `<input
+                    type="range"
+                    min="1"
+                    max="100"
+                    value="${EditorCloset.maxHeightPercent}"
+                    oninput="EditorCloset.handleMaxHeightChange(window.event)"
+                />`,
+                html: true,
+            })
+
+            return menu
+        }
+
         const existingShapesFilter = () => (shapeDefs, draw) => {
             const indices = [...new Set(shapeDefs
                 .map(shape => shape[2])
@@ -64,6 +84,7 @@ var EditorCloset = {
         const editorOcclusion = closet.browser.recipes.occlusionEditor({
             maxOcclusions,
             acceptHandler,
+            setupOcclusionMenu,
             existingShapesFilter,
         })
 
@@ -120,4 +141,22 @@ var EditorCloset = {
     setClosetMode: (mode) => {
         document.getElementById("closetMode").selectedIndex = mode
     },
+
+    /**************** MAX HEIGHT *****************/
+    handleMaxHeightChange: (event) => {
+        EditorCloset.setMaxHeightPercent(Number(event.currentTarget.value))
+    },
+
+    maxHeightPercent: 0,
+    setMaxHeightPercent: (value /* 1 <= x <= 100 */) => {
+        const maxMaxHeight = globalThis.screen.height
+        const factor = rushInOut(value / 100)
+
+        EditorCloset.maxHeightPercent = value
+        EditorCloset.setMaxHeight(factor * maxMaxHeight)
+    },
+
+    setMaxHeight: (value /* > 0 */) => {
+        document.documentElement.style.setProperty('--closet-max-height', `${value}px`)
+    }
 }

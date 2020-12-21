@@ -50,7 +50,7 @@ occlude_shortcut = ProfileConfig("closetOcclusionShortcut", "Ctrl+O")
 occlusion_behavior = ProfileConfig("closetOcclusionAcceptBehavior", "autopaste")
 
 # default max height for images in editor in px
-max_height = ProfileConfig("closetImageMaxHeight", 350)
+max_height = ProfileConfig("closetImageMaxHeight", 25)
 
 
 class ModelConfig:

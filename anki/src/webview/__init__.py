@@ -9,7 +9,12 @@ from aqt.gui_hooks import (
 )
 from aqt.utils import showInfo
 
-from ..utils import closet_enabled, closet_version_per_model, occlusion_behavior
+from ..utils import (
+    closet_enabled,
+    closet_version_per_model,
+    occlusion_behavior,
+    max_height,
+)
 from ..version import version
 from ..simulate_typing import (
     insert_into_zero_indexed,
@@ -25,8 +30,12 @@ def include_closet_code(webcontent, context) -> None:
     if not isinstance(context, Editor):
         return
 
-    webcontent.js.append(f"/_addons/{addon_package}/web/editor.js")
     webcontent.css.append(f"/_addons/{addon_package}/web/editor.css")
+
+    webcontent.js.append(f"/_addons/{addon_package}/web/editor.js")
+    webcontent.head += (
+        f"<script>EditorCloset.setMaxHeightPercent({max_height.value})</script>"
+    )
 
 
 def process_occlusion_index_text(index_text: str) -> List[int]:

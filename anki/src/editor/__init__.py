@@ -124,6 +124,7 @@ def add_closet_mode_select(buttons, editor):
     id="closetMode"
     class="closet-select-mode"
     onchange="pycmd(`closetMode:${{this.selectedIndex}}`)"
+    tabindex="-1"
 >{modes_as_html}</select>"""
 
     buttons.insert(-1, closet_mode_select)

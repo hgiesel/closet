@@ -1,0 +1,56 @@
+<b>Closet</b> is a unique mix between a templating engine and a markup language written in TypeScript for the generation of flashcards, especially for the use in the Anki flashcard software.
+
+It allows to use many “effects”, that you’d like to have on flashcards, like shuffling text items, clozes, multiple choice, or image occlusions.
+
+<img src="https://i.ibb.co/0QM2s8S/full.png">
+
+For more information, see first the <a href="https://www.youtube.com/watch?v=9o7uriyIKnw" rel="nofollow">introduction video</a> and afterwards the <a href="https://closetengine.com" rel="nofollow">website</a>.
+
+<b>Updates</b>
+2020-12-22: v0.3.0 Christmas Update:
+BREAKING changes:
+- If you use Closet with Asset Manager, Closet will insert a new "Closet Setup" entry into it
+  - Simply take the code from your old setup (which is now "loose"), paste it into the new entry
+  - Afterwards you can delete your the old ("loose") entry
+- If you use Image Occlusion with Closet, you should be careful, when editing the occlusions:
+  - Make sure that the field, which is supposed to contain the occlusions has a name which is suffixed with a 0, e.g. "Cmds0", or "Code 0"
+  - First turn on the occlusion editor, so that the occlusions are visible on the image
+  - Now delete the occlusions in the "Cmds0" field
+  - Now accept the occlusions on the image: it should now insert the occlusions wrapped <code>[#!occlusions ...you occlusions... #]</code>
+
+General:
+* Support for Windows + AnkiDroid (starting with 2.15alpha17)
+* By default, Closet now automatically pastes occlusions into a zero-indexed field, if it exists, rather than copying to clipboard
+  * This behavior can be changed in the add-on settings
+* As a beta-feature, Closet now hooks on the cloze shortcut (Ctrl+Shift+C and Ctrl+Alt+Shift+C) for clozes in a Closet-style
+  * Add a select input in the toolbar, to configure what this shortcut outputs
+  * The toolbar can be set with Ctrl+1, Ctrl+2, for different kinds of tags
+  * The tag shortcuts respects the semantics of different tags (e.g. `[[c1::` cannot be on a field without a "Code 1" field, but `[[mix1::` can)
+
+Occlusions:
+* The occlusion editor will refuse to turn on, if the note type does not support Closet
+* You can set the max-height for images in the settings window (in percentage of the screen height)
+* Right-click on images, you can resize pictures in the editor
+* Trying to close the AddCards window with the occlusion editor open, will inform you to close it first
+* Turning on occlusion editor will highlight the icon in the menu
+* Make font size of labels dynamic to adjust to image size
+
+2020-11-05: v0.2.3 has MathJax support in Anki
+- I improved on the previous approaches, and fixed some long-standing issues, that prevented full MathJax support
+
+2020-11-03: v0.2.2 has experimental MathJax support in Anki
+- I removed most of the MathJax support, because it would lead to issues that hide the entire card from displaying in the reviewer
+
+2020-11-02: v0.2.1 has experimental MathJax support in Anki
+- To enable it, you need to reinsert Closet using Asset Manager
+
+2020-10-24: v0.2.0 brought some crucial changes with it, which try to make the Closet experience a better one.
+- Closet doesn't need Anki Persistence installed anymore
+- When opening the Asset Manager window, you will notice a script which says it's "loose". You can simply delete it.
+- Closet is now loaded asynchronously, which will increase the performance.
+
+<b>Support</b>
+If you like my add-ons, you can consider supporting me. My add-ons will always be freely available for everybody, but what I can offer you is my sincere thanks, and first-hand technical support, if you have any questions/issues with my add-ons. At the same time it allows me to put more time and focus into developing these and making them as powerful and user-friendly as they are. Thanks for considering!
+
+<a href="https://ko-fi.com/hgiesel" rel="nofollow"><img src="https://i.imgur.com/V1lNWqQ.png"> ko-fi.com/hgiesel</a>
+<a href="https://patreon.com/hgiesel" rel="nofollow"><img src="https://i.imgur.com/PYuJm9x.png"> patreon.com/hgiesel</a>

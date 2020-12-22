@@ -16,24 +16,24 @@ BREAKING changes:
   - Make sure that the field, which is supposed to contain the occlusions has a name which is suffixed with a 0, e.g. "Cmds0", or "Code 0"
   - First turn on the occlusion editor, so that the occlusions are visible on the image
   - Now delete the occlusions in the "Cmds0" field
-  - Now accept the occlusions on the image: it should now insert the occlusions wrapped <code>[#!occlusions ...you occlusions... #]</code>
+  - Now accept the occlusions on the image: it should now insert the occlusions wrapped <code>[#!occlusions ...your occlusions... #]</code>
 
 General:
-* Support for Windows + AnkiDroid (starting with 2.15alpha17)
-* By default, Closet now automatically pastes occlusions into a zero-indexed field, if it exists, rather than copying to clipboard
-  * This behavior can be changed in the add-on settings
-* As a beta-feature, Closet now hooks on the cloze shortcut (Ctrl+Shift+C and Ctrl+Alt+Shift+C) for clozes in a Closet-style
-  * Add a select input in the toolbar, to configure what this shortcut outputs
-  * The toolbar can be set with Ctrl+1, Ctrl+2, for different kinds of tags
-  * The tag shortcuts respects the semantics of different tags (e.g. `[[c1::` cannot be on a field without a "Code 1" field, but `[[mix1::` can)
+- Support for Windows + AnkiDroid (starting with 2.15alpha17)
+- By default, Closet now automatically pastes occlusions into a zero-indexed field, if it exists, rather than copying to clipboard
+  - This behavior can be changed in the add-on settings
+- As a beta-feature, Closet now hooks on the cloze shortcut (Ctrl+Shift+C and Ctrl+Alt+Shift+C) for clozes in a Closet-style
+  - Add a select input in the toolbar, to configure what this shortcut outputs
+  - The toolbar can be set with Ctrl+1, Ctrl+2, for different kinds of tags
+  - The tag shortcuts respects the semantics of different tags (e.g. `[[c1::` cannot be on a field without a "Code 1" field, but `[[mix1::` can)
 
 Occlusions:
-* The occlusion editor will refuse to turn on, if the note type does not support Closet
-* You can set the max-height for images in the settings window (in percentage of the screen height)
-* Right-click on images, you can resize pictures in the editor
-* Trying to close the AddCards window with the occlusion editor open, will inform you to close it first
-* Turning on occlusion editor will highlight the icon in the menu
-* Make font size of labels dynamic to adjust to image size
+- The occlusion editor will refuse to turn on, if the note type does not support Closet
+- You can set the max-height for images in the settings window (in percentage of the screen height)
+- Right-click on images, you can resize pictures in the editor
+- Trying to close the AddCards window with the occlusion editor open, will inform you to close it first
+- Turning on occlusion editor will highlight the icon in the menu
+- Make font size of labels dynamic to adjust to image size
 
 2020-11-05: v0.2.3 has MathJax support in Anki
 - I improved on the previous approaches, and fixed some long-standing issues, that prevented full MathJax support

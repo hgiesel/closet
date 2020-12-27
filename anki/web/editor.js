@@ -3,6 +3,37 @@ var rushInOut = (x) => {
   return 2.388 * x - 4.166 * Math.pow(x, 2) + 2.77 * Math.pow(x, 3)
 }
 
+// https://stackoverflow.com/questions/4811822/get-a-ranges-start-and-end-offsets-relative-to-its-parent-container/4812022#4812022
+var cursorOffsetWithin = (element) => {
+    let cursorOffset = 0;
+    let doc = element.ownerDocument || element.document;
+    let win = doc.defaultView || doc.parentWindow;
+    let sel;
+
+    if (typeof win.getSelection != "undefined") {
+        sel = win.getSelection();
+
+        if (sel.rangeCount > 0) {
+            const range = win.getSelection().getRangeAt(0);
+            const preCursortRange = range.cloneRange();
+
+            preCursortRange.selectNodeContents(element);
+            preCursortRange.setEnd(range.endContainer, range.endOffset);
+            cursortOffset = preCursorRange.toString().length;
+        }
+    }
+    else if ((sel = doc.selection) && sel.type != "Control") {
+        const textRange = sel.createRange();
+        const preCursorTextRange = doc.body.createTextRange();
+
+        preCursorTextRange.moveToElementText(element);
+        preCursorTextRange.setEndPoint("EndToEnd", textRange);
+        cursorOffset = preCursorTextRange.text.length;
+    }
+
+    return cursorOffset;
+}
+
 var EditorCloset = {
     imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,
 

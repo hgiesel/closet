@@ -22,3 +22,4 @@ zip -r "$DIR/build/$addon_id.ankiaddon" \
 
 # turn on DEBUG mode
 sed -i.bak -e "s#DEBUG = False#DEBUG = True#" "$debug_target"
+rm "$debug_target.bak"

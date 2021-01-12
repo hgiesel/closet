@@ -2,13 +2,5 @@ export type StoreGetter<T> = { get: (key: string, num: number | null | undefined
 
 export const constantGet = <T>(v: T): StoreGetter<T> => ({ get: () => v })
 
-import { setNumberRecipe } from './numberStore'
-import { activateRecipe, deactivateRecipe } from './boolStore'
-
-const preferenceStore = {
-    setNumber: setNumberRecipe,
-    activate: activateRecipe,
-    deactivate: deactivateRecipe,
-}
-
-export default preferenceStore
+export { setNumberRecipe as setNumber } from './numberStore'
+export { activateRecipe as activate, deactivateRecipe as deactivate } from './boolStore'

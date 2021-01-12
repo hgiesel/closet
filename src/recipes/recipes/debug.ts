@@ -26,9 +26,3 @@ export const debugRecipe = () => <T extends Record<string, unknown>>(registrar: 
         return String(memory.fold(memoryTestKey, (v: number) => ++v, 0))
     }))
 }
-
-const debug = {
-    debug: debugRecipe,
-}
-
-export default debug

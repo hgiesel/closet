@@ -1,24 +1,9 @@
-import { default as shuffling } from './shuffling'
-import { default as ordering } from './ordering'
-import { default as generating } from './generating'
-import { default as stylizing } from './stylizing'
-import { default as preferenceStore } from './preferenceStore'
-import { default as sharedStore } from './sharedStore'
-import { default as simple } from './simple'
-import { default as debug } from './debug'
-import { default as meta } from './meta'
-
-
-const recipes = {
-    ...shuffling,
-    ...ordering,
-    ...generating,
-    ...stylizing,
-    ...preferenceStore,
-    ...sharedStore,
-    ...simple,
-    ...debug,
-    ...meta,
-}
-
-export default recipes
+export * as shuffling from './shuffling'
+export * as ordering from './ordering'
+export * as generating from './generating'
+export * as stylizing from './stylizing'
+export * as preferenceStore from './preferenceStore'
+export * as sharedStore from './sharedStore'
+export * as simple from './simple'
+export * as debug from './debug'
+export * as meta from './meta'

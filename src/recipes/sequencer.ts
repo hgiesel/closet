@@ -142,10 +142,3 @@ const across = <T extends Record<string, unknown>>(
 
 export const withinTag = sequenceTemplate(within)
 export const acrossTag = sequenceTemplate(across)
-
-const sequencers = {
-    withinTag: withinTag,
-    acrossTag: acrossTag,
-}
-
-export default sequencers

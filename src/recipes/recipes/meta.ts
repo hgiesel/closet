@@ -29,7 +29,7 @@ const matcher = (tag: TagNode) => (match: string, p1: string) => {
     }
 }
 
-const defRecipe = (options: {
+export const defRecipe = (options: {
     tagname?: string,
 } = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const {
@@ -62,9 +62,3 @@ const defRecipe = (options: {
 
     registrar.register(tagname, defFilter, defOptions)
 }
-
-const meta = {
-    define: defRecipe,
-}
-
-export default meta

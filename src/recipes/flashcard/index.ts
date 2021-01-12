@@ -1,45 +1,33 @@
 import type { Recipe } from '../types'
 import type { FlashcardPreset } from './flashcardTemplate'
 
-import { clozeRecipes } from './clozes'
-import { multipleChoiceRecipes } from './multipleChoice'
-import { specRecipes } from './spec'
-
-import {
-    mingleRecipes,
-    sortRecipes,
-    jumbleRecipes,
-} from './shuffleQuestion'
-
-import * as deciders from './deciders'
-import { FlashcardBehavior } from './flashcardTemplate'
-
-
 export type { FlashcardPreset } from './flashcardTemplate'
-
 export interface FlashcardRecipes {
     show: Recipe<FlashcardPreset>
     hide: Recipe<FlashcardPreset>
     reveal: Recipe<FlashcardPreset>
 }
 
-const flashcardRecipes = {
-    cloze: clozeRecipes,
-    multipleChoice: multipleChoiceRecipes,
-    specification: specRecipes,
 
-    mingle: mingleRecipes,
-    sort: sortRecipes,
-    jumble: jumbleRecipes,
+import { clozeRecipes as cloze } from './clozes'
+import { multipleChoiceRecipes as multipleChoice } from './multipleChoice'
+import { specRecipes as specification } from './spec'
+
+import {
+    mingleRecipes as mingle,
+    sortRecipes as sort,
+    jumbleRecipes as jumble,
+} from './shuffleQuestion'
+
+export * as deciders from './deciders'
+export { FlashcardBehavior as behaviors } from './flashcardTemplate'
+
+export const recipes = {
+    cloze,
+    multipleChoice,
+    specification,
+
+    mingle,
+    sort,
+    jumble,
 }
-
-//////////////////////////////
-
-
-export const flashcard = {
-    recipes: flashcardRecipes,
-    behaviors: FlashcardBehavior,
-    deciders,
-}
-
-export default flashcard

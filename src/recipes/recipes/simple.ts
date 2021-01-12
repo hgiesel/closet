@@ -7,9 +7,3 @@ export const simpleRecipe = <T extends Record<string, unknown>>(weakFilter: Weak
 } = {}) => (registrar: Registrar<T>) => {
     registrar.register(tagname, weakFilter)
 }
-
-const simple = {
-    simple: simpleRecipe,
-}
-
-export default simple

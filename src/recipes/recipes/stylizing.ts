@@ -4,7 +4,7 @@ import { Stylizer } from '../stylizer'
 import { id } from '../utils'
 
 
-const styleRecipe = <T extends Record<string, unknown>>({
+export const styleRecipe = <T extends Record<string, unknown>>({
     tagname = 's',
     stylizer = Stylizer.make(),
     separator = '::',
@@ -16,7 +16,7 @@ const styleRecipe = <T extends Record<string, unknown>>({
     registrar.register(tagname, styleFilter, { separators: [separator] })
 }
 
-const processRecipe = <T extends Record<string, unknown>>({
+export const processRecipe = <T extends Record<string, unknown>>({
     tagname = 's',
     processor = id,
 } = {}) => (registrar: Registrar<T>) => {
@@ -26,10 +26,3 @@ const processRecipe = <T extends Record<string, unknown>>({
 
     registrar.register(tagname, processorFilter, { separators: [] })
 }
-
-const stylizing = {
-    stylize: styleRecipe,
-    process: processRecipe,
-}
-
-export default stylizing

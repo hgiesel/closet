@@ -1,5 +1,6 @@
 import { shuffle } from './utils'
 
+
 export type SortInStrategy = (indices: number[], toLength: number) => number[]
 
 export const topUp: SortInStrategy = (indices: number[], toLength: number): number[] => {
@@ -48,10 +49,3 @@ export const mixIn: SortInStrategy = (indices: number[], toLength: number): numb
 
     return result
 }
-
-const sortInStrategies = {
-    topUp,
-    mixIn,
-}
-
-export default sortInStrategies

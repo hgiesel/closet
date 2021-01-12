@@ -1,19 +1,4 @@
-import { wrap, wrapWithDeferred, wrapWithAftermath } from './wrappers'
-import { sum, sumFour } from './sum'
-import { product } from './product'
-import { collection } from './collection'
-
-const wrappers = {
-    wrap,
-
-    deferred: wrapWithDeferred,
-    aftermath: wrapWithAftermath,
-
-    sum,
-    sumFour,
-
-    product,
-    collection,
-}
-
-export default wrappers
+export { wrap, wrapWithDeferred as deferred, wrapWithAftermath as aftermath } from './wrappers'
+export { sum, sumFour } from './sum'
+export { product } from './product'
+export { collection } from './collection'

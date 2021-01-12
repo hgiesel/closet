@@ -54,9 +54,5 @@ const generateTemplate = (
     registrar.register(tagname, generateFilter, { separators: [separator] })
 }
 
-const generating = {
-    generateInteger: generateTemplate(intAlgorithm, intOutput, 1),
-    generateReal: generateTemplate(realAlgorithm, realOutput, 2),
-}
-
-export default generating
+export const generateInteger = generateTemplate(intAlgorithm, intOutput, 1)
+export const generateReal = generateTemplate(realAlgorithm, realOutput, 2)

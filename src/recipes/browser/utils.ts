@@ -1,4 +1,4 @@
-import patterns from '../patterns'
+import { keySeparation } from '../patterns'
 
 export const appendStyleTag = (input: string): void => {
     const styleSheet = document.createElement('style')
@@ -65,7 +65,7 @@ export const getHighestNum = (labels: string[]): number => {
     let result = 0
 
     for (const label of labels) {
-        const match = label.match(patterns.keySeparation)
+        const match = label.match(keySeparation)
 
         if (!match) {
             continue

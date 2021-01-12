@@ -1,4 +1,4 @@
-const elements = closet.anki.getQaChildNodes()
+const elements = closet.template.anki.getQaChildNodes()
 const memory = chooseMemory('closet__1')
 const filterManager = closet.FilterManager.make(preset, memory.map)
 

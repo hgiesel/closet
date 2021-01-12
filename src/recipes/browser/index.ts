@@ -1,10 +1,2 @@
-export { appendStyleTag } from './utils'
-
-import { occlusionMakerRecipe } from './occlusionEditor'
-import { rectRecipes } from './rect'
-
-
-export const recipes = {
-    occlusionEditor: occlusionMakerRecipe,
-    rect: rectRecipes,
-}
+export { occlusionMakerRecipe as occlusionEditor } from './occlusionEditor'
+export { rectRecipes as rect } from './rect'

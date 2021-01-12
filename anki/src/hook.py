@@ -42,11 +42,11 @@ def get_scripts() -> Tuple[str, str, str]:
 
     user_filepath = Path(filepath, "..", "web", "user.js")
     edit_filepath = Path(filepath, "..", "web", "editable.js")
-    setup_filepath = Path(filepath, "..", "web", "setup.js")
+    default_filepath = Path(filepath, "..", "web", "default.js")
 
     with open(user_filepath, mode="r", encoding="utf-8") as user_file:
         with open(edit_filepath, mode="r", encoding="utf-8") as edit_file:
-            with open(setup_filepath, mode="r", encoding="utf-8") as setup_file:
+            with open(default_filepath, mode="r", encoding="utf-8") as setup_file:
                 return [
                     user_file.read().strip(),
                     edit_file.read().strip(),

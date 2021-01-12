@@ -74,29 +74,39 @@ export const ellipsis = constant('[...]')
 
 interface FlashcardRecipe<T extends Record<string, unknown>> extends Recipe<T> {
     (options?: Record<string, unknown>): (filters: Registrar<T>) => void,
-    hide: Recipe<T>,
     show: Recipe<T>,
+    hide: Recipe<T>,
     reveal: Recipe<T>,
+}
+
+export enum FlashcardBehavior {
+    Show = 'show',
+    Hide = 'hide',
+    Reveal = 'reveal',
 }
 
 export const generateFlashcardRecipes = <T extends FlashcardPreset>(
     publicApi: (front: InactiveBehavior<T>, back: InactiveBehavior<T>) => Recipe<T>
 ): FlashcardRecipe<T> => {
-    const hide = publicApi(id2, id2)
     const show = publicApi(id, id)
+    const hide = publicApi(id2, id2)
     const reveal = publicApi(id2, id)
 
-    const hideOptions = {
-        getTagnames: (options: RecipeOptions) => [options.tagnameHide ?? options.tagname],
-    }
-
-    const showOptions ={
-        getTagnames: (options: RecipeOptions) => [options.tagnameShow ?? `${options.tagname}s`],
-    }
-
-    const revealOptions = {
-        getTagnames: (options: RecipeOptions) => [options.tagnameReveal ?? `${options.tagname}r`],
-    }
+    const [
+        showOptions,
+        hideOptions,
+        revealOptions,
+    ] = [
+        [FlashcardBehavior.Show, "s"],
+        [FlashcardBehavior.Hide, "h"],
+        [FlashcardBehavior.Reveal, "r"],
+    ].map(([behavior, suffix]) => ({
+        getTagnames: (options: RecipeOptions): string[] => [
+            (options.defaultBehavior ?? FlashcardBehavior.Show) === behavior
+            ? options.tagname
+            : options.tagnameShow ?? `${options.tagname}${suffix}`
+        ]
+    }))
 
     const col = collection([
         [hide, hideOptions],
@@ -104,8 +114,8 @@ export const generateFlashcardRecipes = <T extends FlashcardPreset>(
         [reveal, revealOptions],
     ]) as FlashcardRecipe<T>
 
-    col.hide = hide
     col.show = show
+    col.hide = hide
     col.reveal = reveal
 
     return col

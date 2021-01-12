@@ -1,4 +1,4 @@
-import type { TagNode, RecipeOptions, Registrar, Internals, Deferred, Recipe, WrapOptions, DeferredApi } from './types'
+import type { TagNode, RecipeOptions, Registrar, Internals, Deferred, Recipe, WrapOptions, DeferredApi } from '../types'
 
 interface WithInternalKeyword {
     keyInternal: string,

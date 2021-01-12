@@ -28,31 +28,10 @@ export const recipes: Recipes = {
     define: defRecipe,
 }
 
-////////////////////////////////////
+//////////////////////////////////// WRAPPERS / DECIDERS / SEQUENCERS
 
+export { wrappers } from './wrappers'
 export * as deciders from './flashcard/deciders'
-
-//////////////////////////////////// WRAPPERS
-
-import { wrap, wrapWithDeferred, wrapWithAftermath } from './wrappers'
-import { sum, sumFour } from './sum'
-import { product } from './product'
-import { collection } from './collection'
-
-export const wrappers = {
-    wrap,
-
-    deferred: wrapWithDeferred,
-    aftermath: wrapWithAftermath,
-
-    sum,
-    sumFour,
-
-    product,
-    collection,
-}
-
-//////////////////////////////////// SEQUENCERS
 
 import { withinTag, acrossTag } from './sequencer'
 

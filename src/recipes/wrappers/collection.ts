@@ -1,4 +1,4 @@
-import type { Registrar, Recipe, WrapOptions } from './types'
+import type { Registrar, Recipe, WrapOptions } from '../types'
 
 import { defaultTagnameGetter, defaultTagnameSetter } from './wrappers'
 

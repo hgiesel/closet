@@ -1,4 +1,4 @@
-import type { TagNode, Registrar, Eval, Internals, Recipe, WrapOptions } from './types'
+import type { TagNode, Registrar, Eval, Internals, Recipe, WrapOptions } from '../types'
 
 import { defaultTagnameGetter, defaultTagnameSetter } from './wrappers'
 

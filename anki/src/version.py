@@ -1,8 +1,8 @@
 # NOTE should be same as under ../../src/version.ts
 versionInfo = [
     0,  # MAJOR
-    3,  # MINOR
-    1,  # PATCH
+    4,  # MINOR
+    0,  # PATCH
 ]
 
 prereleaseInfo = []

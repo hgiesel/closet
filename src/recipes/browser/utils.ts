@@ -1,4 +1,4 @@
-import { keySeparationPattern } from '../utils'
+import { keySeparationPattern } from '../patterns'
 
 export const appendStyleTag = (input: string): void => {
     const styleSheet = document.createElement('style')

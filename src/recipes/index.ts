@@ -32,29 +32,49 @@ export const recipes: Recipes = {
 
 export * as deciders from './flashcard/deciders'
 
-////////////////////////////////////
+//////////////////////////////////// WRAPPERS
 
 import { wrap, wrapWithDeferred, wrapWithAftermath } from './wrappers'
 import { sum, sumFour } from './sum'
 import { product } from './product'
+import { collection } from './collection'
 
 export const wrappers = {
-    wrap: wrap,
+    wrap,
 
     deferred: wrapWithDeferred,
     aftermath: wrapWithAftermath,
 
-    sum: sum,
-    sumFour: sumFour,
+    sum,
+    sumFour,
 
-    product: product,
+    product,
+    collection,
 }
 
-////////////////////////////////////
+//////////////////////////////////// SEQUENCERS
 
 import { withinTag, acrossTag } from './sequencer'
 
 export const sequencers = {
     withinTag: withinTag,
     acrossTag: acrossTag,
+}
+
+//////////////////////////////////// PATTERNS
+
+import {
+    keyPattern,
+    keySeparationPattern,
+    unicodeLetterPattern,
+    unicodeNumberPattern,
+    unicodeAlphanumericPattern,
+} from './patterns'
+
+export const patterns = {
+    key: keyPattern,
+    keySeparation: keySeparationPattern,
+    unicodeLetter: unicodeLetterPattern,
+    unicodeNumber: unicodeNumberPattern,
+    unicodeAlphanumeric: unicodeAlphanumericPattern,
 }

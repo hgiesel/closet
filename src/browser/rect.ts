@@ -8,6 +8,7 @@ import { SVG, Rect } from './svgClasses'
 
 import { appendStyleTag, getImages, imageLoadCallback, svgKeyword, svgCss } from './utils'
 
+
 export const rectKeyword = 'occlusionRenderRect'
 
 const renderRects = <T extends Record<string, unknown>>(

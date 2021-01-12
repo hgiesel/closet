@@ -2,6 +2,7 @@ import { Rect } from './svgClasses'
 import { getOffsets } from './utils'
 import type { Reverser } from './scaleZoom'
 
+
 export const onMouseMoveResize = (
     reverser: Reverser,
     currentShape: Rect,

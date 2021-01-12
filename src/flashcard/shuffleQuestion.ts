@@ -7,7 +7,7 @@ import { listStylize, listStylizeMaybe } from '../styleList'
 import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './flashcardTemplate'
 
 import { Stylizer } from '../stylizer'
-import { acrossTag } from '../sequencer'
+import { acrossTag } from '../sequencers'
 import { topUp } from '../sortInStrategies'
 
 const justValues = <T extends Record<string, unknown>>(tag: TagNode, _internals: Internals<T>) => tag.values

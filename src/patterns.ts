@@ -1,5 +1,5 @@
-export { keyPattern as key } from '../template/parser/tokenizer'
-export { keySeparationPattern as keySeparation } from '../template/parser/tagBuilder'
+export { keyPattern as key } from './template/parser/tokenizer'
+export { keySeparationPattern as keySeparation } from './template/parser/tagBuilder'
 
 // from http://xregexp.com/v/3.2.0/xregexp-all.js
 /* The MIT License

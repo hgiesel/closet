@@ -4,6 +4,7 @@ import type { CardPreset } from './flashcardTemplate'
 
 import { constantGet } from '../recipes/preferenceStore'
 
+
 const constantFalse = constantGet(false)
 const constantZero = constantGet(0)
 

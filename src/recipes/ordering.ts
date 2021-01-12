@@ -2,7 +2,7 @@ import type { TagNode, Registrar, Internals } from '../types'
 
 import { sortWithIndices } from '../utils'
 import { topUp } from '../sortInStrategies'
-import { TagSelector } from '../utils'
+import { TagSelector } from '../template'
 
 
 const adjustOptions = {

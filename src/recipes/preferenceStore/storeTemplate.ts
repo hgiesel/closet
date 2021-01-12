@@ -1,6 +1,6 @@
 import type { TagNode, Internals } from '../../types'
 
-import { TagSelector } from '../../utils'
+import { TagSelector } from '../../template/'
 
 
 export const defaultSeparator = { sep: ';' }

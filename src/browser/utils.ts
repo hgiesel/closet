@@ -1,5 +1,11 @@
-export { appendStyleTag } from '../../utils/browser'
-import { keySeparation } from '../../utils/patterns'
+import { keySeparation } from '../patterns'
+
+export const appendStyleTag = (input: string): void => {
+    const styleSheet = document.createElement('style')
+    styleSheet.type = 'text/css'
+    styleSheet.innerHTML = input
+    document.head.appendChild(styleSheet)
+}
 
 const imageSrcPattern = /<img[^>]*?src="(.+?)"[^>]*>/g
 export const getImages = (txt: string) => {

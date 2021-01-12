@@ -12,12 +12,21 @@ export interface FlashcardRecipes {
 export * as deciders from './deciders'
 export { FlashcardBehavior as behaviors } from './flashcardTemplate'
 
-export { clozeRecipes as cloze } from './clozes'
-export { multipleChoiceRecipes as multipleChoice } from './multipleChoice'
-export { specRecipes as specification } from './spec'
+import { clozeRecipes as cloze } from './clozes'
+import { multipleChoiceRecipes as multipleChoice } from './multipleChoice'
+import { specRecipes as specification } from './spec'
 
-export {
+import {
     mingleRecipes as mingle,
     sortRecipes as sort,
     jumbleRecipes as jumble,
 } from './shuffleQuestion'
+
+export const recipes = {
+    cloze,
+    multipleChoice,
+    specification,
+    mingle,
+    sort,
+    jumble,
+}

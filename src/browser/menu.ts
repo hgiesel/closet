@@ -1,6 +1,7 @@
 import type { MenuItem } from './menuConstruction'
 import { constructMenu } from './menuConstruction'
 
+
 export const menuCss = `
 :root {
   --cm-niceblue: #3f8cf1;

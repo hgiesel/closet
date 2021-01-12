@@ -1,7 +1,7 @@
 import type { TagNode, Registrar, Internals, Eval } from '../types'
 
 import { Stylizer } from '../stylizer'
-import { acrossTag, withinTag } from '../sequencer'
+import { acrossTag, withinTag } from '../sequencers'
 import { topUp } from '../sortInStrategies'
 
 

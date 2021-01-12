@@ -1,6 +1,6 @@
 import type { TagNode, Internals } from '../../types'
 
-import { Storage } from '../../../filterManager/storage'
+import { Storage } from '../../filterManager/storage'
 
 
 export class SharedStore<T> extends Storage<T> {

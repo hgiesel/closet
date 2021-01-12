@@ -1,4 +1,4 @@
-import type { Delimiters } from '../../template/delimiters'
+import type { Delimiters } from '../template/delimiters'
 
 import { getHighestNum } from './utils'
 

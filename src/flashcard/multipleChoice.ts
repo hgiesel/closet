@@ -4,7 +4,7 @@ import type { StyleList } from '../styleList'
 import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'
 
 import { Stylizer } from '../stylizer'
-import { acrossTag } from '../sequencer'
+import { acrossTag } from '../sequencers'
 import { listStylize, listStylizeMaybe } from '../styleList'
 import { topUp } from '../sortInStrategies'
 import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './flashcardTemplate'

@@ -1,5 +1,6 @@
 import type { Registrar } from '../../types'
 
+
 import {
     PreferenceStore,
     storeTemplate,

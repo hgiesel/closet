@@ -68,11 +68,14 @@ def update_closet() -> None:
     # force refresh
     if DEBUG:
         print("Will force-refresh current Closet JS and CSS")
-        remove(current_js_file)
-        encountered_js = False
 
-        remove(current_css_file)
-        encountered_css = False
+        if encountered_js:
+            remove(current_js_file)
+            encountered_js = False
+
+        if encountered_css:
+            remove(current_css_file)
+            encountered_css = False
 
     if not encountered_js:
         mw.col.media.write_data(current_js_file, closet_js.encode())

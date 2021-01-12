@@ -6,6 +6,9 @@ from importlib import import_module
 from aqt import mw
 
 
+# will be changed to false before zipping
+DEBUG = True
+
 AcceptBehaviors = Literal["copy", "autopaste"]
 
 

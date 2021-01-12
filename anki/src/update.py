@@ -10,7 +10,7 @@ from aqt import mw
 from anki.models import NoteType
 
 from .version import version
-from .utils import closet_version_per_model
+from .utils import closet_version_per_model, DEBUG
 
 
 def get_source(source_name: str) -> Callable[[], str]:
@@ -62,8 +62,20 @@ def update_closet() -> None:
         elif match_version not in active_closets or match_ending not in ["js", "css"]:
             remove(file)
 
+    current_js_file = f"__closet-{version}.js"
+    current_css_file = f"__closet-{version}.css"
+
+    # force refresh
+    if DEBUG:
+        print("Will force-refresh current Closet JS and CSS")
+        remove(current_js_file)
+        encountered_js = False
+
+        remove(current_css_file)
+        encountered_css = False
+
     if not encountered_js:
-        mw.col.media.write_data(f"__closet-{version}.js", closet_js.encode())
+        mw.col.media.write_data(current_js_file, closet_js.encode())
 
     if not encountered_css:
-        mw.col.media.write_data(f"__closet-{version}.css", closet_css.encode())
+        mw.col.media.write_data(current_css_file, closet_css.encode())

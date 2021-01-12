@@ -1,4 +1,4 @@
-import type { TagNode, Recipe, Eval, Internals, InactiveBehavior, WeakFilter, WeakSeparator } from '../types'
+import type { TagNode, Recipe, Eval, Internals, InactiveBehavior, WeakFilter } from '../types'
 import type { SortInStrategy } from '../sortInStrategies'
 import type { StyleList } from '../styleList'
 import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'

@@ -1,4 +1,4 @@
-import type { Registrar } from '../types'
+import type { Registrar } from '../../types'
 
 import {
     PreferenceStore,

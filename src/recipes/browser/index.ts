@@ -1,15 +1,16 @@
-import type { Recipes } from '..'
-
 import { appendStyleTag } from './utils'
 import { occlusionMakerRecipe } from './occlusionEditor'
 import { rectRecipes } from './rect'
 
-const recipes: Recipes = {
+
+const recipes = {
     occlusionEditor: occlusionMakerRecipe,
     rect: rectRecipes,
 }
 
-export const browser = {
+const browser = {
     appendStyleTag: appendStyleTag,
     recipes: recipes,
 }
+
+export default browser

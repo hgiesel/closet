@@ -1,12 +1,12 @@
-import type { Registrar, TagNode, Internals, Eval } from '../types'
-import type { CardPreset } from '../flashcard/flashcardTemplate'
+import type { Registrar, TagNode, Internals, Eval } from '../../types'
+import type { CardPreset } from '../../flashcard/flashcardTemplate'
 import type { ListStore } from './listStore'
 
 import {
     numberGenerator,
     intAlgorithm,
     intStop,
-} from '../generator'
+} from '../../generator'
 
 import {
     listStoreTemplate,

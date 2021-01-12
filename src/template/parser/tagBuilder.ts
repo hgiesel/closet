@@ -1,5 +1,5 @@
 import type { ASTNode } from '../nodes'
-import type { Delimiters } from './tokenizer/delimiters'
+import type { Delimiters } from '../delimiters'
 
 import { TagNode } from '../nodes'
 

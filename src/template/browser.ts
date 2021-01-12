@@ -1,8 +1,8 @@
-import type { TagRenderer } from '../template'
-import type { ASTNode } from '../template/nodes'
-import type { Delimiters } from '../template/parser/tokenizer/delimiters'
+import type { TagRenderer } from './template'
+import type { ASTNode } from './nodes'
+import type { Delimiters } from './delimiters'
 
-import { Template } from '../template'
+import { Template } from './template'
 
 
 // negative result implies invalid idx
@@ -314,6 +314,7 @@ export class BrowserTemplate extends Template {
 }
 
 const delayKeyword = 'closet-delay'
+
 export const cleanup = (): void => {
     for (const element of Array.from(document.getElementsByClassName(delayKeyword))) {
         (element as HTMLElement).style.visibility = 'visible'

@@ -1,8 +1,8 @@
+import type { StoreGetter } from '../recipes/preferenceStore'
 import type { TagNode, Internals } from '../types'
-import type { StoreGetter } from '../preferenceStore'
 import type { CardPreset, SidePreset } from './flashcardTemplate'
 
-import { constantGet } from '../preferenceStore'
+import { constantGet } from '../recipes/preferenceStore'
 
 export const isActiveWithinRange = (cardNumber: number, num: number, bottomRange: number, topRange: number): boolean => {
     return cardNumber - bottomRange <= num && num <= cardNumber + topRange

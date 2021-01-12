@@ -1,4 +1,4 @@
-import type { Registrar, TagNode, Internals } from './types'
+import type { Registrar, TagNode, Internals } from '../types'
 
 export const debugRecipe = () => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const pathFilter = (_t: TagNode, { path }: Internals<T>) => path.join(':')
@@ -26,3 +26,9 @@ export const debugRecipe = () => <T extends Record<string, unknown>>(registrar: 
         return String(memory.fold(memoryTestKey, (v: number) => ++v, 0))
     }))
 }
+
+const debug = {
+    debug: debugRecipe,
+}
+
+export default debug

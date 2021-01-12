@@ -1,6 +1,6 @@
 @{%
 import { tagSelectorTokenizer } from './tokenizer'
-import { keySeparationPattern } from '../template/parser/tagBuilder'
+import { keySeparationPattern } from '../parser/tagBuilder'
 %}
 
 @preprocessor typescript

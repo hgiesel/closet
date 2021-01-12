@@ -2,10 +2,7 @@ import type { Filterable } from '../filterManager/filters'
 import type { Separator, WeakSeparator } from './separator'
 import type { Parser } from './parser'
 import type { TagAccessor, TagPath, RoundInfo } from './types'
-
-import type {
-    Delimiters,
-} from './parser/tokenizer/delimiters'
+import type { Delimiters } from './delimiters'
 
 import { splitValues, weakSeparatorToSeparator } from './separator'
 import { Status } from './types'

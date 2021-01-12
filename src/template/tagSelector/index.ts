@@ -1,7 +1,7 @@
 import { Grammar, Parser } from 'nearley'
 import grammar from './grammar'
 
-import { keySeparationPattern } from '../template/parser/tagBuilder'
+import { keySeparationPattern } from '../parser/tagBuilder'
 
 
 type TagPredicate = (key: string, num: number | null | undefined, occur: number | null) => boolean

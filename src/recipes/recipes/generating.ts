@@ -1,5 +1,5 @@
-import type { Registrar, TagNode, Internals } from './types'
-import type { NumberGenAlgorithm } from './generator'
+import type { Registrar, TagNode, Internals } from '../types'
+import type { NumberGenAlgorithm } from '../generator'
 
 import {
     numberGenerator,
@@ -7,7 +7,7 @@ import {
     intOutput,
     realAlgorithm,
     realOutput,
-} from './generator'
+} from '../generator'
 
 
 const generateTemplate = (

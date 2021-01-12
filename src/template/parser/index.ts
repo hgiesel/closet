@@ -1,6 +1,6 @@
+import type { Delimiters } from '../delimiters'
 import type { TagBuilderSettings } from './tagBuilder'
 import type { ASTNode } from '../nodes'
-import type { Delimiters } from './tokenizer/delimiters'
 import type { NearleyLexer } from './grammar'
 import type { Lexer } from 'moo'
 
@@ -8,10 +8,10 @@ import { Parser as NearleyParser, Grammar } from 'nearley'
 import makeGrammar from './grammar'
 
 import { TextNode, DocSeparatorNode } from '../nodes'
+import { defaultDelimiters } from '../delimiters'
 import { intersperse2d } from '../utils'
 import { tagBuilder } from './tagBuilder'
 import { makeLexer } from './tokenizer'
-import { defaultDelimiters } from './tokenizer/delimiters'
 
 const coreParse = (text: string, grammar: Grammar): ASTNode[][] => {
     const parser = new NearleyParser(grammar)

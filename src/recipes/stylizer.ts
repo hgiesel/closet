@@ -50,3 +50,5 @@ export class Stylizer {
         )
     }
 }
+
+export default Stylizer

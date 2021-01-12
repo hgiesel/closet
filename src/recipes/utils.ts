@@ -2,7 +2,7 @@ export const id = <T>(v: T): T => v
 export const id2 = <T,U>(_v: U, w: T): T => w
 export const constant = <T,U>(x: T) => (_y: U) => x
 
-export { TagSelector } from '../tagSelector'
+export { TagSelector } from '../template/tagSelector'
 
 export const zeroWidthSpace = "​"
 

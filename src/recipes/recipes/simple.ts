@@ -1,4 +1,4 @@
-import type { WeakFilter, Recipe, Registrar } from './types'
+import type { WeakFilter, Recipe, Registrar } from '../types'
 
 export const simpleRecipe = <T extends Record<string, unknown>>(weakFilter: WeakFilter<T>): Recipe<T> => ({
     tagname = 's',
@@ -7,3 +7,9 @@ export const simpleRecipe = <T extends Record<string, unknown>>(weakFilter: Weak
 } = {}) => (registrar: Registrar<T>) => {
     registrar.register(tagname, weakFilter)
 }
+
+const simple = {
+    simple: simpleRecipe,
+}
+
+export default simple

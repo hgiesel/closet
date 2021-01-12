@@ -3,7 +3,7 @@ import { sum, sumFour } from './sum'
 import { product } from './product'
 import { collection } from './collection'
 
-export const wrappers = {
+const wrappers = {
     wrap,
 
     deferred: wrapWithDeferred,
@@ -15,3 +15,5 @@ export const wrappers = {
     product,
     collection,
 }
+
+export default wrappers

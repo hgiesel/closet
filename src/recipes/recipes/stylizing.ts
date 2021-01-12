@@ -1,7 +1,7 @@
-import type { TagNode, Registrar } from './types'
+import type { TagNode, Registrar } from '../types'
 
-import { Stylizer } from './stylizer'
-import { id } from './utils'
+import { Stylizer } from '../stylizer'
+import { id } from '../utils'
 
 
 const styleRecipe = <T extends Record<string, unknown>>({

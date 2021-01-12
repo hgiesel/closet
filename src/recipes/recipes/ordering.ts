@@ -1,8 +1,8 @@
-import type { TagNode, Registrar, Internals } from './types'
+import type { TagNode, Registrar, Internals } from '../types'
 
-import { sortWithIndices } from './utils'
-import { topUp } from './sortInStrategies'
-import { TagSelector } from './utils'
+import { sortWithIndices } from '../utils'
+import { topUp } from '../sortInStrategies'
+import { TagSelector } from '../utils'
 
 
 const adjustOptions = {

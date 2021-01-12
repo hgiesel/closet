@@ -11,6 +11,9 @@ import {
     jumbleRecipes,
 } from './shuffleQuestion'
 
+import * as deciders from './deciders'
+import { FlashcardBehavior } from './flashcardTemplate'
+
 
 export type { FlashcardPreset } from './flashcardTemplate'
 
@@ -20,7 +23,7 @@ export interface FlashcardRecipes {
     reveal: Recipe<FlashcardPreset>
 }
 
-const flashcard = {
+const flashcardRecipes = {
     cloze: clozeRecipes,
     multipleChoice: multipleChoiceRecipes,
     specification: specRecipes,
@@ -28,6 +31,15 @@ const flashcard = {
     mingle: mingleRecipes,
     sort: sortRecipes,
     jumble: jumbleRecipes,
+}
+
+//////////////////////////////
+
+
+export const flashcard = {
+    recipes: flashcardRecipes,
+    behaviors: FlashcardBehavior,
+    deciders,
 }
 
 export default flashcard

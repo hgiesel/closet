@@ -1,7 +1,7 @@
 import type { TagNode, Internals, Registrar, Recipe, Eval, InactiveBehavior, InactiveAdapter, DataOptions, WeakFilter, RecipeOptions } from '../types'
 
 import { id, id2, constant } from '../utils'
-import { simpleRecipe } from '../simple'
+import { simpleRecipe } from '../recipes/simple'
 import { sumFour } from '../wrappers/sum'
 import { collection } from '../wrappers/collection'
 

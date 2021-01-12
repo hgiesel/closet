@@ -42,7 +42,7 @@ sed -i.bak -e "s/$old_lexer/$export_lexer/" "$template_target"
 
 ################ TAG SELECTOR
 
-tagSelector="$DIR/tagSelector/grammar"
+tagSelector="$DIR/template/tagSelector/grammar"
 tagSelector_source="${tagSelector}.ne"
 tagSelector_target="${tagSelector}.ts"
 

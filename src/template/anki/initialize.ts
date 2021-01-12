@@ -1,6 +1,6 @@
+import type { TagRenderer } from '..'
+import type { Delimiters } from '../delimiters'
 import type { MemoryMap } from './persistence'
-import type { FilterManager } from '..'
-import type { Delimiters } from '../template/parser/tokenizer/delimiters'
 
 import { BrowserTemplate, cleanup } from '../browser'
 import { persistenceInterface } from './persistence'
@@ -38,10 +38,10 @@ interface SetupOptions {
     delimiters: Delimiters,
 }
 
-const load = <T extends Record<string, unknown>>(
+const load = (
     elements: Element[],
     memoryMap: MemoryMap,
-    filterManager: FilterManager<T>,
+    filterManager: TagRenderer,
     options?: SetupOptions,
 ): number => {
     const before = window.performance.now()
@@ -57,10 +57,10 @@ const load = <T extends Record<string, unknown>>(
 
 /////////////////////////////////////// INIT
 
-type SetupOutput<T extends Record<string, unknown>> = [
+type SetupOutput = [
     Element[],
     MemoryMap,
-    FilterManager<T>,
+    TagRenderer,
     SetupOptions?,
 ]
 
@@ -68,7 +68,7 @@ type UserLogic<T extends Record<string, unknown>> = (
     closet: NodeModule,
     preset: T,
     chooseMemory: (memoryKey: string) => MemoryMap,
-) => SetupOutput<T>[]
+) => SetupOutput[]
 
 // Export for legacy support
 export const init = (
@@ -82,7 +82,7 @@ export const init = (
     const chooseMemory = persistenceInterface(side, document.getElementById('qa')?.innerHTML ?? '')
 
     return logic(closet, userPreset, chooseMemory)
-        .map((value: SetupOutput<DefaultPreset>) => load(...value))
+        .map((value: SetupOutput) => load(...value))
 }
 
 /////////////////////////////////////// INITIALIZE

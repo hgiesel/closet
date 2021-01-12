@@ -1,8 +1,8 @@
-import type { TagNode, Registrar, Internals, Eval } from './types'
+import type { TagNode, Registrar, Internals, Eval } from '../types'
 
-import { Stylizer } from './stylizer'
-import { acrossTag, withinTag } from './sequencer'
-import { topUp } from './sortInStrategies'
+import { Stylizer } from '../stylizer'
+import { acrossTag, withinTag } from '../sequencer'
+import { topUp } from '../sortInStrategies'
 
 
 const shufflingRecipe = ({

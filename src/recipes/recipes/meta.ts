@@ -1,4 +1,4 @@
-import type { Registrar, TagNode, WeakFilterResult } from './types'
+import type { Registrar, TagNode, WeakFilterResult } from '../types'
 
 const paramPattern = /%(.)/gu
 const defOptions = { separators: [{ sep: '::', max: 2 }], capture: true }
@@ -29,7 +29,7 @@ const matcher = (tag: TagNode) => (match: string, p1: string) => {
     }
 }
 
-export const defRecipe = (options: {
+const defRecipe = (options: {
     tagname?: string,
 } = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const {
@@ -62,3 +62,9 @@ export const defRecipe = (options: {
 
     registrar.register(tagname, defFilter, defOptions)
 }
+
+const meta = {
+    define: defRecipe,
+}
+
+export default meta

@@ -1,4 +1,4 @@
-import type { Delimiters } from './delimiters'
+import type { Delimiters } from '../delimiters'
 import type { Lexer } from 'moo'
 
 import { states } from 'moo'

@@ -1,4 +1,4 @@
-import { TagSelector } from '../../../src/tagSelector'
+import { TagSelector } from '../../../src/template/tagSelector'
 
 describe('parseTagSelector', () => {
     describe('catch-all patterns', () => {

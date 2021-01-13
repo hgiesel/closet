@@ -1,5 +1,6 @@
 import type { Stylizer, Eval, TagNode, Internals, WeakFilter } from './types'
 
+
 const transpose = <T>(array: (T | T[])[]): T[][] => Array.isArray(array[0])
     ? array[0].map((_, index) => array.map((value: any /* T[] */) => value[index]))
     : [array]

@@ -48,3 +48,5 @@ export type InactiveAdapter<T extends Record<string, unknown>> = (behavior: Inac
 export interface RecipeOptions {
     [key: string]: any
 }
+
+export type Un = Record<string, unknown>

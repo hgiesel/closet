@@ -1,0 +1,41 @@
+@mixin clozes-ellipsis {
+    &::before {
+        content: '...';
+    }
+}
+
+@mixin clozes {
+    $denim-blue: #1560bd;
+
+    .closet-cloze {
+        &::before {
+            content: '[';
+        }
+
+        &::after {
+            content: ']';
+        }
+
+        &.is-active {
+            color: $denim-blue;
+        }
+
+        &.is-active.is-back {
+            &::before {
+                content: normal;
+            }
+
+            &::after {
+                content: normal;
+            }
+        }
+    }
+
+    .closet-cloze__hint:empty {
+        @include clozes-ellipsis;
+    }
+
+    .closet-cloze__ellipsis {
+        @include clozes-ellipsis;
+    }
+}

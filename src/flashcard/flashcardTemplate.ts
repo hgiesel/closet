@@ -44,18 +44,26 @@ export const makeFlashcardTemplate = <T extends FlashcardPreset>(
     backInactiveBehavior: InactiveBehavior<T>,
 ) => (
     tagname: string,
+    // highlight it, show the question (e.g. hint for cloze; answer choices for multiple choice)
     front: WeakFilter<T>,
+    // highlight it, show the answer (e.g. unobscure occlusions)
     back: WeakFilter<T>,
+    // provide context for the rest of the question (e.g. show the answer of a cloze; unobscure occlusion)
     contexter: WeakFilter<T>,
+    // render it inactive, avoid giving away too much context for answering (e.g. an ellipsis)
     inactive: WeakFilter<T>,
     dataOptions: Partial<DataOptions> = {},
 ) => (registrar: Registrar<T>) => {
     const internalFilter = `${tagname}:internal`
 
     const flashcardRecipe = sumFour(
+        // isInactive isFront behavior
         simpleRecipe(inactiveAdapter(frontInactiveBehavior)(contexter, inactive)),
+        // isActive isFront behavior
         simpleRecipe(front),
+        // isInctive isBack behavior
         simpleRecipe(inactiveAdapter(backInactiveBehavior)(contexter, inactive)),
+        // isActive isBack behavior
         simpleRecipe(back),
         isActive,
         isBack,

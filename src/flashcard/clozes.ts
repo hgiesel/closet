@@ -1,35 +1,40 @@
-import type { TagNode, Internals, Eval, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from '../types'
+import type { Un, TagNode, Internals, Eval, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from '../types'
 import type { StyleList } from '../styleList'
 
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
 
-import { makeFlashcardTemplate, ellipsis, generateFlashcardRecipes } from './flashcardTemplate'
+import { makeFlashcardTemplate, generateFlashcardRecipes } from './flashcardTemplate'
 import { listStylize } from '../styleList'
 import { Stylizer } from '../stylizer'
+import { constant } from '../utils'
 
-const wrapWithBrackets = (v: string) => `[${v}]`
+const inactive = constant(
+    '<span class="closet-cloze is-inactive"><span class="closet-cloze__ellipsis"></span></span>'
+)
 
-const blueHighlight: Stylizer = Stylizer.make({
-    processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
+const activeFront: Stylizer = Stylizer.make({
+    processor: (s: string) => `<span class="closet-cloze is-active is-front">${s}</span>`
 })
 
-const blueWithBrackets = blueHighlight.toStylizer({
-    mapper: wrapWithBrackets,
+const activeBack = Stylizer.make({
+    processor: (s: string) => `<span class="closet-cloze is-active is-back">${s}</span>`
 })
 
-const hintEllipser = <T extends Record<string, unknown>>(
+const hintEllipser = <T extends Un>(
     tag: TagNode,
     _internals: Internals<T>,
 ) => {
-    return [tag.values[1] ?? '...']
+    return [`<span class="closet-cloze__hint">${tag.values[1] ?? ""}</span>`]
 }
 
-const firstValue = <T extends Record<string, unknown>>(tag: TagNode, { ready }: Internals<T>) => ({
+const answer = (tag: TagNode) => `<span class="closet-cloze__answer">${tag.values[0]}</span>`
+
+const answerBubbleReady = <T extends Un>(tag: TagNode, { ready }: Internals<T>) => ({
     ready: ready,
-    result: tag.values[0],
+    result: answer(tag),
 })
 
-const firstValueAsList = <T extends Record<string, unknown>>(tag: TagNode, _internals: Internals<T>) => [tag.values[0]]
+const answerAsList = (tag: TagNode) => [answer(tag)]
 
 const clozePublicApi = <T extends FlashcardPreset>(
     frontInactive: InactiveBehavior<T>,
@@ -51,13 +56,13 @@ const clozePublicApi = <T extends FlashcardPreset>(
     const {
         tagname = 'c',
 
-        inactiveEllipser = ellipsis,
+        inactiveEllipser = inactive,
 
-        frontStylizer = blueWithBrackets,
+        frontStylizer = activeFront,
         frontEllipser = hintEllipser,
 
-        backStylizer = blueHighlight,
-        backEllipser = firstValueAsList,
+        backStylizer = activeBack,
+        backEllipser = answerAsList,
 
         separator = { sep: '::', max: 2 },
         flashcardTemplate = makeFlashcardTemplate(),
@@ -69,7 +74,7 @@ const clozePublicApi = <T extends FlashcardPreset>(
     const clozeSeparators = { separators: [separator] }
     const clozeRecipe = flashcardTemplate(frontInactive, backInactive)
 
-    return clozeRecipe(tagname, front, back, firstValue, inactiveEllipser, clozeSeparators)
+    return clozeRecipe(tagname, front, back, answerBubbleReady, inactiveEllipser, clozeSeparators)
 }
 
 export const clozeRecipes = generateFlashcardRecipes(clozePublicApi)

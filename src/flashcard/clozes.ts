@@ -8,19 +8,13 @@ import { listStylize } from '../styleList'
 import { Stylizer } from '../stylizer'
 import { constant } from '../utils'
 
-const inactive = constant(
-    '<span class="closet-cloze is-inactive"><span class="closet-cloze__ellipsis"></span></span>'
-)
+const inactive = constant('<span class="closet-cloze is-inactive"><span class="closet-cloze__ellipsis"></span></span>')
 
-const activeFront: Stylizer = Stylizer.make({
-    processor: (s: string) => `<span class="closet-cloze is-active is-front">${s}</span>`
-})
+const active = (side: string) => (s: string) => `<span class="closet-cloze is-active is-${side}">${s}</span>`
+const activeFront: Stylizer = Stylizer.make({ processor: active('front') })
+const activeBack = Stylizer.make({ processor: active('back') })
 
-const activeBack = Stylizer.make({
-    processor: (s: string) => `<span class="closet-cloze is-active is-back">${s}</span>`
-})
-
-const hintEllipser = <T extends Un>(
+const hint = <T extends Un>(
     tag: TagNode,
     _internals: Internals<T>,
 ) => {
@@ -59,7 +53,7 @@ const clozePublicApi = <T extends FlashcardPreset>(
         inactiveEllipser = inactive,
 
         frontStylizer = activeFront,
-        frontEllipser = hintEllipser,
+        frontEllipser = hint,
 
         backStylizer = activeBack,
         backEllipser = answerAsList,

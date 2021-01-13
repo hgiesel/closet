@@ -28,7 +28,7 @@
     "build": "run-s prepare pack",
     "build:main": "run-s compile:parser pack:main",
     "build:docs": "run-s compile:parser create-favicon pack:docs",
-    "build:anki": "run-s compile:parser compile:anki pack:anki",
+    "build:anki": "run-s compile:parser compile:anki compile:style pack:anki",
     "build:anki:dev": "run-s compile:parser compile:anki pack:anki:dev",
     "pack:watch:main": "rollup -w -c --configDev",
     "pack:watch:docs": "rollup -w -c --configDocs --configDev",

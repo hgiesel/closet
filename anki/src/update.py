@@ -56,7 +56,7 @@ def update_closet() -> None:
         if match_version == version:
             if match_ending == "js":
                 encountered_js = True
-            elif match_version == "css":
+            elif match_ending == "css":
                 encountered_css = True
 
         elif match_version not in active_closets or match_ending not in ["js", "css"]:
@@ -67,7 +67,7 @@ def update_closet() -> None:
 
     # force refresh
     if DEBUG:
-        print("Will force-refresh current Closet JS and CSS")
+        print(f"Will force-refresh current Closet JS and CSS to {version}")
 
         if encountered_js:
             remove(current_js_file)

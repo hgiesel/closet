@@ -8,6 +8,6 @@ export const versionInfo = [
 export const prereleaseInfo = [
 ]
 
-export const version = `v${versionInfo.join('.')}` + (prereleaseInfo.length > 0
+export const version = versionInfo.join('.') + (prereleaseInfo.length > 0
     ? `-${prereleaseInfo.join('.')}`
     : '')

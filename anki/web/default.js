@@ -2,16 +2,17 @@ filterManager.install(
     closet.recipes.shuffle({ tagname: 'mix' }),
     closet.recipes.order({ tagname: 'ord' }),
 
-    closet.recipes.flashcard.cloze({
+    closet.flashcard.recipes.cloze({
         tagname: 'c',
-        defaultBehavior: closet.recipes.flashcard.behaviors.Show,
+        defaultBehavior: closet.flashcard.behaviors.Show,
     }),
-    closet.recipes.flashcard.multipleChoice({
+    closet.flashcard.recipes.multipleChoice({
         tagname: 'mc',
-        defaultBehavior: closet.recipes.flashcard.behaviors.Show,
+        defaultBehavior: closet.flashcard.behaviors.Show,
     }),
-    closet.recipes.browser.rect({
+
+    closet.browser.recipes.rect({
         tagname: 'rect',
-        defaultBehavior: closet.recipes.flashcard.behaviors.Show,
+        defaultBehavior: closet.flashcard.behaviors.Show,
     }),
 )

@@ -1,4 +1,4 @@
-@use "clozes";
+@use "cloze";
 
 .android .card:not(.mathjax-rendered) {
     visibility: hidden;
@@ -17,4 +17,4 @@
     border-radius: 0.5rem;
 }
 
-@include clozes.clozes;
+@include cloze.cloze;

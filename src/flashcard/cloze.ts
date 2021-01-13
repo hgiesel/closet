@@ -22,12 +22,10 @@ const hint = <T extends Un>(
 }
 
 const answer = (tag: TagNode) => `<span class="closet-cloze__answer">${tag.values[0]}</span>`
-
 const answerBubbleReady = <T extends Un>(tag: TagNode, { ready }: Internals<T>) => ({
     ready: ready,
-    result: answer(tag),
+    result: `<span  class="closet-cloze is-inactive">${answer(tag)}</span>`,
 })
-
 const answerAsList = (tag: TagNode) => [answer(tag)]
 
 const clozePublicApi = <T extends FlashcardPreset>(

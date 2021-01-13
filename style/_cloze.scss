@@ -1,13 +1,15 @@
-@mixin clozes-ellipsis {
+@mixin cloze-ellipsis {
     &::before {
         content: '...';
     }
 }
 
-@mixin clozes {
+@mixin cloze {
     $denim-blue: #1560bd;
 
-    .closet-cloze {
+    .closet-cloze.is-active {
+        color: $denim-blue;
+
         &::before {
             content: '[';
         }
@@ -16,11 +18,8 @@
             content: ']';
         }
 
-        &.is-active {
-            color: $denim-blue;
-        }
 
-        &.is-active.is-back {
+        &.is-back {
             &::before {
                 content: normal;
             }
@@ -32,10 +31,10 @@
     }
 
     .closet-cloze__hint:empty {
-        @include clozes-ellipsis;
+        @include cloze-ellipsis;
     }
 
     .closet-cloze__ellipsis {
-        @include clozes-ellipsis;
+        @include cloze-ellipsis;
     }
 }

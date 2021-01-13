@@ -12,7 +12,7 @@ export interface FlashcardRecipes {
 export * as deciders from './deciders'
 export { FlashcardBehavior as behaviors } from './flashcardTemplate'
 
-import { clozeRecipes as cloze } from './clozes'
+import { clozeRecipes as cloze } from './cloze'
 import { multipleChoiceRecipes as multipleChoice } from './multipleChoice'
 import { specRecipes as specification } from './spec'
 

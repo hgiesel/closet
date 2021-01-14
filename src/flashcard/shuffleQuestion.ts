@@ -1,30 +1,42 @@
-import type { TagNode, Internals, Eval, WeakSeparator, Recipe, InactiveBehavior, WeakFilter } from '../types'
+import type { Un, TagNode, Internals, Eval, WeakSeparator, Recipe, InactiveBehavior, WeakFilter } from '../types'
 import type { SortInStrategy } from '../sortInStrategies'
 import type { StyleList } from '../styleList'
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
 
 import { listStylize, listStylizeMaybe } from '../styleList'
-import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './flashcardTemplate'
+import { makeFlashcardTemplate, generateFlashcardRecipes } from './flashcardTemplate'
 
 import { Stylizer } from '../stylizer'
 import { acrossTag } from '../sequencers'
 import { topUp } from '../sortInStrategies'
 
-const justValues = <T extends Record<string, unknown>>(tag: TagNode, _internals: Internals<T>) => tag.values
+const justValues = <T extends Un>(tag: TagNode, _internals: Internals<T>) => tag.values
 
-const inactive: Stylizer = Stylizer.make({
-    separator: ', ',
+const mapper = (name: string) => (s: string) => `<span class="closet-${name}__item">${s}</span>`
+const separator = (name: string) => `<span class="closet-${name}__separator"></span>`
+
+const ellipsis = (name: string) => () => `<span class="closet-${name} is-inactive"><span class="closet-${name}__ellipsis"></span></span>`
+
+const inactive = (name: string): Stylizer => Stylizer.make({
+    processor: (s: string) => `<span class="closet-${name} is-inactive">${s}</span>`,
+    mapper: mapper(name),
+    separator: separator(name),
 })
 
-const blueHighlight: Stylizer = Stylizer.make({
-    processor: v => `<span style="color: cornflowerblue;">${v}</span>`,
+const active = (name: string): Stylizer => Stylizer.make({
+    processor: (s: string) => `<span class="closet-${name} is-active">${s}</span>`,
+    mapper: mapper(name),
+    separator: separator(name),
 })
 
-const valuesInOrder = <T extends Record<string, unknown>>(tag: TagNode, _internals: Internals<T>): StyleList => tag.values ? tag.values : []
+const valuesInOrder = (tag: TagNode): StyleList => tag.values ? tag.values : []
 
-const simplyShow = <T extends Record<string, unknown>, V extends StyleList>(stylizer: Stylizer, _shuffler: Eval<T, V | void>) => listStylize(stylizer, justValues)
+const simplyShow = <T extends Un, V extends StyleList>(stylizer: Stylizer, _shuffler: Eval<T, V | void>) => (
+    listStylize(stylizer, justValues)
+)
 
 const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList >(
+    internalName: string,
     frontActive: (stylizer: Stylizer, shuffler: Eval<T, V | void>) => WeakFilter<T>,
     backActive: (stylizer: Stylizer, shuffler: Eval<T, V | void>) => WeakFilter<T>,
 ) => (
@@ -48,11 +60,11 @@ const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList
     const {
         tagname = 'shuf',
 
-        activeStylizer = blueHighlight,
-        inactiveStylizer = inactive,
+        activeStylizer = active(internalName),
+        inactiveStylizer = inactive(internalName),
 
         contexter = valuesInOrder,
-        ellipser = ellipsis,
+        ellipser = ellipsis(internalName),
 
         sequence = acrossTag,
         sortInStrategy = topUp,
@@ -74,6 +86,6 @@ const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList
     return clozeRecipe(tagname, front, back, trueContexter, ellipser, clozeSeparators)
 }
 
-export const mingleRecipes = generateFlashcardRecipes(oneSidedShufflePublicApi(listStylizeMaybe, listStylizeMaybe))
-export const sortRecipes = generateFlashcardRecipes(oneSidedShufflePublicApi(listStylizeMaybe, simplyShow))
-export const jumbleRecipes = generateFlashcardRecipes(oneSidedShufflePublicApi(simplyShow, listStylizeMaybe))
+export const mingleRecipes = generateFlashcardRecipes(oneSidedShufflePublicApi("mingle", listStylizeMaybe, listStylizeMaybe))
+export const sortRecipes = generateFlashcardRecipes(oneSidedShufflePublicApi("sort", listStylizeMaybe, simplyShow))
+export const jumbleRecipes = generateFlashcardRecipes(oneSidedShufflePublicApi("jumble", simplyShow, listStylizeMaybe))

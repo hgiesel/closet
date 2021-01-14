@@ -1,17 +1,12 @@
+@use "utils";
+
 @mixin multiple-choice {
-    .closet-multiple-choice.is-active {
-        &::before {
-            content: '( ';
-        }
-
-        &::after {
-            content: ' )';
-        }
-
+    .closet-multiple-choice {
+        @include utils.wrap('( ', ' )');
     }
 
-    .closet-multiple-choice__separator::before {
-        content: ', ';
+    .closet-multiple-choice__separator {
+        @include utils.placeholder(', ');
     }
 
     .closet-multiple-choice__option {
@@ -24,5 +19,9 @@
 
     .closet-multiple-choice__wrong {
         color: red;
+    }
+
+    .closet-multiple-choice__ellipsis {
+        @include utils.placeholder('...');
     }
 }

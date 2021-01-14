@@ -1,0 +1,19 @@
+@use "utils";
+
+@mixin shuffle-question($name) {
+    .closet-#{$name} {
+        @include utils.wrap('«', '»');
+
+        &.is-active .closet-#{$name}__item {
+            color: mediumpurple;
+        }
+    }
+
+    .closet-#{$name}__separator {
+        @include utils.placeholder(', ');
+    }
+
+    .closet-#{$name}__ellipsis {
+        @include utils.placeholder('...');
+    }
+}

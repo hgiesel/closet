@@ -1,40 +1,25 @@
-@mixin cloze-ellipsis {
-    &::before {
-        content: '...';
-    }
-}
+@use "utils";
 
 @mixin cloze {
     $denim-blue: #1560bd;
 
-    .closet-cloze.is-active {
-        color: $denim-blue;
+    .closet-cloze {
+        @include utils.wrap('[', ']');
 
-        &::before {
-            content: '[';
-        }
+        &.is-active {
+            color: $denim-blue;
 
-        &::after {
-            content: ']';
-        }
-
-
-        &.is-back {
-            &::before {
-                content: normal;
-            }
-
-            &::after {
-                content: normal;
+            &.is-back {
+                @include utils.wrap-reset;
             }
         }
     }
 
     .closet-cloze__hint:empty {
-        @include cloze-ellipsis;
+        @include utils.placeholder('...');
     }
 
     .closet-cloze__ellipsis {
-        @include cloze-ellipsis;
+        @include utils.placeholder('...');
     }
 }

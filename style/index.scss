@@ -1,5 +1,7 @@
+@use "shuffle";
 @use "cloze";
 @use "multiple-choice";
+@use "shuffle-question";
 
 .android .card:not(.mathjax-rendered) {
     visibility: hidden;
@@ -18,5 +20,10 @@
     border-radius: 0.5rem;
 }
 
+@include shuffle.shuffle;
+
 @include cloze.cloze;
 @include multiple-choice.multiple-choice;
+@include shuffle-question.shuffle-question("mingle");
+@include shuffle-question.shuffle-question("jumble");
+@include shuffle-question.shuffle-question("sort");

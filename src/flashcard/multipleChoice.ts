@@ -12,7 +12,7 @@ import { makeFlashcardTemplate, generateFlashcardRecipes } from './flashcardTemp
 
 type ValuePlusCategory = [string, number]
 
-const ellipsis = constant('<span class="closet-multiple-choice is-inactive"><span class="closet-cloze__ellipsis"></span></span>')
+const ellipsis = constant('<span class="closet-multiple-choice is-inactive"><span class="closet-multiple-choice__ellipsis"></span></span>')
 
 const valuesWithIndex = (tag: TagNode): ValuePlusCategory[] => tag.values
     ? tag.values.flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))

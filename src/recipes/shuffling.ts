@@ -5,9 +5,15 @@ import { acrossTag, withinTag } from '../sequencers'
 import { topUp } from '../sortInStrategies'
 
 
+const defaultStylizer = Stylizer.make({
+    processor: (s: string) => `<span class="closet-shuffle">${s}</span>`,
+    mapper: (s: string) => `<span class="closet-shuffle__item">${s}</span>`,
+    separator: '<span class="closet-shuffle__separator"></span>',
+})
+
 export const shufflingRecipe = ({
     tagname = 'mix',
-    stylizer = Stylizer.make(),
+    stylizer = defaultStylizer,
     sortInStrategy = topUp,
 } = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const shuffleFilter = (tag: TagNode, internals: Internals<T>) => {

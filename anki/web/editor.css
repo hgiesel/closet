@@ -4,6 +4,10 @@ img {
 }
 
 .closet-select-mode {
-  /* sligthly below top */
+  /* slightly below top */
   vertical-align: 20%;
+  /* night-mode fix */
+  background-color: var(--frame-bg);
+  border-color: var(--border);
+  color: var(--text-fg);
 }

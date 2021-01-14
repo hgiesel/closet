@@ -31,7 +31,7 @@ class TagBuilder {
         ]
     }
 
-    build(fullKey: string, innerNodes: ASTNode[]): TagNode {
+    build(fullKey: string, innerNodes: ASTNode[], abbreviated: boolean): TagNode {
         const match = fullKey.match(keySeparationPattern)
 
         if (!match) {
@@ -46,7 +46,7 @@ class TagBuilder {
             occur,
         ] = this.increment(fullKey, key)
 
-        return new TagNode(fullKey, key, num, fullOccur, occur, this.delimiters as Delimiters, innerNodes)
+        return new TagNode(fullKey, key, num, fullOccur, occur, abbreviated, this.delimiters as Delimiters, innerNodes)
     }
 
     push(settings: TagBuilderSettings, delimiters: Delimiters): void {

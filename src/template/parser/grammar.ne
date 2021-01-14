@@ -17,10 +17,14 @@ node -> text {% id %}
 
 text -> %text {% ([match]) => new TextNode(match.value) %}
 
-tag -> %tagopen %keyname inner %tagclose {% ([,name,nodes]) => tagBuilder.build(
+tag -> %tagopen %keyname inner %tagclose {% ([,name,[nodes,abbrev]]) => tagBuilder.build(
     name.value,
     nodes,
+    abbrev,
 )
 %}
 
-inner -> (%sep content):? {% ([match]) => match ? match[1] : [] %}
+inner -> (%sep content):? {% ([match]) => match
+    ? [match[1], false]
+    : [[], true]
+%}

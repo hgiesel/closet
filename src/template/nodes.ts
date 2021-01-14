@@ -22,6 +22,8 @@ export class TagNode implements ASTNode, Filterable {
     readonly num: number | null
     readonly fullOccur: number
     readonly occur: number
+    readonly abbreviated: boolean
+
     readonly delimiters: Delimiters
     readonly innerNodes: ASTNode[]
 
@@ -33,6 +35,7 @@ export class TagNode implements ASTNode, Filterable {
         num: number | null,
         fullOccur: number,
         occur: number,
+        abbreviated: boolean,
         delimiters: Delimiters,
         innerNodes: ASTNode[],
     ) {
@@ -42,6 +45,7 @@ export class TagNode implements ASTNode, Filterable {
         this.fullOccur = fullOccur
         this.occur = occur
         this.delimiters = delimiters
+        this.abbreviated = abbreviated
 
         this.innerNodes = innerNodes
     }
@@ -67,7 +71,9 @@ export class TagNode implements ASTNode, Filterable {
     }
 
     toString(): string {
-        return `${this.delimiters.open}${this.fullKey}${this.delimiters.sep}${this.valuesText}${this.delimiters.close}`
+        return this.abbreviated
+            ? `${this.delimiters.open}${this.fullKey}${this.delimiters.close}`
+            : `${this.delimiters.open}${this.fullKey}${this.delimiters.sep}${this.valuesText}${this.delimiters.close}`
     }
 
     isReady(): boolean {

@@ -6,4 +6,7 @@ img {
 .closet-select-mode {
   /* sligthly below top */
   vertical-align: 20%;
+  background-color: var(--frame-bg);
+  border-color: var(--border);
+  color: var(--text-fg);
 }

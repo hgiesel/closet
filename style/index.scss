@@ -1,4 +1,5 @@
 @use "cloze";
+@use "multiple-choice";
 
 .android .card:not(.mathjax-rendered) {
     visibility: hidden;
@@ -18,3 +19,4 @@
 }
 
 @include cloze.cloze;
+@include multiple-choice.multiple-choice;

@@ -15,7 +15,7 @@ export class Stylizer {
     }
 
     static make({
-        separator = ', ',
+        separator = '',
         mapper = id as StringPlusFunction,
         processor = id as StringFunction,
     } = {}) {

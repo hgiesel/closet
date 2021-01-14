@@ -1,0 +1,28 @@
+@mixin multiple-choice {
+    .closet-multiple-choice.is-active {
+        &::before {
+            content: '( ';
+        }
+
+        &::after {
+            content: ' )';
+        }
+
+    }
+
+    .closet-multiple-choice__separator::before {
+        content: ', ';
+    }
+
+    .closet-multiple-choice__option {
+        color: orange;
+    }
+
+    .closet-multiple-choice__correct {
+        color: lime;
+    }
+
+    .closet-multiple-choice__wrong {
+        color: red;
+    }
+}

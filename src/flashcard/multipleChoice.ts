@@ -1,38 +1,50 @@
-import type { TagNode, Recipe, Eval, Internals, InactiveBehavior, WeakFilter } from '../types'
+import type { TagNode, Recipe, Eval, InactiveBehavior, WeakFilter } from '../types'
 import type { SortInStrategy } from '../sortInStrategies'
 import type { StyleList } from '../styleList'
 import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'
 
+import { constant } from '../utils'
 import { Stylizer } from '../stylizer'
 import { acrossTag } from '../sequencers'
 import { listStylize, listStylizeMaybe } from '../styleList'
 import { topUp } from '../sortInStrategies'
-import { makeFlashcardTemplate, generateFlashcardRecipes, ellipsis } from './flashcardTemplate'
+import { makeFlashcardTemplate, generateFlashcardRecipes } from './flashcardTemplate'
 
 type ValuePlusCategory = [string, number]
 
-const valuesWithIndex = <T extends Record<string, unknown>>(
-    tag: TagNode,
-    _internals: Internals<T>,
-): ValuePlusCategory[] => tag.values
+const ellipsis = constant('<span class="closet-multiple-choice is-inactive"><span class="closet-cloze__ellipsis"></span></span>')
+
+const valuesWithIndex = (tag: TagNode): ValuePlusCategory[] => tag.values
     ? tag.values.flatMap((v: string[], i: number) => v.map((w: string) => [w, i]))
     : []
 
-const firstCategory = <T extends Record<string, unknown>>(tag: TagNode, _internals: Internals<T>): string[] => tag.values[0]
+const firstCategory = (tag: TagNode): string[] => tag.values[0]
 
-const inactive = Stylizer.make()
+const separator = `<span class="closet-multiple-choice__separator"></span>`
 
-const orangeCommaSeparated = inactive.toStylizer({
-    processor: (v: string) => `( ${v} )`,
-    mapper: (v: string) => {
-        return `<span style="color: orange;">${v}</span>`
-    },
+const inactive = Stylizer.make({
+    processor: (s: string) => `<span class="closet-multiple-choice is-inactive">${s}</span>`,
+    mapper: (s: string) => (
+        `<span class="closet-multiple-choice__item">${s}</span>`
+    ),
+    separator,
 })
 
-const greenAndRed = orangeCommaSeparated.toStylizer({
-    mapper: (v: string, _i, t: number) => {
-        return `<span style="color: ${t === 0 ? 'lime' : 'red'};">${v}</span>`
-    },
+const active = (side: string) => (s: string) => `<span class="closet-multiple-choice is-active is-${side}">${s}</span>`
+const activeFront = Stylizer.make({
+    processor: active('front'),
+    mapper: (s: string) => (
+        `<span class="closet-multiple-choice__item closet-multiple-choice__option">${s}</span>`
+    ),
+    separator,
+})
+
+const activeBack = Stylizer.make({
+    processor: active('back'),
+    mapper: (v: string, _i, t: number) => (
+        `<span class="closet-multiple-choice__item closet-multiple-choice__${t === 0 ? 'correct' : 'wrong'}">${v}</span>`
+    ),
+    separator,
 })
 
 const multipleChoicePublicApi = <T extends FlashcardPreset>(
@@ -60,8 +72,8 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
     const {
         tagname = 'mc',
 
-        frontStylizer = orangeCommaSeparated,
-        backStylizer = greenAndRed,
+        frontStylizer = activeFront,
+        backStylizer = activeBack,
 
         inactiveStylizer = inactive,
         contexter = firstCategory,

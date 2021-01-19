@@ -64,7 +64,7 @@ var EditorCloset = {
 
             const newIndices = [...new Set(shapes
                 .map(shape => shape.labelText)
-                .map(label => label.match(closet.utils.patterns.keySeparation))
+                .map(label => label.match(closet.patterns.keySeparation))
                 .filter(match => match)
                 .map(match => Number(match[2]))
                 .filter(maybeNumber => !Number.isNaN(maybeNumber))
@@ -100,7 +100,7 @@ var EditorCloset = {
         const existingShapesFilter = () => (shapeDefs, draw) => {
             const indices = [...new Set(shapeDefs
                 .map(shape => shape[2])
-                .map(label => label.match(closet.utils.patterns.keySeparation))
+                .map(label => label.match(closet.patterns.keySeparation))
                 .filter(match => match)
                 .map(match => Number(match[2]))
                 .filter(maybeNumber => !Number.isNaN(maybeNumber))
@@ -112,7 +112,7 @@ var EditorCloset = {
             return shapeDefs
         }
 
-        const editorOcclusion = closet.recipes.browser.occlusionEditor({
+        const editorOcclusion = closet.browser.recipes.occlusionEditor({
             maxOcclusions,
             acceptHandler,
             setupOcclusionMenu,

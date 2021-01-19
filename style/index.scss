@@ -2,6 +2,7 @@
 @use "cloze";
 @use "multiple-choice";
 @use "shuffle-question";
+@use "rect";
 
 .android .card:not(.mathjax-rendered) {
     visibility: hidden;
@@ -27,3 +28,5 @@
 @include shuffle-question.shuffle-question("mingle");
 @include shuffle-question.shuffle-question("jumble");
 @include shuffle-question.shuffle-question("sort");
+
+@include rect.rect;

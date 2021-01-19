@@ -8,7 +8,6 @@ import { SVG, Rect } from './svgClasses'
 
 import { appendStyleTag, getImages, imageLoadCallback, svgKeyword, svgCss } from './utils'
 
-
 export const rectKeyword = 'occlusionRenderRect'
 
 const renderRects = <T extends Record<string, unknown>>(
@@ -80,6 +79,20 @@ const makeRects = (
 
     return { ready: true }
 }
+
+const props: RectProperties = {
+    classes: 'closet-rect__rect',
+    labelClasses: 'closet-rect__label',
+}
+
+const ellipseProps: RectProperties = {
+    classes: 'closet-rect__ellipsis',
+    labelClasses: 'closet-rect__ellipsis',
+}
+
+const classesForFront = 'is-active is-front'
+const classesForBack = 'is-active is-back'
+const classesForInactive = 'is-inactive'
 
 const rectPublicApi = <T extends FlashcardPreset>(
     frontInactive: InactiveBehavior<T>,

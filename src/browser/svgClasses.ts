@@ -5,7 +5,7 @@ import { getHighestNum } from './utils'
 
 const ns = 'http://www.w3.org/2000/svg'
 
-export type RectProperty = 'rx' | 'ry' | 'fill' | 'fillOpacity' | 'stroke' | 'strokeOpacity' | 'strokeWidth'
+export type RectProperty = 'classes' | 'labelClasses' | 'containerClasses' | 'rx' | 'ry' | 'fill' | 'fillOpacity' | 'stroke' | 'strokeOpacity' | 'strokeWidth'
 export type RectProperties = Partial<Record<RectProperty, string>>
 export type RectDefinition = ['rect', boolean | undefined, string, number, number, number, number, RectProperties]
 
@@ -189,8 +189,8 @@ export class Rect implements Shape {
 
         container.appendChild(rect)
         container.appendChild(label)
-        container.classList.add('closet-occlusion-container__shape')
-        container.classList.add('closet-occlusion-container__rect')
+        container.classList.add('closet-rect')
+        container.classList.add('closet-shape')
 
         container.tabIndex = -1
 
@@ -370,6 +370,11 @@ export class Rect implements Shape {
         this.fontSizeUpdate()
     }
 
+    /////////////////// on container
+
+    set containerClasses(txt: string) { txt.split(" ").forEach((cls: string) => this.container.classList.add(cls)) }
+    get containerClasses(): string { return Array.from(this.container.className).join(" ") }
+
     /////////////////// on rect
 
     set rx(i: number) { this.rect.setAttributeNS(null, 'rx', String(i)) }
@@ -384,7 +389,7 @@ export class Rect implements Shape {
     set fillOpacity(i: number) { this.rect.setAttributeNS(null, 'fill-opacity', String(i)) }
     get fillOpacity(): number { return Number(this.rect.getAttributeNS(null, 'fill-opacity')) }
 
-    set stroke(color: string) { this.rect.setAttributeNS(null, 'stroke', color) } 
+    set stroke(color: string) { this.rect.setAttributeNS(null, 'stroke', color) }
     get stroke(): string { return this.rect.getAttributeNS(null, 'stroke') ?? '' }
 
     set strokeOpacity(i: number) { this.rect.setAttributeNS(null, 'stroke-opacity', String(i)) }
@@ -393,6 +398,9 @@ export class Rect implements Shape {
     set strokeWidth(i: number) { this.rect.setAttributeNS(null, 'stroke-width', String(i)) }
     get strokeWidth(): number { return Number(this.rect.getAttributeNS(null, 'stroke-width')) }
 
+    set classes(txt: string) { txt.split(" ").forEach((cls: string) => this.rect.classList.add(cls)) }
+    get classes(): string { return Array.from(this.rect.classList).join(" ") }
+
     /////////////////// on label
 
     set labelText(txt: string) { this.label.innerHTML = txt }
@@ -400,6 +408,9 @@ export class Rect implements Shape {
 
     set fontSize(i: number) { this.label.setAttributeNS(null, 'font-size', String(i)) }
     get fontSize(): number { return Number(this.label.getAttributeNS(null, 'font-size')) }
+
+    set labelClasses(txt: string) { txt.split(" ").forEach((cls: string) => this.label.classList.add(cls)) }
+    get labelClasses(): string { return Array.from(this.label.classList).join(" ") }
 
     getLabel(): string {
         return this.labelText

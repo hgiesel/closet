@@ -106,7 +106,7 @@ img {
   top: 0;
 }
 
-.closet-occlusion-container__shape > text {
+.closet-shape > text {
   text-anchor: middle;
   dominant-baseline: central;
   pointer-events: none;

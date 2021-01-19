@@ -76,7 +76,6 @@ var EditorCloset = {
                 .map(shape => shape.toText(internals.template.parser.delimiters))
                 .join("\n")
 
-
             pycmd(`occlusionText:${shapeText}`)
 
             EditorCloset.clearOcclusionMode()

@@ -15,7 +15,7 @@ def make_insertion_js(field_index: int, text: str) -> str:
     escaped = escape_js_text(text)
 
     cmd = (
-        f'pycmd("key:{field_index}:${{currentNoteId}}:{escaped}"); '
+        f'pycmd(`key:{field_index}:${{currentNoteId}}:{escaped}`); '
         f'document.querySelector("#f{field_index}").innerHTML = "{escaped}";'
     )
     return cmd

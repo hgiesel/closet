@@ -8,10 +8,10 @@
 
         &.is-active {
             color: $denim-blue;
+        }
 
-            &.is-back {
-                @include utils.wrap-reset;
-            }
+        &.is-back, &.is-inactive {
+            @include utils.wrap-reset;
         }
     }
 

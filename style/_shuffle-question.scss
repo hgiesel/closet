@@ -7,6 +7,10 @@
         &.is-active .closet-#{$name}__item {
             color: mediumpurple;
         }
+
+        &.is-inactive {
+            @include utils.wrap-reset;
+        }
     }
 
     .closet-#{$name}__separator {

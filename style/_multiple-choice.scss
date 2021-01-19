@@ -3,6 +3,10 @@
 @mixin multiple-choice {
     .closet-multiple-choice {
         @include utils.wrap('( ', ' )');
+
+        &.is-inactive {
+            @include utils.wrap-reset;
+        }
     }
 
     .closet-multiple-choice__separator {

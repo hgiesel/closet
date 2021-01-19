@@ -64,6 +64,22 @@ const makeInteractive = (
     draw.append(newRect)
 }
 
+const initRect = (
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    labelText: string,
+) => {
+    const result = Rect.make()
+    result.pos = [x, y, width, height]
+    result.labelText = labelText
+    result.classes = "closet-rect__rect"
+    result.labelClasses = "closet-rect__label"
+
+    return result
+}
+
 const initShape = (
     draw: SVG,
     shape: ShapeDefinition,
@@ -87,10 +103,7 @@ const initShape = (
                 height,
             ] = rest
 
-            newRect = Rect.make(draw)
-            newRect.labelText = labelTxt
-            newRect.pos = [x, y, width, height]
-
+            newRect = initRect(x, y, width, height, labelTxt)
             makeInteractive(draw, newRect)
             break
 
@@ -103,12 +116,8 @@ const clickOutsideShape = (draw: SVG, event: MouseEvent) => {
     const reverser = reverseEffects(window.getComputedStyle(draw.image))
     const [downX, downY] = reverser(getOffsets(event))
 
-    const newRect = Rect.make()
     const nextNum = draw.getNextNum(event)
-
-    newRect.labelText = `rect${nextNum}`
-    newRect.pos = [downX, downY, 0, 0]
-
+    const newRect = initRect(downX, downY, 0, 0, `rect${nextNum}`)
     makeInteractive(draw, newRect)
 
     const resizer = onMouseMoveResize(reverser, newRect, true, true, true, true, downX, downY)

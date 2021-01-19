@@ -5,7 +5,17 @@ import { getHighestNum } from './utils'
 
 const ns = 'http://www.w3.org/2000/svg'
 
-export type RectProperty = 'classes' | 'labelClasses' | 'containerClasses' | 'rx' | 'ry' | 'fill' | 'fillOpacity' | 'stroke' | 'strokeOpacity' | 'strokeWidth'
+export type RectProperty = 'classes'
+    | 'labelClasses'
+    | 'containerClasses'
+    | 'rx'
+    | 'ry'
+    | 'fill'
+    | 'fillOpacity'
+    | 'stroke'
+    | 'strokeOpacity'
+    | 'strokeWidth'
+
 export type RectProperties = Partial<Record<RectProperty, string>>
 export type RectDefinition = ['rect', boolean | undefined, string, number, number, number, number, RectProperties]
 
@@ -201,14 +211,6 @@ export class Rect implements Shape {
 
         const theRect = new Rect(container, rect, label, scaleFactorX, scaleFactorY)
 
-        theRect.x = 0
-        theRect.y = 0
-        theRect.width = 0
-        theRect.height = 0
-        theRect.fill = 'moccasin'
-        theRect.stroke = 'olive'
-        theRect.strokeWidth = 2
-
         return theRect
     }
 
@@ -227,10 +229,6 @@ export class Rect implements Shape {
         )
     }
 
-    prop(attr: RectProperty, value: string) {
-        (this[attr] as any) = value
-    }
-
     remove(): void {
         this.container.remove()
     }
@@ -241,6 +239,10 @@ export class Rect implements Shape {
 
     getAnchorElement(): Element {
         return this.rect
+    }
+
+    getLabel(): string {
+        return this.labelText
     }
 
     setScaleFactors(x: number, y: number): void {
@@ -314,11 +316,10 @@ export class Rect implements Shape {
         ]
     }
     set pos([x, y, width, height]: [number, number, number, number]) {
-        this.width = width
-        this.height = height
-
         this.x = x
         this.y = y
+        this.width = width
+        this.height = height
     }
 
     get scaled(): [number, number, number, number] {
@@ -330,7 +331,7 @@ export class Rect implements Shape {
         ]
     }
 
-    /////////////////// internal functions, take care when using
+    /////////////////// internal functions, prefer using pos() / scaled()
 
     get x(): number {
         return Number(this.rect.getAttributeNS(null, 'x')) / this.scaleFactorX
@@ -368,6 +369,19 @@ export class Rect implements Shape {
         this.rect.setAttributeNS(null, 'height', stringified)
         this.label.setAttributeNS(null, 'height', stringified)
         this.fontSizeUpdate()
+    }
+
+    /////////////////// styling
+
+    props(attrs: RectProperties) {
+        for (const key in attrs) {
+            const propName = key as RectProperty
+            this.prop(propName, attrs[propName] as string)
+        }
+    }
+
+    prop(attr: RectProperty, value: string) {
+        (this[attr] as any) = value
     }
 
     /////////////////// on container
@@ -411,8 +425,4 @@ export class Rect implements Shape {
 
     set labelClasses(txt: string) { txt.split(" ").forEach((cls: string) => this.label.classList.add(cls)) }
     get labelClasses(): string { return Array.from(this.label.classList).join(" ") }
-
-    getLabel(): string {
-        return this.labelText
-    }
 }

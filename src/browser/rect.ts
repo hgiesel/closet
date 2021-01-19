@@ -108,13 +108,9 @@ const rectPublicApi = <T extends FlashcardPreset>(
 
     frontProperties?: RectProperties,
     backProperties?: RectProperties,
+    ellipseProperties?: RectProperties,
     contextProperties?: RectProperties,
 } = {}) => {
-    const hide: RectProperties = {
-        fill: 'transparent',
-        stroke: 'transparent',
-    }
-
     const {
         tagname = 'rect',
 
@@ -124,9 +120,10 @@ const rectPublicApi = <T extends FlashcardPreset>(
         separator = { sep: ',' },
         flashcardTemplate = makeFlashcardTemplate(),
 
-        frontProperties = { fill: 'salmon', stroke: 'yellow' },
-        backProperties = hide,
-        contextProperties = {},
+        frontProperties = { ...props, containerClasses: classesForFront },
+        backProperties = { ...props, containerClasses: classesForBack },
+        ellipseProperties = { ...ellipseProps, containerClasses: classesForInactive },
+        contextProperties = { ...props, containerClasses: classesForInactive }
     } = options
 
     const rectSeparators = { separators: [separator] }
@@ -134,9 +131,9 @@ const rectPublicApi = <T extends FlashcardPreset>(
 
     return rectRecipe(
         tagname,
-        (front as any)(frontProperties),
+        front(frontProperties),
         back(backProperties),
-        makeRects(hide),
+        makeRects(ellipseProperties),
         makeRects(contextProperties),
         rectSeparators,
     )

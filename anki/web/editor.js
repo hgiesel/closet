@@ -122,7 +122,7 @@ var EditorCloset = {
         const filterManager = closet.FilterManager.make()
         const target = editorOcclusion(filterManager.registrar)
 
-        filterManager.install(closet.browser.recipes.rect({ tagname: 'rect' }))
+        filterManager.install(closet.browser.recipes.rect.hide({ tagname: 'rect' }))
 
         closet.template.BrowserTemplate
             .makeFromNodes(elements)

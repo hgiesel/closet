@@ -1,4 +1,23 @@
 @use "utils";
 
 @mixin rect {
+    .closet-rect__rect {
+        fill: moccasin;
+        stroke: olive;
+        stroke-width: 2;
+
+        .is-active & {
+            fill: salmon;
+            stroke: yellow;
+        }
+    }
+
+    .closet-rect__ellipsis {
+        fill: transparent;
+        stroke: transparent;
+    }
+
+    .closet-rect__label {
+        stroke: black;
+    }
 }

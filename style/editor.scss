@@ -1,3 +1,5 @@
+@use "rect";
+
 img {
   max-width: 100% !important;
   max-height: var(--closet-max-height);
@@ -11,3 +13,5 @@ img {
   border-color: var(--border);
   color: var(--text-fg);
 }
+
+@include rect.rect;

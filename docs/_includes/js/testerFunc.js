@@ -90,7 +90,7 @@ const processTemplateText = () => {
     console.time('Render template')
 
     try {
-        const tmpl = closet.Template.make(text)
+        const tmpl = closet.template.Template.make(text)
         tmpl.render(filterManager, result => display(templateRendered, result, false))
 
         console.timeEnd('Render template')

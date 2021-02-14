@@ -1,7 +1,5 @@
 name: "Default cloze"
 code: |
-  filterManager.install(closet.recipes.cloze({
-    tagnameShow: 'c',
-    tagnameHide: 'ch',
+  filterManager.install(closet.flashcard.recipes.cloze({
     tagname: 'c',
   }))

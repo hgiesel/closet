@@ -3,6 +3,7 @@ const path = require('path')
 const sass = require('sass')
 
 const __basedir = `${__dirname}/..`
+const args = process.argv.slice(2);
 
 const renderFile = (input, output) => {
     sass.render({
@@ -23,12 +24,23 @@ const renderFile = (input, output) => {
     })
 }
 
-renderFile(
-    path.join(__basedir, 'style', 'editor.scss'),
-    `${__basedir}/anki/web/editor.css`,
-)
+switch (args[0]) {
+    case "anki":
+        renderFile(
+            path.join(__basedir, 'style', 'editor.scss'),
+            `${__basedir}/anki/web/editor.css`,
+        )
 
-renderFile(
-    path.join(__basedir, 'style', 'base.scss'),
-    `${__basedir}/anki/web/closet.css`,
-)
+        renderFile(
+            path.join(__basedir, 'style', 'base.scss'),
+            `${__basedir}/anki/web/closet.css`,
+        )
+        break
+
+    case "docs":
+        renderFile(
+            path.join(__basedir, 'style', 'base.scss'),
+            `${__basedir}/docs/assets/css/closet.css`,
+        )
+        break
+}

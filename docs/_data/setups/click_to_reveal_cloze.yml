@@ -22,7 +22,7 @@ code: |
     }
   }
 
-  const wrappedClozeShow = closet.wrappers.aftermath(closet.recipes.cloze.show, () => {
+  const wrappedCloze= closet.wrappers.aftermath(closet.flashcard.recipes.cloze, () => {
     document.querySelectorAll('.cl--obscure')
     .forEach(tag => {
       tag.addEventListener('click', removeObscure, {
@@ -44,13 +44,13 @@ code: |
   })
 
   filterManager.install(
-    wrappedClozeShow({
+    wrappedCloze({
       tagname: 'c',
       frontEllipser: obscureAndClick,
       frontStylizer: frontStylizer,
     }),
 
-    wrappedClozeShow({
+    wrappedCloze({
       tagname: 'cx',
       frontEllipser: obscureAndClickFix,
       frontStylizer: frontStylizer,

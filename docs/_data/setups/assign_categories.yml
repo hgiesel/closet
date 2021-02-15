@@ -43,18 +43,8 @@ code: |
   }
 
   filterManager.install(
-    closet.recipes.multipleChoice.show({
+    closet.flashcard.recipes.multipleChoice({
       tagname: 'mc',
-      ...assignCategorySettings,
-    }),
-
-    closet.recipes.multipleChoice.hide({
-      tagname: 'mch',
-      ...assignCategorySettings,
-    }),
-
-    closet.recipes.multipleChoice.reveal({
-      tagname: 'mcr',
       ...assignCategorySettings,
     }),
   )

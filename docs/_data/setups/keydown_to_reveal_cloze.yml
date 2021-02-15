@@ -2,7 +2,7 @@ name: Keydown to reveal clozes
 code: |
   const makeObscureOnKd = (keycode, uid) => {
     return function removeObscureOnKd(event) {
-      if (event.keyCode === keycode) {
+      if (event.code === keycode) {
         const nextTarget = document.querySelector(`.cl--obscure.cl--obscure-kd-${uid}`)
 
         if (nextTarget) {
@@ -16,7 +16,7 @@ code: |
 
   const makeObscureOnKdAll = (keycode, uid) => {
     return function removeObscureOnKdAll(event) {
-      if (event.keyCode === keycode) {
+      if (event.code === keycode) {
         const nextTargets = document.querySelectorAll(`.cl--obscure.cl--obscure-kd-${uid}`)
 
         for (const nt of nextTargets) {
@@ -28,7 +28,7 @@ code: |
     }
   }
 
-  const wrappedClozeShow = closet.wrappers.aftermath(closet.recipes.cloze.show, (e, inter) => {
+  const wrappedCloze = closet.wrappers.aftermath(closet.flashcard.recipes.cloze, (e, inter) => {
     const keyword = 'keydownToRevealObscure'
 
     if (!inter.environment.has(keyword)) {
@@ -46,8 +46,8 @@ code: |
         display: none;
       }`)
 
-      const revealOnQ = makeObscureOnKd(KeyEvent.DOM_VK_Q, '6')
-      const revealAllOnW = makeObscureOnKdAll(KeyEvent.DOM_VK_W, '5')
+      const revealOnQ = makeObscureOnKd("KeyQ", '6')
+      const revealAllOnW = makeObscureOnKdAll("KeyW", '5')
 
       document.addEventListener('keydown', revealOnQ)
       document.addEventListener('keydown', revealAllOnW)
@@ -68,13 +68,13 @@ code: |
     processor: v => `<span style="color: cornflowerblue">${v}</span>`,
   })
 
-  filterManager.install(wrappedClozeShow({
+  filterManager.install(wrappedCloze({
     tagname: 'c',
     frontEllipser: obscureAndKeydown,
     frontStylizer: frontStylizer,
   }))
 
-  filterManager.install(wrappedClozeShow({
+  filterManager.install(wrappedCloze({
     tagname: 'cx',
     frontEllipser: obscureAndKeydownFix,
     frontStylizer: frontStylizer,

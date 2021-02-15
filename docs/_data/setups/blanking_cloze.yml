@@ -13,16 +13,8 @@ code: |
   }
 
   filterManager.install(
-    closet.recipes.cloze.show({
+    closet.flashcard.recipes.cloze({
       tagname: 'c',
-      ...blankOptions,
-    }),
-    closet.recipes.cloze.hide({
-      tagname: 'ch',
-      ...blankOptions,
-    }),
-    closet.recipes.cloze.reveal({
-      tagname: 'cr',
       ...blankOptions,
     }),
   )

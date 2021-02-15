@@ -13,11 +13,11 @@ start -> content {% id %}
 
 content -> node:* {% id %}
 node -> text {% id %}
-      | tag {% id %}
+      | inlinetag {% id %}
 
 text -> %text {% ([match]) => new TextNode(match.value) %}
 
-tag -> %tagopen %keyname inner %tagclose {% ([,name,[nodes,abbrev]]) => tagBuilder.build(
+inlinetag -> %inlineopen %keyname inner %close {% ([,name,[nodes,abbrev]]) => tagBuilder.build(
     name.value,
     nodes,
     abbrev,

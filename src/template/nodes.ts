@@ -70,7 +70,7 @@ export class TagNode implements ASTNode, Filterable {
     }
 
     traverse(f: (x: unknown) => unknown) {
-        return run(this.optics, dictFunction, f)(this.valuesText)
+        return run(this._optics, dictFunction, f)(this.valuesText)
     }
 
     set optics(o: Optic[]) {

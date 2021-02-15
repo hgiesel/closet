@@ -1,4 +1,4 @@
-import type { TagNode, Registrar, Internals, Eval } from '../types'
+import type { TagNode, Registrar, Internals, Eval, Un } from '../types'
 
 import { Stylizer } from '../stylizer'
 import { acrossTag, withinTag } from '../sequencers'
@@ -13,12 +13,20 @@ const defaultStylizer = Stylizer.make({
     separator: '<span class="closet-shuffle__separator"></span>',
 })
 
+const defaultEval = <T extends Un>(
+    stylizer: Stylizer,
+    mixedValues: string[],
+): Eval<T, string> => (): string => stylizer.stylize(mixedValues)
+
+const defaultOptics = [separated({ sep: "||" })]
+
 export const shufflingRecipe = ({
     tagname = 'mix',
     stylizer = defaultStylizer,
+    evaluate = defaultEval,
     sortInStrategy = topUp,
-    optics = [separated("||")],
-} = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
+    optics = defaultOptics,
+} = {}) => <T extends Un>(registrar: Registrar<T>) => {
     const shuffleFilter = (tag: TagNode, internals: Internals<T>) => {
         const sequence = tag.num
             ? acrossTag
@@ -33,7 +41,7 @@ export const shufflingRecipe = ({
 
         const maybeValues = shuffler(tag, internals)
         if (maybeValues) {
-            return stylizer.stylize(maybeValues)
+            return evaluate(stylizer, maybeValues)(tag, internals as any)
         }
     }
 

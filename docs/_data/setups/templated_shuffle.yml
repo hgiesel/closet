@@ -1,0 +1,22 @@
+name: Shuffling lines / list items
+code: |
+  const brOptions = {
+    tagname: 'mixbr',
+    optics: [
+      closet.template.optics.separated({ sep: "<br />" }),
+    ],
+    evaluate: (stylizer, values) => () => stylizer.toStylizer({ separator: "<br />" }).stylize(values),
+  }
+
+  const liOptions = {
+    tagname: 'mixli',
+    optics: [
+      closet.template.optics.templated({ before: "<li>", after: "</li>" }),
+    ],
+    evaluate: (stylizer, values) => (tag) => tag.traverse(_ => values),
+  }
+
+  filterManager.install(
+    closet.recipes.shuffle(brOptions),
+    closet.recipes.shuffle(liOptions),
+  )

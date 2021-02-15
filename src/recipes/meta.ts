@@ -1,7 +1,10 @@
 import type { Registrar, TagNode, WeakFilterResult } from '../types'
 
+import { separated } from "../template/optics"
+
+
 const paramPattern = /%(.)/gu
-const defOptions = { separators: [{ sep: '::', max: 2 }], capture: true }
+const defOptions = { optics: [separated({ sep: '::', max: 2 })], capture: true }
 
 const matcher = (tag: TagNode) => (match: string, p1: string) => {
     let num = null
@@ -36,7 +39,7 @@ export const defRecipe = (options: {
         tagname = 'def',
     } = options
 
-    const innerOptions = { separators: [{ sep: '::' }] }
+    const innerOptions = { optics: [separated({ sep: '::' })] }
 
     const defFilter = (tag: TagNode): WeakFilterResult => {
         const [

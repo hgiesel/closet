@@ -26,7 +26,7 @@ export type { DeferredApi, Deferred } from './filterManager/deferred'
 
 export type { DataOptions } from './template/types'
 export type { TagNode } from './template/nodes'
-export type { Separator, WeakSeparator } from './template/separator'
+export type { Optic, WeakSeparator, WeakCircumfix } from './template/optics'
 
 export type { Stylizer } from './stylizer'
 

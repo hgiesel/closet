@@ -2,9 +2,11 @@ import type { TagNode, Internals } from '../../types'
 
 import { TagSelector } from '../../template/'
 
+import { separated } from '../../template/optics'
 
-export const defaultSeparator = { sep: ';' }
-export const innerSeparator = { sep: '=', trim: true, max: 2 }
+
+export const defaultSeparated = separated({ sep: ';' })
+export const innerSeparated = separated({ sep: '=', trim: true, max: 2 })
 
 export class PreferenceStore<T> {
     /**

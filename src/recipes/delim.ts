@@ -1,6 +1,9 @@
 import type { Registrar, TagNode, Internals, WeakFilterResult } from '../types'
 
-const delimOptions = { separators: [{ sep: '::', max: 3 }], capture: true }
+import { separated } from "../template/optics"
+
+
+const delimOptions = { separators: [separated({ sep: '::', max: 3 })], capture: true }
 
 export const delimRecipe = (options: {
     tagname?: string,

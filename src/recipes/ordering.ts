@@ -4,18 +4,23 @@ import { sortWithIndices } from '../utils'
 import { topUp } from '../sortInStrategies'
 import { TagSelector } from '../template'
 
+import { separated, mapped } from "../template/optics"
+
 
 const adjustOptions = {
     priority: 35 /* must be higher than sequencers 15 */,
     persistent: true,
 }
 
+const orderingOptics = [
+    separated('::'),
+    mapped(),
+    separated(','),
+]
+
 export const orderingRecipe = ({
     tagname = 'ord',
-
-    separator = ',',
-    cmdSeparator = '::',
-
+    optics = orderingOptics,
     sortInStrategy = topUp,
 } = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const ordFilter = (tag: TagNode, { deferred, cache, memory }: Internals<T>) => {
@@ -89,5 +94,5 @@ export const orderingRecipe = ({
         return { ready: true }
     }
 
-    registrar.register(tagname, ordFilter, { separators: [cmdSeparator, separator] })
+    registrar.register(tagname, ordFilter, { optics })
 }

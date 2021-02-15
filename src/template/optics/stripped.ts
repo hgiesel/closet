@@ -1,13 +1,12 @@
 import type { ProfunctorDict } from "./profunctors.js"
+import type { Optic } from "./utils"
+import { WeakCircumfix, weakCircumfixToCircumfix } from "./circumfix"
 import { escapeRegExp, regExpString } from "./utils.js"
 
-export const strippedRegex = ({
-    before,
-    after,
-}: {
-    before: string | RegExp,
-    after: string | RegExp,
-}) => {
+
+export const strippedRegex = (wc: WeakCircumfix): Optic => {
+    const { before, after } = weakCircumfixToCircumfix(wc)
+
     const getter = (text: string): [string, null] => {
         const regex = new RegExp(`^${regExpString(before)}(.*?)${regExpString(after)}$`, 'su')
         let match = text
@@ -27,8 +26,8 @@ export const strippedRegex = ({
 
     return (dict: ProfunctorDict, f0: (s: string) => string): (s: string) => string => {
         const f1 = dict.first(f0)
-        const f2 = dict.dimap(getter, setter, f1)
-        return f2
+        const f2 = dict.dimap(getter, setter, f1 as any)
+        return f2 as any
     }
 }
 
@@ -38,7 +37,7 @@ export const stripped = ({
 }: {
     before: string,
     after: string,
-}) => strippedRegex({
+}): Optic => strippedRegex({
     before: `^${escapeRegExp(before)}`,
     after: `${escapeRegExp(after)}$`,
 })

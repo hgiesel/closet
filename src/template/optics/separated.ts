@@ -1,4 +1,6 @@
 import type { ProfunctorDict } from "./profunctors.js"
+import type { Optic } from "./utils"
+
 
 export interface Separator {
     sep: string
@@ -23,8 +25,7 @@ export const weakSeparatorToSeparator = (ws: WeakSeparator): Separator => typeof
         keepEmpty: ws.keepEmpty ?? true,
     }
 
-
-export const separated = (weakSep: WeakSeparator) => {
+export const separated = (weakSep: WeakSeparator): Optic => {
     const { sep, max, trim, keepEmpty } = weakSeparatorToSeparator(weakSep)
 
     const getter = (text: string): [string[] /* no value passed to setter */] => {

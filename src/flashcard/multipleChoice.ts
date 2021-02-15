@@ -2,12 +2,16 @@ import type { TagNode, Recipe, Eval, InactiveBehavior, WeakFilter } from '../typ
 import type { SortInStrategy } from '../sortInStrategies'
 import type { StyleList } from '../styleList'
 import type { FlashcardPreset, FlashcardTemplate } from './flashcardTemplate'
+import type { Optic } from "../template/optics"
+
+import { separated, mapped } from "../template/optics"
 
 import { constant } from '../utils'
 import { Stylizer } from '../stylizer'
 import { acrossTag } from '../sequencers'
 import { listStylize, listStylizeMaybe } from '../styleList'
 import { topUp } from '../sortInStrategies'
+
 import { makeFlashcardTemplate, generateFlashcardRecipes } from './flashcardTemplate'
 
 type ValuePlusCategory = [string, number]
@@ -47,6 +51,17 @@ const activeBack = Stylizer.make({
     separator,
 })
 
+const multipleChoiceOptics = [
+    separated({
+        sep: "::",
+    }),
+    mapped(),
+    separated({
+        sep: "||",
+        keepEmpty: false,
+    }),
+]
+
 const multipleChoicePublicApi = <T extends FlashcardPreset>(
     frontInactive: InactiveBehavior<T>,
     backInactive: InactiveBehavior<T>,
@@ -64,8 +79,7 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
     sequence?: (getValues: Eval<T, V>, sortIn: SortInStrategy) => Eval<T, V | void>
 
     sortInStrategy?: SortInStrategy,
-    categorySeparator?: string,
-    valueSeparator?: string,
+    optics?: Optic[],
 
     flashcardTemplate?: FlashcardTemplate<T>,
 } = {})  => {
@@ -84,8 +98,7 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
         sequence = acrossTag,
         sortInStrategy = topUp,
 
-        categorySeparator = '::',
-        valueSeparator = '||',
+        optics = multipleChoiceOptics,
 
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
@@ -95,20 +108,12 @@ const multipleChoicePublicApi = <T extends FlashcardPreset>(
     const front = listStylizeMaybe(frontStylizer, shuffler)
     const back = listStylizeMaybe(backStylizer, shuffler)
 
-    const multipleChoiceSeparators = {
-        separators: [{
-            sep: categorySeparator,
-        }, {
-            sep: valueSeparator,
-            keepEmpty: false,
-        }],
-    }
-
     const multipleChoiceRecipe = flashcardTemplate(frontInactive, backInactive)
 
     const trueContexter = listStylize(inactiveStylizer, contexter)
+    const dataOptions = { optics }
 
-    return multipleChoiceRecipe(tagname, front, back, trueContexter, ellipser, multipleChoiceSeparators)
+    return multipleChoiceRecipe(tagname, front, back, trueContexter, ellipser, dataOptions)
 }
 
 export const multipleChoiceRecipes = generateFlashcardRecipes(multipleChoicePublicApi)

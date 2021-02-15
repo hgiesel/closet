@@ -9,6 +9,10 @@ import {
     realOutput,
 } from '../generator'
 
+import { separated } from "../template/optics"
+
+
+const generateOptics = [separated({ sep: ',' })]
 
 const generateTemplate = (
     algorithm: (min: number, max: number) => NumberGenAlgorithm,
@@ -17,7 +21,7 @@ const generateTemplate = (
 ) => ({
     tagname = 'gen',
     uniqueConstraintId = 'uniq',
-    separator = { sep: ',' },
+    optics = generateOptics,
 } = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const uniqConstraintPrefix = `gen:${uniqueConstraintId}`
 
@@ -51,7 +55,7 @@ const generateTemplate = (
         return { ready: true, result: result }
     }
 
-    registrar.register(tagname, generateFilter, { separators: [separator] })
+    registrar.register(tagname, generateFilter, { optics })
 }
 
 export const generateInteger = generateTemplate(intAlgorithm, intOutput, 1)

@@ -1,4 +1,36 @@
-/////////////////// Profunctor (->)
+// Heavily inspired by:
+// - https://oleg.fi/gists/posts/2017-04-18-glassery.html#instances-forget
+// - Optika JS library
+
+enum ProfunctorInstance {
+    Strong,
+    Choice,
+    Traversing,
+    Bicontravariant,
+}
+
+export interface ProfunctorDict {
+    classes: ProfunctorInstance[],
+    dimap: <A,B,C,D>(
+        l: (a: A) => B,
+        r: (c: C) => D,
+        f: (b: B) => C,
+    ) => (a: A) => unknown;
+
+    first: <A,B,C>(
+        f: (a: A) => B,
+    ) => (
+        [a, c]: [A, C],
+    ) => unknown,
+
+    right: <A,B,C>(
+        f: (a: A) => B,
+    ) => (
+        [isRight, x]: [false, C] | [true, A],
+    ) => unknown,
+}
+
+/////////////////////////////////////// Profunctor (->)
 const dimap = <A,B,C,D>(
     l: (a: A) => B,
     r: (c: C) => D,
@@ -6,13 +38,6 @@ const dimap = <A,B,C,D>(
 ): (a: A) => D => (
     a: A,
 ): D => r(f(l(a)))
-
-// const lmap = <A,B,C>(
-//     l: (a: A) => B,
-//     f: (b: B) => C,
-// ): (a: A) => C => (
-//     a: A,
-// ): C => f(l(a))
 
 // Strong profunctor
 // (a, b) == [a, b]
@@ -33,46 +58,52 @@ const right = <A,B,C>(
     : [isRight, x] as [false, C]
 
 export const dictFunction: ProfunctorDict = {
+    classes: [
+        ProfunctorInstance.Choice,
+        ProfunctorInstance.Strong,
+        ProfunctorInstance.Traversing,
+    ],
     dimap,
     first,
-    right: right as any /* TS typecheck issue */,
+    right: right as any,
 }
 
-/////////////////// Profunctor Forget
+/////////////////////////////////////// Profunctor (Forget r) ==  Star (Const r)
+const lmap = <A,B,C>(
+    l: (a: A) => B,
+    f: (b: B) => C,
+): (a: A) => C => (
+    a: A,
+): C => f(l(a))
 
-// const forgetDimap = <A,B,C,D>(
-//     l: (a: A) => B,
-//     _r: (c: C) => D,
-//     f: (b: B) => C,
-// ): (a: A) => C => lmap(l, f)
+const dimapForget = <A,B,C,D>(
+    l: (a: A) => B,
+    _r: (c: C) => D,
+    f: (b: B) => C,
+): (a: A) => C => lmap(l, f)
 
+const firstForget = <A,B,C>(
+    f: (a: A) => B,
+) => (
+    [a]: [A, C],
+): B => f(a)
 
-// const dictForget = {
-//     dimap: forgetDimap,
-//     first: (f) => (x) => f(x[0]),
-//     //  basically fmap @Maybe
-//     right: (f) => (x) => x[0] ? f(x[1]) : x[1],
+const rightForget = <A,B,C>(
+    f: (a: A) => B,
+) => (
+    [isRight, x]: [false, C] | [true, A],
+): [] | B => isRight
+    ? f(x as A) as B
+    : [/* mempty */]
 
-//     pre: (inner) => (f) => (xs) => [xs.map(x => inner.pre(f)(x)[0])],
-//     post: (inner) => (f) => (xs) => xs.map(x => inner.post(f)([x]))[0],
-// }
-
-export interface ProfunctorDict {
-    dimap: <A,B,C,D>(
-        l: (a: A) => B,
-        r: (c: C) => D,
-        f: (b: B) => C,
-    ) => (a: A) => D;
-
-    first: <A,B,C>(
-        f: (a: A) => B,
-    ) => (
-        [a, c]: [A, C],
-    ) => [B, C];
-
-    right: <A,B,C>(
-        f: (a: A) => B,
-    ) => (
-        [isRight, x]: [false, C] | [true, A],
-    ) => [false, C] | [true, B];
+export const dictForget: ProfunctorDict = {
+    classes: [
+        ProfunctorInstance.Bicontravariant,
+        ProfunctorInstance.Choice,
+        ProfunctorInstance.Strong,
+        ProfunctorInstance.Traversing,
+    ],
+    dimap: dimapForget,
+    first: firstForget,
+    right: rightForget as any,
 }

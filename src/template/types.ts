@@ -1,5 +1,5 @@
 import type { ASTNode, TagNode } from './nodes'
-import type { Separator } from './separator'
+import type { Optic } from './optics'
 
 
 export type TagPath = number[]
@@ -19,7 +19,7 @@ export interface ProcessorOutput {
 }
 
 export interface DataOptions {
-    separators: Array<string | Partial<Separator>>
+    optics: Optic[]
     capture: boolean
     [k: string]: unknown
 }

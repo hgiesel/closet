@@ -2,9 +2,8 @@ import type { Registrar, TagNode, Internals, Eval } from '../../types'
 import type { CardPreset } from '../../flashcard/flashcardTemplate'
 import type { ListStore } from './listStore'
 
-import {
-    listStoreTemplate,
-} from './listStore'
+import { listStoreTemplate } from './listStore'
+import { separated, mapped } from "../../template/optics"
 
 
 const discard = <T extends Record<string, unknown>>(
@@ -45,8 +44,7 @@ const setListTemplate = <T extends Record<string, unknown>>(
     tagname = 'setl',
     storeId = 'lists',
     postprocess = discard,
-    separator = { sep: '::' },
-    innerSeparator = { sep: '||' },
+    optics = [separated({ sep: '::' }), mapped(), separated({ sep: '||' })],
 } = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     listStoreTemplate(
@@ -55,10 +53,7 @@ const setListTemplate = <T extends Record<string, unknown>>(
             picker as any,
             postprocess,
         ) as any,
-    ), {
-        separators: [separator, innerSeparator],
-    },
-)
+    ), { optics })
 
 const setListTo = (
     listStore: ListStore,

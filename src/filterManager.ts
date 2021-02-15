@@ -21,7 +21,7 @@ const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOut
 })
 
 const fillDataOptions = (partial: Partial<DataOptions>): DataOptions => ({
-    separators: partial.separators ?? [],
+    optics: partial.optics ?? [],
     capture: partial.capture ?? false,
 })
 

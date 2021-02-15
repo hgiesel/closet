@@ -1,10 +1,11 @@
 import type { Filterable } from '../filterManager/filters'
-import type { Separator, WeakSeparator } from './separator'
 import type { Parser } from './parser'
 import type { TagAccessor, TagPath, RoundInfo } from './types'
 import type { Delimiters } from './delimiters'
+import type { Optic } from "./optics"
 
-import { splitValues, weakSeparatorToSeparator } from './separator'
+import { id } from "../utils"
+import { run, dictFunction, dictForget } from './optics'
 import { Status } from './types'
 
 
@@ -27,7 +28,7 @@ export class TagNode implements ASTNode, Filterable {
     readonly delimiters: Delimiters
 
     protected _innerNodes: ASTNode[]
-    protected _separators: Separator[] = []
+    protected _optics: Optic[] = []
 
     constructor(
         fullKey: string,
@@ -63,15 +64,15 @@ export class TagNode implements ASTNode, Filterable {
     }
 
     get values() {
-        return splitValues(this.valuesText, this._separators)
+        return run(this._optics, dictForget, id)
     }
 
-    set separators(seps: WeakSeparator[]) {
-        this._separators = seps.map(weakSeparatorToSeparator)
+    traverse(f: (x: unknown) => unknown) {
+        return run(this.optics, dictFunction, f)
     }
 
-    get separator(): Separator[] {
-        return this.separators as Separator[]
+    set optics(o: Optic[]) {
+        this._optics = o
     }
 
     toString(): string {
@@ -105,7 +106,7 @@ export class TagNode implements ASTNode, Filterable {
         }
 
         const allReady = this.innerNodes.reduce(nodesAreReady, true)
-        this.separators = tagProcessor.getOptions().separators
+        this._optics = tagProcessor.getOptions().optics
 
         const roundInfo: RoundInfo = {
             path: tagPath,

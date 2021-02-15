@@ -4,6 +4,8 @@ import { Stylizer } from '../stylizer'
 import { acrossTag, withinTag } from '../sequencers'
 import { topUp } from '../sortInStrategies'
 
+import { separated } from "../template/optics"
+
 
 const defaultStylizer = Stylizer.make({
     processor: (s: string) => `<span class="closet-shuffle">${s}</span>`,
@@ -15,6 +17,7 @@ export const shufflingRecipe = ({
     tagname = 'mix',
     stylizer = defaultStylizer,
     sortInStrategy = topUp,
+    optics = [separated("||")],
 } = {}) => <T extends Record<string, unknown>>(registrar: Registrar<T>) => {
     const shuffleFilter = (tag: TagNode, internals: Internals<T>) => {
         const sequence = tag.num
@@ -34,5 +37,5 @@ export const shufflingRecipe = ({
         }
     }
 
-    registrar.register(tagname, shuffleFilter, { separators: ['||'] })
+    registrar.register(tagname, shuffleFilter, { optics })
 }

@@ -3,9 +3,11 @@ import type { Registrar } from '../../types'
 import {
     PreferenceStore,
     storeTemplate,
-    defaultSeparator,
-    innerSeparator
+    defaultSeparated,
+    innerSeparated
 } from './storeTemplate'
+
+import { mapped } from '../../template/optics'
 
 
 class NumberStore extends PreferenceStore<number> {
@@ -19,8 +21,8 @@ const numStoreFilterTemplate = storeTemplate(NumberStore)
 export const setNumberRecipe = <T extends Record<string, unknown>>({
     tagname = 'set',
     storeId = 'numerical',
-    separator = defaultSeparator,
-    assignmentSeparator = innerSeparator,
+    separator = defaultSeparated,
+    assignmentSeparator = innerSeparated,
 } = {}) => (registrar: Registrar<T>) => registrar.register(
     tagname,
     numStoreFilterTemplate(
@@ -28,6 +30,6 @@ export const setNumberRecipe = <T extends Record<string, unknown>>({
         0,
         (selector, val) => (numberMap) => numberMap.setNumber(selector, Number(val)),
     ), {
-        separators: [separator, assignmentSeparator],
+        optics: [separator, mapped(), assignmentSeparator],
     },
 )

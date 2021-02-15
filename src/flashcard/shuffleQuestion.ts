@@ -1,7 +1,8 @@
-import type { Un, TagNode, Internals, Eval, WeakSeparator, Recipe, InactiveBehavior, WeakFilter } from '../types'
+import type { Un, TagNode, Internals, Eval, Recipe, InactiveBehavior, WeakFilter } from '../types'
 import type { SortInStrategy } from '../sortInStrategies'
 import type { StyleList } from '../styleList'
 import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
+import type { Optic } from "../template/optics"
 
 import { listStylize, listStylizeMaybe } from '../styleList'
 import { makeFlashcardTemplate, generateFlashcardRecipes } from './flashcardTemplate'
@@ -9,6 +10,7 @@ import { makeFlashcardTemplate, generateFlashcardRecipes } from './flashcardTemp
 import { Stylizer } from '../stylizer'
 import { acrossTag } from '../sequencers'
 import { topUp } from '../sortInStrategies'
+import { separated } from "../template/optics"
 
 const justValues = <T extends Un>(tag: TagNode, _internals: Internals<T>) => tag.values
 
@@ -35,6 +37,8 @@ const simplyShow = <T extends Un, V extends StyleList>(stylizer: Stylizer, _shuf
     listStylize(stylizer, justValues)
 )
 
+const clozeOptics = [separated({ sep: '::' })]
+
 const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList >(
     internalName: string,
     frontActive: (stylizer: Stylizer, shuffler: Eval<T, V | void>) => WeakFilter<T>,
@@ -54,7 +58,7 @@ const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList
     sequence?: (getValues: Eval<T, V>, sortIn: SortInStrategy) => Eval<T, V | void>,
 
     sortInStrategy?: SortInStrategy,
-    separator?: WeakSeparator,
+    optics?: Optic[],
     flashcardTemplate?: FlashcardTemplate<T>,
 } = {}) => {
     const {
@@ -69,11 +73,11 @@ const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList
         sequence = acrossTag,
         sortInStrategy = topUp,
 
-        separator = { sep: '::' },
+        optics = clozeOptics,
         flashcardTemplate = makeFlashcardTemplate(),
     } = options
 
-    const clozeSeparators = { separators: [separator] }
+    const clozeOptions = { optics }
 
     const shuffler: Eval<T, V> = sequence(contexter as any, sortInStrategy) as Eval<T, V>
 
@@ -83,7 +87,7 @@ const oneSidedShufflePublicApi = <T extends FlashcardPreset, V extends StyleList
     const trueContexter = listStylize(inactiveStylizer, contexter)
 
     const clozeRecipe = flashcardTemplate(frontInactive, backInactive)
-    return clozeRecipe(tagname, front, back, trueContexter, ellipser, clozeSeparators)
+    return clozeRecipe(tagname, front, back, trueContexter, ellipser, clozeOptions)
 }
 
 export const mingleRecipes = generateFlashcardRecipes(oneSidedShufflePublicApi("mingle", listStylizeMaybe, listStylizeMaybe))

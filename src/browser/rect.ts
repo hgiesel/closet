@@ -1,5 +1,6 @@
 import type { TagNode, Internals, AftermathEntry, AftermathInternals, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from '../types'
 import type { FlashcardPreset } from '../flashcard'
+import type { Optic } from '../template/optics'
 
 import { FlashcardTemplate, makeFlashcardTemplate, generateFlashcardRecipes } from '../flashcard/flashcardTemplate'
 
@@ -7,6 +8,8 @@ import type { RectProperty, RectProperties, RectDefinition } from './svgClasses'
 import { SVG, Rect } from './svgClasses'
 
 import { appendStyleTag, getImages, imageLoadCallback, svgKeyword, svgCss } from './utils'
+import { separated } from '../template/optics'
+
 
 export const rectKeyword = 'occlusionRenderRect'
 
@@ -103,7 +106,7 @@ const rectPublicApi = <T extends FlashcardPreset>(
     front?: (props: RectProperties) => WeakFilter<T>,
     back?: (props: RectProperties) => WeakFilter<T>,
 
-    separator?: WeakSeparator,
+    optics?: Optic[],
     flashcardTemplate?: FlashcardTemplate<T>,
 
     frontProperties?: RectProperties,
@@ -117,7 +120,7 @@ const rectPublicApi = <T extends FlashcardPreset>(
         front = makeRects,
         back = makeRects,
 
-        separator = { sep: ',' },
+        optics = [separated({ sep: ',' })],
         flashcardTemplate = makeFlashcardTemplate(),
 
         frontProperties = { ...props, containerClasses: classesForFront },
@@ -126,7 +129,7 @@ const rectPublicApi = <T extends FlashcardPreset>(
         contextProperties = { ...props, containerClasses: classesForInactive }
     } = options
 
-    const rectSeparators = { separators: [separator] }
+    const rectOptics = { optics }
     const rectRecipe = flashcardTemplate(frontInactive, backInactive)
 
     return rectRecipe(
@@ -135,7 +138,7 @@ const rectPublicApi = <T extends FlashcardPreset>(
         back(backProperties),
         makeRects(ellipseProperties),
         makeRects(contextProperties),
-        rectSeparators,
+        rectOptics,
     )
 }
 

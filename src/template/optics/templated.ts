@@ -1,5 +1,8 @@
 import type { ProfunctorDict } from "./profunctors.js"
+import type { Optic } from "./utils"
+import { WeakCircumfix, weakCircumfixToCircumfix } from "./circumfix"
 import { escapeRegExp } from "./utils.js"
+
 
 const temp = (strings: string[], keys: number[]) => {
     return (values: string[]): string => {
@@ -9,7 +12,7 @@ const temp = (strings: string[], keys: number[]) => {
         keys.forEach((key, index) => {
             const value = Number.isInteger(key)
                 ? values[key]
-                : dict[key]
+                : (dict as any)[key]
             result.push(value, strings[index + 1])
         })
 
@@ -18,20 +21,16 @@ const temp = (strings: string[], keys: number[]) => {
 }
 
 // Setter
-export const templatedRegex = ({
-    before,
-    after,
-}: {
-    before: string,
-    after: string,
-}) => {
+export const templatedRegex = (wc: WeakCircumfix): Optic => {
     type TemplatedResult = [string[], (repls: string[]) => string]
+
+    const { before, after } = weakCircumfixToCircumfix(wc)
 
     const getter = (text: string): TemplatedResult => { //[string[], => {
         const regex = new RegExp(`(${before})(.*?)(${after})`, 'gsu')
 
-        const parts = []
-        const matches = []
+        const parts: string[] = []
+        const matches: string[] = []
         let lastOffset = 0
 
         text.replace(regex, (match: string, before: string, inner: string, after: string, offset: number): string => {
@@ -58,7 +57,7 @@ export const templatedRegex = ({
 
     return (dict: ProfunctorDict, f0: (s: string[]) => string[]) => {
         const f1 = dict.first(f0)
-        const f2 = dict.dimap(getter, setter, f1)
+        const f2 = dict.dimap(getter, setter, f1 as any)
         return f2
     }
 }
@@ -69,7 +68,7 @@ export const templated = ({
 }: {
     before: string,
     after: string,
-}) => templatedRegex({
+}): Optic => templatedRegex({
     before: escapeRegExp(before),
     after: escapeRegExp(after),
 })

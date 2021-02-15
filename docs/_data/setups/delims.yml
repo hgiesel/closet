@@ -1,0 +1,5 @@
+name: Setting delimiters
+code: |
+  filterManager.install(
+    closet.recipes.delimiter(),
+  )

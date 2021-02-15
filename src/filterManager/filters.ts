@@ -1,6 +1,10 @@
+import type { ASTNode } from "../template/nodes"
+
+type ResultType = string | ASTNode[]
+
 export interface FilterResult {
     ready: boolean
-    result: string
+    result: ResultType
     containsTags: boolean
 }
 
@@ -13,20 +17,20 @@ export type Filter<F, T> = (t: F, i: T) => FilterResult
 export type WeakFilterResult = Partial<FilterResult> | string | void
 export type WeakFilter<F, T> = (tag: F, internals: T) => WeakFilterResult
 
-const wrapWithBool = (result: string, bool: boolean): FilterResult => ({
+const wrapWithBool = (result: ResultType, bool: boolean): FilterResult => ({
     ready: bool,
     result: result,
     containsTags: false,
 })
 
-const wrapWithReady = (result: string): FilterResult => wrapWithBool(result, true)
-const wrapWithReadyBubbled = (result: string, ready: boolean): FilterResult => wrapWithBool(result, ready)
+const wrapWithReady = (result: ResultType): FilterResult => wrapWithBool(result, true)
+const wrapWithReadyBubbled = (result: ResultType, ready: boolean): FilterResult => wrapWithBool(result, ready)
 
 const defaultFilter = <T extends Readiable>(t: Filterable, i: T) => wrapWithReadyBubbled(t.representation, i.ready)
 
 const nullFilterResult: FilterResult = {
     ready: false,
-    result: '',
+    result: [],
     containsTags: false,
 }
 
@@ -40,7 +44,7 @@ const standardizeFilterResult = (weak: WeakFilterResult): FilterResult => {
             // includes null
             return {
                 ready: weak.ready ?? true,
-                result: weak.result ?? '',
+                result: weak.result ?? [],
                 containsTags: weak.containsTags ?? false,
             }
 

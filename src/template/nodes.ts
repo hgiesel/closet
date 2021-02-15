@@ -25,8 +25,8 @@ export class TagNode implements ASTNode, Filterable {
     readonly abbreviated: boolean
 
     readonly delimiters: Delimiters
-    readonly innerNodes: ASTNode[]
 
+    protected _innerNodes: ASTNode[]
     protected _separators: Separator[] = []
 
     constructor(
@@ -47,11 +47,15 @@ export class TagNode implements ASTNode, Filterable {
         this.delimiters = delimiters
         this.abbreviated = abbreviated
 
-        this.innerNodes = innerNodes
+        this._innerNodes = innerNodes
     }
 
     get representation() {
         return this.toString()
+    }
+
+    get innerNodes() {
+        return this._innerNodes
     }
 
     get valuesText(): string {
@@ -80,11 +84,11 @@ export class TagNode implements ASTNode, Filterable {
         return false
     }
 
-    evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode[] {
+    evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath, allowCapture = true): ASTNode[] {
         const tagProcessor = tagAccessor(this.key)
         const depth = tagPath.length - 1
 
-        const useCapture = tagProcessor.getOptions().capture
+        const useCapture = tagProcessor.getOptions().capture && allowCapture
 
         const innerEvaluate = (node: ASTNode, index: number) => node.evaluate(
             parser,
@@ -107,21 +111,35 @@ export class TagNode implements ASTNode, Filterable {
             path: tagPath,
             depth: depth,
             ready: allReady,
-            capture: useCapture,
+            isCapture: useCapture,
         }
 
         const filterOutput = tagProcessor.execute(this, roundInfo)
+        let result
 
         switch (filterOutput.status) {
-            case Status.NotReady:
-                return [this]
             case Status.Ready:
-                return [new TextNode(filterOutput.result as string)]
-            case Status.ContainsTags:
-                return parser.rawParse(filterOutput.result as string)
+                result = typeof filterOutput.result === "string"
+                    ? [new TextNode(filterOutput.result as string)]
+                    : filterOutput.result as unknown as ASTNode[]
+                break
+            case Status.NotReady:
+                result = [this]
+                break
             case Status.ContinueTags:
-                return parser.rawParse(filterOutput.result as string).flatMap(innerEvaluate)
+                result = parser.rawParse(filterOutput.result as string).flatMap(innerEvaluate)
+                break
+            case Status.ContainsTags:
+                result = parser.rawParse(filterOutput.result as string)
+                break
         }
+
+        if (useCapture) {
+            this._innerNodes = result
+            return this.evaluate(parser, tagAccessor, tagPath, false)
+        }
+
+        return result
     }
 }
 

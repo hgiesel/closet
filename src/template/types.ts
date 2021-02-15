@@ -1,4 +1,4 @@
-import type { TagNode } from './nodes'
+import type { ASTNode, TagNode } from './nodes'
 import type { Separator } from './separator'
 
 
@@ -7,12 +7,14 @@ export type TagPath = number[]
 export enum Status {
     Ready,
     NotReady,
-    ContainsTags,
     ContinueTags,
+    // when ready == true; result needs parsing, iterate down the new structure
+    ContainsTags,
+    // when ready == false; result needs parsing, but continue in normal order
 }
 
 export interface ProcessorOutput {
-    result: string | null
+    result: string | ASTNode[] | null
     status: Status
 }
 
@@ -26,7 +28,7 @@ export interface RoundInfo {
     path: TagPath
     depth: number
     ready: boolean
-    capture: boolean
+    isCapture: boolean
 }
 
 export type TagAccessor = (name: string) => TagProcessor

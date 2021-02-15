@@ -49,7 +49,7 @@ code: |
     background-color: coral;
   }`
 
-  const wrappedMultipleChoiceShow = closet.wrappers.aftermath(closet.recipes.multipleChoice.show, (e, inter) => {
+  const wrappedMultipleChoice = closet.wrappers.aftermath(closet.flashcard.recipes.multipleChoice, (e, inter) => {
     document.querySelectorAll('.cl--child')
       .forEach(v => v.addEventListener('click', () => {
         const container = document.querySelector('.cl--container')
@@ -69,7 +69,7 @@ code: |
 
   const wrapItem = (v, _i, cat) => `<div class="cl--card"><div class="cl--child cl--category-${cat}"><h3>${v}</h3></div></div>`
 
-  filterManager.install(wrappedMultipleChoiceShow({
+  filterManager.install(wrappedMultipleChoice({
     tagname: 'mc',
     frontStylizer: closet.Stylizer.make({
       mapper: wrapItem,

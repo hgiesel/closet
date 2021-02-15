@@ -74,9 +74,9 @@ code: |
     }
   }
 
-  const wrappedMultipleChoiceShow = closet.wrappers.aftermath(closet.recipes.multipleChoice.show, addHighlightCSS)
+  const wrappedMultipleChoice = closet.wrappers.aftermath(closet.flashcard.recipes.multipleChoice, addHighlightCSS)
 
-  filterManager.install(wrappedMultipleChoiceShow({
+  filterManager.install(wrappedMultipleChoice({
     tagname: 'mc',
     getValues: countRightAnswers,
     frontStylizer: front,

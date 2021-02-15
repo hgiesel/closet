@@ -1,8 +1,5 @@
 name: Default Multiple Choice
 code: |
-  filterManager.install( 
-    closet.recipes.multipleChoice.show({ tagname: 'mc' }),
-    closet.recipes.multipleChoice.hide({ tagname: 'mch' }),
-    closet.recipes.multipleChoice.reveal({ tagname: 'mcr' }),
+  filterManager.install(
+    closet.flashcard.recipes.multipleChoice({ tagname: 'mc' }),
   )
-

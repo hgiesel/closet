@@ -124,7 +124,9 @@ export class TagNode implements ASTNode, Filterable {
                     : filterOutput.result as unknown as ASTNode[]
                 break
             case Status.NotReady:
-                result = [this]
+                result = useCapture
+                    ? this.innerNodes
+                    : [this]
                 break
             case Status.ContinueTags:
                 result = parser.rawParse(filterOutput.result as string).flatMap(innerEvaluate)

@@ -28,7 +28,9 @@ export class TagNode implements ASTNode, Filterable {
     readonly delimiters: Delimiters
 
     protected _innerNodes: ASTNode[]
+
     protected _optics: Optic[] = []
+    protected _getter: Function = id
 
     constructor(
         fullKey: string,
@@ -64,15 +66,16 @@ export class TagNode implements ASTNode, Filterable {
     }
 
     get values() {
-        return run(this._optics, dictForget, id)
+        return this._getter(this.valuesText)
     }
 
     traverse(f: (x: unknown) => unknown) {
-        return run(this.optics, dictFunction, f)
+        return run(this.optics, dictFunction, f)(this.valuesText)
     }
 
     set optics(o: Optic[]) {
         this._optics = o
+        this._getter = run(this._optics, dictForget, id)
     }
 
     toString(): string {
@@ -106,7 +109,7 @@ export class TagNode implements ASTNode, Filterable {
         }
 
         const allReady = this.innerNodes.reduce(nodesAreReady, true)
-        this._optics = tagProcessor.getOptions().optics
+        this.optics = tagProcessor.getOptions().optics
 
         const roundInfo: RoundInfo = {
             path: tagPath,

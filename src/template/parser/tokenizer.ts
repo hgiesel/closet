@@ -3,7 +3,7 @@ import type { Lexer } from 'moo'
 
 import { states } from 'moo'
 
-export const keyPattern = /(?:[a-zA-Z_/]|%\w)+\d*/u
+export const keyPattern = /(?:[a-zA-Z_#/]|%\w)+\d*/u
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
 const escapeRegExp = (str: string): string =>

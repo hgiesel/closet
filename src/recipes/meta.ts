@@ -49,7 +49,7 @@ export const defRecipe = (options: {
 
             return {
                 result: result,
-                containsTags: true,
+                parse: true,
             }
         }
 

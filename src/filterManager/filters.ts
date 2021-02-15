@@ -5,7 +5,7 @@ type ResultType = string | ASTNode[]
 export interface FilterResult {
     ready: boolean
     result: ResultType
-    containsTags: boolean
+    parse: boolean
 }
 
 export interface Filterable {
@@ -20,7 +20,7 @@ export type WeakFilter<F, T> = (tag: F, internals: T) => WeakFilterResult
 const wrapWithBool = (result: ResultType, bool: boolean): FilterResult => ({
     ready: bool,
     result: result,
-    containsTags: false,
+    parse: false,
 })
 
 const wrapWithReady = (result: ResultType): FilterResult => wrapWithBool(result, true)
@@ -31,7 +31,7 @@ const defaultFilter = <T extends Readiable>(t: Filterable, i: T) => wrapWithRead
 const nullFilterResult: FilterResult = {
     ready: false,
     result: [],
-    containsTags: false,
+    parse: false,
 }
 
 
@@ -45,7 +45,7 @@ const standardizeFilterResult = (weak: WeakFilterResult): FilterResult => {
             return {
                 ready: weak.ready ?? true,
                 result: weak.result ?? [],
-                containsTags: weak.containsTags ?? false,
+                parse: weak.parse ?? false,
             }
 
         default:

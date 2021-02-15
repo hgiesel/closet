@@ -21,7 +21,7 @@ export const delimRecipe = (options: {
 
             return {
                 result: innerTemplate,
-                containsTags: true,
+                parse: true,
             }
         }
 

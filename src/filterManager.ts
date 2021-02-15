@@ -10,7 +10,7 @@ import type { TagNode } from './template/nodes'
 import type { TagAccessor, TagProcessor, RoundInfo, DataOptions, ProcessorOutput } from './template/types'
 
 const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => ({
-    status: filterResult.containsTags
+    status: filterResult.parse
     ? filterResult.ready
         ? Status.ContinueTags
         : Status.ContainsTags

@@ -4,7 +4,7 @@ import type { FlashcardTemplate, FlashcardPreset } from './flashcardTemplate'
 import { makeFlashcardTemplate, generateFlashcardRecipes } from './flashcardTemplate'
 
 
-const insert = (tag: TagNode) => ({ result: tag.values, containsTags: true })
+const insert = (tag: TagNode) => ({ result: tag.values, parse: true })
 const noinsert = () => ''
 
 const specPublicApi = <T extends FlashcardPreset>(

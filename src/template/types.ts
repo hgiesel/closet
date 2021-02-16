@@ -19,7 +19,9 @@ export interface ProcessorOutput {
 }
 
 export interface DataOptions {
-    optics: Optic[]
+    optics?: Optic[]
+    blockOptics: Optic[]
+    inlineOptics: Optic[]
     capture: boolean
     [k: string]: unknown
 }

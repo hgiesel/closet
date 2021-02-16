@@ -216,7 +216,9 @@ export class TagNode implements ASTNode, Filterable {
         }
 
         const allReady = this.innerNodes.reduce(nodesAreReady, true)
-        this.optics = tagProcessor.getOptions().optics
+
+        this.inlineOptics = tagProcessor.getOptions().inlineOptics
+        this.blockOptics = tagProcessor.getOptions().blockOptics
 
         const roundInfo: RoundInfo = {
             path: tagPath,

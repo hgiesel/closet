@@ -9,6 +9,7 @@ import type { TagRenderer, TemplateInfo, IterationInfo, ResultInfo } from './tem
 import type { TagNode } from './template/nodes'
 import type { TagAccessor, TagProcessor, RoundInfo, DataOptions, ProcessorOutput } from './template/types'
 
+
 const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOutput => ({
     status: filterResult.parse
     ? filterResult.ready
@@ -20,10 +21,15 @@ const filterResultToProcessorOutput = (filterResult: FilterResult): ProcessorOut
     result: filterResult.result,
 })
 
-const fillDataOptions = (partial: Partial<DataOptions>): DataOptions => ({
-    optics: partial.optics ?? [],
-    capture: partial.capture ?? false,
-})
+const fillDataOptions = (partial: Partial<DataOptions>): DataOptions => {
+    const optics = partial.optics ?? []
+
+    return {
+        inlineOptics: partial.inlineOptics ?? optics,
+        blockOptics: partial.blockOptics ?? optics,
+        capture: partial.capture ?? false,
+    }
+}
 
 const closetEnvironmentName = '_closetEnvironment'
 interface ClosetEnvironment {

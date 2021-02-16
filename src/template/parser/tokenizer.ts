@@ -42,7 +42,7 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
         match: keyPattern,
     }
 
-    const outerText = {
+    const mainText = {
         match: outerTextPattern,
         lineBreaks: true,
     }
@@ -62,13 +62,13 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
         main: {
             blockopen,
             inlineopen,
-            text: outerText,
+            text: mainText,
         },
 
         blockkey: {
             keyname,
             sep: sep('blocktag'),
-            close: closenext('mainblock'),
+            close: closenext('blockmain'),
         },
 
         inlinekey: {
@@ -80,7 +80,7 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
         blocktag: {
             blockopen,
             inlineopen,
-            close: closenext('mainblock'),
+            close: closenext('blockmain'),
             text,
         },
 
@@ -91,10 +91,11 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
             text,
         },
 
-        mainblock: {
+        blockmain: {
             blockopen,
-            inlineopen,
             blockclose,
+            inlineopen,
+            text: mainText,
         },
 
         blockclose: {

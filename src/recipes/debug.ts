@@ -14,7 +14,7 @@ export const debugRecipe = () => <T extends Record<string, unknown>>(registrar: 
 
         filters.register('base', (tag: TagNode, internals: Internals<T>) => {
             return internals.iteration >= endAtIteration
-                ? tag.valuesText ?? ''
+                ? tag.text ?? ''
                 : savedBase(tag, internals)
         })
 

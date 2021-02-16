@@ -18,25 +18,30 @@ node -> text {% id %}
 
 text -> %text {% ([match]) => new TextNode(match.value) %}
 
-inlinetag -> %inlineopen %keyname inline %close {%
-    ([,name,[nodes,abbrev]]) => tagBuilder.build(
+inlinetag -> %inlineopen inline {%
+    ([/* open */, [name, inlineNodes, hasInline]]) => tagBuilder.build(
         name.value,
-        nodes,
-        abbrev,
+        inlineNodes,
+        hasInline,
     )
 %}
 
-blocktag -> %blockopen %keyname inline %close content blockclose {%
-    ([,name,[nodes,abbrev],,blockNodes,]) => tagBuilder.build(
-        name.value,
-        nodes,
-        abbrev,
-    )
+blocktag -> %blockopen inline content blockclose {%
+    ([/* open */, [name, inlineNodes, hasInline], blockNodes, closename], _location, reject) =>
+        !closename || name.value === closename.value
+            ? tagBuilder.build(
+                name.value,
+                inlineNodes,
+                hasInline,
+                blockNodes,
+                true,
+            )
+            : reject
+%}
+
+inline -> %keyname (%sep content):? %close {% ([name, match]) => match
+    ? [name, match[1], true]
+    : [name, [], false]
 %}
 
 blockclose -> %blockclose %keyname:? %close {% ([,name]) => name %}
-
-inline -> (%sep content):? {% ([match]) => match
-    ? [match[1], false]
-    : [[], true]
-%}

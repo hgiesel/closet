@@ -17,17 +17,21 @@ export interface ASTNode {
 
 export const nodesAreReady = (accu: boolean, node: ASTNode): boolean => accu && node.isReady()
 
+const joinNodes = (nodes: ASTNode[]) => nodes.map(node => node.toString()).join('')
+
 export class TagNode implements ASTNode, Filterable {
     readonly fullKey: string
     readonly key: string
     readonly num: number | null
     readonly fullOccur: number
     readonly occur: number
-    readonly abbreviated: boolean
 
     readonly delimiters: Delimiters
 
-    protected _innerNodes: ASTNode[]
+    protected _inlineNodes: ASTNode[]
+    readonly hasInline: boolean
+    protected _blockNodes: ASTNode[]
+    readonly hasBlock: boolean
 
     protected _optics: Optic[] = []
     protected _getter: Function = id
@@ -38,9 +42,11 @@ export class TagNode implements ASTNode, Filterable {
         num: number | null,
         fullOccur: number,
         occur: number,
-        abbreviated: boolean,
         delimiters: Delimiters,
-        innerNodes: ASTNode[],
+        inlineNodes: ASTNode[],
+        hasInline: boolean,
+        blockNodes: ASTNode[],
+        hasBlock: boolean,
     ) {
         this.fullKey = fullKey
         this.key = key
@@ -48,40 +54,93 @@ export class TagNode implements ASTNode, Filterable {
         this.fullOccur = fullOccur
         this.occur = occur
         this.delimiters = delimiters
-        this.abbreviated = abbreviated
 
-        this._innerNodes = innerNodes
+        this._inlineNodes = inlineNodes
+        this.hasInline = hasInline
+        this._blockNodes = blockNodes
+        this.hasBlock = hasBlock
     }
 
-    get representation() {
-        return this.toString()
+    /******************** NODES ********************/
+    get inlineNodes(): ASTNode[]{
+        return this._inlineNodes
     }
 
-    get innerNodes() {
-        return this._innerNodes
+    get blockNodes(): ASTNode[]{
+        return this._blockNodes
     }
 
-    get valuesText(): string {
-        return this.innerNodes.map(node => node.toString()).join('')
+    get innerNodes(): ASTNode[] {
+        return this.hasBlock ? this.blockNodes : this.innerNodes
+    }
+
+    protected set internalNodes(nodes: ASTNode[]) {
+        if (this.hasBlock) {
+            this._blockNodes = nodes
+        }
+        else {
+            this._inlineNodes = nodes
+        }
+    }
+
+    /******************** TEXT ********************/
+    get inlineText(): string {
+        return joinNodes(this.inlineNodes)
+    }
+
+    get blockText(): string {
+        return joinNodes(this.blockNodes)
+    }
+
+    get text(): string {
+        return joinNodes(this.innerNodes)
+    }
+
+    /******************** VALUES ********************/
+    get inlineValues() {
+        return this._getter(this.inlineText)
+    }
+
+    get blockValues() {
+        return this._getter(this.blockText)
     }
 
     get values() {
-        return this._getter(this.valuesText)
+        return this._getter(this.text)
+    }
+
+    /******************** TRAVERSE ********************/
+    inlineTraverse(f: (x: unknown) => unknown) {
+        return run(this._optics, dictFunction, f)(this.inlineText)
+    }
+
+    blockTraverse(f: (x: unknown) => unknown) {
+        return run(this._optics, dictFunction, f)(this.blockText)
     }
 
     traverse(f: (x: unknown) => unknown) {
-        return run(this._optics, dictFunction, f)(this.valuesText)
+        return run(this._optics, dictFunction, f)(this.text)
     }
+
+    /******************** REPRESENTATION ********************/
+    toString(): string {
+        return this.hasInline
+            ? this.hasBlock
+                ? `${this.delimiters.open}#${this.fullKey}${this.delimiters.sep}${this.inlineText}${this.delimiters.close}${this.blockText}${this.delimiters.open}/${this.fullKey}{${this.delimiters.close}`
+                : `${this.delimiters.open}${this.fullKey}${this.delimiters.sep}${this.inlineText}${this.delimiters.close}`
+            : this.hasBlock
+                ? `${this.delimiters.open}#${this.fullKey}${this.delimiters.close}${this.blockText}${this.delimiters.open}/${this.fullKey}${this.delimiters.close}`
+                : `${this.delimiters.open}${this.fullKey}${this.delimiters.close}`
+    }
+
+    get representation(): string {
+        return this.toString()
+    }
+
 
     set optics(o: Optic[]) {
         this._optics = o
         this._getter = run(this._optics, dictForget, id)
-    }
-
-    toString(): string {
-        return this.abbreviated
-            ? `${this.delimiters.open}${this.fullKey}${this.delimiters.close}`
-            : `${this.delimiters.open}${this.fullKey}${this.delimiters.sep}${this.valuesText}${this.delimiters.close}`
     }
 
     isReady(): boolean {
@@ -141,7 +200,7 @@ export class TagNode implements ASTNode, Filterable {
         }
 
         if (useCapture) {
-            this._innerNodes = result
+            this.internalNodes = result
             return this.evaluate(parser, tagAccessor, tagPath, false)
         }
 

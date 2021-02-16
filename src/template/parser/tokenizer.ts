@@ -10,8 +10,11 @@ const escapeRegExp = (str: string): string =>
     str.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
 
 export const makeLexer = (delimiters: Delimiters): Lexer => {
-    const outerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(delimiters.open)}|$)`, 'u')
-    const innerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapeRegExp(delimiters.open)}|${escapeRegExp(delimiters.close)})`, 'u')
+    const escapedOpen = escapeRegExp(delimiters.open)
+    const escapedClose = escapeRegExp(delimiters.close)
+
+    const outerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapedOpen}|$)`, 'u')
+    const innerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapedOpen}|${escapedClose})`, 'u')
 
     const inlineopen = {
         match: delimiters.open,
@@ -33,10 +36,10 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
         pop: 1,
     }
 
-    const closenext = (state: string) => ({
+    const closenext = {
         match: delimiters.close,
-        next: state,
-    })
+        next: 'blockmain',
+    }
 
     const keyname = {
         match: keyPattern,
@@ -68,7 +71,7 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
         blockkey: {
             keyname,
             sep: sep('blocktag'),
-            close: closenext('blockmain'),
+            close: closenext,
         },
 
         inlinekey: {
@@ -80,7 +83,7 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
         blocktag: {
             blockopen,
             inlineopen,
-            close: closenext('blockmain'),
+            close: closenext,
             text,
         },
 

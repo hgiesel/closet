@@ -3,7 +3,7 @@ import type { Registrar, TagNode, Internals, WeakFilterResult } from '../types'
 import { separated } from "../template/optics"
 
 
-const delimOptions = { separators: [separated({ sep: '::', max: 3 })], capture: true }
+const delimOptions = { inlineOptics: [separated({ sep: '::', max: 2 })], capture: true }
 
 export const delimRecipe = (options: {
     tagname?: string,
@@ -17,13 +17,12 @@ export const delimRecipe = (options: {
             const [
                 open,
                 close,
-                innerTemplate,
-            ] = tag.values
+            ] = tag.inlineValues
 
             template.parser.update({ open, close })
 
             return {
-                result: innerTemplate,
+                result: tag.blockText,
                 parse: true,
             }
         }

@@ -1,4 +1,4 @@
-import type { TagNode, Internals, Eval } from './types'
+import type { TagNode, Internals, Eval, Un } from './types'
 import type { SortInStrategy } from './sortInStrategies'
 
 import { sortWithIndices } from './utils'
@@ -126,19 +126,66 @@ const sequenceTemplate = <T extends Record<string, unknown>>(
     return sequencer(uid, sequenceId, sortIn, getValues)(tag, internals)
 }
 
-const within = <T extends Record<string, unknown>>(
-    { fullKey, fullOccur }: TagNode, _internals: Internals<T>,
-): [string, string] => [
-    `${fullKey}:${fullOccur}`,
-    `${fullKey}:${fullOccur}`,
-]
-
-const across = <T extends Record<string, unknown>>(
-    { fullKey, fullOccur }: TagNode, _internals: Internals<T>,
+const within = <T extends Un>(
+    { fullKey, fullOccur }: TagNode,
+    _internals: Internals<T>,
 ): [string, string] => [
     `${fullKey}:${fullOccur}`,
     fullKey,
 ]
 
+const across = <T extends Un>(
+    { fullKey, fullOccur }: TagNode,
+    _internals: Internals<T>,
+): [string, string] => [
+    `${fullKey}:${fullOccur}`,
+    `${fullKey}:${fullOccur}`,
+]
+
+const acrossNumbered = <T extends Un>(
+    { fullKey, fullOccur, num }: TagNode,
+    _internals: Internals<T>,
+): [string, string] => [
+    `${fullKey}:${fullOccur}`,
+    num ? fullKey : `${fullKey}:${fullOccur}`,
+]
+
+const customWithin = (custom: string) => <T extends Un>(
+    { fullOccur, num }: TagNode,
+    _internals: Internals<T>,
+): [string, string] => {
+    const customKey = `${custom}${num}`
+    return [
+        `${customKey}:${fullOccur}`,
+        `${customKey}:${fullOccur}`,
+    ]
+}
+
+const customAcross = (custom: string) => <T extends Un>(
+    { fullOccur, num }: TagNode,
+    _internals: Internals<T>,
+): [string, string] => {
+    const customKey = `${custom}${num}`
+    return [
+        `${customKey}:${fullOccur}`,
+        customKey,
+    ]
+}
+
+const customAcrossNumbered = (custom: string) => <T extends Un>(
+    { fullOccur, num }: TagNode,
+    _internals: Internals<T>,
+): [string, string] => {
+    const customKey = `${custom}${num}`
+    return [
+        `${customKey}:${fullOccur}`,
+        num ? customKey : `${customKey}:${fullOccur}`,
+    ]
+}
+
 export const withinTag = sequenceTemplate(within)
 export const acrossTag = sequenceTemplate(across)
+export const acrossNumberedTag = sequenceTemplate(acrossNumbered)
+export const withinCustom = (custom: string) => sequenceTemplate(customWithin(custom))
+export const acrossCustom = (custom: string) => sequenceTemplate(customAcross(custom))
+export const acrossNumberedCustom = (custom: string) => sequenceTemplate(customAcrossNumbered(custom))

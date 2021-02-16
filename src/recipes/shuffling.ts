@@ -1,7 +1,7 @@
 import type { TagNode, Registrar, Internals, Eval, Un } from '../types'
 
 import { Stylizer } from '../stylizer'
-import { acrossTag, withinTag } from '../sequencers'
+import { acrossNumberedTag } from '../sequencers'
 import { topUp } from '../sortInStrategies'
 
 import { separated } from "../template/optics"
@@ -25,16 +25,13 @@ export const shufflingRecipe = ({
     stylizer = defaultStylizer,
     evaluate = defaultEval,
     sortInStrategy = topUp,
+    sequencer = acrossNumberedTag,
     optics = defaultOptics,
 } = {}) => <T extends Un>(registrar: Registrar<T>) => {
     const shuffleFilter = (tag: TagNode, internals: Internals<T>) => {
-        const sequence = tag.num
-            ? acrossTag
-            : withinTag
-
         const getValues: Eval<T, string[]> = ({ values }: TagNode): string[] => values ?? []
 
-        const shuffler: Eval<T, string[] | void> = sequence(
+        const shuffler: Eval<T, string[] | void> = sequencer(
             getValues as any,
             sortInStrategy,
         ) as Eval<T, string[] | void>

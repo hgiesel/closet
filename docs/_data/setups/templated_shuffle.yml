@@ -1,11 +1,14 @@
 name: Shuffling lines / list items
 code: |
+  const sequencer = closet.sequencers.acrossNumberedCustom("mix")
+
   const brOptions = {
     tagname: 'mixbr',
     optics: [
       closet.template.optics.separated({ sep: "<br />" }),
     ],
     evaluate: (stylizer, values) => () => stylizer.toStylizer({ separator: "<br />" }).stylize(values),
+    sequencer,
   }
 
   const liOptions = {
@@ -14,6 +17,7 @@ code: |
       closet.template.optics.templated({ before: "<li>", after: "</li>" }),
     ],
     evaluate: (stylizer, values) => (tag) => tag.traverse(_ => values),
+    sequencer,
   }
 
   filterManager.install(

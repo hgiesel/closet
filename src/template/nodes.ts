@@ -74,7 +74,7 @@ export class TagNode implements ASTNode, Filterable {
     }
 
     get innerNodes(): ASTNode[] {
-        return this.hasBlock ? this.blockNodes : this.innerNodes
+        return this.hasBlock ? this.blockNodes : this.inlineNodes
     }
 
     protected set internalNodes(nodes: ASTNode[]) {

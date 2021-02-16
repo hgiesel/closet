@@ -36,8 +36,11 @@ export class TagNode implements ASTNode, Filterable {
     protected _blockNodes: ASTNode[]
     readonly hasBlock: boolean
 
-    protected _optics: Optic[] = []
-    protected _getter: Function = id
+    protected _inlineOptics: Optic[] = []
+    protected _inlineGetter: Function = id
+
+    protected _blockOptics: Optic[] = []
+    protected _blockGetter: Function = id
 
     constructor(
         fullKey: string,
@@ -99,13 +102,61 @@ export class TagNode implements ASTNode, Filterable {
         return this.hasBlock ? this.blockText : this.inlineText
     }
 
+    /******************** OPTICS ********************/
+    set inlineOptics(op: Optic[]) {
+        this._inlineOptics = op
+        this._inlineGetter = run(op, dictForget, id)
+    }
+
+    set blockOptics(op: Optic[]) {
+        this._blockOptics = op
+        this._blockGetter = run(op, dictForget, id)
+    }
+
+    set optics(op: Optic[]) {
+        if (this.hasBlock) {
+            this.blockOptics = op
+        }
+        else {
+            this.inlineOptics = op
+        }
+    }
+
+    get inlineOptics(): Optic[] {
+        return this._inlineOptics
+    }
+
+    get blockOptics(): Optic[] {
+        return this._blockOptics
+    }
+
+    get optics(): Optic[] {
+        return this.hasBlock
+            ? this.blockOptics
+            : this.inlineOptics
+    }
+
+    get inlineGetter(): Function {
+        return this._inlineGetter
+    }
+
+    get blockGetter(): Function {
+        return this._blockGetter
+    }
+
+    get getter(): Function {
+        return this.hasBlock
+            ? this.blockGetter
+            : this.inlineGetter
+    }
+
     /******************** VALUES ********************/
     get inlineValues() {
-        return this._getter(this.inlineText)
+        return this.inlineGetter(this.inlineText)
     }
 
     get blockValues() {
-        return this._getter(this.blockText)
+        return this.blockGetter(this.blockText)
     }
 
     get values() {
@@ -114,15 +165,15 @@ export class TagNode implements ASTNode, Filterable {
 
     /******************** TRAVERSE ********************/
     inlineTraverse(f: (x: unknown) => unknown) {
-        return run(this._optics, dictFunction, f)(this.inlineText)
+        return run(this.inlineOptics, dictFunction, f)(this.inlineText)
     }
 
     blockTraverse(f: (x: unknown) => unknown) {
-        return run(this._optics, dictFunction, f)(this.blockText)
+        return run(this.blockOptics, dictFunction, f)(this.blockText)
     }
 
     traverse(f: (x: unknown) => unknown) {
-        return run(this._optics, dictFunction, f)(this.text)
+        return this.hasBlock ? this.blockTraverse(f) : this.inlineTraverse(f)
     }
 
     /******************** REPRESENTATION ********************/
@@ -138,12 +189,6 @@ export class TagNode implements ASTNode, Filterable {
 
     get representation(): string {
         return this.toString()
-    }
-
-
-    set optics(o: Optic[]) {
-        this._optics = o
-        this._getter = run(this._optics, dictForget, id)
     }
 
     isReady(): boolean {

@@ -19,6 +19,9 @@ export const nodesAreReady = (accu: boolean, node: ASTNode): boolean => accu && 
 
 const joinNodes = (nodes: ASTNode[]) => nodes.map(node => node.toString()).join('')
 
+const leadingTrailingNewlineOrBr = /^(?:<br(?: ?\/)?>|\n)|(?:<br(?: ?\/)?>|\n)$/gu
+const stripLineBreaks = (text: string): string => text.replace(leadingTrailingNewlineOrBr, '')
+
 export class TagNode implements ASTNode, Filterable {
     readonly fullKey: string
     readonly key: string
@@ -89,11 +92,11 @@ export class TagNode implements ASTNode, Filterable {
     }
 
     get blockText(): string {
-        return joinNodes(this.blockNodes)
+        return stripLineBreaks(joinNodes(this.blockNodes))
     }
 
     get text(): string {
-        return joinNodes(this.innerNodes)
+        return this.hasBlock ? this.blockText : this.inlineText
     }
 
     /******************** VALUES ********************/
@@ -106,7 +109,7 @@ export class TagNode implements ASTNode, Filterable {
     }
 
     get values() {
-        return this._getter(this.text)
+        return this.hasBlock ? this.blockValues : this.inlineValues
     }
 
     /******************** TRAVERSE ********************/

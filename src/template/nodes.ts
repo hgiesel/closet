@@ -195,11 +195,12 @@ export class TagNode implements ASTNode, Filterable {
         return false
     }
 
-    evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath, allowCapture = true): ASTNode[] {
+    evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath, afterCapture = false): ASTNode[] {
+        console.log(this.fullKey)
         const tagProcessor = tagAccessor(this.key)
         const depth = tagPath.length - 1
 
-        const useCapture = tagProcessor.getOptions().capture && allowCapture
+        const useCapture = tagProcessor.getOptions().capture
 
         const innerEvaluate = (node: ASTNode, index: number) => node.evaluate(
             parser,
@@ -207,7 +208,10 @@ export class TagNode implements ASTNode, Filterable {
             [...tagPath, index],
         )
 
-        if (!useCapture) {
+        const shouldEvaluateInnerNodes = !useCapture && !afterCapture
+        const operatesAsCapture = useCapture && !afterCapture
+
+        if (shouldEvaluateInnerNodes) {
             this.innerNodes.splice(
                 0,
                 this.innerNodes.length,
@@ -224,7 +228,7 @@ export class TagNode implements ASTNode, Filterable {
             path: tagPath,
             depth: depth,
             ready: allReady,
-            isCapture: useCapture,
+            isCapture: operatesAsCapture,
         }
 
         const filterOutput = tagProcessor.execute(this, roundInfo)
@@ -237,7 +241,7 @@ export class TagNode implements ASTNode, Filterable {
                     : filterOutput.result as unknown as ASTNode[]
                 break
             case Status.NotReady:
-                result = useCapture
+                result = operatesAsCapture
                     ? this.innerNodes
                     : [this]
                 break
@@ -249,9 +253,9 @@ export class TagNode implements ASTNode, Filterable {
                 break
         }
 
-        if (useCapture) {
+        if (operatesAsCapture) {
             this.internalNodes = result
-            return this.evaluate(parser, tagAccessor, tagPath, false)
+            return this.evaluate(parser, tagAccessor, tagPath, true)
         }
 
         return result

@@ -151,34 +151,28 @@ const acrossNumbered = <T extends Un>(
 ]
 
 const customWithin = (custom: string) => <T extends Un>(
-    { fullOccur, num }: TagNode,
+    { fullKey, fullOccur, num }: TagNode,
     _internals: Internals<T>,
-): [string, string] => {
-    const customKey = `${custom}${num}`
-    return [
-        `${customKey}:${fullOccur}`,
-        `${customKey}:${fullOccur}`,
-    ]
-}
+): [string, string] => [
+    `${fullKey}:${fullOccur}`,
+    `${custom}${num}:${fullOccur}`,
+]
 
 const customAcross = (custom: string) => <T extends Un>(
-    { fullOccur, num }: TagNode,
+    { fullKey, fullOccur, num }: TagNode,
     _internals: Internals<T>,
-): [string, string] => {
-    const customKey = `${custom}${num}`
-    return [
-        `${customKey}:${fullOccur}`,
-        customKey,
-    ]
-}
+): [string, string] => [
+    `${fullKey}:${fullOccur}`,
+    `${custom}${num}`,
+]
 
 const customAcrossNumbered = (custom: string) => <T extends Un>(
-    { fullOccur, num }: TagNode,
+    { fullKey, fullOccur, num }: TagNode,
     _internals: Internals<T>,
 ): [string, string] => {
     const customKey = `${custom}${num}`
     return [
-        `${customKey}:${fullOccur}`,
+        `${fullKey}:${fullOccur}`,
         num ? customKey : `${customKey}:${fullOccur}`,
     ]
 }

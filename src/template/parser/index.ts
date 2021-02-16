@@ -60,7 +60,7 @@ export class Parser {
         this.grammar = Grammar.fromCompiled(makeGrammar(this.lexer as unknown as NearleyLexer))
     }
 
-    update(delimiters: Partial<Delimiters> = {}) {
+    update(delimiters?: Partial<Delimiters>) {
         this.delimiters = Object.assign({}, defaultDelimiters, delimiters)
         this.lexer = makeLexer(this.delimiters)
         // Force silence moo/nearley inconsistency

@@ -11,6 +11,7 @@ import { Status } from './types'
 
 export interface ASTNode {
     toString(): string | null
+    // toReprString comes from Filterable
     isReady(): boolean
     evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode[]
 }
@@ -176,7 +177,7 @@ export class TagNode implements ASTNode, Filterable {
         return this.hasBlock ? this.blockTraverse(f) : this.inlineTraverse(f)
     }
 
-    /******************** REPRESENTATION ********************/
+    /******************** STRINGIFY ********************/
     toString(): string {
         return this.hasInline
             ? this.hasBlock
@@ -187,7 +188,7 @@ export class TagNode implements ASTNode, Filterable {
                 : `${this.delimiters.open}${this.fullKey}${this.delimiters.close}`
     }
 
-    get representation(): string {
+    toReprString(): string {
         return this.toString()
     }
 
@@ -262,19 +263,7 @@ export class TagNode implements ASTNode, Filterable {
     }
 }
 
-export class TextNode implements ASTNode {
-    readonly text: string
-
-    constructor(
-        text: string,
-    ) {
-        this.text = text
-    }
-
-    toString(): string | null {
-        return this.text
-    }
-
+class SimpleNode implements ASTNode {
     isReady(): boolean {
         // should never happen
         return true
@@ -285,12 +274,28 @@ export class TextNode implements ASTNode {
     }
 }
 
-export class EscapedNode implements ASTNode {
+export class TextNode extends SimpleNode {
+    readonly text: string
+
+    constructor(
+        text: string,
+    ) {
+        super()
+        this.text = text
+    }
+
+    toString(): string | null {
+        return this.text
+    }
+}
+
+export class EscapedNode extends SimpleNode {
     readonly escaped: string
 
     constructor(
         escaped: string,
     ) {
+        super()
         this.escaped = escaped.length === 1
             ? escaped
             : escaped.slice(1)
@@ -299,28 +304,10 @@ export class EscapedNode implements ASTNode {
     toString(): string | null {
         return this.escaped
     }
-
-    isReady(): boolean {
-        // should never happen
-        return true
-    }
-
-    evaluate(): ASTNode[] {
-        return [this]
-    }
 }
 
-export class DocSeparatorNode implements ASTNode {
+export class DocSeparatorNode extends SimpleNode {
     toString(): string | null {
         return null
-    }
-
-    isReady(): boolean {
-        // should never happen
-        return true
-    }
-
-    evaluate(): ASTNode[] {
-        return [this]
     }
 }

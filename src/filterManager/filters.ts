@@ -9,7 +9,7 @@ export interface FilterResult {
 }
 
 export interface Filterable {
-    representation: string
+    toReprString(): string
 }
 
 export type Filter<F, T> = (t: F, i: T) => FilterResult
@@ -26,7 +26,7 @@ const wrapWithBool = (result: ResultType, bool: boolean): FilterResult => ({
 const wrapWithReady = (result: ResultType): FilterResult => wrapWithBool(result, true)
 const wrapWithReadyBubbled = (result: ResultType, ready: boolean): FilterResult => wrapWithBool(result, ready)
 
-const defaultFilter = <T extends Readiable>(t: Filterable, i: T) => wrapWithReadyBubbled(t.representation, i.ready)
+const defaultFilter = <T extends Readiable>(t: Filterable, i: T) => wrapWithReadyBubbled(t.toReprString(), i.ready)
 
 const nullFilterResult: FilterResult = {
     ready: false,

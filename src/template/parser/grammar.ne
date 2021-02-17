@@ -1,5 +1,5 @@
 @{%
-import { TextNode } from '../nodes'
+import { TextNode, EscapedNode } from '../nodes'
 
 import { tagBuilder } from './tagBuilder'
 %}
@@ -17,6 +17,7 @@ node -> text {% id %}
       | blocktag {% id %}
 
 text -> %text {% ([match]) => new TextNode(match.value) %}
+      | %escapeseq {% ([match]) => new EscapedNode(match.value) %}
 
 inlinetag -> %inlineopen inline {%
     ([/* open */, [name, inlineNodes, hasInline]]) => tagBuilder.build(

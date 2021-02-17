@@ -13,8 +13,9 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
     const escapedOpen = escapeRegExp(delimiters.open)
     const escapedClose = escapeRegExp(delimiters.close)
 
-    const outerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapedOpen}|$)`, 'u')
-    const innerTextPattern = new RegExp(`[\\s\\S]+?(?=${escapedOpen}|${escapedClose})`, 'u')
+    const outerTextPattern = new RegExp(`[\\s\\S]+?(?=\\\\|${escapedOpen}|$)`, 'u')
+    const innerTextPattern = new RegExp(`[\\s\\S]+?(?=\\\\|${escapedOpen}|${escapedClose})`, 'u')
+    const escapedSequence = new RegExp(`\\\\(?:${escapedOpen}|${escapedClose})?`, 'u')
 
     const inlineopen = {
         match: delimiters.open,
@@ -45,7 +46,7 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
         match: keyPattern,
     }
 
-    const mainText = {
+    const maintext = {
         match: outerTextPattern,
         lineBreaks: true,
     }
@@ -53,6 +54,10 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
     const text = {
         match: innerTextPattern,
         lineBreaks: true,
+    }
+
+    const escapeseq = {
+        match: escapedSequence,
     }
 
     const sep = (state: string) => ({
@@ -65,7 +70,8 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
         main: {
             blockopen,
             inlineopen,
-            text: mainText,
+            escapeseq,
+            text: maintext,
         },
 
         blockkey: {
@@ -83,6 +89,7 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
         blocktag: {
             blockopen,
             inlineopen,
+            escapeseq,
             close: closenext,
             text,
         },
@@ -90,6 +97,7 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
         inlinetag: {
             blockopen,
             inlineopen,
+            escapeseq,
             close: closepop,
             text,
         },
@@ -98,7 +106,8 @@ export const makeLexer = (delimiters: Delimiters): Lexer => {
             blockopen,
             blockclose,
             inlineopen,
-            text: mainText,
+            escapeseq,
+            text: maintext,
         },
 
         blockclose: {

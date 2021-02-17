@@ -285,6 +285,31 @@ export class TextNode implements ASTNode {
     }
 }
 
+export class EscapedNode implements ASTNode {
+    readonly escaped: string
+
+    constructor(
+        escaped: string,
+    ) {
+        this.escaped = escaped.length === 1
+            ? escaped
+            : escaped.slice(1)
+    }
+
+    toString(): string | null {
+        return this.escaped
+    }
+
+    isReady(): boolean {
+        // should never happen
+        return true
+    }
+
+    evaluate(): ASTNode[] {
+        return [this]
+    }
+}
+
 export class DocSeparatorNode implements ASTNode {
     toString(): string | null {
         return null

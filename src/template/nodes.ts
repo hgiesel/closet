@@ -216,7 +216,6 @@ export class TagNode implements ASTNode {
     }
 
     evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath, afterCapture = false): ASTNode[] {
-        console.log(this.fullKey)
         const tagProcessor = tagAccessor(this.key)
         const depth = tagPath.length - 1
 

@@ -16,7 +16,6 @@ export const strippedRegex = (wc: WeakCircumfix): Optic => {
             return ''
         })
 
-        console.log(text, 'tmatch', regex,  match)
         return [match, null]
     }
 

@@ -3,7 +3,7 @@ code: |
   filterManager.install(
     closet.recipes.debug(),
     closet.recipes.define({ tagname: 'def' }),
-    closet.recipes.specification.hide({ tagname: 'spec' }),
+    closet.flashcard.recipes.specification.hide({ tagname: 'spec' }),
   )
 
 ## Example of new syntax

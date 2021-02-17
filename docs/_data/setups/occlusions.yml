@@ -3,7 +3,5 @@ code: |
   globalThis.target = closet.browser.recipes.occlusionEditor()(filterManager.registrar)
 
   filterManager.install(
-    closet.browser.recipes.rect.show({ tagname: 'rect' }),
-    closet.browser.recipes.rect.reveal({ tagname: 'rectr' }),
-    closet.browser.recipes.rect.hide({ tagname: 'recth' }),
+    closet.browser.recipes.rect({ tagname: 'rect' }),
   )

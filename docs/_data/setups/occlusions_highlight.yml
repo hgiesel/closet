@@ -7,7 +7,5 @@ code: |
   }
 
   filterManager.install(
-    closet.browser.recipes.rect.show({ tagname: 'rect', backProperties }),
-    closet.browser.recipes.rect.reveal({ tagname: 'rectr', backProperties }),
-    closet.browser.recipes.rect.hide({ tagname: 'recth', backProperties }),
+    closet.browser.recipes.rect({ tagname: 'rect', backProperties }),
   )

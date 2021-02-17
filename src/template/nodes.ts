@@ -9,9 +9,8 @@ import { run, dictFunction, dictForget } from './optics'
 import { Status } from './types'
 
 
-export interface ASTNode {
+export interface ASTNode extends Filterable {
     toString(): string | null
-    // toReprString comes from Filterable
     isReady(): boolean
     evaluate(parser: Parser, tagAccessor: TagAccessor, tagPath: TagPath): ASTNode[]
 }
@@ -19,11 +18,12 @@ export interface ASTNode {
 export const nodesAreReady = (accu: boolean, node: ASTNode): boolean => accu && node.isReady()
 
 const joinNodes = (nodes: ASTNode[]) => nodes.map(node => node.toString()).join('')
+const joinRepr = (nodes: ASTNode[]) => nodes.map(node => node.toReprString()).join('')
 
 const leadingTrailingNewlineOrBr = /^(?:<br(?: ?\/)?>|\n)|(?:<br(?: ?\/)?>|\n)$/gu
 const stripLineBreaks = (text: string): string => text.replace(leadingTrailingNewlineOrBr, '')
 
-export class TagNode implements ASTNode, Filterable {
+export class TagNode implements ASTNode {
     readonly fullKey: string
     readonly key: string
     readonly num: number | null
@@ -178,18 +178,37 @@ export class TagNode implements ASTNode, Filterable {
     }
 
     /******************** STRINGIFY ********************/
-    toString(): string {
+    // implementation detail
+    protected wrapWithDelimiters(infix: string, wrapped?: string): string {
+        return `${this.delimiters.open}${infix}${this.fullKey}${wrapped ? this.delimiters.sep + wrapped : ''}${this.delimiters.close}`
+    }
+
+    protected wrapBlock(block: string, inline?: string): string {
+        return `${this.wrapWithDelimiters('#', inline)}${block}${this.wrapWithDelimiters('/')}`
+    }
+
+    protected baseToString(getInline: () => string, getBlock: () => string): string {
         return this.hasInline
             ? this.hasBlock
-                ? `${this.delimiters.open}#${this.fullKey}${this.delimiters.sep}${this.inlineText}${this.delimiters.close}${this.blockText}${this.delimiters.open}/${this.fullKey}{${this.delimiters.close}`
-                : `${this.delimiters.open}${this.fullKey}${this.delimiters.sep}${this.inlineText}${this.delimiters.close}`
+                ? this.wrapBlock(getBlock(), getInline())
+                : this.wrapWithDelimiters('', getInline())
             : this.hasBlock
-                ? `${this.delimiters.open}#${this.fullKey}${this.delimiters.close}${this.blockText}${this.delimiters.open}/${this.fullKey}${this.delimiters.close}`
-                : `${this.delimiters.open}${this.fullKey}${this.delimiters.close}`
+                ? this.wrapBlock(getBlock())
+                : this.wrapWithDelimiters('')
+    }
+
+    toString(): string {
+        return this.baseToString(
+            () => this.inlineText,
+            () => this.blockText,
+        )
     }
 
     toReprString(): string {
-        return this.toString()
+        return this.baseToString(
+            () => joinRepr(this.inlineNodes),
+            () => joinRepr(this.blockNodes),
+        )
     }
 
     isReady(): boolean {
@@ -272,6 +291,10 @@ class SimpleNode implements ASTNode {
     evaluate(): ASTNode[] {
         return [this]
     }
+
+    toReprString(): string {
+        return this.toString() ?? ''
+    }
 }
 
 export class TextNode extends SimpleNode {
@@ -296,12 +319,16 @@ export class EscapedNode extends SimpleNode {
         escaped: string,
     ) {
         super()
-        this.escaped = escaped.length === 1
-            ? escaped
-            : escaped.slice(1)
+        this.escaped = escaped
     }
 
     toString(): string | null {
+        return this.escaped.length === 1
+            ? this.escaped
+            : this.escaped.slice(1)
+    }
+
+    toReprString(): string {
         return this.escaped
     }
 }

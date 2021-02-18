@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, { Component, createRef } from "react"
+import Prism from "prismjs"
 
 
 const setupPattern = /^function.*?^\}/msu
@@ -17,17 +18,20 @@ type CodeDisplayProps = { setupName: string }
 type CodeDisplayState = { setupCode: string }
 
 class CodeDisplay extends Component<CodeDisplayProps, CodeDisplayState> {
+  codeContainer
+
   constructor(props: CodeDisplayProps) {
     super(props)
     this.state = { setupCode: "" }
+    this.codeContainer = createRef()
   }
 
   async componentDidMount() {
     const file = `${this.props.setupName}.js`
 
     try {
-      const setupAsString = await import(`!raw-loader!./setups/${file}`)
-      const setup = await import(`./setups/${file}`)
+      const setupAsString = await import(`!raw-loader!@site/src/setups/${file}`)
+      const setup = await import(`@site/src/setups/${file}`)
 
       const setupCode = getSetupCode(setupAsString.default)
       this.setState({ setupCode })
@@ -35,6 +39,11 @@ class CodeDisplay extends Component<CodeDisplayProps, CodeDisplayState> {
     catch (error) {
       console.log(error)
     }
+
+    if (this.codeContainer.current) {
+      Prism.highlightElement(this.codeContainer.current)
+    }
+
   }
 
   componentWillUnmount() {
@@ -43,9 +52,12 @@ class CodeDisplay extends Component<CodeDisplayProps, CodeDisplayState> {
 
   render() {
     return (
-      <pre><code className="language-javascript">{this.state.setupCode}</code></pre>
-    );
+      <pre><code ref={this.codeContainer} className="language-javascript">
+        {this.state.setupCode}
+      </code></pre>
+    )
   }
+
 }
 
 export default CodeDisplay;

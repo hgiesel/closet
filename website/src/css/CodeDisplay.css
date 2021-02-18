@@ -1,0 +1,13 @@
+:root {
+    --light-purple: #cc99cd;
+    --baby-blue: #67cdcc;
+    --orange: #f08d49;
+}
+
+.token.tagstart, .token.tagend, .token.argsep {
+    color: var(--baby-blue);
+}
+
+.token.tagname {
+    color: var(--light-purple);
+}

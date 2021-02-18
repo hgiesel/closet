@@ -1,6 +1,21 @@
 import React, { Component, createRef } from "react"
 import Prism from "prismjs"
 
+import "@site/src/css/CodeDisplay.css"
+
+
+Prism.languages.closet = {
+    tagopen: {
+        pattern: /\[\[[a-zA-Z]+\d*/u,
+        inside: {
+            tagstart: /\[\[/u,
+            tagname: /[a-zA-Z]+\d*/u,
+        },
+    },
+    tagend: /\]\]/,
+    altsep: /\|\|/,
+    argsep: /::/,
+}
 
 const setupPattern = /^function.*?^\}/msu
 
@@ -52,8 +67,8 @@ class CodeDisplay extends Component<CodeDisplayProps, CodeDisplayState> {
 
   render() {
     return (
-      <pre><code ref={this.codeContainer} className="language-javascript">
-        {this.state.setupCode}
+      <pre><code ref={this.codeContainer} className="language-closet">
+        This is a [[c1::Test]] Foobar [[c2::meh]]
       </code></pre>
     )
   }

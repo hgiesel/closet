@@ -3,7 +3,6 @@ import Prism from "prismjs"
 
 import "@site/src/css/CodeDisplay.css"
 
-
 Prism.languages.closet = {
     tagopen: {
         pattern: /\[\[[a-zA-Z]+\d*/u,

@@ -12,5 +12,9 @@
       "es2019.array",
       "dom"
     ]
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "website",
+  ],
 }

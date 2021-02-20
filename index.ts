@@ -1,1 +1,1 @@
-export * from './src'
+export * as closet from './src'

@@ -80,7 +80,7 @@ export const makeFlashcardTemplate = <T extends FlashcardPreset>(
 
 export const ellipsis = constant('[...]')
 
-interface FlashcardRecipe<T extends Record<string, unknown>> extends Recipe<T> {
+export interface FlashcardRecipe<T extends Record<string, unknown>> extends Recipe<T> {
     (options?: Record<string, unknown>): (filters: Registrar<T>) => void,
     show: Recipe<T>,
     hide: Recipe<T>,

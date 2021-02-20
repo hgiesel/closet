@@ -3,6 +3,7 @@
     "target": "es5",
     "strict": true,
     "downlevelIteration": true,
+    "moduleResolution": "node",
     "typeRoots" : [
       "./node_modules/@types",
       "./typings"
@@ -16,5 +17,8 @@
   "exclude": [
     "node_modules",
     "website",
+    "dist",
+    "build",
+    "test",
   ],
 }

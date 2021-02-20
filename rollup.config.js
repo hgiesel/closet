@@ -20,24 +20,33 @@ const terserOptions = {
     },
 }
 
+const tsconfigDist = {
+    declaration: true,
+    declarationDir: "dist/",
+}
+
 /**
  * available configs:
  *  --configDocs
  *  --configAnki
- *  --configMain
+ *  --configDist
+ *  --configDistWeb
  *  --configDev
  */
 export default args => {
-    const file = args.configAnki
-        ? 'anki/web/closet.js'
+    const destination = args.configAnki
+        ? { file: 'anki/web/closet.js' }
         : args.configDocs
-        ? 'docs/assets/js/closet.js'
-        /* args.configDist */
-        : 'dist/closet.min.js'
+        ? { file: 'docs/assets/js/closet.js' }
+        : args.configDist
+        ? { dir: 'dist/' }
+        /* args.configDistWeb */
+        : { file: 'dist/closet.min.js' }
+
 
     const format = args.configAnki
         ? 'esm'
-        : args.configDocs
+        : args.configDocs || args.configDistWeb
         ? 'iife'
         /* args.configDist */
         : 'cjs'
@@ -45,7 +54,10 @@ export default args => {
     const plugins = [
         nodeResolve(),
         commonjs(),
-        typescript(),
+        typescript(args.configDist
+            ? tsconfigDist
+            : {}
+        ),
         babel(babelOptions),
     ]
 
@@ -57,9 +69,9 @@ export default args => {
         input: 'index.ts',
         output: {
             name: 'closet',
-            file,
+            ...destination,
             format,
-            sourcemap: args.configDist,
+            sourcemap: args.configDistWeb,
         },
         plugins,
     }

@@ -1,5 +1,8 @@
 import React, { Component, createRef } from "react"
 import Prism from "prismjs"
+import * as closet from "closetjs"
+
+console.log(closet)
 
 import "@site/src/css/CodeDisplay.css"
 

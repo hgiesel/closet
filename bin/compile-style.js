@@ -24,23 +24,34 @@ const renderFile = (input, output) => {
     })
 }
 
-switch (args[0]) {
-    case "anki":
-        renderFile(
-            path.join(__basedir, 'style', 'editor.scss'),
-            `${__basedir}/anki/web/editor.css`,
-        )
+const renderFromArg = (arg) => {
+    switch (arg) {
+        case "anki":
+            renderFile(
+                path.join(__basedir, 'style', 'editor.scss'),
+                `${__basedir}/anki/web/editor.css`,
+            )
 
-        renderFile(
-            path.join(__basedir, 'style', 'base.scss'),
-            `${__basedir}/anki/web/closet.css`,
-        )
-        break
+            renderFile(
+                path.join(__basedir, 'style', 'base.scss'),
+                `${__basedir}/anki/web/closet.css`,
+            )
+            break
 
-    case "docs":
-        renderFile(
-            path.join(__basedir, 'style', 'base.scss'),
-            `${__basedir}/docs/assets/css/closet.css`,
-        )
-        break
+        case "dist":
+            renderFile(
+                path.join(__basedir, 'style', 'base.scss'),
+                `${__basedir}/dist/closet.css`,
+            )
+            break
+
+        case "docs":
+            renderFile(
+                path.join(__basedir, 'style', 'base.scss'),
+                `${__basedir}/docs/assets/css/closet.css`,
+            )
+            break
+    }
 }
+
+renderFromArg(args[0])

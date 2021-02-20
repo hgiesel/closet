@@ -6,8 +6,12 @@
     "url": "https://github.com/hgiesel"
   },
   "license": "GPL-3.0",
-  "version": "0.4.0",
-  "browser": "index.ts",
+  "version": "0.4.2",
+  "main": "index.ts",
+  "files": [
+    "dist/*",
+    "src/**/*.ts"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/hgiesel/closet.git"
@@ -18,25 +22,25 @@
     "compile:parser": "bin/compile-parser.sh",
     "compile:anki": "bin/compile-anki.sh",
     "compile:style": "run-p compile:style:anki compile:style:docs",
+    "compile:style:dist": "node bin/compile-style.js dist",
     "compile:style:anki": "node bin/compile-style.js anki",
     "compile:style:docs": "node bin/compile-style.js docs",
     "create-favicon": "bin/create-favicon.sh",
-    "prepare": "run-p compile:setups compile:parser compile:anki compile:style create-favicon",
-    "pack": "run-p pack:main pack:docs pack:anki",
-    "pack:main": "rollup -c",
+    "pack": "run-p pack:dist pack:docs pack:anki",
+    "pack:dist": "rollup -c --configDist",
     "pack:docs": "rollup -c --configDocs",
     "pack:anki": "rollup -c --configAnki",
     "pack:anki:dev": "rollup -c --configAnki --configDev",
     "build": "run-s prepare pack",
-    "build:main": "run-s compile:parser pack:main",
+    "build:dist": "run-s compile:parser compile:style:dist pack:dist",
     "build:docs": "run-s compile:parser create-favicon compile:style:docs pack:docs",
     "build:anki": "run-s compile:parser compile:anki compile:style:anki pack:anki",
     "build:anki:dev": "run-s compile:parser compile:anki pack:anki:dev",
-    "pack:watch:main": "rollup -w -c --configDev",
+    "pack:watch:dist": "rollup -w -c --configDist --configDev",
     "pack:watch:docs": "rollup -w -c --configDocs --configDev",
     "pack:watch:anki": "rollup -w -c --configAnki --configDev",
-    "watch": "run-s compile:parser compile:anki create-favicon watch:main watch:docs watch:anki",
-    "watch:main": "run-s compile:parser pack:watch:main",
+    "watch": "run-s compile:parser compile:anki create-favicon watch:dist watch:docs watch:anki",
+    "watch:dist": "run-s compile:parser pack:watch:dist",
     "watch:docs": "run-s compile:parser pack:watch:docs",
     "watch:anki": "run-s compile:parser compile:anki pack:watch:anki",
     "serve:docs": "bin/serve.sh",
@@ -48,7 +52,8 @@
     "zip": "run-s build:anki zip:sub",
     "zip:dev": "run-s build:anki:dev zip:sub",
     "test": "jest",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "prepublishOnly": "run-p build:dist"
   },
   "dependencies": {
     "moo": "^0.5.1",

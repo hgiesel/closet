@@ -1,4 +1,4 @@
-import type { ProfunctorDict } from "./profunctors.js"
+import type { ProfunctorDict } from "./profunctors"
 import type { Optic } from "./utils"
 
 

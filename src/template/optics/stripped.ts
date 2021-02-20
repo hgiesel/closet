@@ -1,7 +1,7 @@
-import type { ProfunctorDict } from "./profunctors.js"
+import type { ProfunctorDict } from "./profunctors"
 import type { Optic } from "./utils"
 import { WeakCircumfix, weakCircumfixToCircumfix } from "./circumfix"
-import { escapeRegExp, regExpString } from "./utils.js"
+import { escapeRegExp, regExpString } from "./utils"
 
 
 export const strippedRegex = (wc: WeakCircumfix): Optic => {

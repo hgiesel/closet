@@ -15,14 +15,15 @@
     "@docusaurus/core": "2.0.0-alpha.70",
     "@docusaurus/preset-classic": "2.0.0-alpha.70",
     "@mdx-js/react": "^1.6.21",
-    "closetjs": "^0.4.2",
+    "closetjs": "^0.4.4",
     "clsx": "^1.1.1",
     "codemirror": "^5.59.2",
     "loaders": "file:plugins/loaders",
     "prismjs": "^1.23.0",
     "react": "^16.8.4",
     "react-codemirror2": "^7.2.1",
-    "react-dom": "^16.8.4"
+    "react-dom": "^16.8.4",
+    "ts-loader": "^8.0.17"
   },
   "browserslist": {
     "production": [

@@ -3016,10 +3016,10 @@ clone-response@^1.0.2:
   dependencies:
     mimic-response "^1.0.0"
 
-closetjs@^0.4.4:
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/closetjs/-/closetjs-0.4.4.tgz#71167403a9a44d6f9c5b88334e1949e818e4a1fe"
-  integrity sha512-xtEj+/Rhoo8J/9MVvUzWLbvIdPG/FS+PFI8DJJC8k5wjjeGZW92u8S8Nu3U3bZCZY/g7mZQfKA3DMVgoBXy8zQ==
+closetjs@^0.4.5:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/closetjs/-/closetjs-0.4.5.tgz#ddaf3327607411a3f223930e6697fd2b4360ac21"
+  integrity sha512-yJwPgd6Y3/kB5SNVSY5r8MPAwQ0xdLvHkQhuISgmoD/jsazTKEVVjd/aayYn/wvBByCxacGUQg3T2tkOhcdS4g==
   dependencies:
     moo "^0.5.1"
     nearley "^2.19.6"

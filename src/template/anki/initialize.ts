@@ -65,14 +65,14 @@ type SetupOutput = [
 ]
 
 type UserLogic<T extends Record<string, unknown>> = (
-    closet: NodeModule,
+    closet: Record<string, unknown>,
     preset: T,
     chooseMemory: (memoryKey: string) => MemoryMap,
 ) => SetupOutput[]
 
 // Export for legacy support
 export const init = (
-    closet: NodeModule,
+    closet: Record<string, unknown>,
     logic: UserLogic<DefaultPreset>,
     cardType: string,
     tagsFull: string,
@@ -88,7 +88,7 @@ export const init = (
 /////////////////////////////////////// INITIALIZE
 
 const logInit = (
-    closet: NodeModule,
+    closet: Record<string, unknown>,
     logic: UserLogic<DefaultPreset>,
     cardType: string,
     tagsFull: string,
@@ -108,12 +108,12 @@ const logInit = (
 }
 
 export const initialize = (
-    closet: NodeModule,
+    closet: Record<string, unknown>,
     logic: UserLogic<DefaultPreset>,
     cardType: string,
     tagsFull: string,
     side: CardSide,
-): NodeModule => {
+): Record<string, unknown> => {
     delayAction(() => logInit(closet, logic, cardType, tagsFull, side))
     return closet
 }

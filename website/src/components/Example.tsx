@@ -1,21 +1,10 @@
+import type { ExampleInfo } from "../examples"
+
 import React, { PureComponent, Suspense } from "react"
 import ExampleSyntax from "./ExampleSyntax"
-import Prism from "prismjs"
+import ExampleCompiled from "./ExampleCompiled"
 
 import * as closet from "closetjs"
-
-Prism.languages.closet = {
-    tagopen: {
-        pattern: /\[\[[a-zA-Z]+\d*/u,
-        inside: {
-            tagstart: /\[\[/u,
-            tagname: /[a-zA-Z]+\d*/u,
-        },
-    },
-    tagend: /\]\]/,
-    altsep: /\|\|/,
-    argsep: /::/,
-}
 
 const setupPattern = /^.*\}/gsu
 const prepareSetupCode = (moduleCode: string): string => {
@@ -29,47 +18,42 @@ const prepareSetupCode = (moduleCode: string): string => {
 }
 
 type CodeDisplayProps = { name: string }
-type CodeDisplayState = { rawText: string }
+type CodeDisplayState = { rawText: string, setups: string[] }
 
-const defaultState: CodeDisplayState = { rawText: "" }
+
+const defaultState: CodeDisplayState = { rawText: "", setups: [] }
 
 class CodeDisplay extends PureComponent<CodeDisplayProps, CodeDisplayState> {
   constructor(props: CodeDisplayProps) {
     super(props)
-    const exampleName = this.props.name
-
-    import(`!raw-loader!@site/src/examples/${exampleName}/text.html`)
-      .then((module: NodeModule) => module["default"])
-      .then((rawText: string) => this.setState({ rawText }))
-      .catch((reason) => console.log(`Could not fetch example text: ${exampleName}: `, reason))
-
     this.state = defaultState;
   }
-
-  // async componentDidMount() {
-  //   const exampleName = this.props.name
-
-  //   const example = await import(`@site/src/examples/${exampleName}`)
-  //     .catch((reason) => console.log(`Could not fetch example: ${exampleName}: `, reason))
-
-//     const setups = await Promise.all(example.setups
-//       .map((setupName: string) => import(`@site/src/setups/${setupName}`))
-//     )
-
-//     const setupCode = await Promise.all(example.setups
-//       .map((setupName: string) => import(`!raw-loader!@site/src/setups/${setupName}/setup`))
-//     )
-//       .then(setups => setups.map(setup => setup["default"]))
-
-    // this.setState({ rawText })
-  // }
 
   render() {
     return (
       <>
+        <ExampleCompiled setups={this.state.setups} />
         <ExampleSyntax text={this.state.rawText}/>
       </>
     )
+  }
+
+  async componentDidMount() {
+    const exampleName = this.props.name
+
+    const rawTextPromise = import(`!raw-loader!@site/src/examples/${exampleName}/text.html`)
+      .then((module: NodeModule) => module["default"])
+      .catch((reason) => console.log(`Could not fetch example text: ${exampleName}: `, reason))
+
+    const examplePromise = await import(`@site/src/examples/${exampleName}`)
+      .catch((reason) => console.log(`Could not fetch example: ${exampleName}: `, reason))
+
+    const [
+      rawText,
+      { setups },
+    ] = await Promise.all([rawTextPromise, examplePromise])
+
+    this.setState({ rawText, setups })
   }
 
   componentWillUnmount() {

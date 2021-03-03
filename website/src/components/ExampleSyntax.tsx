@@ -1,4 +1,4 @@
-import React, { Component, createRef, RefObject } from "react"
+import React, { PureComponent, createRef, RefObject } from "react"
 import Prism from "prismjs"
 
 import "@site/src/css/ExampleSyntax.css"
@@ -21,7 +21,7 @@ type ExampleSyntaxState = { highlightedText: string }
 
 const defaultState = { highlightedText: "" }
 
-class ExampleSyntax extends Component<ExampleSyntaxProps, ExampleSyntaxState> {
+class ExampleSyntax extends PureComponent<ExampleSyntaxProps, ExampleSyntaxState> {
   codeContainer: RefObject<HTMLElement>
 
   constructor(props: ExampleSyntaxProps) {
@@ -39,10 +39,6 @@ class ExampleSyntax extends Component<ExampleSyntaxProps, ExampleSyntaxState> {
     return { highlightedText }
   }
 
-  componentDidMount() {
-    Prism.highlightElement(this.codeContainer.current)
-  }
-
   render() {
     return (
       <pre>
@@ -55,6 +51,9 @@ class ExampleSyntax extends Component<ExampleSyntaxProps, ExampleSyntaxState> {
     )
   }
 
+  componentDidMount() {
+    Prism.highlightElement(this.codeContainer.current)
+  }
 }
 
 export default ExampleSyntax;

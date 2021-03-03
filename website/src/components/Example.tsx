@@ -32,8 +32,8 @@ class CodeDisplay extends PureComponent<CodeDisplayProps, CodeDisplayState> {
   render() {
     return (
       <>
-        <ExampleCompiled setups={this.state.setups} />
         <ExampleSyntax text={this.state.rawText}/>
+        <ExampleCompiled setups={this.state.setups} />
       </>
     )
   }

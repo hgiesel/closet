@@ -11,6 +11,9 @@ module.exports = {
     plugins: [
         'loaders',
     ],
+    stylesheets: [
+      "https://fonts.googleapis.com/icon?family=Material+Icons",
+    ],
     themeConfig: {
         hideableSidebar: true,
         navbar: {

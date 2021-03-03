@@ -1,0 +1,11 @@
+.example {
+  position: relative;
+}
+
+.down-arrow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: -1rem auto 0;
+  transform: scale(2);
+}

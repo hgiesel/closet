@@ -1,21 +1,11 @@
-import type { ExampleInfo } from "../examples"
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownwardRounded';
 
-import React, { PureComponent, Suspense } from "react"
+import React, { PureComponent } from "react"
 import ExampleSyntax from "./ExampleSyntax"
 import ExampleCompiled from "./ExampleCompiled"
 
-import * as closet from "closetjs"
 
-const setupPattern = /^.*\}/gsu
-const prepareSetupCode = (moduleCode: string): string => {
-  const match = moduleCode.match(setupPattern)
-
-  if (!match) {
-    throw new Error(`Module has invalid formatting: ${moduleCode}`)
-  }
-
-  return match[0]
-}
+import styles from "@site/src/css/Example.module.css"
 
 type CodeDisplayProps = { name: string }
 type CodeDisplayState = { rawText: string, setups: string[] }
@@ -30,11 +20,13 @@ class CodeDisplay extends PureComponent<CodeDisplayProps, CodeDisplayState> {
   }
 
   render() {
+    console.log(styles)
     return (
-      <>
-        <ExampleSyntax text={this.state.rawText}/>
+      <div className={styles.example}>
+        <ExampleSyntax text={this.state.rawText} />
+        <ArrowDownwardIcon className={styles['down-arrow']} />
         <ExampleCompiled setups={this.state.setups} />
-      </>
+      </div>
     )
   }
 

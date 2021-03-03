@@ -1,5 +1,16 @@
-import React, { PureComponent, createRef, RefObject } from "react"
-import Prism from "prismjs"
+import React, { PureComponent } from "react"
+
+
+const setupPattern = /^.*\}/gsu
+const prepareSetupCode = (moduleCode: string): string => {
+  const match = moduleCode.match(setupPattern)
+
+  if (!match) {
+    throw new Error(`Module has invalid formatting: ${moduleCode}`)
+  }
+
+  return match[0]
+}
 
 type ExampleCompiledProps = { setups: string[] }
 type ExampleCompiledState = { highlightedText: string }

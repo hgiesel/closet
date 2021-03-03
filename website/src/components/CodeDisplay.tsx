@@ -28,37 +28,47 @@ const prepareSetupCode = (moduleCode: string): string => {
   return match[0]
 }
 
-type CodeDisplayProps = { setup: string, example: string }
-type CodeDisplayState = { setupCode: string }
+type CodeDisplayProps = { example: string }
+type CodeDisplayState = {
+  exampleText: string,
+}
 
 class CodeDisplay extends Component<CodeDisplayProps, CodeDisplayState> {
   codeContainer
 
   constructor(props: CodeDisplayProps) {
     super(props)
-    this.state = { setupCode: "" }
+    this.state = { exampleText: "" }
     this.codeContainer = createRef()
   }
 
   async componentDidMount() {
-    const setupName = this.props.setup
     const exampleName = this.props.example
 
-    try {
-      const setup = await import(`@site/src/setups/${setupName}`)
-      const setupCode = await import(`!raw-loader!@site/src/setups/${setupName}/setup`)
-        .then((module: NodeModule) => module["default"])
-        .then(prepareSetupCode)
+    const example = await import(`@site/src/examples/${exampleName}`)
+      .catch((reason) => console.log(`Could not fetch example: ${exampleName}: `, reason))
 
-      this.setState({ setupCode })
-    }
-    catch (error) {
-      console.log(error)
-    }
+    const rawText = await import(`!html-loader!@site/src/examples/${exampleName}/code.html`)
+      .then((module: NodeModule) => module["default"])
+      .catch((reason) => console.log(`Could not fetch example text: ${exampleName}: `, reason))
 
-    if (this.codeContainer.current) {
-      Prism.highlightElement(this.codeContainer.current)
-    }
+    const exampleText = Prism.highlight(rawText, Prism.languages.closet, "closet")
+      .replace(/&lt;/gu, "<")
+      .replace(/\n/gu, "")
+
+    console.log(exampleText)
+    this.setState({ exampleText })
+
+
+    // const setups = await Promise.all(example.setups
+    //   .map((setupName: string) => import(`@site/src/setups/${setupName}`))
+    // )
+
+    // const setupCode = await Promise.all(example.setups
+    //   .map((setupName: string) => import(`!raw-loader!@site/src/setups/${setupName}/setup`))
+    // )
+    //   .then(setups => setups.map(setup => setup["default"]))
+
   }
 
   componentWillUnmount() {
@@ -67,9 +77,13 @@ class CodeDisplay extends Component<CodeDisplayProps, CodeDisplayState> {
 
   render() {
     return (
-      <pre><code ref={this.codeContainer} className="language-closet">
-        This is a [[c1::Test]] Foobar [[c2::meh]]
-      </code></pre>
+      <pre>
+        <code
+          className="language-closet"
+          ref={this.codeContainer}
+          dangerouslySetInnerHTML={{__html: this.state.exampleText}}
+        ></code>
+      </pre>
     )
   }
 

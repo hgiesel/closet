@@ -22,8 +22,7 @@
     "prismjs": "^1.23.0",
     "react": "^16.8.4",
     "react-codemirror2": "^7.2.1",
-    "react-dom": "^16.8.4",
-    "ts-loader": "^8.0.17"
+    "react-dom": "^16.8.4"
   },
   "browserslist": {
     "production": [
@@ -48,6 +47,7 @@
     "css-loader": "^5.0.2",
     "raw-loader": "^4.0.2",
     "style-loader": "^2.0.0",
+    "ts-loader": "^8.0.17",
     "typescript": "^4.1.5",
     "yaml-loader": "^0.6.0"
   }

@@ -1,5 +1,5 @@
 :root {
-    --light-purple: #cc99cd;
+    --light-purple: #f781f9;
     --baby-blue: #67cdcc;
     --docusaurus-green: #27c2a0;
     --cherry-tomato: #e94b3cff;
@@ -10,16 +10,26 @@
     --danger-red: #d9514eff;
 }
 
-.token.tagstart, .token.tagend, .token.argsep {
-    color: var(--baby-blue);
-}
-
-.token.tagname {
-    color: var(--light-purple);
-}
-
 .mb-0 {
   margin-bottom: 0;
   border-bottom-right-radius: 0;
   border-bottom-left-radius:  0;
+}
+
+/* SYNTAX HIGHLIGHTING */
+
+html[data-theme="light"] :is(.token.tagstart, .token.tagend, .token.argsep) {
+    color: var(--blue-bossom);
+}
+
+html[data-theme="dark"] :is(.token.tagstart, .token.tagend, .token.argsep) {
+    color: var(--baby-blue);
+}
+
+html[data-theme="light"] .token.tagname {
+    color: var(--danger-red);
+}
+
+html[data-theme="dark"] .token.tagname {
+    color: var(--light-purple);
 }

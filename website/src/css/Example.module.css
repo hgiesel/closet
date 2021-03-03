@@ -31,6 +31,10 @@ html[data-theme="dark"] pre {
   background-color: var(--anki-nightfield);
 }
 
+html[data-theme="light"] pre {
+  background-color: #e4e4e4;
+}
+
 pre * {
   margin: 0;
 }

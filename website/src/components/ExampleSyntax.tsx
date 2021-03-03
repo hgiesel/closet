@@ -1,7 +1,8 @@
-import React, { PureComponent, createRef, RefObject } from "react"
-import Prism from "prismjs"
+import React, { useEffect, useState, useRef } from "react"
+import Prism, { highlight, highlightElement } from "prismjs"
 
 import "@site/src/css/ExampleSyntax.css"
+
 
 Prism.languages.closet = {
     tagopen: {
@@ -17,43 +18,34 @@ Prism.languages.closet = {
 }
 
 type ExampleSyntaxProps = { text: string }
-type ExampleSyntaxState = { highlightedText: string }
 
-const defaultState = { highlightedText: "" }
+const ExampleSyntax = (props: ExampleSyntaxProps) => {
+  const codeContainer = useRef()
 
-class ExampleSyntax extends PureComponent<ExampleSyntaxProps, ExampleSyntaxState> {
-  codeContainer: RefObject<HTMLElement>
+  const [
+    highlightedText,
+    setHighlightedText,
+  ] = useState("");
 
-  constructor(props: ExampleSyntaxProps) {
-    super(props)
-    this.codeContainer = createRef()
-    this.state = defaultState
-  }
-
-  static getDerivedStateFromProps(props: ExampleSyntaxProps): ExampleSyntaxState {
-    const highlightedText = Prism.highlight(props.text.replace(/</gu, "%LESSTHAN%"), Prism.languages.closet, "closet")
+  useEffect(() => {
+    const highlighted = highlight(props.text.replace(/</gu, "%LESSTHAN%"), Prism.languages.closet, "closet")
       .replace(/%LESSTHAN%/gu, "<")
       .replace(/\n/gu, "")
       .replace(/(?<=>)[ ]+?(?=<)/gu, "")
 
-    return { highlightedText }
-  }
+    setHighlightedText(highlighted)
+    highlightElement(codeContainer.current)
+  }, [props.text])
 
-  render() {
-    return (
-      <pre>
-        <code
-          className="language-closet"
-          ref={this.codeContainer}
-          dangerouslySetInnerHTML={{__html: this.state.highlightedText}}
-        ></code>
-      </pre>
-    )
-  }
-
-  componentDidMount() {
-    Prism.highlightElement(this.codeContainer.current)
-  }
-}
+  return (
+    <pre>
+      <code
+        className="language-closet"
+        ref={codeContainer}
+        dangerouslySetInnerHTML={{__html: highlightedText}}
+      ></code>
+    </pre>
+  )
+};
 
 export default ExampleSyntax;

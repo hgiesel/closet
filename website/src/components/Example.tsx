@@ -20,7 +20,6 @@ class CodeDisplay extends PureComponent<CodeDisplayProps, CodeDisplayState> {
   }
 
   render() {
-    console.log(styles)
     return (
       <div className={styles.example}>
         <ExampleSyntax text={this.state.rawText} />

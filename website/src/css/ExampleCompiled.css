@@ -1,3 +1,30 @@
+.tabs {
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.tabs__item {
+  white-space: nowrap;
+  user-select: none;
+  border-radius: 0;
+  margin: auto 0;
+}
+
+:root {
+  --anki-nightfield: #3a3a3a;
+  --anki-nightborder: #777777;
+}
+
+.tabs__item--active {
+  border-bottom-color: transparent;
+  background-color: var(--ifm-hover-overlay);
+}
+
 .margin-vert--md {
   margin-top: 0 !important;
+}
+
+.margin-vert--md pre {
+  border-top-right-radius: 0;
+  border-top-left-radius:  0;
 }

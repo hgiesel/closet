@@ -38,7 +38,7 @@ const ExampleSyntax = (props: ExampleSyntaxProps) => {
   }, [props.text])
 
   return (
-    <pre>
+    <pre className={"mb-0"}>
       <code
         className="language-closet"
         ref={codeContainer}

@@ -1,7 +1,13 @@
 :root {
     --light-purple: #cc99cd;
     --baby-blue: #67cdcc;
-    --orange: #f08d49;
+    --docusaurus-green: #27c2a0;
+    --cherry-tomato: #e94b3cff;
+    --orange: #f2aa4cff;
+    --blazing-yellow: #fee715ff;
+    --mint: #adefd1ff;
+    --blue-bossom: #2da8d8ff;
+    --danger-red: #d9514eff;
 }
 
 .token.tagstart, .token.tagend, .token.argsep {
@@ -10,4 +16,10 @@
 
 .token.tagname {
     color: var(--light-purple);
+}
+
+.mb-0 {
+  margin-bottom: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius:  0;
 }

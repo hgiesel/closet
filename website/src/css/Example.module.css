@@ -2,10 +2,35 @@
   position: relative;
 }
 
-.down-arrow {
+.icon-plus {
   position: absolute;
   left: 0;
   right: 0;
-  margin: -1rem auto 0;
-  transform: scale(2);
+  margin: -0.5rem auto 0;
+  transform: scale(3);
+
+  pointer-events: none;
+}
+
+.icon-equals {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 3.3rem auto 0;
+  transform: scale(3);
+
+  pointer-events: none;
+}
+
+:root {
+  --anki-nightfield: #3a3a3a;
+  --anki-nightborder: #777777;
+}
+
+html[data-theme="dark"] pre {
+  background-color: var(--anki-nightfield);
+}
+
+pre * {
+  margin: 0;
 }

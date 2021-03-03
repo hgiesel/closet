@@ -54,10 +54,6 @@ class ExampleCompiled extends PureComponent<ExampleCompiledProps, ExampleCompile
           { label: "Front 3", value: "f3" },
           { label: "Front 4", value: "f4" },
           { label: "Front 5", value: "f5" },
-          { label: "Front 6", value: "f6" },
-          { label: "Front 7", value: "f7" },
-          { label: "Front 8", value: "f8" },
-          { label: "Front 9", value: "f9" },
       ]}>
         <TabItem value="f1">
           <pre>

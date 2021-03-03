@@ -1,4 +1,4 @@
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownwardRounded';
+import { TiPlus, TiEquals } from "react-icons/ti";
 
 import React, { PureComponent } from "react"
 import ExampleSyntax from "./ExampleSyntax"
@@ -23,7 +23,8 @@ class CodeDisplay extends PureComponent<CodeDisplayProps, CodeDisplayState> {
     return (
       <div className={styles.example}>
         <ExampleSyntax text={this.state.rawText} />
-        <ArrowDownwardIcon className={styles['down-arrow']} />
+        <TiPlus className={styles["icon-plus"]} />
+        <TiEquals className={styles["icon-equals"]} />
         <ExampleCompiled setups={this.state.setups} />
       </div>
     )

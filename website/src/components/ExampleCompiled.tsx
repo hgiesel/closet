@@ -1,5 +1,10 @@
 import React, { PureComponent } from "react"
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import "@site/src/css/ExampleCompiled.css"
+
 
 const setupPattern = /^.*\}/gsu
 const prepareSetupCode = (moduleCode: string): string => {
@@ -41,9 +46,30 @@ class ExampleCompiled extends PureComponent<ExampleCompiledProps, ExampleCompile
 
   render() {
     return (
-      <pre>
-        Heyo
-      </pre>
+      <Tabs
+        defaultValue="f1"
+        values={[
+          { label: "Front 1", value: "f1" },
+          { label: "Front 2", value: "f2" },
+          { label: "Front 3", value: "f3" },
+          { label: "Front 4", value: "f4" },
+          { label: "Front 5", value: "f5" },
+          { label: "Front 6", value: "f6" },
+          { label: "Front 7", value: "f7" },
+          { label: "Front 8", value: "f8" },
+          { label: "Front 9", value: "f9" },
+      ]}>
+        <TabItem value="f1">
+          <pre>
+            Heyo
+          </pre>
+        </TabItem>
+        <TabItem value="f2">
+          <pre>
+            Heyo!
+          </pre>
+        </TabItem>
+      </Tabs>
     )
   }
 

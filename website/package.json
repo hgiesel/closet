@@ -45,6 +45,7 @@
     "@types/react-router-dom": "^5.1.7",
     "babel-plugin-prismjs": "^2.0.1",
     "css-loader": "^5.0.2",
+    "html-loader": "^2.1.1",
     "raw-loader": "^4.0.2",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.0.17",

@@ -1,56 +1,49 @@
+import type { ExampleInfo } from "../../examples"
+
+import React from "react"
+import { useAsync } from "react-use"
 import { TiPlus, TiEquals } from "react-icons/ti";
 
-import React, { PureComponent } from "react"
 import ExampleSyntax from "../ExampleSyntax"
 import ExampleCompiled from "../ExampleCompiled"
 
-
 import styles from "./styles.module.css"
 
-type CodeDisplayProps = { name: string }
-type CodeDisplayState = { rawText: string, setups: string[], preset: string }
 
-
-const defaultState: CodeDisplayState = { rawText: "", setups: [], preset: "" }
-
-class CodeDisplay extends PureComponent<CodeDisplayProps, CodeDisplayState> {
-  constructor(props: CodeDisplayProps) {
-    super(props)
-    this.state = defaultState;
-  }
-
-  render() {
-    return (
-      <div className={styles.example}>
-        <ExampleSyntax text={this.state.rawText} />
-        <TiPlus className={styles["icon-plus"]} />
-        <TiEquals className={styles["icon-equals"]} />
-        <ExampleCompiled text={this.state.rawText} setupNames={this.state.setups} presetName={this.state.preset} />
-      </div>
-    )
-  }
-
-  async componentDidMount() {
-    const exampleName = this.props.name
-
-    const rawTextPromise = import(`!raw-loader!@site/src/examples/${exampleName}/text.html`)
-      .then((module: NodeModule) => module["default"])
-      .catch((reason) => console.log(`Could not fetch example text: ${exampleName}: `, reason))
-
-    const examplePromise = await import(`@site/src/examples/${exampleName}`)
-      .catch((reason) => console.log(`Could not fetch example: ${exampleName}: `, reason))
-
-    const [
-      rawText,
-      { setups, preset },
-    ] = await Promise.all([rawTextPromise, examplePromise])
-
-    this.setState({ rawText, setups, preset })
-  }
-
-  componentWillUnmount() {
-    this.setState = () => {}
-  }
+const fetchExampleText = async (name: string): Promise<string> => {
+  const module = await import(`!raw-loader!@site/src/examples/${name}/text.html`)
+  return module["default"]
 }
 
-export default CodeDisplay;
+const fetchExample = async (name: string): Promise<ExampleInfo> => {
+  return import(`@site/src/examples/${name}`)
+}
+
+type CodeDisplayProps = { name: string }
+
+const CodeDisplay2 = ({ name }: CodeDisplayProps) => {
+  const exampleText = useAsync(async () => fetchExampleText(name), [name])
+  const example = useAsync(async () => fetchExample(name), [name])
+  console.log('foobar', example, exampleText)
+
+  return (
+    <div className={styles.example}>
+      {exampleText.loading
+        ? <pre></pre>
+        : <ExampleSyntax text={exampleText.value} />
+      }
+      <TiPlus className={styles["icon-plus"]} />
+      <TiEquals className={styles["icon-equals"]} />
+      {example.loading || exampleText.loading
+        ? <pre></pre>
+        : <ExampleCompiled
+          text={exampleText.value}
+          setups={example.value.setups.map(setup => setup.setup)}
+          context={example.value.context}
+        />
+      }
+    </div>
+  )
+}
+
+export default CodeDisplay2;

@@ -1,6 +1,5 @@
 .tabs {
-  justify-content: space-between;
-  align-items: stretch;
+  justify-content: stretch;
 }
 
 .tabs__item {

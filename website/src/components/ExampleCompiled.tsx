@@ -6,6 +6,7 @@ import TabItem from '@theme/TabItem';
 
 import "@site/src/css/ExampleCompiled.css"
 
+import * as closet from "closetjs"
 
 const setupPattern = /^.*\}/gsu
 const prepareSetupCode = (moduleCode: string): string => {
@@ -23,39 +24,50 @@ const prepareSetupCode = (moduleCode: string): string => {
 //     )
 //       .then(setups => setups.map(setup => setup["default"]))
 
+const prepare = (text: string, setups: any[], preset: Record<string, unknown>) => {
+  const filterManager = closet.FilterManager.make()
 
-type ExampleCompiledProps = { setups: string[], preset: string }
+  for (const setup of setups) {
+    setup.setup(closet, filterManager, preset)
+  }
 
-const ExampleCompiled = ({ setups, preset }: ExampleCompiledProps) => {
-  const { loading, value = [] } = useAsync(async () => Promise.all(
-    setups.map((name: string) => import(`@site/src/setups/${name}`))
-  ), setups)
+  const output = closet.template.Template
+    .make(text)
+    .render(filterManager)
 
-  return (
-    <pre>
-      {loading ? "...waiting..." : `loaded: ${value}` }
-    </pre>
-  )
-
-// <Tabs
-//   defaultValue="f1"
-//   values={[
-//     { label: "Front 1 and foo", value: "f1" },
-//     { label: "Front 2", value: "f2" },
-//     { label: "Front 3", value: "f3" },
-// ]}>
-//   <TabItem value="f1">
-//     <pre>
-//       Heyo
-//     </pre>
-//   </TabItem>
-//   <TabItem value="f2">
-//     <pre>
-//       Heyo!
-//     </pre>
-//   </TabItem>
-// </Tabs>
-
+  return output[0]
 }
+
+type ExampleCompiledProps = { text: string, setupNames: string[], presetName: string }
+
+const ExampleCompiled = ({ text, setupNames, presetName }: ExampleCompiledProps) => {
+
+  const setups = useAsync(async () => Promise.all(
+    setupNames.map((name: string) => import(`@site/src/setups/${name}`))
+  ), [setupNames])
+
+  const preset = useAsync(async () => import(`@site/src/presets/${presetName}`), [presetName])
+
+  const rendered = setups.value && preset.value
+    ? prepare(text, setups.value, preset.value)
+    : "..."
+
+  return preset.value
+    ? (
+      <Tabs
+        defaultValue={preset.value.defaultValue}
+        values={preset.value.values}
+      >
+        {preset.value.values.map(({ value }) => (
+          <TabItem key={value} value={value}>
+            <pre dangerouslySetInnerHTML={{ __html: rendered }}>
+            </pre>
+          </TabItem>
+        ))}
+      </Tabs>
+    )
+    : <></>
+}
+
 
 export default ExampleCompiled;

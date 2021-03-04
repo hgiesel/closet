@@ -25,7 +25,7 @@ class CodeDisplay extends PureComponent<CodeDisplayProps, CodeDisplayState> {
         <ExampleSyntax text={this.state.rawText} />
         <TiPlus className={styles["icon-plus"]} />
         <TiEquals className={styles["icon-equals"]} />
-        <ExampleCompiled setups={this.state.setups} preset={this.state.preset} />
+        <ExampleCompiled text={this.state.rawText} setupNames={this.state.setups} presetName={this.state.preset} />
       </div>
     )
   }

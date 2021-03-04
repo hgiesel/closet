@@ -12,19 +12,3 @@
   border-top-right-radius: 0;
   border-top-left-radius:  0;
 }
-
-.tabs {
-  justify-content: stretch;
-}
-
-.tabs__item {
-  white-space: nowrap;
-  user-select: none;
-  border-radius: 0;
-  margin: auto 0 !important;
-}
-
-.tabs__item--active {
-  border-bottom-color: transparent;
-  background-color: var(--ifm-hover-overlay);
-}

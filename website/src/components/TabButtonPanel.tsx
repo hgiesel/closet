@@ -1,4 +1,6 @@
-import React, { KeyboardEvent, MouseEvent, useState, useEffect } from "react"
+import React, { KeyboardEvent, MouseEvent, useState, useEffect } from "react";
+
+import "@site/src/css/TabButtonPanel.css";
 
 type TabButtonPanelProps = {
   onSelected: (value: string, indexChanged: boolean) => void,

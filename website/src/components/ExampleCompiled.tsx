@@ -1,4 +1,4 @@
-import React, { PureComponent, RefObject } from "react"
+import React from "react"
 import { useAsync } from "react-use"
 
 import Tabs from '@theme/Tabs';
@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 import "@site/src/css/ExampleCompiled.css"
 
 import * as closet from "closetjs"
-import "../../../node_modules/closetjs/dist"
+import "@site/node_modules/closetjs/dist/closet.css"
 
 const setupPattern = /^.*\}/gsu
 const prepareSetupCode = (moduleCode: string): string => {

@@ -5,7 +5,7 @@ export const values = [
     value: "f",
     data: {
       cardSide: "front",
-    }
+    },
   },
   {
     label: "Back",

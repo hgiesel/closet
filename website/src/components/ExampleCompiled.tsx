@@ -25,12 +25,14 @@ const prepareSetupCode = (moduleCode: string): string => {
 //     )
 //       .then(setups => setups.map(setup => setup["default"]))
 
-const prepare = (text: string, setups: any[], preset: Record<string, unknown>): string => {
+const prepare = (text: string, setups: any[], context: Record<string, unknown>[]): string => {
   const filterManager = closet.FilterManager.make()
 
   for (const setup of setups) {
-    setup.setup(closet, filterManager, preset)
+    setup.setup(closet, filterManager, context[0])
   }
+
+  filterManager.switchPreset(context[0])
 
   const output = closet.template.Template
     .make(text)
@@ -47,19 +49,20 @@ const ExampleCompiled = ({ text, setupNames, presetName }: ExampleCompiledProps)
     setupNames.map((name: string) => import(`@site/src/setups/${name}`))
   ), [setupNames])
 
-  const preset = useAsync(async () => import(`@site/src/presets/${presetName}`), [presetName])
+  const context = useAsync(async () => import(`@site/src/contexts/${presetName}`), [presetName])
 
-  const rendered = setups.value && preset.value
-    ? prepare(text, setups.value, preset.value)
+  const rendered = setups.value && context.value
+    ? prepare(text, setups.value, context.value.values.map((ctxt) => ctxt.data))
     : "..."
 
-  return preset.value
+  return setups.value && context.value
     ? (
       <Tabs
-        defaultValue={preset.value.defaultValue}
-        values={preset.value.values}
+        defaultValue={context.value.defaultValue}
+        values={context.value.values}
+        lazy
       >
-        {preset.value.values.map(({ value }) => (
+        {context.value.values.map(({ value }) => (
           <TabItem key={value} value={value}>
             <pre dangerouslySetInnerHTML={{ __html: rendered }}>
             </pre>

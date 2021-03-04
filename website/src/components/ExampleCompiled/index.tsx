@@ -1,7 +1,9 @@
 import type { ContextInfo, Context } from "../../contexts"
 import type { Setup } from "../../setups"
 
-import React, { useEffect, useRef } from "react"
+import React, { useRef } from "react"
+
+import { indexBy, prop } from "ramda"
 
 import TabButtonPanel  from '../TabButtonPanel';
 
@@ -21,24 +23,22 @@ const prepareSetupCode = (moduleCode: string): string => {
   return match[0]
 }
 
-//     const setupCode = await Promise.all(example.setups
-//       .map((setupName: string) => import(`!raw-loader!@site/src/setups/${setupName}/setup`))
-//     )
-//       .then(setups => setups.map(setup => setup["default"]))
-
 const prepareRenderer = (
   text: string,
   setups: Setup[],
-  contextData: any,
+  contextData: Context[],
 ) => {
-  const filterManager = closet.FilterManager.make()
+  let filterManager = closet.FilterManager.make()
 
   for (const setup of setups) {
     setup(closet as any, filterManager)
   }
 
+  const contexts = indexBy(prop("value"), contextData)
+
   return (value: string, indexChanged: boolean, target: HTMLElement): void => {
-    console.log(contextData)
+    const newContext = contexts[value].data
+    filterManager.switchPreset(newContext)
 
     closet.template.Template
       .make(text)

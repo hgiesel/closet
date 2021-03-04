@@ -4,14 +4,14 @@ export const values = [
     label: "Front",
     value: "f",
     data: {
-      cardSide: "front",
+      side: "front",
     },
   },
   {
     label: "Back",
     value: "b",
     data: {
-      cardSide: "back",
+      side: "back",
     }
   },
 ]

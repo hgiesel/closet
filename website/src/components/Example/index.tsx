@@ -24,7 +24,6 @@ type CodeDisplayProps = { name: string }
 const CodeDisplay2 = ({ name }: CodeDisplayProps) => {
   const exampleText = useAsync(async () => fetchExampleText(name), [name])
   const example = useAsync(async () => fetchExample(name), [name])
-  console.log('foobar', example, exampleText)
 
   return (
     <div className={styles.example}>

@@ -6,7 +6,7 @@ import TabItem from '@theme/TabItem';
 
 import "@site/src/css/ExampleCompiled.css"
 
-import * as closet from "closetjs"
+import { closet } from "closetjs"
 import "@site/node_modules/closetjs/dist/closet.css"
 
 const setupPattern = /^.*\}/gsu
@@ -25,7 +25,7 @@ const prepareSetupCode = (moduleCode: string): string => {
 //     )
 //       .then(setups => setups.map(setup => setup["default"]))
 
-const prepare = (text: string, setups: any[], preset: Record<string, unknown>) => {
+const prepare = (text: string, setups: any[], preset: Record<string, unknown>): string => {
   const filterManager = closet.FilterManager.make()
 
   for (const setup of setups) {

@@ -38,3 +38,20 @@ html[data-theme="light"] pre {
 pre * {
   margin: 0;
 }
+
+.pre-top {
+  margin-bottom: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius:  0;
+}
+
+.pre-top code {
+  white-space: normal;
+}
+
+.pre-bottom {
+  white-space: normal;
+  margin-top: 0;
+  border-top-right-radius: 0;
+  border-top-left-radius:  0;
+}

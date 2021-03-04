@@ -17,9 +17,9 @@ Prism.languages.closet = {
     argsep: /::/,
 }
 
-type ExampleSyntaxProps = { text: string }
+type ExampleSyntaxProps = { text: string, className: string }
 
-const ExampleSyntax = ({ text }: ExampleSyntaxProps) => {
+const ExampleSyntax = ({ text, className = "" }: ExampleSyntaxProps) => {
   const codeContainer = useRef()
 
   const [
@@ -30,15 +30,13 @@ const ExampleSyntax = ({ text }: ExampleSyntaxProps) => {
   useEffect(() => {
     const highlighted = highlight(text.replace(/</gu, "%LESSTHAN%"), Prism.languages.closet, "closet")
       .replace(/%LESSTHAN%/gu, "<")
-      .replace(/\n/gu, "")
-      .replace(/(?<=>)[ ]+?(?=<)/gu, "")
 
     setHighlightedText(highlighted)
     highlightElement(codeContainer.current)
   }, [text])
 
   return (
-    <pre className={"mb-0"}>
+    <pre className={className}>
       <code
         className="language-closet"
         ref={codeContainer}

@@ -10,14 +10,6 @@
     --danger-red: #d9514eff;
 }
 
-.mb-0 {
-  margin-bottom: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius:  0;
-}
-
-/* SYNTAX HIGHLIGHTING */
-
 html[data-theme="light"] :is(.token.tagstart, .token.tagend, .token.argsep) {
     color: var(--blue-bossom);
 }

@@ -28,18 +28,26 @@ const CodeDisplay2 = ({ name }: CodeDisplayProps) => {
   return (
     <div className={styles.example}>
       {exampleText.loading
-        ? <pre></pre>
-        : <ExampleSyntax text={exampleText.value} />
+        ? <pre className={styles["pre-top"]}></pre>
+        : <ExampleSyntax
+          text={exampleText.value}
+          className={styles["pre-top"]}
+        />
       }
       <TiPlus className={styles["icon-plus"]} />
-      <TiEquals className={styles["icon-equals"]} />
       {example.loading || exampleText.loading
-        ? <pre></pre>
-        : <ExampleCompiled
-          text={exampleText.value}
-          setups={example.value.setups.map(setup => setup.setup)}
-          context={example.value.context}
-        />
+        ? <pre className={styles["pre-bottom"]}></pre>
+        : (
+          <>
+            <TiEquals className={styles["icon-equals"]} />
+            <ExampleCompiled
+              text={exampleText.value}
+              setups={example.value.setups.map(setup => setup.setup)}
+              context={example.value.context}
+              className={styles["pre-bottom"]}
+            />
+          </>
+        )
       }
     </div>
   )

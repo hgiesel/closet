@@ -48,9 +48,19 @@ const prepareRenderer = (
   }
 }
 
-type ExampleCompiledProps = { text: string, setups: Setup[], context: ContextInfo }
+type ExampleCompiledProps = {
+  text: string
+  setups: Setup[]
+  context: ContextInfo
+  className: string
+}
 
-const ExampleCompiled = ({ text, setups, context }: ExampleCompiledProps) => {
+const ExampleCompiled = ({
+  text,
+  setups,
+  context,
+  className = "",
+}: ExampleCompiledProps) => {
   const renderContainer = useRef()
   const renderer = prepareRenderer(text, setups, context.values)
 
@@ -59,9 +69,13 @@ const ExampleCompiled = ({ text, setups, context }: ExampleCompiledProps) => {
         <TabButtonPanel
           defaultValue={context.defaultValue}
           values={context.values}
-          onSelected={(value, indexChanged) => renderer(value, indexChanged, renderContainer.current)}
+          onSelected={(value, indexChanged) => renderer(
+            value,
+            indexChanged,
+            renderContainer.current,
+          )}
         />
-        <pre ref={renderContainer}></pre>
+        <pre className={className} ref={renderContainer}></pre>
       </div>
   )
 }

@@ -2,8 +2,10 @@ import React, { KeyboardEvent, MouseEvent, useState, useEffect } from "react";
 
 import "./styles.css"
 
+export type SelectedHandler = (value: string, indexChanged: boolean) => void;
+
 type TabButtonPanelProps = {
-  onSelected: (value: string, indexChanged: boolean) => void,
+  onSelected: SelectedHandler,
   defaultValue: string,
   values: {
     value: string,

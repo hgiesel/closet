@@ -1,7 +1,7 @@
-import React from "react"
+import React, { useEffect, useRef } from "react"
 import { useAsync } from "react-use"
 
-import TabButtonPanel from '../TabButtonPanel';
+import TabButtonPanel, { SelectedHandler } from '../TabButtonPanel';
 
 import "./styles.css"
 
@@ -24,48 +24,63 @@ const prepareSetupCode = (moduleCode: string): string => {
 //     )
 //       .then(setups => setups.map(setup => setup["default"]))
 
-const prepare = (text: string, setups: any[], context: Record<string, unknown>[]): string => {
+const prepareRenderer = (
+  text: string,
+  setups: any[],
+  contextData: Record<string, Record<string, unknown>>,
+  target: HTMLElement,
+): SelectedHandler => {
   const filterManager = closet.FilterManager.make()
 
   for (const setup of setups) {
-    setup.setup(closet, filterManager, context[0])
+    setup.setup(closet, filterManager)
   }
 
-  filterManager.switchPreset(context[0])
-
-  const output = closet.template.Template
-    .make(text)
-    .render(filterManager)
-
-  return output[0]
+  return (value: string, indexChanged: boolean): void => {
+    closet.template.BrowserTemplate
+      .makeFromNode(target)
+      .render(filterManager)
+  }
 }
 
 type ExampleCompiledProps = { text: string, setupNames: string[], presetName: string }
 
 const ExampleCompiled = ({ text, setupNames, presetName }: ExampleCompiledProps) => {
+  const renderContainer = useRef()
 
-  const setups = useAsync(async () => Promise.all(
+  console.log(setupNames, presetName)
+
+  const setupsPromise = Promise.all(
     setupNames.map((name: string) => import(`@site/src/setups/${name}`))
-  ), [setupNames])
+  )
+  const contextPromise = import(`@site/src/contexts/${presetName}`)
 
-  const context = useAsync(async () => import(`@site/src/contexts/${presetName}`), [presetName])
+  let renderer: SelectedHandler = null;
+  let contexts = null;
 
-  const rendered = setups.value && context.value
-    ? prepare(text, setups.value, context.value.values.map((ctxt) => ctxt.data))
-    : "..."
+  useEffect(() => {
+    Promise.all([setupsPromise, contextPromise])
+      .then(([setups, context]) => {
+        console.log('hey', context, setups)
+        renderer = prepareRenderer(text, setups.value, context.value.values, renderContainer.current)
+      })
+  }, [])
 
-  return setups.value && context.value
-    ? (
+  return (
       <div className={"code-compiled"}>
-        <TabButtonPanel
-          defaultValue={context.value.defaultValue}
-          values={context.value.values}
-          onSelected={console.log}
-        />
-        <pre>Foo</pre>
+        {renderer && contexts
+          ? (
+            <TabButtonPanel
+              defaultValue={contexts.defaultValue}
+              values={contexts.values}
+              onSelected={renderer}
+            />
+          )
+          : <></>
+        }
+        <pre ref={renderContainer}></pre>
       </div>
-    )
-    : <></>
+  )
 }
 
 

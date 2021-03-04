@@ -1,3 +1,18 @@
+:root {
+  --anki-nightfield: #3a3a3a;
+  --anki-nightborder: #777777;
+}
+
+.code-compiled {
+  margin-top: 0 !important;
+}
+
+.code-compiled pre {
+  white-space: normal;
+  border-top-right-radius: 0;
+  border-top-left-radius:  0;
+}
+
 .tabs {
   justify-content: stretch;
 }
@@ -6,25 +21,10 @@
   white-space: nowrap;
   user-select: none;
   border-radius: 0;
-  margin: auto 0;
-}
-
-:root {
-  --anki-nightfield: #3a3a3a;
-  --anki-nightborder: #777777;
+  margin: auto 0 !important;
 }
 
 .tabs__item--active {
   border-bottom-color: transparent;
   background-color: var(--ifm-hover-overlay);
-}
-
-.margin-vert--md {
-  margin-top: 0 !important;
-}
-
-.margin-vert--md pre {
-  white-space: normal;
-  border-top-right-radius: 0;
-  border-top-left-radius:  0;
 }

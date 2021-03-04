@@ -1,8 +1,7 @@
 import React from "react"
 import { useAsync } from "react-use"
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabButtonPanel from './TabButtonPanel';
 
 import "@site/src/css/ExampleCompiled.css"
 
@@ -57,18 +56,14 @@ const ExampleCompiled = ({ text, setupNames, presetName }: ExampleCompiledProps)
 
   return setups.value && context.value
     ? (
-      <Tabs
-        defaultValue={context.value.defaultValue}
-        values={context.value.values}
-        lazy
-      >
-        {context.value.values.map(({ value }) => (
-          <TabItem key={value} value={value}>
-            <pre dangerouslySetInnerHTML={{ __html: rendered }}>
-            </pre>
-          </TabItem>
-        ))}
-      </Tabs>
+      <div className={"code-compiled"}>
+        <TabButtonPanel
+          defaultValue={context.value.defaultValue}
+          values={context.value.values}
+          onSelected={console.log}
+        />
+        <pre>Foo</pre>
+      </div>
     )
     : <></>
 }

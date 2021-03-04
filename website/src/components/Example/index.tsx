@@ -1,11 +1,11 @@
 import { TiPlus, TiEquals } from "react-icons/ti";
 
 import React, { PureComponent } from "react"
-import ExampleSyntax from "./ExampleSyntax"
-import ExampleCompiled from "./ExampleCompiled"
+import ExampleSyntax from "../ExampleSyntax"
+import ExampleCompiled from "../ExampleCompiled"
 
 
-import styles from "@site/src/css/Example.module.css"
+import styles from "./styles.module.css"
 
 type CodeDisplayProps = { name: string }
 type CodeDisplayState = { rawText: string, setups: string[], preset: string }

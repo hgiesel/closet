@@ -1,6 +1,6 @@
 import React, { KeyboardEvent, MouseEvent, useState, useEffect } from "react";
 
-import "@site/src/css/TabButtonPanel.css";
+import "./styles.css"
 
 type TabButtonPanelProps = {
   onSelected: (value: string, indexChanged: boolean) => void,

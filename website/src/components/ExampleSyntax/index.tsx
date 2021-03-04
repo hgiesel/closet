@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react"
 import Prism, { highlight, highlightElement } from "prismjs"
 
-import "@site/src/css/ExampleSyntax.css"
+import "./styles.css"
 
 
 Prism.languages.closet = {

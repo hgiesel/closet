@@ -1,9 +1,9 @@
 import React from "react"
 import { useAsync } from "react-use"
 
-import TabButtonPanel from './TabButtonPanel';
+import TabButtonPanel from '../TabButtonPanel';
 
-import "@site/src/css/ExampleCompiled.css"
+import "./styles.css"
 
 import { closet } from "closetjs"
 import "@site/node_modules/closetjs/dist/closet.css"

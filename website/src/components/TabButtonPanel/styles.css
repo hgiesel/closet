@@ -24,11 +24,21 @@
   background-color: var(--ifm-hover-overlay);
 }
 
-.tabs__item--activated {
+html[data-theme="light"] .tabs__item--activated {
   animation: blinker 0.1s ease-out;
 }
 
+html[data-theme="dark"] .tabs__item--activated {
+  animation: blinker-dark 0.1s ease-out;
+}
+
 @keyframes blinker {
+  50% {
+    background-color: var(--ifm-color-gray-000);
+  }
+}
+
+@keyframes blinker-dark {
   50% {
     background-color: var(--ifm-color-gray-800);
   }

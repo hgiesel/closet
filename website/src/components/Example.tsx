@@ -8,10 +8,10 @@ import ExampleCompiled from "./ExampleCompiled"
 import styles from "@site/src/css/Example.module.css"
 
 type CodeDisplayProps = { name: string }
-type CodeDisplayState = { rawText: string, setups: string[] }
+type CodeDisplayState = { rawText: string, setups: string[], preset: string }
 
 
-const defaultState: CodeDisplayState = { rawText: "", setups: [] }
+const defaultState: CodeDisplayState = { rawText: "", setups: [], preset: "" }
 
 class CodeDisplay extends PureComponent<CodeDisplayProps, CodeDisplayState> {
   constructor(props: CodeDisplayProps) {
@@ -25,7 +25,7 @@ class CodeDisplay extends PureComponent<CodeDisplayProps, CodeDisplayState> {
         <ExampleSyntax text={this.state.rawText} />
         <TiPlus className={styles["icon-plus"]} />
         <TiEquals className={styles["icon-equals"]} />
-        <ExampleCompiled setups={this.state.setups} />
+        <ExampleCompiled setups={this.state.setups} preset={this.state.preset} />
       </div>
     )
   }
@@ -42,10 +42,10 @@ class CodeDisplay extends PureComponent<CodeDisplayProps, CodeDisplayState> {
 
     const [
       rawText,
-      { setups },
+      { setups, preset },
     ] = await Promise.all([rawTextPromise, examplePromise])
 
-    this.setState({ rawText, setups })
+    this.setState({ rawText, setups, preset })
   }
 
   componentWillUnmount() {

@@ -3068,10 +3068,10 @@ clone-response@^1.0.2:
   dependencies:
     mimic-response "^1.0.0"
 
-closetjs@^0.4.7:
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/closetjs/-/closetjs-0.4.7.tgz#8185b2bdb6121a5ddac1ba76b22fdf4f3b7ffab1"
-  integrity sha512-A2eZRxEDsjv/jHQKAAMb1kAr1G//iR9e67UQVEuzg6LduxxIS4KcL5Vx2h7dQi70w6l8/ZBWKicrOkI4YlSfTA==
+closetjs@0.4.8-0:
+  version "0.4.8-0"
+  resolved "https://registry.yarnpkg.com/closetjs/-/closetjs-0.4.8-0.tgz#7e4833d4d5046953e69d876892fc18b6e04f96d0"
+  integrity sha512-nUqk4J1BPJmumCsxf0qjiTihcvGrpQ/QOPvhU5ucD0PuKCd8v+I5cvzreJP1I8LUx7zzMh0R48hKXJZ1Uh5tdg==
   dependencies:
     moo "^0.5.1"
     nearley "^2.19.6"

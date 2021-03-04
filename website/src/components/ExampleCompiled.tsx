@@ -7,6 +7,7 @@ import TabItem from '@theme/TabItem';
 import "@site/src/css/ExampleCompiled.css"
 
 import * as closet from "closetjs"
+import "../../../node_modules/closetjs/dist"
 
 const setupPattern = /^.*\}/gsu
 const prepareSetupCode = (moduleCode: string): string => {

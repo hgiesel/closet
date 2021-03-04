@@ -10,7 +10,9 @@
   "main": "dist/index.js",
   "files": [
     "tsconfig.json",
-    "dist/*"
+    "dist/src/**/*",
+    "dist/*.js",
+    "dist/*.css"
   ],
   "repository": {
     "type": "git",

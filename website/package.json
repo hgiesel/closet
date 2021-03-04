@@ -23,7 +23,8 @@
     "react": "^16.8.4",
     "react-codemirror2": "^7.2.1",
     "react-dom": "^16.8.4",
-    "react-icons": "^4.2.0"
+    "react-icons": "^4.2.0",
+    "react-use": "^17.1.1"
   },
   "browserslist": {
     "production": [

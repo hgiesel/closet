@@ -1,5 +1,15 @@
 .tabs {
   justify-content: stretch;
+  flex-direction: row !important;
+}
+
+.tabs::-webkit-scrollbar {
+  height: 0.6rem;
+  background-color: var(--ifm-scrollbar-track-background-color);
+}
+
+.tabs::-webkit-scrollbar-thumb {
+    background: var(--ifm-scrollbar-thumb-background-color)
 }
 
 .tabs__item {

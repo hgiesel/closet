@@ -23,3 +23,13 @@
   border-bottom-color: transparent;
   background-color: var(--ifm-hover-overlay);
 }
+
+.tabs__item--activated {
+  animation: blinker 0.1s ease-out;
+}
+
+@keyframes blinker {
+  50% {
+    background-color: var(--ifm-color-gray-800);
+  }
+}

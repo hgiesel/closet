@@ -29,9 +29,13 @@ const TabButtonPanel = (props: TabButtonPanelProps) => {
     setSelectedValue(tabValue);
   };
 
+  const activationHighlightClass = "tabs__item--activated";
+
   const activateTab = (tab: HTMLLIElement): void => {
     const tabIndex = tabRefs.indexOf(tab);
     const tabValue = values[tabIndex].value;
+    tab.classList.add(activationHighlightClass);
+    setTimeout(() => tab.classList.remove(activationHighlightClass), 100)
     activateTabValue(tabValue);
   };
 

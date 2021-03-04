@@ -1,9 +1,8 @@
 ---
-title: Flashcard types
+title: Flashcard Filters
 ---
 
-Many filters display an effect than is categorized as a _flashcard effect_.
-They are called that, because the effect only really make sense in the context of flashcards.
+_Flashcard filters_ describe a family of filters that are especially useful for flashcards.
 They include:
 
 - clozes
@@ -14,28 +13,26 @@ They include:
 
 They all have a few concepts in common:
 
----
 ## Question and answer context
 
-The rendering of the effect needs to _context-sensitive_.
-Depending on the context the effect needs to be rendered differently:
+The rendering of the effect is _context-sensitive_.
+Depending on the context the effect is rendered differently:
 
-1. as a _question_, _test_, or _front_, it needs to show the user what is the task at hand, that needs to be answered.
+1. as a _question_, _test_, or _front_, it needs to show the user the task to be solved, the question to be answered.
 
-:::tip Examples
+:::info Examples
 For *clozes*, this could be an ellipsis, or a hint; for *MCQs*, this would typically be the answer options.
 :::
 
-1. as the _answer_, _reveal_, or _back_, it needs to provide a solution to the question.
+2. as the _answer_, _reveal_, or _back_, it needs to provide a solution to the prior task or question.
 
-:::tip Examples
+:::info Examples
 For *clozes*, this would be the revealed answer; for *MCQs* it would need to provide some highlight to the correct answer.
 :::
 
 For flashcards, _test_ will be synonmymous with the _front_, _answer_ with the _back_.
 
----
-## Active and inactive effects
+## Active and inactive context
 
 In a flashcard, you usually want to test each piece of knowledge individually.
 This is also called the [minimum information principle](https://www.supermemo.com/de/archives1990-2015/articles/20rules#minimum%20information%20principle).
@@ -48,15 +45,7 @@ The capital of Portugal is [[c1::Lisbon]]. Its area is [[c2::92km²]].
 Using the above template, we could create two different cards, both testing one piece of knowledge on the note.
 This introduces the notion of _active_ flashcard effect, compared to _inactive_ ones.
 
-In Anki, on a card "**Card 1**", the active flashcard effects would end in a _1_, like `c1`, or `mc1` whereas `c2`/`mc2` are inactive, and vice versa.
-Within Closet we can be more flexibile, but generally we will adhere to this convention.
-
 ---
-## Summary
 
-Altogether, a flashcard effect can be rendered in four different ways:
-
-|            | question  | answer |
-|:-----------|-----------|--------|
-| active     |           |        |
-| inactive   |           |        |
+In Anki, on a card **Card 1**, the active flashcard effects end in a _1_, like `c1`, or `mc1` whereas `c2`/`mc2` are inactive, and vice versa.
+Within Closet we can be more flexibile, but generally we will adhere to this convention.

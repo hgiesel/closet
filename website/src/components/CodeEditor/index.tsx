@@ -11,7 +11,6 @@ import Switch from '@material-ui/core/Switch';
 
 import SetupDrawer from "../SetupDrawer"
 
-
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 import "./styles.css"
@@ -60,7 +59,7 @@ const CodeEditor = () => {
           label="Reuse Memory"
         />
 
-      <SetupDrawer />
+      <SetupDrawer onSetupsChanged={console.log} />
 
       <Button
         variant="contained"

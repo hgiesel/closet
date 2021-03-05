@@ -5,3 +5,5 @@ export interface SetupInfo {
   title: string
   setup: Setup
 }
+
+export * as clozes from "./clozes"

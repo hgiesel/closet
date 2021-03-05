@@ -11,6 +11,11 @@ html[data-theme="dark"] .MuiSwitch-track {
   flex-wrap: nowrap !important;
 }
 
+.MuiFormControlLabel-root {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
 .MuiFormGroup-row {
   margin: 0.2rem 0;
   column-gap: 0.6rem;

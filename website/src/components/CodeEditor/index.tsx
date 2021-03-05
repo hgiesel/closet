@@ -9,7 +9,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
 import Switch from '@material-ui/core/Switch';
 
-import SetupMenu from "../SetupMenu"
 import SetupDrawer from "../SetupDrawer"
 
 

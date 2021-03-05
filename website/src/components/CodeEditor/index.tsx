@@ -7,6 +7,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
 import Switch from '@material-ui/core/Switch';
 
+import SetupMenu from "../SetupMenu"
+import SetupDrawer from "../SetupDrawer"
+
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 import "./styles.css"
@@ -54,7 +57,7 @@ const CodeEditor = () => {
         label="Reuse Memory"
       />
 
-
+      <SetupDrawer />
 
       <Button
         variant="contained"

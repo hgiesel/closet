@@ -59,7 +59,10 @@ const CodeEditor = () => {
           label="Reuse Memory"
         />
 
-      <SetupDrawer onSetupsChanged={console.log} />
+      <SetupDrawer
+        initialSetups={[]}
+        onSetupsChanged={console.log}
+      />
 
       <Button
         variant="contained"

@@ -1,4 +1,4 @@
-import React, { KeyboardEvent, MouseEvent, useState } from 'react';
+import React, { KeyboardEvent, MouseEvent, useState, useEffect } from 'react';
 
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -24,9 +24,12 @@ const useStyles = makeStyles({
 });
 
 
-type SetupDrawerProps = { onSetupsChanged: (setups: SetupInfo[]) => void }
+type SetupDrawerProps = {
+  initialSetups: string[]
+  onSetupsChanged: (setups: SetupInfo[]) => void
+}
 
-const SetupDrawer = ({ onSetupsChanged }: SetupDrawerProps) => {
+const SetupDrawer = ({ onSetupsChanged, initialSetups = [] }: SetupDrawerProps) => {
   const classes = useStyles();
   const [isOpen, setOpen] = useState(false)
 
@@ -35,18 +38,22 @@ const SetupDrawer = ({ onSetupsChanged }: SetupDrawerProps) => {
     .map(([key, value]) => ({ key, ...value }))
 
   const setupStates = setupInfos.reduce((accu, value) => {
-    accu[value.key] = false;
+    accu[value.key] = initialSetups.includes(value.key);
     return accu;
   }, {})
 
+  const [states, setStates] = useState(setupStates)
+
+  useEffect(() => {
+    const activeSetups = Object.entries(states)
+      .filter(([, isActive]) => isActive)
+      .map(([key]) => setups[key])
+
+    onSetupsChanged(activeSetups)
+  }, [states])
+
   const notifySetupUpdate = (key: string, state: boolean): void => {
-    setupStates[key] = state;
-
-    const newSetups = Object.entries(setupStates)
-      .filter(([, state]) => state)
-      .map((([setupName]) => setups[setupName]))
-
-    onSetupsChanged(newSetups)
+    setStates({ ...states, [key]: state })
   }
 
   const toggleDrawer = (open: boolean) => (

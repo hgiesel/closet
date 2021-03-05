@@ -6,9 +6,3 @@
 .code-compiled {
   margin-top: 0 !important;
 }
-
-.code-compiled pre {
-  white-space: normal;
-  border-top-right-radius: 0;
-  border-top-left-radius:  0;
-}

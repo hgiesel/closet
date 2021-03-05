@@ -16,6 +16,8 @@
   white-space: nowrap;
   user-select: none;
   border-radius: 0;
+
+  padding: 0.5rem var(--ifm-tabs-padding-horizontal);
   margin: auto 0 !important;
 }
 

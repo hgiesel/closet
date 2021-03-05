@@ -21,7 +21,7 @@ const fetchExample = async (name: string): Promise<ExampleInfo> => {
 
 type CodeDisplayProps = { name: string }
 
-const CodeDisplay2 = ({ name }: CodeDisplayProps) => {
+const CodeDisplay = ({ name }: CodeDisplayProps) => {
   const exampleText = useAsync(async () => fetchExampleText(name), [name])
   const example = useAsync(async () => fetchExample(name), [name])
 
@@ -53,4 +53,4 @@ const CodeDisplay2 = ({ name }: CodeDisplayProps) => {
   )
 }
 
-export default CodeDisplay2;
+export default CodeDisplay

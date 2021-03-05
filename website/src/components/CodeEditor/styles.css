@@ -2,3 +2,11 @@
     height: auto;
     border: 5px solid #eee;
 }
+
+html[data-theme="dark"] .MuiSwitch-track {
+  background-color: white;
+}
+
+.MuiButton-containedPrimary {
+  background-color: #10ac7d;
+}

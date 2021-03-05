@@ -3,12 +3,15 @@ import React from "react"
 import { UnControlled as CodeMirror } from 'react-codemirror2'
 import "codemirror/lib/codemirror.css"
 
+import FormGroup from "@material-ui/core/FormGroup"
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+
 import Button from '@material-ui/core/Button';
 import Switch from '@material-ui/core/Switch';
 
 import SetupMenu from "../SetupMenu"
 import SetupDrawer from "../SetupDrawer"
+
 
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
@@ -38,24 +41,25 @@ const CodeEditor = () => {
       />
 
     <MuiThemeProvider theme={theme}>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={console.log}
-      >
-        Render
-      </Button>
-      <FormControlLabel
-        control={
-          <Switch
-            onChange={console.log}
-            color="secondary"
-            name="checkedB"
-            inputProps={{ 'aria-label': 'primary checkbox' }}
-          />
-        }
-        label="Reuse Memory"
-      />
+      <FormGroup row={true}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={console.log}
+        >
+          Render
+        </Button>
+        <FormControlLabel
+          control={
+            <Switch
+              onChange={console.log}
+              color="secondary"
+              name="checkedB"
+              inputProps={{ 'aria-label': 'primary checkbox' }}
+            />
+          }
+          label="Reuse Memory"
+        />
 
       <SetupDrawer />
 
@@ -66,6 +70,7 @@ const CodeEditor = () => {
       >
         Copy as link
       </Button>
+    </FormGroup>
     </MuiThemeProvider>
   </>
   )

@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { Fragment, useState } from 'react';
+
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
+
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
+
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+
 import Checkbox from '@material-ui/core/Checkbox';
 
 const useStyles = makeStyles({
@@ -23,14 +27,15 @@ type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
 const SetupDrawer = () => {
   const classes = useStyles();
-  const [state, setState] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
+  const [isOpen, setOpen] = useState(false)
 
-  const toggleDrawer = (anchor: Anchor, open: boolean) => (
+  const setups = [
+    "Inbox",
+    "Starred",
+    "Send",
+  ]
+
+  const toggleDrawer = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent,
   ) => {
     if (
@@ -41,20 +46,18 @@ const SetupDrawer = () => {
       return;
     }
 
-    setState({ ...state, [anchor]: open });
+    setOpen(open);
   };
 
-  const list = (anchor: Anchor) => (
+  const list = () => (
     <div
-      className={clsx(classes.list, {
-        [classes.fullList]: anchor === 'top' || anchor === 'bottom',
-      })}
+      className={clsx(classes.list)}
       role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
     >
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+        {setups.map((text) => (
           <ListItem button key={text}>
             <ListItemText primary={text} />
             <Checkbox />
@@ -63,12 +66,7 @@ const SetupDrawer = () => {
       </List>
       <Divider />
       <List>
-        {[
-        'All mail', 'Trash', 'Spam', 'foobar', 'meh', 'foo', 'abc', 'bla',
-        'All mail', 'Trash', 'Spam', 'foobar', 'meh', 'foo', 'abc', 'bla',
-        'All mail', 'Trash', 'Spam', 'foobar', 'meh', 'foo', 'abc', 'bla',
-        'All mail', 'Trash', 'Spam', 'foobar', 'meh', 'foo', 'abc', 'bla',
-        ].map((text, index) => (
+        {setups.map((text, index) => (
           <ListItem button key={text}>
             <ListItemText primary={text} />
             <Checkbox />
@@ -80,14 +78,17 @@ const SetupDrawer = () => {
 
   return (
     <div>
-      {(['left', 'right', 'top', 'bottom'] as Anchor[]).map((anchor) => (
-        <React.Fragment key={anchor}>
-          <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
-          <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
-            {list(anchor)}
-          </Drawer>
-        </React.Fragment>
-      ))}
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={toggleDrawer(true)}
+      >
+        Setups
+      </Button>
+
+      <Drawer anchor="right" open={isOpen} onClose={toggleDrawer(false)}>
+        {list()}
+      </Drawer>
     </div>
   );
 }

@@ -1,4 +1,11 @@
-import React from "react"
+import React, { useState, useEffect, useRef } from "react"
+
+import type { Setup } from "../../setups";
+import type { Context } from "../../contexts";
+
+import { indexBy, prop } from "ramda"
+
+import { closet } from "closetjs"
 
 import { UnControlled as CodeMirror } from 'react-codemirror2'
 import "codemirror/lib/codemirror.css"
@@ -27,15 +34,52 @@ const theme = createMuiTheme({
   },
 });
 
-const CodeEditor = () => {
+const prepareRenderer = (
+  setups: Setup[],
+  context: Context,
+) => {
+  let filterManager = closet.FilterManager.make(context.data)
+
+  for (const setup of setups) {
+    setup(closet as any, filterManager)
+  }
+
+  return (text: string, target: HTMLElement): void => {
+    try {
+    closet.template.Template
+      .make(text)
+      .render(filterManager, ([result]) => {
+        target.innerHTML = result;
+      })
+    }
+    catch (e) {
+      // TODO notify invalid template
+    }
+  }
+}
+
+import * as frontBack from "../../contexts/frontBack"
+
+interface CodeEditorProps {
+  initialText: string
+}
+
+const CodeEditor = (props: CodeEditorProps) => {
+  const [text, setText] = useState("")
+  const [setups, setSetups] = useState([])
+
+  const renderContainer = useRef()
+
+  useEffect(() => {
+    const renderer = prepareRenderer(setups, frontBack.values[0])
+    renderer(text, renderContainer.current)
+  }, [text, setups])
 
   return (
     <>
       <CodeMirror
-        value={"...your content here..."}
-        onChange={(editor, data, value) => {
-          console.log(editor, data, value)
-        }}
+        value={props.initialText}
+        onChange={(_editor, _data, value) => setText(value)}
       />
 
     <MuiThemeProvider theme={theme}>
@@ -61,7 +105,7 @@ const CodeEditor = () => {
 
       <SetupDrawer
         initialSetups={[]}
-        onSetupsChanged={console.log}
+        onSetupsChanged={(setups) => setSetups(setups.map(setupInfo => setupInfo.setup))}
       />
 
       <Button
@@ -73,6 +117,8 @@ const CodeEditor = () => {
       </Button>
     </FormGroup>
     </MuiThemeProvider>
+
+    <div ref={renderContainer}></div>
   </>
   )
 }

@@ -12,16 +12,6 @@ import "./styles.css"
 import { closet } from "closetjs"
 import "@site/node_modules/closetjs/dist/closet.css"
 
-const setupPattern = /^.*\}/gsu
-const prepareSetupCode = (moduleCode: string): string => {
-  const match = moduleCode.match(setupPattern)
-
-  if (!match) {
-    throw new Error(`Module has invalid formatting: ${moduleCode}`)
-  }
-
-  return match[0]
-}
 
 const prepareRenderer = (
   text: string,
@@ -48,7 +38,7 @@ const prepareRenderer = (
   }
 }
 
-type ExampleCompiledProps = {
+interface ExampleCompiledProps {
   text: string
   setups: Setup[]
   context: ContextInfo

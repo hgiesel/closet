@@ -7,10 +7,6 @@ html[data-theme="dark"] .MuiSwitch-track {
   background-color: white;
 }
 
-.MuiFormGroup-root {
-  flex-wrap: nowrap !important;
-}
-
 .MuiFormControlLabel-root {
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -19,6 +15,10 @@ html[data-theme="dark"] .MuiSwitch-track {
 .MuiFormGroup-row {
   margin: 0.2rem 0;
   column-gap: 0.6rem;
+}
+
+.MuiTextField-root {
+  width: 98px;
 }
 
 .MuiButton-containedPrimary {

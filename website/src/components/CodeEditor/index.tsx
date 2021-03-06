@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 
 import type { Setup } from "../../setups";
-import type { Context } from "../../contexts";
+import type { ContextData } from "../../contexts";
 
 import { indexBy, prop } from "ramda"
 
@@ -15,7 +15,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import Button from '@material-ui/core/Button';
 import Switch from '@material-ui/core/Switch';
+import Input from '@material-ui/core/Input';
 
+import TextField from '@material-ui/core/TextField';
+
+import ContextControls from "../ContextControls"
 import SetupDrawer from "../SetupDrawer"
 
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
@@ -36,9 +40,9 @@ const theme = createMuiTheme({
 
 const prepareRenderer = (
   setups: Setup[],
-  context: Context,
+  context: ContextData,
 ) => {
-  let filterManager = closet.FilterManager.make(context.data)
+  let filterManager = closet.FilterManager.make(context)
 
   for (const setup of setups) {
     setup(closet as any, filterManager)
@@ -58,8 +62,6 @@ const prepareRenderer = (
   }
 }
 
-import * as frontBack from "../../contexts/frontBack"
-
 interface CodeEditorProps {
   initialText: string
 }
@@ -67,13 +69,14 @@ interface CodeEditorProps {
 const CodeEditor = (props: CodeEditorProps) => {
   const [text, setText] = useState("")
   const [setups, setSetups] = useState([])
+  const [context, setContext] = useState({ cardNumber: 1, side: "front" })
 
   const renderContainer = useRef()
 
   useEffect(() => {
-    const renderer = prepareRenderer(setups, frontBack.values[0])
+    const renderer = prepareRenderer(setups, context)
     renderer(text, renderContainer.current)
-  }, [text, setups])
+  }, [text, setups, context])
 
   return (
     <>
@@ -91,13 +94,13 @@ const CodeEditor = (props: CodeEditorProps) => {
         >
           Render
         </Button>
+
         <FormControlLabel
           control={
             <Switch
               onChange={console.log}
               color="secondary"
               name="checkedB"
-              inputProps={{ 'aria-label': 'primary checkbox' }}
             />
           }
           label="Reuse Memory"
@@ -108,6 +111,10 @@ const CodeEditor = (props: CodeEditorProps) => {
         onSetupsChanged={(setups) => setSetups(setups.map(setupInfo => setupInfo.setup))}
       />
 
+    <ContextControls
+      onContextChange={(cardNumber, isBack) => setContext({ cardNumber, side: isBack ? 'back' : 'front' })}
+    />
+
       <Button
         variant="contained"
         color="primary"
@@ -115,6 +122,7 @@ const CodeEditor = (props: CodeEditorProps) => {
       >
         Copy as link
       </Button>
+
     </FormGroup>
     </MuiThemeProvider>
 

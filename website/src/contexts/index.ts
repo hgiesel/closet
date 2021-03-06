@@ -1,3 +1,5 @@
+export type ContextData = Record<string, unknown>
+
 export interface Context {
   label: string
   value: string

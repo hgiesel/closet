@@ -16,18 +16,18 @@ export const rectKeyword = 'occlusionRenderRect'
 
 const renderRects = <T extends Record<string, unknown>>(
     entry: AftermathEntry<T>,
-    { template, cache, environment }: AftermathInternals<T>,
+    { template, cache }: AftermathInternals<T>,
 ) => {
     const images = getImagesFromTemplate(template as BrowserTemplate)
     const rects = cache.get<RectDefinition[]>(entry.keyword, [])
 
-    if (!environment.post(svgKeyword, () => true, false)) {
-        appendStyleTag(svgCss)
-    }
-
     const firstImage = images[0]
 
     imageLoadCallback(`img[src="${firstImage[0]}"]`, firstImage[1], (event) => {
+        const image = event.target as HTMLImageElement
+
+        appendStyleTag(image, svgKeyword, svgCss)
+
         const draw = SVG.wrapImage(event.target as HTMLImageElement)
 
         for (const [/* type */, active,, x, y, width, height, options] of rects) {

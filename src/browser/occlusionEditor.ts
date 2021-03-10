@@ -222,14 +222,6 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
         const images = getImagesFromTemplate(template)
 
         internals.aftermath.registerIfNotExists(keyword, (entry, internals) => {
-            if (!internals.environment.post(occlusionMakerCssKeyword, () => true, false)) {
-                appendStyleTag(menuCss)
-                appendStyleTag(occlusionCss)
-            }
-
-            if (!internals.environment.post(svgKeyword, () => true, false)) {
-                appendStyleTag(svgCss)
-            }
 
             const existingShapes: any[] = []
             for (const kw of shapeKeywords) {
@@ -242,7 +234,14 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
             }
 
             const callback = (event: Event) => {
-                const draw = SVG.wrapImage(event.target as HTMLImageElement)
+                const image = event.target as HTMLImageElement
+                const imageRoot = image.getRootNode()
+
+                appendStyleTag(document.body, occlusionMakerCssKeyword, menuCss)
+                appendStyleTag(imageRoot, occlusionMakerCssKeyword, occlusionCss)
+                appendStyleTag(imageRoot, svgKeyword, svgCss)
+
+                const draw = SVG.wrapImage(image)
                 draw.setMaxOcclusions(maxOcclusions)
 
                 existingShapesFilter(entry as any, internals)(existingShapes, draw)

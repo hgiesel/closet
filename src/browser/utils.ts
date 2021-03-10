@@ -1,11 +1,23 @@
 import type { BrowserTemplate, ChildNodeSpan } from '../template/browser'
 import { keySeparation } from '../patterns'
 
-export const appendStyleTag = (input: string): void => {
+const createStyleTag = (keyword: string, input: string): HTMLStyleElement => {
     const styleSheet = document.createElement('style')
     styleSheet.type = 'text/css'
     styleSheet.innerHTML = input
-    document.head.appendChild(styleSheet)
+    styleSheet.id = keyword
+
+    return styleSheet
+}
+
+export const appendStyleTag = (anchor: Node, keyword: string, input: string): void => {
+    const root = anchor.getRootNode() as any
+
+    if (root.querySelector(`#${keyword}`)) {
+        return
+    }
+
+    anchor.appendChild(createStyleTag(keyword, input))
 }
 
 const imageSrcPattern = /<img[^>]*?src="(.+?)"[^>]*>/g

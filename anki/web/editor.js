@@ -140,23 +140,19 @@ var EditorCloset = {
     },
 
     clearOcclusionMode: () => {
-        const fieldsWithOcclusionContainer = function*() {
-            let field_idx = 0
-            let field = null
+        const editingAreas = []
 
-            while (field = document.getElementById(`f${field_idx}`)) {
-                if (field.innerHTML.includes('<div class="closet-occlusion-container">')) {
-                    yield [field_idx, field]
-                }
-                field_idx++
+        forEditorField([], (field) => {
+            const edit = field.editingArea
+            if (edit.editable.innerHTML.includes('<div class="closet-occlusion-container">')) {
+                editingAreas.push(edit)
             }
-        }
+        })
 
-        const fields = Array.from(fieldsWithOcclusionContainer())
         EditorCloset.occlusionEditorTarget.dispatchEvent(new Event('reject'))
 
-        fields.forEach(([index, field]) => {
-            pycmd(`key:${index}:${currentNoteId}:${field.innerHTML}`)
+        editingAreas.forEach(field => {
+            pycmd(`key:${field.ord}:${getNoteId()}:${field.editable.fieldHTML}`)
         })
 
         EditorCloset.setInactive()
@@ -174,6 +170,9 @@ var EditorCloset = {
                     error => console.log('Could not load Closet:', error),
                 )
         }
+    },
+
+    loadOcclusionCss: () => {
     },
 
     /**************** CLOSET MODE ****************/

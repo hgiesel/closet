@@ -1,3 +1,4 @@
+import type { BrowserTemplate, ChildNodeSpan } from '../template/browser'
 import { keySeparation } from '../patterns'
 
 export const appendStyleTag = (input: string): void => {
@@ -8,18 +9,31 @@ export const appendStyleTag = (input: string): void => {
 }
 
 const imageSrcPattern = /<img[^>]*?src="(.+?)"[^>]*>/g
-export const getImages = (txt: string) => {
+const getImages = (txt: string, root: Node): [string, Node][] => {
     const result = []
     let match: RegExpExecArray | null
 
     do {
         match = imageSrcPattern.exec(txt)
         if (match) {
-            result.push(match[1])
+            result.push([match[1], root])
         }
     } while (match)
 
-    return result
+    return result as [string, Node][]
+}
+
+export const getImagesFromTemplate = (template: BrowserTemplate): [string, Node][] => {
+    const applyGetImages = ([fragment, input]: [string, string | Element | Text | ChildNodeSpan]): [string, Node][] => input instanceof Node
+        ? getImages(
+            fragment,
+            input.getRootNode(),
+        )
+        : []
+
+    return template.textFragments
+        .map((fragment: string, index: number): [string, string | Element | Text | ChildNodeSpan] => [fragment, template.inputs[index]])
+        .flatMap(applyGetImages)
 }
 
 export const getOffsets = (event: MouseEvent): [number, number] => {
@@ -47,8 +61,8 @@ export const getOffsets = (event: MouseEvent): [number, number] => {
     }
 }
 
-export const imageLoadCallback = (query: string, callback: (event: Event) => void) => {
-    const maybeElement = document.querySelector(query) as HTMLImageElement
+export const imageLoadCallback = (query: string, root: Node, callback: (event: Event) => void) => {
+    const maybeElement = (root as any).querySelector(query) as HTMLImageElement
 
     if (maybeElement) {
         if (maybeElement.complete) {

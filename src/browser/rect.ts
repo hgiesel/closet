@@ -1,13 +1,14 @@
-import type { TagNode, Internals, AftermathEntry, AftermathInternals, WeakSeparator, Recipe, WeakFilter, InactiveBehavior } from '../types'
+import type { TagNode, Internals, AftermathEntry, AftermathInternals, Recipe, WeakFilter, InactiveBehavior } from '../types'
 import type { FlashcardPreset } from '../flashcard'
 import type { Optic } from '../template/optics'
+import type { BrowserTemplate } from '../template/browser'
 
 import { FlashcardTemplate, makeFlashcardTemplate, generateFlashcardRecipes } from '../flashcard/flashcardTemplate'
 
 import type { RectProperty, RectProperties, RectDefinition } from './svgClasses'
 import { SVG, Rect } from './svgClasses'
 
-import { appendStyleTag, getImages, imageLoadCallback, svgKeyword, svgCss } from './utils'
+import { appendStyleTag, getImagesFromTemplate, imageLoadCallback, svgKeyword, svgCss } from './utils'
 import { separated } from '../template/optics'
 
 
@@ -17,14 +18,16 @@ const renderRects = <T extends Record<string, unknown>>(
     entry: AftermathEntry<T>,
     { template, cache, environment }: AftermathInternals<T>,
 ) => {
-    const images = template.textFragments.flatMap(getImages)
+    const images = getImagesFromTemplate(template as BrowserTemplate)
     const rects = cache.get<RectDefinition[]>(entry.keyword, [])
 
     if (!environment.post(svgKeyword, () => true, false)) {
         appendStyleTag(svgCss)
     }
 
-    imageLoadCallback(`img[src="${images[0]}"]`, (event) => {
+    const firstImage = images[0]
+
+    imageLoadCallback(`img[src="${firstImage[0]}"]`, firstImage[1], (event) => {
         const draw = SVG.wrapImage(event.target as HTMLImageElement)
 
         for (const [/* type */, active,, x, y, width, height, options] of rects) {

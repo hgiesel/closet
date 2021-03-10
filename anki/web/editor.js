@@ -132,7 +132,7 @@ var EditorCloset = {
             "rectr",
         ].map((tagname) => closet.browser.recipes.rect.hide({ tagname })))
 
-        closet.BrowserTemplate
+        closet.template.BrowserTemplate
             .makeFromNodes(elements)
             .render(filterManager)
 
@@ -170,7 +170,7 @@ var EditorCloset = {
         else {
             import(`/__closet-${versionString}.js`)
                 .then(
-                    closet => EditorCloset.setupOcclusionEditor(closet, maxOcclusions),
+                    closet => EditorCloset.setupOcclusionEditor(closet.closet, maxOcclusions),
                     error => console.log('Could not load Closet:', error),
                 )
         }

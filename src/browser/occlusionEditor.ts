@@ -1,11 +1,12 @@
 import type { Registrar, TagNode, Internals, AftermathEntry, AftermathInternals } from '../types'
 import type { MenuItem } from './menuConstruction'
+import type { BrowserTemplate } from '../template/browser'
 import { id } from '../utils'
 
 import { SVG, Shape, ShapeDefinition, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
 import { reverseEffects } from './scaleZoom'
-import { appendStyleTag, getImages, getOffsets, imageLoadCallback, svgKeyword, svgCss } from './utils'
+import { appendStyleTag, getImagesFromTemplate, getOffsets, imageLoadCallback, svgKeyword, svgCss } from './utils'
 
 import { setupMenu, enableAsMenuTrigger, menuCss } from './menu'
 import { rectKeyword } from './rect'
@@ -217,7 +218,8 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
     } = options
 
     const occlusionMakerFilter = (_tag: TagNode, internals: Internals<T>) => {
-        const images = internals.template.textFragments.flatMap(getImages)
+        const template = internals.template as BrowserTemplate
+        const images = getImagesFromTemplate(template)
 
         internals.aftermath.registerIfNotExists(keyword, (entry, internals) => {
             if (!internals.environment.post(occlusionMakerCssKeyword, () => true, false)) {
@@ -261,8 +263,8 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
                 wrapForOcclusion(draw, menu)
             }
 
-            for (const srcUrl of images) {
-                imageLoadCallback(`img[src="${srcUrl}"]`, callback)
+            for (const [srcUrl, root] of images) {
+                imageLoadCallback(`img[src="${srcUrl}"]`, root, callback)
             }
         }, { priority: 100 /* before any other occlusion aftermath */ })
 

@@ -56,8 +56,13 @@ var EditorCloset = {
     },
 
     setupOcclusionEditor: (closet, maxOcclusions) => {
+        const fieldElements = []
+        forEditorField([], (field) => {
+            fieldElements.push(field.editingArea.editable)
+        })
+
         const elements = ['[[makeOcclusions]]']
-            .concat(...document.body.querySelectorAll('.field'))
+            .concat(...fieldElements)
 
         const acceptHandler = (_entry, internals) => (shapes, draw) => {
             const imageSrc = draw.image.src.match(EditorCloset.imageSrcPattern)[1]
@@ -121,9 +126,13 @@ var EditorCloset = {
         const filterManager = closet.FilterManager.make()
         const target = editorOcclusion(filterManager.registrar)
 
-        filterManager.install(closet.browser.recipes.rect.hide({ tagname: 'rect' }))
+        filterManager.install(...[
+            "rect",
+            "recth",
+            "rectr",
+        ].map((tagname) => closet.browser.recipes.rect.hide({ tagname })))
 
-        closet.template.BrowserTemplate
+        closet.BrowserTemplate
             .makeFromNodes(elements)
             .render(filterManager)
 

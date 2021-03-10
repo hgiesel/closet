@@ -15,8 +15,8 @@ def make_insertion_js(field_index: int, text: str) -> str:
     escaped = escape_js_text(text)
 
     cmd = (
-        f'pycmd(`key:{field_index}:${{currentNoteId}}:{escaped}`); '
-        f'document.querySelector("#f{field_index}").innerHTML = "{escaped}";'
+        f'pycmd(`key:{field_index}:${{getNoteId()}}:{escaped}`); '
+        f'getEditorField({field_index}).editingArea.fieldHTML = `{escaped}`; '
     )
     return cmd
 
@@ -44,7 +44,7 @@ def insert_into_zero_indexed(editor, text: str) -> None:
         if not match or int(match[0]) != 0:
             continue
 
-        get_content_js = f'document.querySelector("#f{index}").innerHTML;'
+        get_content_js = f'getEditorField({index}).editingArea.fieldHTML; '
 
         editor.web.evalWithCallback(
             get_content_js,

@@ -172,7 +172,17 @@ var EditorCloset = {
         }
     },
 
-    loadOcclusionCss: () => {
+    loadOcclusionCss: (css) => {
+        forEditorField([], (field) => {
+            if (!field.hasAttribute("has-occlusion-style")) {
+                const style = document.createElement("style")
+                style.rel = "stylesheet"
+                style.textContent = css
+                field.editingArea.shadowRoot.appendChild(style)
+
+                field.setAttribute("has-occlusion-style", "")
+            }
+        })
     },
 
     /**************** CLOSET MODE ****************/

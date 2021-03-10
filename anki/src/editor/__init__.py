@@ -13,6 +13,7 @@ from aqt.editor import Editor
 from aqt.gui_hooks import (
     editor_did_init_buttons,
     editor_did_init_shortcuts,
+    editor_did_load_note,
     editor_will_munge_html,
 )
 from aqt.utils import shortcut, showInfo
@@ -205,9 +206,43 @@ def on_cloze(editor, _old) -> None:
     editor.web.eval(f'wrap("{prefix}", "{suffix}");')
 
 
+per_field_css = """
+img {
+  max-width: 100% !important;
+  max-height: var(--closet-max-height);
+}
+
+.closet-rect__rect {
+  fill: moccasin;
+  stroke: olive;
+}
+
+.is-active .closet-rect__rect {
+  fill: salmon;
+  stroke: yellow;
+}
+
+.closet-rect__ellipsis {
+  fill: transparent;
+  stroke: transparent;
+}
+
+.closet-rect__label {
+  stroke: black;
+  stroke-width: 0.5;
+}
+"""
+
+
+def load_closet_css(editor) -> None:
+    editor.web.eval(f"EditorCloset.loadOcclusionCss(`{per_field_css}`); ")
+
+
 def init_editor():
     editor_did_init_buttons.append(add_buttons)
     editor_did_init_shortcuts.append(add_occlusion_shortcut)
+    editor_did_load_note.append(load_closet_css)
+
     editor_will_munge_html.append(remove_occlusion_code)
 
     Editor._onHtmlEdit = wrap(

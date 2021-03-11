@@ -131,7 +131,7 @@ const within = <T extends Un>(
     _internals: Internals<T>,
 ): [string, string] => [
     `${fullKey}:${fullOccur}`,
-    fullKey,
+    `${fullKey}:${fullOccur}`,
 ]
 
 const across = <T extends Un>(
@@ -139,7 +139,7 @@ const across = <T extends Un>(
     _internals: Internals<T>,
 ): [string, string] => [
     `${fullKey}:${fullOccur}`,
-    `${fullKey}:${fullOccur}`,
+    fullKey,
 ]
 
 const acrossNumbered = <T extends Un>(

@@ -1,7 +1,7 @@
 # NOTE should be same as under ../../src/version.ts
 versionInfo = [
     0,  # MAJOR
-    4,  # MINOR
+    5,  # MINOR
     0,  # PATCH
 ]
 

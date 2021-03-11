@@ -100,7 +100,7 @@ export class SVG {
     }
 
     resize(): void {
-        this.setScaleFactors()
+        // this.setScaleFactors()
 
         if (this.scaleFactors.includes(0)) {
             // image is not displayed anymore
@@ -338,8 +338,10 @@ export class Rect implements Shape {
     }
     set x(i: number) {
         const scaledX = i * this.scaleFactorX
+        const scaledForLabelX = (i + this.width / 2) * this.scaleFactorX
+
         this.rect.setAttributeNS(null, 'x', String(scaledX))
-        this.label.setAttributeNS(null, 'x', String((scaledX + this.width / 2 * this.scaleFactorX)))
+        this.label.setAttributeNS(null, 'x', String(scaledForLabelX))
     }
 
     get y(): number {
@@ -347,8 +349,10 @@ export class Rect implements Shape {
     }
     set y(i: number) {
         const scaledY = i * this.scaleFactorY
+        const scaledForLabelY = (i + this.height / 2) * this.scaleFactorY
+
         this.rect.setAttributeNS(null, 'y', String(scaledY))
-        this.label.setAttributeNS(null, 'y', String((scaledY + this.height / 2 * this.scaleFactorY)))
+        this.label.setAttributeNS(null, 'y', String(scaledForLabelY))
     }
 
     get width(): number {

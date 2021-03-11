@@ -222,7 +222,6 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
         const images = getImagesFromTemplate(template)
 
         internals.aftermath.registerIfNotExists(keyword, (entry, internals) => {
-
             const existingShapes: any[] = []
             for (const kw of shapeKeywords) {
                 // get shapes for editing
@@ -233,13 +232,16 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
                 internals.aftermath.block(kw)
             }
 
-            const callback = (event: Event) => {
+            const callback = (event: Event): void => {
                 const image = event.target as HTMLImageElement
                 const imageRoot = image.getRootNode()
+                const anchorNode = imageRoot instanceof Document
+                    ? imageRoot.head
+                    : imageRoot
 
                 appendStyleTag(document.body, occlusionMakerCssKeyword, menuCss)
-                appendStyleTag(imageRoot, occlusionMakerCssKeyword, occlusionCss)
-                appendStyleTag(imageRoot, svgKeyword, svgCss)
+                appendStyleTag(anchorNode, occlusionMakerCssKeyword, occlusionCss)
+                appendStyleTag(anchorNode, svgKeyword, svgCss)
 
                 const draw = SVG.wrapImage(image)
                 draw.setMaxOcclusions(maxOcclusions)
@@ -265,7 +267,9 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
             for (const [srcUrl, root] of images) {
                 imageLoadCallback(`img[src="${srcUrl}"]`, root, callback)
             }
-        }, { priority: 100 /* before any other occlusion aftermath */ })
+        }, {
+            priority: 100 /* before any other occlusion aftermath */,
+        })
 
         return { ready: true }
     }

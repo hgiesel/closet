@@ -25,18 +25,24 @@ const renderRects = <T extends Record<string, unknown>>(
 
     imageLoadCallback(`img[src="${firstImage[0]}"]`, firstImage[1], (event) => {
         const image = event.target as HTMLImageElement
+        const imageRoot = image.getRootNode()
+        const anchorNode = imageRoot instanceof Document
+            ? imageRoot.head
+            : imageRoot
 
-        appendStyleTag(image, svgKeyword, svgCss)
+        appendStyleTag(anchorNode, svgKeyword, svgCss)
 
         const draw = SVG.wrapImage(event.target as HTMLImageElement)
 
-        for (const [/* type */, active,, x, y, width, height, options] of rects) {
+        for (const [/* type */, active, /* fullKey */, x, y, width, height, options] of rects) {
             if (!active) {
                 continue
             }
 
             const svgRect = Rect.make(draw)
+            console.log('made')
             svgRect.pos = [x, y, width, height]
+            console.log('pos set')
 
             for (const prop in options) {
                 const rectProperty = prop as RectProperty

@@ -1,4 +1,6 @@
-import type { BrowserTemplate, ChildNodeSpan } from '../template/browser'
+import type { BrowserTemplate } from '../template/browser'
+
+import { ChildNodeSpan } from '../template/browser'
 import { keySeparation } from '../patterns'
 
 const createStyleTag = (keyword: string, input: string): HTMLStyleElement => {
@@ -36,10 +38,17 @@ const getImages = (txt: string, root: Node): [string, Node][] => {
 }
 
 export const getImagesFromTemplate = (template: BrowserTemplate): [string, Node][] => {
-    const applyGetImages = ([fragment, input]: [string, string | Element | Text | ChildNodeSpan]): [string, Node][] => input instanceof Node
+    const applyGetImages = (
+        [fragment, input]: [string, string | Element | Text | ChildNodeSpan],
+    ): [string, Node][] => input instanceof Node
         ? getImages(
             fragment,
             input.getRootNode(),
+        )
+        : input instanceof ChildNodeSpan
+        ? getImages(
+            fragment,
+            input.parentElement.getRootNode(),
         )
         : []
 

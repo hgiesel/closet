@@ -113,12 +113,12 @@ export class ChildNodeSpan {
     static readonly CHILD_NODE_SPAN = 3353 /* this number is arbitrary */
     readonly nodeType = ChildNodeSpan.CHILD_NODE_SPAN
 
-    private readonly parentElement: Element
+    readonly parentElement: Element
     private childNodes: ChildNode[]
     private max: number
 
-    private _fromIndex: number 
-    private _toIndex: number 
+    private _fromIndex: number
+    private _toIndex: number
 
     constructor(
         parentElement: Element,

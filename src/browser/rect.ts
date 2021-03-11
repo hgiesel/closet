@@ -17,11 +17,15 @@ export const rectKeyword = 'occlusionRenderRect'
 const renderRects = <T extends Record<string, unknown>>(
     entry: AftermathEntry<T>,
     { template, cache }: AftermathInternals<T>,
-) => {
+): void => {
     const images = getImagesFromTemplate(template as BrowserTemplate)
     const rects = cache.get<RectDefinition[]>(entry.keyword, [])
 
     const firstImage = images[0]
+
+    if (!firstImage) {
+        return
+    }
 
     imageLoadCallback(`img[src="${firstImage[0]}"]`, firstImage[1], (event) => {
         const image = event.target as HTMLImageElement
@@ -40,9 +44,7 @@ const renderRects = <T extends Record<string, unknown>>(
             }
 
             const svgRect = Rect.make(draw)
-            console.log('made')
             svgRect.pos = [x, y, width, height]
-            console.log('pos set')
 
             for (const prop in options) {
                 const rectProperty = prop as RectProperty

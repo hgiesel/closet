@@ -100,7 +100,7 @@ export class SVG {
     }
 
     resize(): void {
-        // this.setScaleFactors()
+        this.setScaleFactors()
 
         if (this.scaleFactors.includes(0)) {
             // image is not displayed anymore

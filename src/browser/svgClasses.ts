@@ -268,9 +268,7 @@ export class Rect implements Shape {
 
     resize(forSVG?: SVG) {
         const savePos = this.pos
-
         this.readjust(forSVG)
-
         this.pos = savePos
     }
 
@@ -316,10 +314,11 @@ export class Rect implements Shape {
         ]
     }
     set pos([x, y, width, height]: [number, number, number, number]) {
-        this.x = x
-        this.y = y
+        // NOTE: width and height need to be set first, because x/y are dependent on them
         this.width = width
         this.height = height
+        this.x = x
+        this.y = y
     }
 
     get scaled(): [number, number, number, number] {

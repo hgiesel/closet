@@ -10,6 +10,10 @@ filterManager.install(
         tagname: 'mc',
         defaultBehavior: closet.flashcard.behaviors.Show,
     }),
+    closet.flashcard.recipes.sort({
+        tagname: 'sort',
+        defaultBehavior: closet.flashcard.behaviors.Show,
+    }),
 
     closet.browser.recipes.rect({
         tagname: 'rect',

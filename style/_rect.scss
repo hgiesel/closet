@@ -9,6 +9,11 @@
             fill: salmon;
             stroke: yellow;
         }
+
+        .is-back.is-active & {
+            fill: transparent;
+            stroke: transparent;
+        }
     }
 
     .closet-rect__ellipsis {

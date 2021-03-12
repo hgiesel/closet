@@ -6,8 +6,8 @@ import { keySeparation } from '../patterns'
 const createStyleTag = (keyword: string, input: string): HTMLStyleElement => {
     const styleSheet = document.createElement('style')
     styleSheet.type = 'text/css'
-    styleSheet.innerHTML = input
     styleSheet.id = keyword
+    styleSheet.textContent = input
 
     return styleSheet
 }

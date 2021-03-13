@@ -1,57 +1,60 @@
-const fs = require('fs')
-const path = require('path')
-const sass = require('sass')
+const fs = require("fs");
+const path = require("path");
+const sass = require("sass");
 
-const __basedir = `${__dirname}/..`
+const __basedir = `${__dirname}/..`;
 const args = process.argv.slice(2);
 
 const renderFile = (input, output) => {
-    sass.render({
-        file: input,
-    }, (error, result) => {
-        if (error) {
-            console.error(error)
-            return
-        }
-
-        fs.writeFile(output, result.css, (error) => {
-            if(error) {
-                return console.log(err)
+    sass.render(
+        {
+            file: input,
+        },
+        (error, result) => {
+            if (error) {
+                console.error(error);
+                return;
             }
 
-            console.log(`SCSS was successfully compiled to ${output}`)
-        })
-    })
-}
+            fs.writeFile(output, result.css, (error) => {
+                if (error) {
+                    return console.log(err);
+                }
+
+                console.log(`SCSS was successfully compiled to ${output}`);
+            });
+        },
+    );
+};
 
 const renderFromArg = (arg) => {
     switch (arg) {
         case "anki":
             renderFile(
-                path.join(__basedir, 'style', 'editor.scss'),
+                path.join(__basedir, "style", "editor.scss"),
                 `${__basedir}/anki/web/editor.css`,
-            )
+            );
 
             renderFile(
-                path.join(__basedir, 'style', 'base.scss'),
+                path.join(__basedir, "style", "base.scss"),
                 `${__basedir}/anki/web/closet.css`,
-            )
-            break
+            );
+            break;
 
         case "dist":
             renderFile(
-                path.join(__basedir, 'style', 'base.scss'),
+                path.join(__basedir, "style", "base.scss"),
                 `${__basedir}/dist/closet.css`,
-            )
-            break
+            );
+            break;
 
         case "docs":
             renderFile(
-                path.join(__basedir, 'style', 'base.scss'),
+                path.join(__basedir, "style", "base.scss"),
                 `${__basedir}/docs/assets/css/closet.css`,
-            )
-            break
+            );
+            break;
     }
-}
+};
 
-renderFromArg(args[0])
+renderFromArg(args[0]);

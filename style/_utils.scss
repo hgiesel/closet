@@ -1,25 +1,25 @@
 @mixin wrap($before, $after) {
-    &::before {
-        content: $before;
-    }
+  &::before {
+    content: $before;
+  }
 
-    &::after {
-        content: $after;
-    }
+  &::after {
+    content: $after;
+  }
 }
 
 @mixin wrap-reset {
-    &::before {
-        content: normal;
-    }
+  &::before {
+    content: normal;
+  }
 
-    &::after {
-        content: normal;
-    }
+  &::after {
+    content: normal;
+  }
 }
 
 @mixin placeholder($s) {
-    &::before {
-        content: $s;
-    }
+  &::before {
+    content: $s;
+  }
 }

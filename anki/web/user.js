@@ -1,24 +1,32 @@
-function closetUserLogic(
-    closet,
-    preset,
-    chooseMemory,
-) {
-    $$editableCode
-    return output
+function closetUserLogic(closet, preset, chooseMemory) {
+    $$editableCode;
+    return output;
 }
 
-var getAnkiPrefix = () => globalThis.ankiPlatform === 'desktop'
-    ? ''
-    : globalThis.AnkiDroidJS
-    ? 'https://appassets.androidplatform.net'
-    : '.'
+var getAnkiPrefix = () =>
+    globalThis.ankiPlatform === "desktop"
+        ? ""
+        : globalThis.AnkiDroidJS
+        ? "https://appassets.androidplatform.net"
+        : ".";
 
-var closetPromise = import(`${getAnkiPrefix()}/__closet-$$version.js`)
-closetPromise.then(
-    ({ closet }) => closet.template.anki.initialize(closet, closetUserLogic, '$$cardType', '$$tagsFull', '$$side'),
-    error => console.log('An error occured while loading Closet:', error),
-).catch(error => console.log('An error occured while executing Closet:', error))
+var closetPromise = import(`${getAnkiPrefix()}/__closet-$$version.js`);
+closetPromise
+    .then(
+        ({ closet }) =>
+            closet.template.anki.initialize(
+                closet,
+                closetUserLogic,
+                "$$cardType",
+                "$$tagsFull",
+                "$$side",
+            ),
+        (error) => console.log("An error occured while loading Closet:", error),
+    )
+    .catch((error) =>
+        console.log("An error occured while executing Closet:", error),
+    );
 
 if (globalThis.onUpdateHook) {
-    onUpdateHook.push(() => closetPromise)
+    onUpdateHook.push(() => closetPromise);
 }

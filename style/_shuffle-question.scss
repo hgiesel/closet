@@ -1,23 +1,23 @@
 @use "utils";
 
 @mixin shuffle-question($name) {
-    .closet-#{$name} {
-        @include utils.wrap('«', '»');
+  .closet-#{$name} {
+    @include utils.wrap("«", "»");
 
-        &.is-active .closet-#{$name}__item {
-            color: mediumpurple;
-        }
-
-        &.is-inactive {
-            @include utils.wrap-reset;
-        }
+    &.is-active .closet-#{$name}__item {
+      color: mediumpurple;
     }
 
-    .closet-#{$name}__separator {
-        @include utils.placeholder(', ');
+    &.is-inactive {
+      @include utils.wrap-reset;
     }
+  }
 
-    .closet-#{$name}__ellipsis {
-        @include utils.placeholder('...');
-    }
+  .closet-#{$name}__separator {
+    @include utils.placeholder(", ");
+  }
+
+  .closet-#{$name}__ellipsis {
+    @include utils.placeholder("...");
+  }
 }

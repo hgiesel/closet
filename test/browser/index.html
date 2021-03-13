@@ -1,62 +1,59 @@
 <html>
-  <head>
-    <title>Mocha</title>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <head>
+        <title>Mocha</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-     <!-- Loading mocha: file protocol -->
-     <!-- https://mochajs.org/#running-mocha-in-the-browser -->
-     <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
-  </head>
-  <body>
-    <em>You need to run `npm run serve-test` and open the served link!</em>
-    <div id="mocha"></div>
+        <!-- Loading mocha: file protocol -->
+        <!-- https://mochajs.org/#running-mocha-in-the-browser -->
+        <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+    </head>
+    <body>
+        <em>You need to run `npm run serve-test` and open the served link!</em>
+        <div id="mocha"></div>
 
-    <script src="https://unpkg.com/mocha/mocha.js"></script>
-    <script src="https://unpkg.com/chai/chai.js"></script>
+        <script src="https://unpkg.com/mocha/mocha.js"></script>
+        <script src="https://unpkg.com/chai/chai.js"></script>
 
-    <script class="mocha-init">
-      mocha.setup('bdd')
-      mocha.checkLeaks()
-    </script>
+        <script class="mocha-init">
+            mocha.setup("bdd");
+            mocha.checkLeaks();
+        </script>
 
-    <!-- Loading specs -->
-    <script type="module" src="/specs/childnode.spec.js"></script>
-    <script type="module" src="/specs/intersplice.spec.js"></script>
+        <!-- Loading specs -->
+        <script type="module" src="/specs/childnode.spec.js"></script>
+        <script type="module" src="/specs/intersplice.spec.js"></script>
 
-    <script class="mocha-exec">
-      window.onload = () => {
-         console.log('Tests start!')
-         mocha.run();
-       };
-    </script>
+        <script class="mocha-exec">
+            window.onload = () => {
+                console.log("Tests start!");
+                mocha.run();
+            };
+        </script>
 
-    <div id="experimental-area">
-      <div id="childnodetest">
-        <div class="first">
-          <div class="foo" id="first-start-here"></div>
-          <div class="foo" id="first-very-close"></div>
-          <div id="first-end-here">get me</div>
-          <div class="foo"></div>
+        <div id="experimental-area">
+            <div id="childnodetest">
+                <div class="first">
+                    <div class="foo" id="first-start-here"></div>
+                    <div class="foo" id="first-very-close"></div>
+                    <div id="first-end-here">get me</div>
+                    <div class="foo"></div>
+                </div>
+            </div>
+
+            <div class="second">
+                <div id="intersplicetest">
+                    <div class="bar"></div>
+                    <div class="foo"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="foo"></div>
+                    <div class="bar"></div>
+                    <div class="foo"></div>
+                </div>
+            </div>
+
+            <div class="third"></div>
         </div>
-      </div>
-
-      <div class="second">
-        <div id="intersplicetest">
-          <div class="bar"></div>
-          <div class="foo"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="foo"></div>
-          <div class="bar"></div>
-          <div class="foo"></div>
-        </div>
-      </div>
-
-      <div class="third">
-      </div>
-
-
-    </div>
-  </body>
+    </body>
 </html>

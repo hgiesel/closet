@@ -1,7 +1,7 @@
 @use "utils";
 
 @mixin shuffle {
-    .closet-shuffle__separator {
-        @include utils.placeholder(', ');
-    }
+  .closet-shuffle__separator {
+    @include utils.placeholder(", ");
+  }
 }

@@ -96,7 +96,7 @@ export class BrowserTemplate extends Template {
     }
 
     appendStyleAll(keyword: string, css: string): void {
-        for (const input in this.inputs) {
+        for (const input of this.inputs) {
             if (typeof input !== "string") {
                 this.appendStyle(input, keyword, css);
             }

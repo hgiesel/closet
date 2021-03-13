@@ -18,7 +18,7 @@ const renderFile = (input, output) => {
 
             fs.writeFile(output, result.css, (error) => {
                 if (error) {
-                    return console.log(err);
+                    return console.log(error);
                 }
 
                 console.log(`SCSS was successfully compiled to ${output}`);

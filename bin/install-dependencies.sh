@@ -7,7 +7,8 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 
 elif [[ "$(uname)" == 'Linux' ]]; then
   # Ubuntu
-  sudo apt-get install qtcreator pyqt5-dev-tools
+  sudo apt-get update
+  sudo apt-get install --fix-missing qtcreator pyqt5-dev-tools
 
 else
   echo 'Unknown plattform'

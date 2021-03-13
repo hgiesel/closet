@@ -60,7 +60,7 @@ export const imageLoadCallback = (
     query: string,
     root: Node,
     callback: (event: Event) => void,
-) => {
+): void => {
     const maybeElement = (root as any).querySelector(query) as HTMLImageElement;
 
     if (maybeElement) {

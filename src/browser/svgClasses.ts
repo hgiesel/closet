@@ -80,7 +80,7 @@ export class SVG {
         this.setScaleFactors();
     }
 
-    protected setScaleFactors() {
+    protected setScaleFactors(): void {
         this.scaleFactorX = this.image.width / this.image.naturalWidth;
         this.scaleFactorY = this.image.height / this.image.naturalHeight;
     }
@@ -154,7 +154,7 @@ export class SVG {
         });
     }
 
-    setMaxOcclusions(maxOcclusions: number) {
+    setMaxOcclusions(maxOcclusions: number): void {
         this.maxOcclusions = maxOcclusions;
     }
 
@@ -273,7 +273,7 @@ export class Rect implements Shape {
         return [saveX, saveY];
     }
 
-    resize(forSVG?: SVG) {
+    resize(forSVG?: SVG): void {
         const savePos = this.pos;
         this.readjust(forSVG);
         this.pos = savePos;
@@ -387,14 +387,14 @@ export class Rect implements Shape {
 
     /////////////////// styling
 
-    props(attrs: RectProperties) {
+    props(attrs: RectProperties): void {
         for (const key in attrs) {
             const propName = key as RectProperty;
             this.prop(propName, attrs[propName] as string);
         }
     }
 
-    prop(attr: RectProperty, value: string) {
+    prop(attr: RectProperty, value: string): void {
         (this[attr] as any) = value;
     }
 

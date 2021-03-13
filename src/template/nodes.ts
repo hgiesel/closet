@@ -45,10 +45,10 @@ export class TagNode implements ASTNode {
     readonly hasBlock: boolean;
 
     protected _inlineOptics: Optic[] = [];
-    protected _inlineGetter: Function = id;
+    protected _inlineGetter: (i: any) => any = id;
 
     protected _blockOptics: Optic[] = [];
-    protected _blockGetter: Function = id;
+    protected _blockGetter: (i: any) => any = id;
 
     constructor(
         fullKey: string,
@@ -140,15 +140,15 @@ export class TagNode implements ASTNode {
         return this.hasBlock ? this.blockOptics : this.inlineOptics;
     }
 
-    get inlineGetter(): Function {
+    get inlineGetter(): (i: any) => any {
         return this._inlineGetter;
     }
 
-    get blockGetter(): Function {
+    get blockGetter(): (i: any) => any {
         return this._blockGetter;
     }
 
-    get getter(): Function {
+    get getter(): (i: any) => any {
         return this.hasBlock ? this.blockGetter : this.inlineGetter;
     }
 

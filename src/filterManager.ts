@@ -1,3 +1,5 @@
+import type { Un } from "./types"
+
 import { MetaFilterManager } from "./filterManager/index";
 import { FilterApi } from "./filterManager/filters";
 import { Storage, StorageType } from "./filterManager/storage";
@@ -48,7 +50,7 @@ interface ClosetEnvironment {
     [closetEnvironmentName]: StorageType<unknown>;
 }
 
-export class FilterManager<P extends Record<string, unknown>>
+export class FilterManager<P extends Un>
     extends MetaFilterManager<
         TagNode,
         TemplateInfo,
@@ -59,10 +61,10 @@ export class FilterManager<P extends Record<string, unknown>>
         P
     >
     implements TagRenderer {
-    static make(
-        preset: Record<string, unknown> = {},
+    static make<P extends Un>(
+        preset: P = {} as P,
         memory: StorageType<unknown> = new Map(),
-    ) {
+    ): FilterManager<P> {
         const environment = !Object.prototype.hasOwnProperty.call(
             globalThis,
             closetEnvironmentName,

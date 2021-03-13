@@ -35,7 +35,7 @@ class TagBuilder {
         inlineNodes: ASTNode[],
         hasInline: boolean,
         blockNodes: ASTNode[] = [],
-        hasBlock: boolean = false,
+        hasBlock = false,
     ): TagNode {
         const match = fullKey.match(keySeparationPattern);
 

@@ -115,9 +115,17 @@ export class TagNode implements ASTNode {
         this._inlineGetter = run(op, dictForget, id);
     }
 
+    get inlineOptics(): Optic[] {
+        return this._inlineOptics;
+    }
+
     set blockOptics(op: Optic[]) {
         this._blockOptics = op;
         this._blockGetter = run(op, dictForget, id);
+    }
+
+    get blockOptics(): Optic[] {
+        return this._blockOptics;
     }
 
     set optics(op: Optic[]) {
@@ -126,14 +134,6 @@ export class TagNode implements ASTNode {
         } else {
             this.inlineOptics = op;
         }
-    }
-
-    get inlineOptics(): Optic[] {
-        return this._inlineOptics;
-    }
-
-    get blockOptics(): Optic[] {
-        return this._blockOptics;
     }
 
     get optics(): Optic[] {

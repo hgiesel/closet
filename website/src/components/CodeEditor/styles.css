@@ -1,6 +1,6 @@
 .CodeMirror {
-    height: auto;
-    border: 5px solid #eee;
+  height: auto;
+  border: 5px solid #eee;
 }
 
 html[data-theme="dark"] .MuiSwitch-track {

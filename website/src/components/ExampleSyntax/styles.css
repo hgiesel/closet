@@ -1,27 +1,27 @@
 :root {
-    --light-purple: #f781f9;
-    --baby-blue: #67cdcc;
-    --docusaurus-green: #27c2a0;
-    --cherry-tomato: #e94b3cff;
-    --orange: #f2aa4cff;
-    --blazing-yellow: #fee715ff;
-    --mint: #adefd1ff;
-    --blue-bossom: #2da8d8ff;
-    --danger-red: #d9514eff;
+  --light-purple: #f781f9;
+  --baby-blue: #67cdcc;
+  --docusaurus-green: #27c2a0;
+  --cherry-tomato: #e94b3cff;
+  --orange: #f2aa4cff;
+  --blazing-yellow: #fee715ff;
+  --mint: #adefd1ff;
+  --blue-bossom: #2da8d8ff;
+  --danger-red: #d9514eff;
 }
 
 html[data-theme="light"] :is(.token.tagstart, .token.tagend, .token.argsep) {
-    color: var(--blue-bossom);
+  color: var(--blue-bossom);
 }
 
 html[data-theme="dark"] :is(.token.tagstart, .token.tagend, .token.argsep) {
-    color: var(--baby-blue);
+  color: var(--baby-blue);
 }
 
 html[data-theme="light"] .token.tagname {
-    color: var(--danger-red);
+  color: var(--danger-red);
 }
 
 html[data-theme="dark"] .token.tagname {
-    color: var(--light-purple);
+  color: var(--light-purple);
 }

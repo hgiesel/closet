@@ -1,4 +1,4 @@
-export const defaultValue = "f"
+export const defaultValue = "f";
 export const values = [
   {
     label: "Front",
@@ -12,6 +12,6 @@ export const values = [
     value: "b",
     data: {
       side: "back",
-    }
+    },
   },
-]
+];

@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react";
 
-import TextField from "@material-ui/core/TextField"
-import FormControlLabel from "@material-ui/core/FormControlLabel"
-import Switch from "@material-ui/core/Switch"
-
+import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 
 interface ContextControlsProps {
-  onContextChange?: (cardNumber: number, isBack: boolean) => void
-  defaultCardNumber?: number
-  defaultIsBack?: boolean
+  onContextChange?: (cardNumber: number, isBack: boolean) => void;
+  defaultCardNumber?: number;
+  defaultIsBack?: boolean;
 }
 
 const ContextControls = ({
@@ -16,12 +15,12 @@ const ContextControls = ({
   defaultCardNumber = 1,
   defaultIsBack = false,
 }: ContextControlsProps) => {
-  const [cardNumber, setCardNumber] = useState(defaultCardNumber)
-  const [isBack, setSide] = useState(defaultIsBack)
+  const [cardNumber, setCardNumber] = useState(defaultCardNumber);
+  const [isBack, setSide] = useState(defaultIsBack);
 
   useEffect(() => {
-    onContextChange(cardNumber, isBack)
-  }, [isBack, cardNumber])
+    onContextChange(cardNumber, isBack);
+  }, [isBack, cardNumber]);
 
   return (
     <>
@@ -30,13 +29,12 @@ const ContextControls = ({
         label="Card Number"
         defaultValue={defaultCardNumber}
         size="small"
-
         variant="outlined"
         InputProps={{
           inputProps: {
             min: 1,
-              max: 100,
-          }
+            max: 100,
+          },
         }}
         onInput={(event) => setCardNumber(Number((event.target as any).value))}
       />
@@ -52,7 +50,7 @@ const ContextControls = ({
         label={isBack ? "Backside" : "Frontside"}
       />
     </>
-  )
-}
+  );
+};
 
-export default ContextControls
+export default ContextControls;

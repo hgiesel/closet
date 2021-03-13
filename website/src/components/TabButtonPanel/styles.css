@@ -9,7 +9,7 @@
 }
 
 .tabs::-webkit-scrollbar-thumb {
-    background: var(--ifm-scrollbar-thumb-background-color)
+  background: var(--ifm-scrollbar-thumb-background-color);
 }
 
 .tabs__item {

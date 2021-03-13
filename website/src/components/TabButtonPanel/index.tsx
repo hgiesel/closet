@@ -1,33 +1,33 @@
 import React, { KeyboardEvent, MouseEvent, useState, useEffect } from "react";
 
-import "./styles.css"
+import "./styles.css";
 
 export type SelectedHandler = (value: string, indexChanged: boolean) => void;
 
 type TabButtonPanelProps = {
-  onSelected: SelectedHandler,
-  defaultValue: string,
+  onSelected: SelectedHandler;
+  defaultValue: string;
   values: {
-    value: string,
-    label: string,
-  }[],
-}
+    value: string;
+    label: string;
+  }[];
+};
 
-const keys ={
+const keys = {
   ArrowLeft: 37,
   ArrowRight: 39,
-}
+};
 
 const TabButtonPanel = (props: TabButtonPanelProps) => {
-  const { defaultValue, values, onSelected }= props;
+  const { defaultValue, values, onSelected } = props;
   const [selectedValue, setSelectedValue] = useState(defaultValue);
 
-  useEffect(() => onSelected(selectedValue, true), [])
+  useEffect(() => onSelected(selectedValue, true), []);
 
   const tabRefs: (HTMLLIElement | null)[] = [];
 
   const activateTabValue = (tabValue: string): void => {
-    onSelected(tabValue, tabValue !== selectedValue)
+    onSelected(tabValue, tabValue !== selectedValue);
     setSelectedValue(tabValue);
   };
 
@@ -37,7 +37,7 @@ const TabButtonPanel = (props: TabButtonPanelProps) => {
     const tabIndex = tabRefs.indexOf(tab);
     const tabValue = values[tabIndex].value;
     tab.classList.add(activationHighlightClass);
-    setTimeout(() => tab.classList.remove(activationHighlightClass), 100)
+    setTimeout(() => tab.classList.remove(activationHighlightClass), 100);
     activateTabValue(tabValue);
   };
 
@@ -66,8 +66,8 @@ const TabButtonPanel = (props: TabButtonPanelProps) => {
     }
 
     if (focusElement) {
-      focusElement.focus()
-      activateTab(focusElement)
+      focusElement.focus();
+      activateTab(focusElement);
     }
   };
 
@@ -78,12 +78,15 @@ const TabButtonPanel = (props: TabButtonPanelProps) => {
         aria-orientation="horizontal"
         className={"tabs tabs--block"}
       >
-        {values.map(({value, label}) => (
+        {values.map(({ value, label }) => (
           <li
             role="tab"
             tabIndex={selectedValue === value ? 0 : -1}
             aria-selected={selectedValue === value}
-            className={"tabs__item" + (selectedValue === value ? " tabs__item--active" : "")}
+            className={
+              "tabs__item" +
+              (selectedValue === value ? " tabs__item--active" : "")
+            }
             key={value}
             ref={(tabControl) => tabRefs.push(tabControl)}
             onKeyDown={handleKeydown}
@@ -95,6 +98,6 @@ const TabButtonPanel = (props: TabButtonPanelProps) => {
       </ul>
     </div>
   );
-}
+};
 
-export default TabButtonPanel
+export default TabButtonPanel;

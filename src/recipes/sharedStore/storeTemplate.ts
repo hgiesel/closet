@@ -1,7 +1,6 @@
-import type { TagNode, Internals } from '../../types'
+import type { TagNode, Internals } from "../../types";
 
-import { Storage } from '../../filterManager/storage'
-
+import { Storage } from "../../filterManager/storage";
 
 export class SharedStore<T> extends Storage<T> {
     /**
@@ -17,16 +16,21 @@ export class SharedStore<T> extends Storage<T> {
 
 export const storeTemplate = <Store extends SharedStore<U>, U>(
     Store: new (map: Map<string, U>) => Store,
-
 ) => (
     storeId: string,
-    operation: <T extends Record<string, unknown>>(tag: TagNode, internals: Internals<T>) => (store: Store) => string | void,
-) => <T extends Record<string, unknown>>(tag: TagNode, internals: Internals<T>) => {
+    operation: <T extends Record<string, unknown>>(
+        tag: TagNode,
+        internals: Internals<T>,
+    ) => (store: Store) => string | void,
+) => <T extends Record<string, unknown>>(
+    tag: TagNode,
+    internals: Internals<T>,
+) => {
     const result = (internals.cache.over(
         storeId,
         operation(tag, internals),
-        new Store(new Map<string, U>())
-    ) ?? '') as string
+        new Store(new Map<string, U>()),
+    ) ?? "") as string;
 
-    return { ready: true, result: result }
-}
+    return { ready: true, result: result };
+};

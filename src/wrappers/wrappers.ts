@@ -1,57 +1,76 @@
-import type { TagNode, RecipeOptions, Registrar, Internals, Deferred, Recipe, WrapOptions, DeferredApi } from '../types'
+import type {
+    TagNode,
+    RecipeOptions,
+    Registrar,
+    Internals,
+    Deferred,
+    Recipe,
+    WrapOptions,
+    DeferredApi,
+} from "../types";
 
 interface WithInternalKeyword {
-    keyInternal: string,
+    keyInternal: string;
 }
 
-export const defaultTagnameGetter = (o: RecipeOptions): string[] => Object.prototype.hasOwnProperty.call(o, 'tagname')
-    ? [o['tagname']]
-    : []
+export const defaultTagnameGetter = (o: RecipeOptions): string[] =>
+    Object.prototype.hasOwnProperty.call(o, "tagname") ? [o["tagname"]] : [];
 
-export const defaultTagnameSetter = (o: RecipeOptions, newNames: string[]): RecipeOptions => ({ ...o, tagname: newNames[0] })
+export const defaultTagnameSetter = (
+    o: RecipeOptions,
+    newNames: string[],
+): RecipeOptions => ({ ...o, tagname: newNames[0] });
 
-const defaultWrapId = 'wrapped'
+const defaultWrapId = "wrapped";
 
 export const wrap = <T extends Record<string, unknown>>(
-    wrapped: (tag: TagNode & WithInternalKeyword, internals: Internals<T>) => void,
+    wrapped: (
+        tag: TagNode & WithInternalKeyword,
+        internals: Internals<T>,
+    ) => void,
 ) => (
-    mainRecipe: Recipe<T>, {
-        wrapId,
-        getTagnames,
-        setTagnames,
-    }: WrapOptions = {
+    mainRecipe: Recipe<T>,
+    { wrapId, getTagnames, setTagnames }: WrapOptions = {
         wrapId: defaultWrapId,
         getTagnames: defaultTagnameGetter,
         setTagnames: defaultTagnameSetter,
     },
-): Recipe<T> => (
-    options: RecipeOptions = {},
-) => (registrar: Registrar<T>): void => {
-    const tagnames = getTagnames(options)
+): Recipe<T> => (options: RecipeOptions = {}) => (
+    registrar: Registrar<T>,
+): void => {
+    const tagnames = getTagnames(options);
 
-    const makeInternalKeyword = (keyword: string) => `${keyword}:${wrapId}:internal`
+    const makeInternalKeyword = (keyword: string) =>
+        `${keyword}:${wrapId}:internal`;
 
-    const keywordMap = new Map()
-    const alteredTagnames = tagnames.map(keyword => {
-        const internalKeyword = makeInternalKeyword(keyword)
-        keywordMap.set(keyword, internalKeyword)
-        return internalKeyword
-    })
+    const keywordMap = new Map();
+    const alteredTagnames = tagnames.map((keyword) => {
+        const internalKeyword = makeInternalKeyword(keyword);
+        keywordMap.set(keyword, internalKeyword);
+        return internalKeyword;
+    });
 
-    mainRecipe(setTagnames(options, alteredTagnames))(registrar)
+    mainRecipe(setTagnames(options, alteredTagnames))(registrar);
 
     const wrapFilter = (tag: TagNode, inter: Internals<T>) => {
-        const internalKeyword = keywordMap.get(tag.key)
+        const internalKeyword = keywordMap.get(tag.key);
 
-        wrapped(Object.assign({}, tag, { keyInternal: internalKeyword }), inter)
+        wrapped(
+            Object.assign({}, tag, { keyInternal: internalKeyword }),
+            inter,
+        );
 
-        return inter.filters.getOrDefault(internalKeyword)(tag, inter)
-    }
+        return inter.filters.getOrDefault(internalKeyword)(tag, inter);
+    };
 
     for (const keyword of tagnames) {
-        registrar.register(keyword, wrapFilter, registrar.getOptions(makeInternalKeyword(keyword)))
+        registrar.register(
+            keyword,
+            wrapFilter,
+            registrar.getOptions(makeInternalKeyword(keyword)),
+        );
     }
-}
+};
 
 const wrapWithDeferredTemplate = <T extends Record<string, unknown>, D>(
     getDeferredApi: (i: Internals<T>) => DeferredApi<D>,
@@ -65,9 +84,13 @@ const wrapWithDeferredTemplate = <T extends Record<string, unknown>, D>(
     },
 ): Recipe<T> => {
     return wrap((t, internals: Internals<T>) => {
-        getDeferredApi(internals).registerIfNotExists(t.keyInternal, action)
-    })(mainRecipe, wrapOptions)
-}
+        getDeferredApi(internals).registerIfNotExists(t.keyInternal, action);
+    })(mainRecipe, wrapOptions);
+};
 
-export const wrapWithDeferred = wrapWithDeferredTemplate(inter => inter.deferred)
-export const wrapWithAftermath = wrapWithDeferredTemplate(inter => inter.aftermath)
+export const wrapWithDeferred = wrapWithDeferredTemplate(
+    (inter) => inter.deferred,
+);
+export const wrapWithAftermath = wrapWithDeferredTemplate(
+    (inter) => inter.aftermath,
+);

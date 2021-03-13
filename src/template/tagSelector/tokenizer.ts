@@ -1,6 +1,6 @@
-import type { Lexer } from 'moo'
+import type { Lexer } from "moo";
 
-import { compile } from 'moo'
+import { compile } from "moo";
 
 export const tagSelectorTokenizer: Lexer = compile({
     text: {
@@ -8,15 +8,15 @@ export const tagSelectorTokenizer: Lexer = compile({
     },
 
     numDigits: {
-        match: /\d+(?=:|$)/u
+        match: /\d+(?=:|$)/u,
     },
 
     digits: {
-        match: /\d+/u
+        match: /\d+/u,
     },
 
     slash: {
-        match: '/',
+        match: "/",
     },
 
     escapeseq: {
@@ -37,15 +37,15 @@ export const tagSelectorTokenizer: Lexer = compile({
     },
 
     star: {
-        match: '*',
+        match: "*",
     },
 
     groupOpen: {
-        match: '{',
+        match: "{",
     },
 
     groupAlternative: {
-        match: ',',
+        match: ",",
     },
 
     rangeSpecifier: {
@@ -57,10 +57,10 @@ export const tagSelectorTokenizer: Lexer = compile({
     },
 
     groupClose: {
-        match: '}',
+        match: "}",
     },
 
     occurSep: {
-        match: ':',
+        match: ":",
     },
-})
+});

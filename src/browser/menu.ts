@@ -1,6 +1,5 @@
-import type { MenuItem } from './menuConstruction'
-import { constructMenu } from './menuConstruction'
-
+import type { MenuItem } from "./menuConstruction";
+import { constructMenu } from "./menuConstruction";
 
 export const menuCss = `
 :root {
@@ -81,61 +80,67 @@ nav.context-menu a {
 nav.context-menu li.context-menu--hover a {
   color: white;
 }
-`
+`;
 
 const turnOffMenu = (menu: HTMLElement) => (_event: MouseEvent) => {
-    menu.classList.remove('context-menu--active')
-}
+    menu.classList.remove("context-menu--active");
+};
 
 const positionMenu = (menu: HTMLElement, x: number, y: number) => {
-    menu.style.left = `${x}px`
-    menu.style.top = `${y}px`
-}
+    menu.style.left = `${x}px`;
+    menu.style.top = `${y}px`;
+};
 
 ///////////////////
 
 const initializeMenu = (menu: HTMLElement) => {
-    menu.addEventListener('click', (event: MouseEvent) => {
-        event.stopPropagation()
-    })
+    menu.addEventListener("click", (event: MouseEvent) => {
+        event.stopPropagation();
+    });
 
-    menu.querySelectorAll('li').forEach((liElement: HTMLLIElement) => {
-        liElement.addEventListener('mouseenter', () => {
-            liElement.classList.add('context-menu--hover')
-        })
+    menu.querySelectorAll("li").forEach((liElement: HTMLLIElement) => {
+        liElement.addEventListener("mouseenter", () => {
+            liElement.classList.add("context-menu--hover");
+        });
 
-        liElement.addEventListener('mouseleave', () => {
-            liElement.classList.remove('context-menu--hover')
-        })
+        liElement.addEventListener("mouseleave", () => {
+            liElement.classList.remove("context-menu--hover");
+        });
 
-        liElement.addEventListener('click', (event: MouseEvent) => {
-            turnOffMenu(menu)(event)
-        })
-    })
-}
+        liElement.addEventListener("click", (event: MouseEvent) => {
+            turnOffMenu(menu)(event);
+        });
+    });
+};
 
 export const enableAsMenuTrigger = (menu: HTMLElement, where: EventTarget) => {
-    const turnOffTheMenu = turnOffMenu(menu)
+    const turnOffTheMenu = turnOffMenu(menu);
 
-    where.addEventListener('contextmenu', (event: any /* MouseEvent */) => {
-        event.preventDefault()
-        event.stopPropagation()
+    where.addEventListener("contextmenu", (event: any /* MouseEvent */) => {
+        event.preventDefault();
+        event.stopPropagation();
 
-        document.querySelectorAll('.context-menu--active')
-            .forEach((element) => element.classList.remove('context-menu--active'))
+        document
+            .querySelectorAll(".context-menu--active")
+            .forEach((element) =>
+                element.classList.remove("context-menu--active"),
+            );
 
-        menu.classList.add('context-menu--active')
+        menu.classList.add("context-menu--active");
 
-        window.addEventListener('click', turnOffTheMenu, { once: true })
-        positionMenu(menu, event.pageX, event.pageY)
-    })
-}
+        window.addEventListener("click", turnOffTheMenu, { once: true });
+        positionMenu(menu, event.pageX, event.pageY);
+    });
+};
 
-export const setupMenu = (menuName: string, menuItems: MenuItem[]): HTMLElement => {
-    const menu = constructMenu(menuName, menuItems)
+export const setupMenu = (
+    menuName: string,
+    menuItems: MenuItem[],
+): HTMLElement => {
+    const menu = constructMenu(menuName, menuItems);
 
-    document.body.insertAdjacentElement('beforeend', menu)
-    initializeMenu(menu)
+    document.body.insertAdjacentElement("beforeend", menu);
+    initializeMenu(menu);
 
-    return menu
-}
+    return menu;
+};

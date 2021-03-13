@@ -1,12 +1,11 @@
-import type { TagNode, Internals } from '../../types'
+import type { TagNode, Internals } from "../../types";
 
-import { TagSelector } from '../../template/'
+import { TagSelector } from "../../template/";
 
-import { separated } from '../../template/optics'
+import { separated } from "../../template/optics";
 
-
-export const defaultSeparated = separated({ sep: ';' })
-export const innerSeparated = separated({ sep: '=', trim: true, max: 2 })
+export const defaultSeparated = separated({ sep: ";" });
+export const innerSeparated = separated({ sep: "=", trim: true, max: 2 });
 
 export class PreferenceStore<T> {
     /**
@@ -20,25 +19,24 @@ export class PreferenceStore<T> {
      * not make a shared value, for that see `SharedStore` (TODO)
      */
 
-    selectors: [TagSelector, T][]
-    defaultValue: T
+    selectors: [TagSelector, T][];
+    defaultValue: T;
 
     constructor(defaultValue: T) {
-        this.defaultValue = defaultValue
-        this.selectors = []
+        this.defaultValue = defaultValue;
+        this.selectors = [];
     }
 
     protected set(selector: string, value: T): void {
-        this.selectors.unshift([TagSelector.make(selector), value])
+        this.selectors.unshift([TagSelector.make(selector), value]);
     }
 
     get(key: string, num: number, fullOccur: number): T {
-        const found = this.selectors
-            .find(([selector]) => selector.check(key, num, fullOccur))
+        const found = this.selectors.find(([selector]) =>
+            selector.check(key, num, fullOccur),
+        );
 
-        return found
-            ? found[1]
-            : this.defaultValue
+        return found ? found[1] : this.defaultValue;
     }
 }
 
@@ -48,12 +46,15 @@ export const storeTemplate = <Store extends PreferenceStore<U>, U>(
     storeId: string,
     defaultValue: U,
     operation: (...vals: string[]) => (a: Store) => void,
-) => <T extends Record<string, unknown>>(tag: TagNode, { cache }: Internals<T>) => {
-    const commands = tag.values
+) => <T extends Record<string, unknown>>(
+    tag: TagNode,
+    { cache }: Internals<T>,
+) => {
+    const commands = tag.values;
 
     commands.forEach((cmd: string) => {
-        cache.over(storeId, operation(...cmd), new Store(defaultValue))
-    })
+        cache.over(storeId, operation(...cmd), new Store(defaultValue));
+    });
 
-    return { ready: true }
-}
+    return { ready: true };
+};

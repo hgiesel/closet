@@ -1,8 +1,7 @@
-import type { ASTNode, TagNode } from './nodes'
-import type { Optic } from './optics'
+import type { ASTNode, TagNode } from "./nodes";
+import type { Optic } from "./optics";
 
-
-export type TagPath = number[]
+export type TagPath = number[];
 
 export enum Status {
     Ready,
@@ -14,28 +13,28 @@ export enum Status {
 }
 
 export interface ProcessorOutput {
-    result: string | ASTNode[] | null
-    status: Status
+    result: string | ASTNode[] | null;
+    status: Status;
 }
 
 export interface DataOptions {
-    optics?: Optic[]
-    blockOptics: Optic[]
-    inlineOptics: Optic[]
-    capture: boolean
-    [k: string]: unknown
+    optics?: Optic[];
+    blockOptics: Optic[];
+    inlineOptics: Optic[];
+    capture: boolean;
+    [k: string]: unknown;
 }
 
 export interface RoundInfo {
-    path: TagPath
-    depth: number
-    ready: boolean
-    isCapture: boolean
+    path: TagPath;
+    depth: number;
+    ready: boolean;
+    isCapture: boolean;
 }
 
-export type TagAccessor = (name: string) => TagProcessor
+export type TagAccessor = (name: string) => TagProcessor;
 
 export interface TagProcessor {
-    execute: (data: TagNode, round: RoundInfo) => ProcessorOutput
-    getOptions: () => DataOptions
+    execute: (data: TagNode, round: RoundInfo) => ProcessorOutput;
+    getOptions: () => DataOptions;
 }

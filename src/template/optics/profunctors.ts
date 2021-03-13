@@ -10,52 +10,42 @@ enum ProfunctorInstance {
 }
 
 export interface ProfunctorDict {
-    classes: ProfunctorInstance[],
-    dimap: <A,B,C,D>(
+    classes: ProfunctorInstance[];
+    dimap: <A, B, C, D>(
         l: (a: A) => B,
         r: (c: C) => D,
         f: (b: B) => C,
     ) => (a: A) => unknown;
 
-    first: <A,B,C>(
-        f: (a: A) => B,
-    ) => (
-        [a, c]: [A, C],
-    ) => unknown,
+    first: <A, B, C>(f: (a: A) => B) => ([a, c]: [A, C]) => unknown;
 
-    right: <A,B,C>(
+    right: <A, B, C>(
         f: (a: A) => B,
-    ) => (
-        [isRight, x]: [false, C] | [true, A],
-    ) => unknown,
+    ) => ([isRight, x]: [false, C] | [true, A]) => unknown;
 }
 
 /////////////////////////////////////// Profunctor (->)
-const dimap = <A,B,C,D>(
+const dimap = <A, B, C, D>(
     l: (a: A) => B,
     r: (c: C) => D,
     f: (b: B) => C,
-): (a: A) => D => (
-    a: A,
-): D => r(f(l(a)))
+): ((a: A) => D) => (a: A): D => r(f(l(a)));
 
 // Strong profunctor
 // (a, b) == [a, b]
-const first = <A,B,C>(
-    f: (a: A) => B,
-) => (
-    [a, c]: [A, C],
-): [B, C] => [f(a), c]
+const first = <A, B, C>(f: (a: A) => B) => ([a, c]: [A, C]): [B, C] => [
+    f(a),
+    c,
+];
 
 // Choice profunctor
 // Either l r == [boolean, L | R] == [false, L] | [true | R]
-const right = <A,B,C>(
-    f: (a: A) => B,
-) => (
-    [isRight, x]: [false, C] | [true, A],
-): [false, C] | [true, B] => isRight
-    ? [isRight, f(x as A)] as [true, B]
-    : [isRight, x] as [false, C]
+const right = <A, B, C>(f: (a: A) => B) => ([isRight, x]:
+    | [false, C]
+    | [true, A]): [false, C] | [true, B] =>
+    isRight
+        ? ([isRight, f(x as A)] as [true, B])
+        : ([isRight, x] as [false, C]);
 
 export const dictFunction: ProfunctorDict = {
     classes: [
@@ -66,35 +56,29 @@ export const dictFunction: ProfunctorDict = {
     dimap,
     first,
     right: right as any,
-}
+};
 
 /////////////////////////////////////// Profunctor (Forget r) ==  Star (Const r)
-const lmap = <A,B,C>(
-    l: (a: A) => B,
-    f: (b: B) => C,
-): (a: A) => C => (
+const lmap = <A, B, C>(l: (a: A) => B, f: (b: B) => C): ((a: A) => C) => (
     a: A,
-): C => f(l(a))
+): C => f(l(a));
 
-const dimapForget = <A,B,C,D>(
+const dimapForget = <A, B, C, D>(
     l: (a: A) => B,
     _r: (c: C) => D,
     f: (b: B) => C,
-): (a: A) => C => lmap(l, f)
+): ((a: A) => C) => lmap(l, f);
 
-const firstForget = <A,B,C>(
-    f: (a: A) => B,
-) => (
-    [a]: [A, C],
-): B => f(a)
+const firstForget = <A, B, C>(f: (a: A) => B) => ([a]: [A, C]): B => f(a);
 
-const rightForget = <A,B,C>(
-    f: (a: A) => B,
-) => (
-    [isRight, x]: [false, C] | [true, A],
-): [] | B => isRight
-    ? f(x as A) as B
-    : [/* mempty */]
+const rightForget = <A, B, C>(f: (a: A) => B) => ([isRight, x]:
+    | [false, C]
+    | [true, A]): [] | B =>
+    isRight
+        ? (f(x as A) as B)
+        : [
+              /* mempty */
+          ];
 
 export const dictForget: ProfunctorDict = {
     classes: [
@@ -106,4 +90,4 @@ export const dictForget: ProfunctorDict = {
     dimap: dimapForget,
     first: firstForget,
     right: rightForget as any,
-}
+};

@@ -1,100 +1,100 @@
-import type { BrowserTemplate, BrowserTemplateNode } from '../template/browser'
+import type { BrowserTemplate, BrowserTemplateNode } from "../template/browser";
 
-import { ChildNodeSpan } from '../template/browser'
-import { keySeparation } from '../patterns'
+import { keySeparation } from "../patterns";
 
-const imageSrcPattern = /<img[^>]*?src="(.+?)"[^>]*>/g
+const imageSrcPattern = /<img[^>]*?src="(.+?)"[^>]*>/g;
 const getImages = (txt: string, root: Node): [string, Node][] => {
-    const result = []
-    let match: RegExpExecArray | null
+    const result = [];
+    let match: RegExpExecArray | null;
 
     do {
-        match = imageSrcPattern.exec(txt)
+        match = imageSrcPattern.exec(txt);
         if (match) {
-            result.push([match[1], root])
+            result.push([match[1], root]);
         }
-    } while (match)
+    } while (match);
 
-    return result as [string, Node][]
-}
+    return result as [string, Node][];
+};
 
-export const getImagesFromTemplate = (template: BrowserTemplate): [string, Node][] => {
-    const applyGetImages = (
-        [fragment, input]: [string, string | Element | Text | ChildNodeSpan],
-    ): [string, Node][] => typeof input === "string"
-        ? []
-        : getImages(
-            fragment,
-            input.getRootNode(),
-        )
+export const getImagesFromTemplate = (
+    template: BrowserTemplate,
+): [string, Node][] => {
+    const applyGetImages = ([fragment, input]: [string, BrowserTemplateNode]): [
+        string,
+        Node,
+    ][] =>
+        typeof input === "string"
+            ? []
+            : getImages(fragment, input.getRootNode());
 
     return template.textFragments
-        .map((fragment: string, index: number): [string, string | Element | Text | ChildNodeSpan] => [fragment, template.inputs[index]])
-        .flatMap(applyGetImages)
-}
+        .map((fragment: string, index: number): [
+            string,
+            BrowserTemplateNode,
+        ] => [fragment, template.inputs[index]])
+        .flatMap(applyGetImages);
+};
 
 export const getOffsets = (event: MouseEvent): [number, number] => {
-    if (navigator.userAgent.search('Chrome') >= 0) {
-        return [
-            event.offsetX,
-            event.offsetY,
-        ]
-    }
-    else /* Firefox support */ {
+    if (navigator.userAgent.search("Chrome") >= 0) {
+        return [event.offsetX, event.offsetY];
+    } /* Firefox support */ else {
         // layerX/Y are deprecated, however offsetX/Y give wrong values on Firefox
         // this does not work when using transform
-        const target = (event.currentTarget as Element)
+        const target = event.currentTarget as Element;
 
-        const boundingRect = target.getBoundingClientRect()
-        const parentRect = (target.parentElement as Element).getBoundingClientRect()
+        const boundingRect = target.getBoundingClientRect();
+        const parentRect = (target.parentElement as Element).getBoundingClientRect();
 
-        const offsetX = (event as any).layerX - (parentRect.left - boundingRect.left)
-        const offsetY = (event as any).layerY - (parentRect.top - boundingRect.top)
+        const offsetX =
+            (event as any).layerX - (parentRect.left - boundingRect.left);
+        const offsetY =
+            (event as any).layerY - (parentRect.top - boundingRect.top);
 
-        return [
-            offsetX,
-            offsetY,
-        ]
+        return [offsetX, offsetY];
     }
-}
+};
 
-export const imageLoadCallback = (query: string, root: Node, callback: (event: Event) => void) => {
-    const maybeElement = (root as any).querySelector(query) as HTMLImageElement
+export const imageLoadCallback = (
+    query: string,
+    root: Node,
+    callback: (event: Event) => void,
+) => {
+    const maybeElement = (root as any).querySelector(query) as HTMLImageElement;
 
     if (maybeElement) {
         if (maybeElement.complete) {
-            callback({ target: maybeElement } as any)
-        }
-
-        else {
-            maybeElement.addEventListener('load', callback)
+            callback({ target: maybeElement } as any);
+        } else {
+            maybeElement.addEventListener("load", callback);
         }
     }
-}
+};
 
 export const getHighestNum = (labels: string[]): number => {
-    let result = 0
+    let result = 0;
 
     for (const label of labels) {
-        const match = label.match(keySeparation)
+        const match = label.match(keySeparation);
 
         if (!match) {
-            continue
+            continue;
         }
 
-        const labelNum = Number(match[2])
+        const labelNum = Number(match[2]);
 
         if (Number.isNaN(labelNum)) {
-            continue
+            continue;
         }
 
-        result = Math.max(result, labelNum)
+        result = Math.max(result, labelNum);
     }
 
-    return result
-}
+    return result;
+};
 
-export const svgKeyword = 'occlusionSvgCss'
+export const svgKeyword = "occlusionSvgCss";
 export const svgCss = `
 img {
   max-width: 100% !important;
@@ -121,4 +121,4 @@ img {
   text-anchor: middle;
   dominant-baseline: central;
   pointer-events: none;
-}`
+}`;

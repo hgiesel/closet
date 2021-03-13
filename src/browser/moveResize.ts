@@ -11,7 +11,7 @@ export const onMouseMoveResize = (
     bottom: boolean,
     downX: number,
     downY: number,
-) => (event: MouseEvent) => {
+) => (event: MouseEvent): void => {
     const [moveX, moveY] = reverser(getOffsets(event));
 
     if (left && moveX < downX) {
@@ -125,7 +125,7 @@ const getCursor = perDirection<string>(
 
 export const adaptCursor = (reverser: Reverser, currentShape: Rect) => (
     event: MouseEvent,
-) => {
+): void => {
     if (event.shiftKey) {
         currentShape.rect.style.cursor = "no-drop";
     } else {

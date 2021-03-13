@@ -82,7 +82,7 @@ nav.context-menu li.context-menu--hover a {
 }
 `;
 
-const turnOffMenu = (menu: HTMLElement) => (_event: MouseEvent) => {
+const turnOffMenu = (menu: HTMLElement) => () => {
     menu.classList.remove("context-menu--active");
 };
 
@@ -93,12 +93,12 @@ const positionMenu = (menu: HTMLElement, x: number, y: number) => {
 
 ///////////////////
 
-const initializeMenu = (menu: HTMLElement) => {
+const initializeMenu = (menu: HTMLElement): void => {
     menu.addEventListener("click", (event: MouseEvent) => {
         event.stopPropagation();
     });
 
-    menu.querySelectorAll("li").forEach((liElement: HTMLLIElement) => {
+    menu.querySelectorAll("li").forEach((liElement: HTMLLIElement): void => {
         liElement.addEventListener("mouseenter", () => {
             liElement.classList.add("context-menu--hover");
         });
@@ -107,13 +107,13 @@ const initializeMenu = (menu: HTMLElement) => {
             liElement.classList.remove("context-menu--hover");
         });
 
-        liElement.addEventListener("click", (event: MouseEvent) => {
-            turnOffMenu(menu)(event);
+        liElement.addEventListener("click", () => {
+            turnOffMenu(menu)();
         });
     });
 };
 
-export const enableAsMenuTrigger = (menu: HTMLElement, where: EventTarget) => {
+export const enableAsMenuTrigger = (menu: HTMLElement, where: EventTarget): void => {
     const turnOffTheMenu = turnOffMenu(menu);
 
     where.addEventListener("contextmenu", (event: any /* MouseEvent */) => {

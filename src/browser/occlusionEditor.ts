@@ -6,7 +6,7 @@ import { id } from '../utils'
 import { SVG, Shape, ShapeDefinition, Rect } from './svgClasses'
 import { adaptCursor, getResizeParameters, onMouseMoveResize, onMouseMoveMove } from './moveResize'
 import { reverseEffects } from './scaleZoom'
-import { appendStyleTag, getImagesFromTemplate, getOffsets, imageLoadCallback, svgKeyword, svgCss } from './utils'
+import { getImagesFromTemplate, getOffsets, imageLoadCallback, svgKeyword, svgCss } from './utils'
 
 import { setupMenu, enableAsMenuTrigger, menuCss } from './menu'
 import { rectKeyword } from './rect'
@@ -234,14 +234,11 @@ export const occlusionMakerRecipe = <T extends Record<string, unknown>>(options:
 
             const callback = (event: Event): void => {
                 const image = event.target as HTMLImageElement
-                const imageRoot = image.getRootNode()
-                const anchorNode = imageRoot instanceof Document
-                    ? imageRoot.head
-                    : imageRoot
+                const template = internals.template as BrowserTemplate
 
-                appendStyleTag(document.body, occlusionMakerCssKeyword, menuCss)
-                appendStyleTag(anchorNode, occlusionMakerCssKeyword, occlusionCss)
-                appendStyleTag(anchorNode, svgKeyword, svgCss)
+                template.appendDocumentStyle(occlusionMakerCssKeyword, menuCss)
+                template.appendStyle(image, occlusionMakerCssKeyword, occlusionCss)
+                template.appendStyle(image, svgKeyword, svgCss)
 
                 const draw = SVG.wrapImage(image)
                 draw.setMaxOcclusions(maxOcclusions)

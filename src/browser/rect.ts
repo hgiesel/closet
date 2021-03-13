@@ -8,7 +8,7 @@ import { FlashcardTemplate, makeFlashcardTemplate, generateFlashcardRecipes } fr
 import type { RectProperty, RectProperties, RectDefinition } from './svgClasses'
 import { SVG, Rect } from './svgClasses'
 
-import { appendStyleTag, getImagesFromTemplate, imageLoadCallback, svgKeyword, svgCss } from './utils'
+import { getImagesFromTemplate, imageLoadCallback, svgKeyword, svgCss } from './utils'
 import { separated } from '../template/optics'
 
 
@@ -27,14 +27,9 @@ const renderRects = <T extends Record<string, unknown>>(
         return
     }
 
-    imageLoadCallback(`img[src="${firstImage[0]}"]`, firstImage[1], (event) => {
-        const image = event.target as HTMLImageElement
-        const imageRoot = image.getRootNode()
-        const anchorNode = imageRoot instanceof Document
-            ? imageRoot.head
-            : imageRoot
-
-        appendStyleTag(anchorNode, svgKeyword, svgCss)
+    imageLoadCallback(`img[src="${firstImage[0]}"]`, firstImage[1], (event: Event): void => {
+        const browserTemplate = template as BrowserTemplate
+        browserTemplate.appendStyle(event.target as HTMLImageElement, svgKeyword, svgCss)
 
         const draw = SVG.wrapImage(event.target as HTMLImageElement)
 

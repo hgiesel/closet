@@ -1,7 +1,7 @@
-import type { ChildNodeSpan } from '../browser'
+import type { ChildNodeSpan, BrowserTemplateNode } from '../browser'
 import { interspliceChildNodes } from '../browser'
 
-const isElement = (tag: ChildNode): tag is Element => (
+const isElement = (tag: Node): tag is Element => (
     tag.nodeType === Node.ELEMENT_NODE
 )
 
@@ -20,15 +20,22 @@ const isJavaScriptElement = (tag: Element): tag is HTMLScriptElement => (
 
 // Anki Asset Manager support
 const isAnkiAssetManagerElement = (tag: Element): tag is HTMLDivElement => (
-    tag.id === 'anki-am' 
+    tag.id === 'anki-am'
+)
+
+
+const isTemplateableElement = (tag: Node): boolean => isElement(tag) && (
+    isStyleElement(tag) ||
+    isJavaScriptElement(tag) ||
+    isAnkiAssetManagerElement(tag)
 )
 
 export const getQaChildNodes = (): ChildNodeSpan[] | null => {
-    if (!window.document) {
+    if (!globalThis.document) {
         return null
     }
 
-    const qa = window.document.getElementById('qa')
+    const qa = globalThis.document.getElementById('qa')
 
     if (!qa) {
         return null
@@ -36,12 +43,6 @@ export const getQaChildNodes = (): ChildNodeSpan[] | null => {
 
     return interspliceChildNodes(qa, {
         type: 'predicate',
-        value: (tag: ChildNode): boolean => !(
-            isElement(tag) && (
-                isStyleElement(tag) ||
-                isJavaScriptElement(tag) ||
-                isAnkiAssetManagerElement(tag)
-            )
-        )
+        value: (tag: BrowserTemplateNode): boolean => !isTemplateableElement(tag as Node),
     })
 }

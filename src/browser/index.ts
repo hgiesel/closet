@@ -1,5 +1,3 @@
-export { appendStyleTag } from './utils'
-
 import { occlusionMakerRecipe as occlusionEditor } from './occlusionEditor'
 import { rectRecipes as rect } from './rect'
 

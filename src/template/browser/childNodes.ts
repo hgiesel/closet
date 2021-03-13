@@ -1,9 +1,4 @@
-import type { TagRenderer } from './template'
-import type { ASTNode } from './nodes'
-import type { Delimiters } from './delimiters'
-
-import { Template } from './template'
-
+export type BrowserTemplateNode = Element | Text | ChildNodeSpan | string
 
 // negative result implies invalid idx
 const parseIndexArgument = (idx: number, min: number, max: number): number => {
@@ -12,7 +7,7 @@ const parseIndexArgument = (idx: number, min: number, max: number): number => {
     : min + idx
 }
 
-const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string, takeOuter: boolean): string => {
+export const getText = (input: BrowserTemplateNode, takeOuter: boolean): string => {
     if (typeof(input) === 'string') {
         return input
     }
@@ -41,7 +36,7 @@ const getText = (input: Element | Text | ChildNodeSpan | ChildNode | string, tak
     }
 }
 
-const setText = (input: Element | Text | ChildNodeSpan | string, newText: string): void => {
+export const setText = (input: BrowserTemplateNode, newText: string): void => {
     if (typeof(input) === 'string') {
         return
     }
@@ -85,14 +80,14 @@ interface ChildNodeIndex {
 
 interface ChildNodeNode {
     type: 'node'
-    value: Element | Text | ChildNode
+    value: BrowserTemplateNode
     exclusive?: boolean
     startAtIndex?: number
 }
 
-interface ChildNodePredicate {
+export interface ChildNodePredicate {
     type: 'predicate'
-    value: (v: Element | Text | ChildNode) => boolean
+    value: (v: BrowserTemplateNode) => boolean
     exclusive?: boolean
     startAtIndex?: number
 }
@@ -113,7 +108,7 @@ export class ChildNodeSpan {
     static readonly CHILD_NODE_SPAN = 3353 /* this number is arbitrary */
     readonly nodeType = ChildNodeSpan.CHILD_NODE_SPAN
 
-    readonly parentElement: Element
+    private readonly parentElement: Element
     private childNodes: ChildNode[]
     private max: number
 
@@ -226,6 +221,10 @@ export class ChildNodeSpan {
         return Math.max(0, this._toIndex - this._fromIndex + 1)
     }
 
+    getRootNode(): Node {
+        return this.parentElement.getRootNode()
+    }
+
     span(): ChildNode[] {
         return this.valid
             ? this.childNodes.slice(this._fromIndex, this._toIndex + 1)
@@ -235,7 +234,7 @@ export class ChildNodeSpan {
     spanAsStrings(): string[] {
         return this
             .span()
-            .map(elem => getText(elem, true))
+            .map(elem => getText(elem as Element, true))
     }
 
     replaceSpan(newText: string): void {
@@ -259,64 +258,5 @@ export class ChildNodeSpan {
         this.max = this.childNodes.length
 
         this._toIndex = this._toIndex + (this.max - oldLength)
-    }
-}
-
-const makePositions = (template: ChildNodePredicate, currentIndex = 0): [ChildNodePredicate, ChildNodePredicate] => {
-    const fromSkip: ChildNodePredicate = {
-        type: 'predicate',
-        value: template.value,
-        startAtIndex: currentIndex,
-        exclusive: false,
-    }
-    const toSkip: ChildNodePredicate = {
-        type: 'predicate',
-        value: (v) => !template.value(v),
-        startAtIndex: currentIndex,
-        exclusive: true,
-    }
-
-    return [fromSkip, toSkip]
-}
-
-export const interspliceChildNodes = (parent: Element, skip: ChildNodePredicate): ChildNodeSpan[] => {
-    const result: ChildNodeSpan[] = []
-    let currentSpan = new ChildNodeSpan(parent, ...makePositions(skip))
-
-    while (currentSpan.valid) {
-        result.push(currentSpan)
-
-        currentSpan = new ChildNodeSpan(parent, ...makePositions(skip, currentSpan.to + 1))
-    }
-
-    return result
-}
-
-export class BrowserTemplate extends Template {
-    inputs: Array<Element | Text | ChildNodeSpan | string>
-
-    protected constructor(text: string[], preparsed: ASTNode[] | null, inputs: Array<Element | Text | ChildNodeSpan | string>, delimiters?: Delimiters) {
-        super(text, preparsed, delimiters)
-        this.inputs = inputs
-    }
-
-    static makeFromNode = (input: Element | Text | ChildNodeSpan | string, delimiters?: Delimiters): BrowserTemplate => {
-        return new BrowserTemplate([getText(input, false)], null, [input], delimiters)
-    }
-
-    static makeFromNodes = (inputs: Array<Element | Text | ChildNodeSpan | string>, delimiters?: Delimiters): BrowserTemplate => {
-        return new BrowserTemplate(inputs.map(input => getText(input, false)), null, inputs, delimiters)
-    }
-
-    renderToNodes(tagRenderer: TagRenderer): void {
-        super.render(tagRenderer, (t: string[]) => t.forEach((text: string, index: number) => setText(this.inputs[index], text)))
-    }
-}
-
-const delayKeyword = 'closet-delay'
-
-export const cleanup = (): void => {
-    for (const element of Array.from(document.getElementsByClassName(delayKeyword))) {
-        (element as HTMLElement).style.visibility = 'visible'
     }
 }

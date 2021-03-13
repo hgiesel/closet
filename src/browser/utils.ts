@@ -1,26 +1,7 @@
-import type { BrowserTemplate } from '../template/browser'
+import type { BrowserTemplate, BrowserTemplateNode } from '../template/browser'
 
 import { ChildNodeSpan } from '../template/browser'
 import { keySeparation } from '../patterns'
-
-const createStyleTag = (keyword: string, input: string): HTMLStyleElement => {
-    const styleSheet = document.createElement('style')
-    styleSheet.type = 'text/css'
-    styleSheet.id = keyword
-    styleSheet.textContent = input
-
-    return styleSheet
-}
-
-export const appendStyleTag = (anchor: Node, keyword: string, input: string): void => {
-    const root = anchor.getRootNode() as any
-
-    if (root.querySelector(`#${keyword}`)) {
-        return
-    }
-
-    anchor.appendChild(createStyleTag(keyword, input))
-}
 
 const imageSrcPattern = /<img[^>]*?src="(.+?)"[^>]*>/g
 const getImages = (txt: string, root: Node): [string, Node][] => {
@@ -40,17 +21,12 @@ const getImages = (txt: string, root: Node): [string, Node][] => {
 export const getImagesFromTemplate = (template: BrowserTemplate): [string, Node][] => {
     const applyGetImages = (
         [fragment, input]: [string, string | Element | Text | ChildNodeSpan],
-    ): [string, Node][] => input instanceof Node
-        ? getImages(
+    ): [string, Node][] => typeof input === "string"
+        ? []
+        : getImages(
             fragment,
             input.getRootNode(),
         )
-        : input instanceof ChildNodeSpan
-        ? getImages(
-            fragment,
-            input.parentElement.getRootNode(),
-        )
-        : []
 
     return template.textFragments
         .map((fragment: string, index: number): [string, string | Element | Text | ChildNodeSpan] => [fragment, template.inputs[index]])

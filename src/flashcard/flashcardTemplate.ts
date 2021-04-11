@@ -12,7 +12,7 @@ import type {
 } from "../types";
 
 import { id, id2, constant } from "../utils";
-import { simpleRecipe } from "../recipes/simple";
+import { simpleRecipe as simple } from "../recipes/simple";
 import { sumFour } from "../wrappers/sum";
 import { collection } from "../wrappers/collection";
 
@@ -66,17 +66,17 @@ export const makeFlashcardTemplate = <T extends FlashcardPreset>(
 
     const flashcardRecipe = sumFour(
         // isInactive isFront behavior
-        simpleRecipe(
+        simple(
             inactiveAdapter(frontInactiveBehavior)(contexter, inactive),
         ),
         // isActive isFront behavior
-        simpleRecipe(front),
+        simple(front),
         // isInctive isBack behavior
-        simpleRecipe(
+        simple(
             inactiveAdapter(backInactiveBehavior)(contexter, inactive),
         ),
         // isActive isBack behavior
-        simpleRecipe(back),
+        simple(back),
         isActive,
         isBack,
     );

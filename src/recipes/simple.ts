@@ -39,5 +39,5 @@ export const styleRecipe = <T extends Un>({
     stylizer = Stylizer.make(),
     optics = [separated("::")],
 } = {}) => (registrar: Registrar<T>) => {
-    registrar.register(tagname, applyToValues<T, any>(stylizer.stylize), { optics });
+    registrar.register(tagname, applyToValues<T, any>(stylizer.stylize.bind(stylizer)), { optics });
 };

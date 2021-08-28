@@ -6,7 +6,7 @@
     "url": "https://github.com/hgiesel"
   },
   "license": "GPL-3.0",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "main": "dist/index.js",
   "files": [
     "tsconfig.json",

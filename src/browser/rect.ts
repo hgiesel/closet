@@ -3,6 +3,7 @@ import type {
     Internals,
     AftermathEntry,
     AftermathInternals,
+    Un,
     Recipe,
     WeakFilter,
     InactiveBehavior,
@@ -20,6 +21,7 @@ import {
 import type {
     RectProperty,
     RectProperties,
+    RectPropertyGetter,
     RectDefinition,
 } from "./svgClasses";
 import { SVG, Rect } from "./svgClasses";
@@ -34,7 +36,7 @@ import { separated } from "../template/optics";
 
 export const rectKeyword = "occlusionRenderRect";
 
-const renderRects = <T extends Record<string, unknown>>(
+const renderRects = <T extends Un>(
     entry: AftermathEntry<T>,
     { template, cache }: AftermathInternals<T>,
 ): void => {
@@ -100,31 +102,33 @@ const processProps = (rest: string[], overwriteProps = {}): RectProperties => {
     return Object.assign(propObject, overwriteProps);
 };
 
-const makeRects = (props: RectProperties) => <
-    T extends Record<string, unknown>
+const makeRects = (props: RectProperties | RectPropertyGetter) => <
+    T extends Un
 >(
-    { fullKey, values }: TagNode,
-    { cache, aftermath }: Internals<T>,
+    tag: TagNode,
+    internals: Internals<T>,
 ) => {
-    const [x = 0, y = 0, width = 50, height = width, ...rest] = values;
+    const [x = 0, y = 0, width = 50, height = width, ...rest] = tag.values;
 
-    cache.over(
+    const theProps: RectProperties = typeof props === "function" ? props(tag, internals) : props;
+
+    internals.cache.over(
         rectKeyword,
         (rectList: RectDefinition[]) =>
             rectList.push([
                 "rect",
                 true,
-                fullKey,
+                tag.fullKey,
                 Number(x),
                 Number(y),
                 Number(width),
                 Number(height),
-                processProps(rest, props),
+                processProps(rest, theProps),
             ]),
         [],
     );
 
-    aftermath.registerIfNotExists(rectKeyword, renderRects as any);
+    internals.aftermath.registerIfNotExists(rectKeyword, renderRects as any);
 
     return { ready: true };
 };
@@ -150,16 +154,16 @@ const rectPublicApi = <T extends FlashcardPreset>(
     options: {
         tagname?: string;
 
-        front?: (props: RectProperties) => WeakFilter<T>;
-        back?: (props: RectProperties) => WeakFilter<T>;
+        front?: (props: RectProperties | RectPropertyGetter) => WeakFilter<T>;
+        back?: (props: RectProperties | RectPropertyGetter) => WeakFilter<T>;
 
         optics?: Optic[];
         flashcardTemplate?: FlashcardTemplate<T>;
 
-        frontProperties?: RectProperties;
-        backProperties?: RectProperties;
-        ellipseProperties?: RectProperties;
-        contextProperties?: RectProperties;
+        frontProperties?: RectProperties | RectPropertyGetter;
+        backProperties?: RectProperties | RectPropertyGetter;
+        ellipseProperties?: RectProperties | RectPropertyGetter;
+        contextProperties?: RectProperties | RectPropertyGetter;
     } = {},
 ) => {
     const {

@@ -1,5 +1,11 @@
 import type { Delimiters } from "../template/delimiters";
 
+import type {
+    TagNode,
+    Internals,
+    Un,
+} from "../types";
+
 import { getHighestNum } from "./utils";
 
 const ns = "http://www.w3.org/2000/svg";
@@ -17,6 +23,8 @@ export type RectProperty =
     | "strokeWidth";
 
 export type RectProperties = Partial<Record<RectProperty, string>>;
+export type RectPropertyGetter = <T extends Un>(tag: TagNode, internals: Internals<T>) => RectProperties;
+
 export type RectDefinition = [
     "rect",
     boolean | undefined,

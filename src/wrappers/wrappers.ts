@@ -7,6 +7,8 @@ import type {
     Recipe,
     WrapOptions,
     DeferredApi,
+    DeferredOptions,
+    Un,
 } from "../types";
 
 interface WithInternalKeyword {
@@ -23,7 +25,7 @@ export const defaultTagnameSetter = (
 
 const defaultWrapId = "wrapped";
 
-export const wrap = <T extends Record<string, unknown>>(
+export const wrap = <T extends Un>(
     wrapped: (
         tag: TagNode & WithInternalKeyword,
         internals: Internals<T>,
@@ -72,11 +74,12 @@ export const wrap = <T extends Record<string, unknown>>(
     }
 };
 
-const wrapWithDeferredTemplate = <T extends Record<string, unknown>, D>(
+const wrapWithDeferredTemplate = <T extends Un, D>(
     getDeferredApi: (i: Internals<T>) => DeferredApi<D>,
 ) => (
     mainRecipe: Recipe<T>,
     action: Deferred<D>,
+    options: Partial<DeferredOptions> = {},
     wrapOptions: WrapOptions = {
         wrapId: defaultWrapId,
         getTagnames: defaultTagnameGetter,
@@ -84,13 +87,13 @@ const wrapWithDeferredTemplate = <T extends Record<string, unknown>, D>(
     },
 ): Recipe<T> => {
     return wrap((t, internals: Internals<T>) => {
-        getDeferredApi(internals).registerIfNotExists(t.keyInternal, action);
+        getDeferredApi(internals).registerIfNotExists(t.keyInternal, action, options);
     })(mainRecipe, wrapOptions);
 };
 
 export const wrapWithDeferred = wrapWithDeferredTemplate(
-    (inter) => inter.deferred,
+    (internals) => internals.deferred,
 );
 export const wrapWithAftermath = wrapWithDeferredTemplate(
-    (inter) => inter.aftermath,
+    (internals) => internals.aftermath,
 );

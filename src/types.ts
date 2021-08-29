@@ -6,6 +6,7 @@ import type {
 } from "./filterManager/filters";
 import type { RegistrarApi } from "./filterManager/registrar";
 import type { DeferredEntry as DefEntry } from "./filterManager/deferred";
+export type { DeferredOptions } from "./filterManager/deferred";
 
 import type { TagNode } from "./template/nodes";
 import type { TemplateInfo, IterationInfo, ResultInfo } from "./template";

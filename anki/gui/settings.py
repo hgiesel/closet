@@ -15,7 +15,7 @@ class Settings(QDialog):
         self.ui.setupUi(self)
 
         self.cb = callback
-        self.layout().setSizeConstraint(QLayout.SetFixedSize)
+        self.layout().setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
 
     def setupUi(
         self, occlude_shortcut: str, occlude_accept_behavior: str, max_height: int

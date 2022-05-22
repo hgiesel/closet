@@ -56,9 +56,11 @@ var EditorCloset = {
 
     setupOcclusionEditor: (closet, maxOcclusions) => {
         const fieldElements = [];
-        forEditorField([], (field) => {
-            fieldElements.push(field.editingArea.editable);
-        });
+        const a = require("anki/NoteEditor");
+        console.log(a);
+        // forEditorField([], (field) => {
+        //     fieldElements.push(field.editingArea.editable);
+        // });
 
         const elements = ["[[makeOcclusions]]"].concat(...fieldElements);
 
@@ -156,16 +158,16 @@ var EditorCloset = {
     clearOcclusionMode: () => {
         const editingAreas = [];
 
-        forEditorField([], (field) => {
-            const edit = field.editingArea;
-            if (
-                edit.editable.innerHTML.includes(
-                    '<div class="closet-occlusion-container">',
-                )
-            ) {
-                editingAreas.push(edit);
-            }
-        });
+        // forEditorField([], (field) => {
+        //     const edit = field.editingArea;
+        //     if (
+        //         edit.editable.innerHTML.includes(
+        //             '<div class="closet-occlusion-container">',
+        //         )
+        //     ) {
+        //         editingAreas.push(edit);
+        //     }
+        // });
 
         EditorCloset.occlusionEditorTarget.dispatchEvent(new Event("reject"));
 
@@ -195,16 +197,16 @@ var EditorCloset = {
     },
 
     loadOcclusionCss: (css) => {
-        forEditorField([], (field) => {
-            if (!field.hasAttribute("has-occlusion-style")) {
-                const style = document.createElement("style");
-                style.rel = "stylesheet";
-                style.textContent = css;
-                field.editingArea.shadowRoot.appendChild(style);
+        // forEditorField([], (field) => {
+        //     if (!field.hasAttribute("has-occlusion-style")) {
+        //         const style = document.createElement("style");
+        //         style.rel = "stylesheet";
+        //         style.textContent = css;
+        //         field.editingArea.shadowRoot.appendChild(style);
 
-                field.setAttribute("has-occlusion-style", "");
-            }
-        });
+        //         field.setAttribute("has-occlusion-style", "");
+        //     }
+        // });
     },
 
     /**************** CLOSET MODE ****************/

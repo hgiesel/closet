@@ -31,11 +31,7 @@ def include_closet_code(webcontent, context) -> None:
         return
 
     webcontent.css.append(f"/_addons/{addon_package}/web/editor.css")
-
     webcontent.js.append(f"/_addons/{addon_package}/web/editor.js")
-    webcontent.head += (
-        f"<script>EditorCloset.setMaxHeightPercent({max_height.value})</script>"
-    )
 
 
 def process_occlusion_index_text(index_text: str) -> List[int]:

@@ -89,7 +89,9 @@ def setup_script() -> None:
         closet_version_per_model.value = version
 
         old_css = mw.col.models.byName(model)["css"]
-        new_css = re.sub('^@import url\("__closet-.*?\.css"\);$\n', '', old_css, flags=re.MULTILINE)
+        new_css = re.sub(
+            '^@import url\("__closet-.*?\.css"\);$\n', "", old_css, flags=re.MULTILINE
+        )
         new_import = f'@import url("__closet-{version}.css");\n'
 
         mw.col.models.byName(model)["css"] = new_import + new_css

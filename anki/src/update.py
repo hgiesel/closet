@@ -1,7 +1,7 @@
 from typing import Callable, List
 from pathlib import Path
 from os.path import basename, dirname, realpath
-from os import remove
+from os import remove, getcwd
 from glob import glob
 import re
 
@@ -70,11 +70,11 @@ def update_closet() -> None:
         print(f"Will force-refresh current Closet JS and CSS to {version}")
 
         if encountered_js:
-            remove(current_js_file)
+            remove(f"{basepath}/{current_js_file}")
             encountered_js = False
 
         if encountered_css:
-            remove(current_css_file)
+            remove(f"{basepath}/{current_css_file}")
             encountered_css = False
 
     if not encountered_js:

@@ -33,6 +33,52 @@ var cursorOffsetWithin = (element) => {
     return cursorOffset;
 };
 
+const { instances, lifecycle } = require("anki/NoteEditor");
+const { get } = require("svelte/store");
+
+const occlusionCss = `
+img {
+  max-width: 100% !important;
+  max-height: var(--closet-max-height);
+}
+
+.closet-rect__rect {
+  fill: moccasin;
+  stroke: olive;
+}
+
+.is-active .closet-rect__rect {
+  fill: salmon;
+  stroke: yellow;
+}
+
+.closet-rect__ellipsis {
+  fill: transparent;
+  stroke: transparent;
+}
+
+.closet-rect__label {
+  stroke: black;
+  stroke-width: 0.5;
+}`
+
+
+lifecycle.onMount(async ({ fields }) => {
+    for (const field of fields) {
+        const fieldElement = await field.element;
+        console.log('loada')
+
+        if (!fieldElement.hasAttribute("has-occlusion-style")) {
+            const style = document.createElement("style");
+            style.rel = "stylesheet";
+            style.textContent = occlusionCss;
+            field.editingArea.shadowRoot.appendChild(style);
+
+            fieldElement.setAttribute("has-occlusion-style", "");
+        }
+    }
+});
+
 var EditorCloset = {
     imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,
 
@@ -44,23 +90,22 @@ var EditorCloset = {
         EditorCloset.occlusionEditorTarget = target;
         EditorCloset.occlusionMode = true;
         EditorCloset.getOcclusionButton().classList.add("highlighted");
-        pycmd("occlusionEditorActive");
+        bridgeCommand("occlusionEditorActive");
     },
 
     setInactive: () => {
         EditorCloset.occlusionEditorTarget = null;
         EditorCloset.occlusionMode = false;
         EditorCloset.getOcclusionButton().classList.remove("highlighted");
-        pycmd("occlusionEditorInactive");
+        bridgeCommand("occlusionEditorInactive");
     },
 
-    setupOcclusionEditor: (closet, maxOcclusions) => {
+    setupOcclusionEditor: async (closet, maxOcclusions) => {
         const fieldElements = [];
-        const a = require("anki/NoteEditor");
-        console.log(a);
-        // forEditorField([], (field) => {
-        //     fieldElements.push(field.editingArea.editable);
-        // });
+
+        for (const field of instances[0].fields) {
+            fieldElements.push(await get(field.editingArea.editingInputs).find((input) => input.name === "rich-text").element);
+        }
 
         const elements = ["[[makeOcclusions]]"].concat(...fieldElements);
 
@@ -82,7 +127,7 @@ var EditorCloset = {
                 ),
             ];
 
-            pycmd(`newOcclusions:${imageSrc}:${newIndices.join(",")}`);
+            bridgeCommand(`newOcclusions:${imageSrc}:${newIndices.join(",")}`);
 
             const shapeText = shapes
                 .map((shape) =>
@@ -90,7 +135,7 @@ var EditorCloset = {
                 )
                 .join("\n");
 
-            pycmd(`occlusionText:${shapeText}`);
+            bridgeCommand(`occlusionText:${shapeText}`);
 
             EditorCloset.clearOcclusionMode();
         };
@@ -127,7 +172,7 @@ var EditorCloset = {
             const imageSrc = draw.image.src.match(
                 EditorCloset.imageSrcPattern,
             )[1];
-            pycmd(`oldOcclusions:${imageSrc}:${indices.join(",")}`);
+            bridgeCommand(`oldOcclusions:${imageSrc}:${indices.join(",")}`);
 
             return shapeDefs;
         };
@@ -155,26 +200,30 @@ var EditorCloset = {
         EditorCloset.setActive(target);
     },
 
-    clearOcclusionMode: () => {
+    clearOcclusionMode: async () => {
         const editingAreas = [];
 
-        // forEditorField([], (field) => {
-        //     const edit = field.editingArea;
-        //     if (
-        //         edit.editable.innerHTML.includes(
-        //             '<div class="closet-occlusion-container">',
-        //         )
-        //     ) {
-        //         editingAreas.push(edit);
-        //     }
-        // });
+        for (const [index, field] of instances[0].fields.entries()) {
+            const editingArea = field.editingArea;
+            const editable = await get(field.editingArea.editingInputs).find((input) => input.name === "rich-text").element;
+
+            if (
+                editable.innerHTML.includes(
+                    '<div class="closet-occlusion-container">',
+                )
+            ) {
+                editingAreas.push(editingArea);
+            }
+        }
 
         EditorCloset.occlusionEditorTarget.dispatchEvent(new Event("reject"));
 
         editingAreas.forEach((field) => {
-            pycmd(
-                `key:${field.ord}:${getNoteId()}:${field.editable.fieldHTML}`,
-            );
+            field.content.update(v => v);
+            // console.log('fieldd', field);
+            // bridgeCommand(
+            //     `key:${index}:${getNoteId()}:${get(field.content)}`,
+            // );
         });
 
         EditorCloset.setInactive();
@@ -194,19 +243,6 @@ var EditorCloset = {
                 (error) => console.log("Could not load Closet:", error),
             );
         }
-    },
-
-    loadOcclusionCss: (css) => {
-        // forEditorField([], (field) => {
-        //     if (!field.hasAttribute("has-occlusion-style")) {
-        //         const style = document.createElement("style");
-        //         style.rel = "stylesheet";
-        //         style.textContent = css;
-        //         field.editingArea.shadowRoot.appendChild(style);
-
-        //         field.setAttribute("has-occlusion-style", "");
-        //     }
-        // });
     },
 
     /**************** CLOSET MODE ****************/

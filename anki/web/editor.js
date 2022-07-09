@@ -3,7 +3,34 @@ var rushInOut = (x) => {
     return 2.388 * x - 4.166 * Math.pow(x, 2) + 2.77 * Math.pow(x, 3);
 };
 
+/** Python functions moved to JS for async operations **/
+var escape_js_text = (text) => {
+    return text.replace("\\", "\\\\").replace('"', '\\"').replace("'", "\\'");
+}
 
+var replace_or_prefix_old_occlusion_text = (old_html, new_text) => {
+    const occlusion_block_regex = /\[#!occlusions.*?#\]/;
+
+    const new_html = new_text.split(/\r?\n/).join("<br>");
+    replacement = `[#!occlusions ${new_html} #]`;
+
+    /** imitate re.subn **/
+    [subbed, number_of_subs] = ((count = 0) => {
+        const subbed = old_html.replace(occlusion_block_regex, () => {
+            ++count;
+            return replacement;
+        })
+        return [subbed, count];
+    })();
+    
+    if (number_of_subs > 0) {
+        return subbed;
+    } else if (["", "<br>"].includes(old_html)) {
+        return replacement;
+    } else {
+        return `${replacement}<br>${old_html}`;
+    } 
+}
 
 
 const { instances, lifecycle } = require("anki/NoteEditor");

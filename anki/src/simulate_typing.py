@@ -21,22 +21,6 @@ def make_insertion_js(field_index: int, text: str) -> str:
     return cmd
 
 
-def replace_or_prefix_old_occlusion_text(editor, old_html: str, new_text: str) -> str:
-    occlusion_block_regex = r"\[#!occlusions.*?#\]"
-
-    new_html = "<br>".join(new_text.splitlines())
-    replacement = f"[#!occlusions {new_html} #]"
-
-    subbed, number_of_subs = re.subn(occlusion_block_regex, replacement, old_html)
-
-    if number_of_subs > 0:
-        return subbed
-    elif is_text_empty(editor, old_html):
-        return replacement
-    else:
-        return f"{replacement}<br>{old_html}"
-
-
 def insert_into_zero_indexed(editor, text: str) -> None:
     for index, (name, item) in enumerate(editor.note.items()):
         match = re.search(r"\d+$", name)

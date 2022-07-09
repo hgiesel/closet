@@ -16,7 +16,7 @@ def make_insertion_js(field_index: int, text: str) -> str:
 
     cmd = (
         f"pycmd(`key:{field_index}:${{getNoteId()}}:{escaped}`); "
-        f"getEditorField({field_index}).editingArea.fieldHTML = `{escaped}`; "
+        f"EditorCloset.setFieldHTML({field_index}, `{escaped}`); "
     )
     return cmd
 

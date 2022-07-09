@@ -73,6 +73,22 @@ var EditorCloset = {
         bridgeCommand("occlusionEditorInactive");
     },
 
+    getFieldHTML: async (index) => {
+        const richTextEditable = await EditorCloset.getRichTextEditable(index)
+        return richTextEditable.innerHTML;
+    },
+
+    setFieldHTML: async (index, html) => {
+        const richTextEditable = await EditorCloset.getRichTextEditable(index);
+        richTextEditable.innerHTML = html;
+    },
+
+    getRichTextEditable: async (index) => {
+        return await get(EditorField.instances[index].editingArea.editingInputs)
+        .find((input) => input.name === "rich-text")
+        .element;
+    },
+
     setupOcclusionEditor: async (closet, maxOcclusions) => {
         const fieldElements = [];
 

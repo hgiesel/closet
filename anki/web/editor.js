@@ -62,6 +62,12 @@ img {
   stroke-width: 0.5;
 }`
 
+/** Cloze support for non-cloze notetypes on 2.1.50+ **/
+document.addEventListener("keydown", (evt) => {
+    if (evt.ctrlKey && evt.shiftKey && evt.code == "KeyC") {
+        pycmd("closetCloze");
+    }
+});
 
 EditorField.lifecycle.onMount(async (field) => {
     const fieldElement = await field.element;

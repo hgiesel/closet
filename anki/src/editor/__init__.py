@@ -175,7 +175,7 @@ def turn_of_occlusion_editor_if_in_field(editor, _field):
         editor.web.eval("EditorCloset.clearOcclusionMode()")
 
 
-def on_cloze(editor, _old) -> None:
+def on_cloze(editor) -> None:
     model = editor.note.model()
 
     # This will not overwrite standard clozes
@@ -214,4 +214,3 @@ def init_editor():
     Editor._onHtmlEdit = wrap(
         Editor._onHtmlEdit, turn_of_occlusion_editor_if_in_field, "before"
     )
-    Editor.onCloze = wrap(Editor.onCloze, on_cloze, "around")

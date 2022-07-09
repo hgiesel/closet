@@ -119,6 +119,7 @@ var EditorCloset = {
 
     setupOcclusionEditor: async (closet, maxOcclusions) => {
         const fieldElements = [];
+        const subscriptionCallbacks = [];
 
         for (const field of EditorField.instances) {
             const richTextInputAPI = get(field.editingArea.editingInputs)
@@ -157,6 +158,7 @@ var EditorCloset = {
 
             bridgeCommand(`occlusionText:${shapeText}`);
 
+            subscriptionCallbacks.forEach((resubscribe) => resubscribe());
             EditorCloset.clearOcclusionMode();
         };
 

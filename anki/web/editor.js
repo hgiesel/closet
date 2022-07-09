@@ -33,7 +33,7 @@ var replace_or_prefix_old_occlusion_text = (old_html, new_text) => {
 }
 
 
-const { instances, lifecycle } = require("anki/NoteEditor");
+const EditorField = require("anki/EditorField");
 const { get } = require("svelte/store");
 
 const occlusionCss = `
@@ -63,21 +63,22 @@ img {
 }`
 
 
-lifecycle.onMount(async ({ fields }) => {
-    for (const field of fields) {
-        const fieldElement = await field.element;
-        console.log('loada')
+EditorField.lifecycle.onMount(async (field) => {
+    const fieldElement = await field.element;
 
-        if (!fieldElement.hasAttribute("has-occlusion-style")) {
-            const style = document.createElement("style");
-            style.rel = "stylesheet";
-            style.textContent = occlusionCss;
-            field.editingArea.shadowRoot.appendChild(style);
+    if (!fieldElement.hasAttribute("has-occlusion-style")) {
+        const style = document.createElement("style");
+        style.id = "closet-occlusion-style"
+        style.rel = "stylesheet";
+        style.textContent = occlusionCss;
+        const richTextEditable = await get(field.editingArea.editingInputs)
+            .find((input) => input.name === "rich-text")
+            .element;
+        richTextEditable.getRootNode().prepend(style);
 
-            fieldElement.setAttribute("has-occlusion-style", "");
-        }
+        fieldElement.setAttribute("has-occlusion-style", "");
     }
-});
+})
 
 var EditorCloset = {
     imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,
@@ -119,8 +120,11 @@ var EditorCloset = {
     setupOcclusionEditor: async (closet, maxOcclusions) => {
         const fieldElements = [];
 
-        for (const field of instances[0].fields) {
-            fieldElements.push(await get(field.editingArea.editingInputs).find((input) => input.name === "rich-text").element);
+        for (const field of EditorField.instances) {
+            const richTextInputAPI = get(field.editingArea.editingInputs)
+                .find((input) => input.name === "rich-text");
+            subscriptionCallbacks.push(richTextInputAPI.preventResubscription());
+            fieldElements.push(await richTextInputAPI.element);
         }
 
         const elements = ["[[makeOcclusions]]"].concat(...fieldElements);
@@ -219,12 +223,12 @@ var EditorCloset = {
     clearOcclusionMode: async () => {
         const editingAreas = [];
 
-        for (const [index, field] of instances[0].fields.entries()) {
+        for (const field of EditorField.instances) {
             const editingArea = field.editingArea;
-            const editable = await get(field.editingArea.editingInputs).find((input) => input.name === "rich-text").element;
+            const richTextEditable = await get(field.editingArea.editingInputs).find((input) => input.name === "rich-text").element;
 
             if (
-                editable.innerHTML.includes(
+                richTextEditable.innerHTML.includes(
                     '<div class="closet-occlusion-container">',
                 )
             ) {

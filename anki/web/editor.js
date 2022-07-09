@@ -267,6 +267,16 @@ var EditorCloset = {
         }
     },
 
+    insertIntoZeroIndexed: async (new_text, index) => {
+        const old_html = await EditorCloset.getFieldHTML(index);
+        const text = replace_or_prefix_old_occlusion_text(old_html, new_text);
+
+        const escaped = escape_js_text(text);
+
+        pycmd(`key:${index}:${getNoteId()}:${escaped}`);
+        EditorCloset.setFieldHTML(index, escaped);
+    },
+
     /**************** CLOSET MODE ****************/
     setClosetMode: (mode) => {
         document.getElementById("closetMode").selectedIndex = mode;

@@ -27,18 +27,8 @@ def insert_into_zero_indexed(editor, text: str) -> None:
 
         if not match or int(match[0]) != 0:
             continue
-
-        get_content_js = f"getEditorField({index}).editingArea.fieldHTML; "
-
-        editor.web.evalWithCallback(
-            get_content_js,
-            lambda old_html: editor.web.eval(
-                make_insertion_js(
-                    index,
-                    replace_or_prefix_old_occlusion_text(editor, old_html, text),
-                )
-            ),
-        )
+        
+        editor.web.eval(f"EditorCloset.insertIntoZeroIndexed(`{text}`, {index}); ")
         break
 
 

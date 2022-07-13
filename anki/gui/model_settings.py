@@ -18,7 +18,7 @@ class ModelSettings(QDialog):
         self.ui.saveButton.clicked.connect(self.accept)
         self.ui.cancelButton.clicked.connect(self.reject)
 
-        self.layout().setSizeConstraint(QLayout.SetFixedSize)
+        self.layout().setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
 
     def setupUi(
         self,

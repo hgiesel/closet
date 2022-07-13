@@ -237,6 +237,7 @@ const defaultRejectHandler: ShapeHandler = () => (
 const occlusionCss = `
 .closet-occlusion-container {
   outline: 3px dotted hotpink;
+  outline-offset: -3px;
 }`;
 
 const occlusionMakerCssKeyword = "occlusionMakerCss";

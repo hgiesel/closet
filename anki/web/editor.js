@@ -3,35 +3,88 @@ var rushInOut = (x) => {
     return 2.388 * x - 4.166 * Math.pow(x, 2) + 2.77 * Math.pow(x, 3);
 };
 
-// https://stackoverflow.com/questions/4811822/get-a-ranges-start-and-end-offsets-relative-to-its-parent-container/4812022#4812022
-var cursorOffsetWithin = (element) => {
-    let cursorOffset = 0;
-    let doc = element.ownerDocument || element.document;
-    let win = doc.defaultView || doc.parentWindow;
-    let sel;
+/** Python functions moved to JS for async operations **/
+var escape_js_text = (text) => {
+    return text.replace("\\", "\\\\").replace('"', '\\"').replace("'", "\\'");
+}
 
-    if (typeof win.getSelection != "undefined") {
-        sel = win.getSelection();
+var replace_or_prefix_old_occlusion_text = (old_html, new_text) => {
+    const occlusion_block_regex = /\[#!occlusions.*?#\]/;
 
-        if (sel.rangeCount > 0) {
-            const range = win.getSelection().getRangeAt(0);
-            const preCursortRange = range.cloneRange();
+    const new_html = new_text.split(/\r?\n/).join("<br>");
+    replacement = `[#!occlusions ${new_html} #]`;
 
-            preCursortRange.selectNodeContents(element);
-            preCursortRange.setEnd(range.endContainer, range.endOffset);
-            cursortOffset = preCursorRange.toString().length;
-        }
-    } else if ((sel = doc.selection) && sel.type != "Control") {
-        const textRange = sel.createRange();
-        const preCursorTextRange = doc.body.createTextRange();
+    /** imitate re.subn **/
+    [subbed, number_of_subs] = ((count = 0) => {
+        const subbed = old_html.replace(occlusion_block_regex, () => {
+            ++count;
+            return replacement;
+        })
+        return [subbed, count];
+    })();
+    
+    if (number_of_subs > 0) {
+        return subbed;
+    } else if (["", "<br>"].includes(old_html)) {
+        return replacement;
+    } else {
+        return `${replacement}<br>${old_html}`;
+    } 
+}
 
-        preCursorTextRange.moveToElementText(element);
-        preCursorTextRange.setEndPoint("EndToEnd", textRange);
-        cursorOffset = preCursorTextRange.text.length;
+
+const EditorField = require("anki/EditorField");
+const { get } = require("svelte/store");
+
+const occlusionCss = `
+img {
+  max-width: 100% !important;
+  max-height: var(--closet-max-height);
+}
+
+.closet-rect__rect {
+  fill: moccasin;
+  stroke: olive;
+}
+
+.is-active .closet-rect__rect {
+  fill: salmon;
+  stroke: yellow;
+}
+
+.closet-rect__ellipsis {
+  fill: transparent;
+  stroke: transparent;
+}
+
+.closet-rect__label {
+  stroke: black;
+  stroke-width: 0.5;
+}`
+
+/** Cloze support for non-cloze notetypes on 2.1.50+ **/
+document.addEventListener("keydown", (evt) => {
+    if (evt.ctrlKey && evt.shiftKey && evt.code == "KeyC") {
+        pycmd("closetCloze");
     }
+});
 
-    return cursorOffset;
-};
+EditorField.lifecycle.onMount(async (field) => {
+    const fieldElement = await field.element;
+
+    if (!fieldElement.hasAttribute("has-occlusion-style")) {
+        const style = document.createElement("style");
+        style.id = "closet-occlusion-style"
+        style.rel = "stylesheet";
+        style.textContent = occlusionCss;
+        const richTextEditable = await get(field.editingArea.editingInputs)
+            .find((input) => input.name === "rich-text")
+            .element;
+        richTextEditable.getRootNode().prepend(style);
+
+        fieldElement.setAttribute("has-occlusion-style", "");
+    }
+})
 
 var EditorCloset = {
     imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,
@@ -44,21 +97,42 @@ var EditorCloset = {
         EditorCloset.occlusionEditorTarget = target;
         EditorCloset.occlusionMode = true;
         EditorCloset.getOcclusionButton().classList.add("highlighted");
-        pycmd("occlusionEditorActive");
+        bridgeCommand("occlusionEditorActive");
     },
 
     setInactive: () => {
         EditorCloset.occlusionEditorTarget = null;
         EditorCloset.occlusionMode = false;
         EditorCloset.getOcclusionButton().classList.remove("highlighted");
-        pycmd("occlusionEditorInactive");
+        bridgeCommand("occlusionEditorInactive");
     },
 
-    setupOcclusionEditor: (closet, maxOcclusions) => {
+    getFieldHTML: async (index) => {
+        const richTextEditable = await EditorCloset.getRichTextEditable(index)
+        return richTextEditable.innerHTML;
+    },
+
+    setFieldHTML: async (index, html) => {
+        const richTextEditable = await EditorCloset.getRichTextEditable(index);
+        richTextEditable.innerHTML = html;
+    },
+
+    getRichTextEditable: async (index) => {
+        return await get(EditorField.instances[index].editingArea.editingInputs)
+        .find((input) => input.name === "rich-text")
+        .element;
+    },
+
+    setupOcclusionEditor: async (closet, maxOcclusions) => {
         const fieldElements = [];
-        forEditorField([], (field) => {
-            fieldElements.push(field.editingArea.editable);
-        });
+        const subscriptionCallbacks = [];
+
+        for (const field of EditorField.instances) {
+            const richTextInputAPI = get(field.editingArea.editingInputs)
+                .find((input) => input.name === "rich-text");
+            subscriptionCallbacks.push(richTextInputAPI.preventResubscription());
+            fieldElements.push(await richTextInputAPI.element);
+        }
 
         const elements = ["[[makeOcclusions]]"].concat(...fieldElements);
 
@@ -80,7 +154,7 @@ var EditorCloset = {
                 ),
             ];
 
-            pycmd(`newOcclusions:${imageSrc}:${newIndices.join(",")}`);
+            bridgeCommand(`newOcclusions:${imageSrc}:${newIndices.join(",")}`);
 
             const shapeText = shapes
                 .map((shape) =>
@@ -88,8 +162,9 @@ var EditorCloset = {
                 )
                 .join("\n");
 
-            pycmd(`occlusionText:${shapeText}`);
+            bridgeCommand(`occlusionText:${shapeText}`);
 
+            subscriptionCallbacks.forEach((resubscribe) => resubscribe());
             EditorCloset.clearOcclusionMode();
         };
 
@@ -125,7 +200,7 @@ var EditorCloset = {
             const imageSrc = draw.image.src.match(
                 EditorCloset.imageSrcPattern,
             )[1];
-            pycmd(`oldOcclusions:${imageSrc}:${indices.join(",")}`);
+            bridgeCommand(`oldOcclusions:${imageSrc}:${indices.join(",")}`);
 
             return shapeDefs;
         };
@@ -153,26 +228,30 @@ var EditorCloset = {
         EditorCloset.setActive(target);
     },
 
-    clearOcclusionMode: () => {
+    clearOcclusionMode: async () => {
         const editingAreas = [];
 
-        forEditorField([], (field) => {
-            const edit = field.editingArea;
+        for (const field of EditorField.instances) {
+            const editingArea = field.editingArea;
+            const richTextEditable = await get(field.editingArea.editingInputs).find((input) => input.name === "rich-text").element;
+
             if (
-                edit.editable.innerHTML.includes(
+                richTextEditable.innerHTML.includes(
                     '<div class="closet-occlusion-container">',
                 )
             ) {
-                editingAreas.push(edit);
+                editingAreas.push(editingArea);
             }
-        });
+        }
 
         EditorCloset.occlusionEditorTarget.dispatchEvent(new Event("reject"));
 
         editingAreas.forEach((field) => {
-            pycmd(
-                `key:${field.ord}:${getNoteId()}:${field.editable.fieldHTML}`,
-            );
+            field.content.update(v => v);
+            // console.log('fieldd', field);
+            // bridgeCommand(
+            //     `key:${index}:${getNoteId()}:${get(field.content)}`,
+            // );
         });
 
         EditorCloset.setInactive();
@@ -194,17 +273,14 @@ var EditorCloset = {
         }
     },
 
-    loadOcclusionCss: (css) => {
-        forEditorField([], (field) => {
-            if (!field.hasAttribute("has-occlusion-style")) {
-                const style = document.createElement("style");
-                style.rel = "stylesheet";
-                style.textContent = css;
-                field.editingArea.shadowRoot.appendChild(style);
+    insertIntoZeroIndexed: async (new_text, index) => {
+        const old_html = await EditorCloset.getFieldHTML(index);
+        const text = replace_or_prefix_old_occlusion_text(old_html, new_text);
 
-                field.setAttribute("has-occlusion-style", "");
-            }
-        });
+        const escaped = escape_js_text(text);
+
+        pycmd(`key:${index}:${getNoteId()}:${escaped}`);
+        EditorCloset.setFieldHTML(index, escaped);
     },
 
     /**************** CLOSET MODE ****************/

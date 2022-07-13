@@ -7,11 +7,8 @@ versionInfo = [
 
 prereleaseInfo = []
 
-version = (
-    ".".join([str(comp) for comp in versionInfo])
-    + (
-        f'-{".".join([str(comp) for comp in prereleaseInfo])}'
-        if len(prereleaseInfo) > 0
-        else ""
-    )
+version = ".".join([str(comp) for comp in versionInfo]) + (
+    f'-{".".join([str(comp) for comp in prereleaseInfo])}'
+    if len(prereleaseInfo) > 0
+    else ""
 )

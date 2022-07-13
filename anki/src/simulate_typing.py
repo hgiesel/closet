@@ -15,26 +15,10 @@ def make_insertion_js(field_index: int, text: str) -> str:
     escaped = escape_js_text(text)
 
     cmd = (
-        f'pycmd(`key:{field_index}:${{getNoteId()}}:{escaped}`); '
-        f'getEditorField({field_index}).editingArea.fieldHTML = `{escaped}`; '
+        f"pycmd(`key:{field_index}:${{getNoteId()}}:{escaped}`); "
+        f"EditorCloset.setFieldHTML({field_index}, `{escaped}`); "
     )
     return cmd
-
-
-def replace_or_prefix_old_occlusion_text(editor, old_html: str, new_text: str) -> str:
-    occlusion_block_regex = r"\[#!occlusions.*?#\]"
-
-    new_html = "<br>".join(new_text.splitlines())
-    replacement = f"[#!occlusions {new_html} #]"
-
-    subbed, number_of_subs = re.subn(occlusion_block_regex, replacement, old_html)
-
-    if number_of_subs > 0:
-        return subbed
-    elif is_text_empty(editor, old_html):
-        return replacement
-    else:
-        return f"{replacement}<br>{old_html}"
 
 
 def insert_into_zero_indexed(editor, text: str) -> None:
@@ -43,18 +27,8 @@ def insert_into_zero_indexed(editor, text: str) -> None:
 
         if not match or int(match[0]) != 0:
             continue
-
-        get_content_js = f'getEditorField({index}).editingArea.fieldHTML; '
-
-        editor.web.evalWithCallback(
-            get_content_js,
-            lambda old_html: editor.web.eval(
-                make_insertion_js(
-                    index,
-                    replace_or_prefix_old_occlusion_text(editor, old_html, text),
-                )
-            ),
-        )
+        
+        editor.web.eval(f"EditorCloset.insertIntoZeroIndexed(`{text}`, {index}); ")
         break
 
 

@@ -23,7 +23,7 @@ def on_closet(models):
     dialog = ModelSettings(mw, set_settings)
 
     dialog.setupUi(closet_enabled.value, closet_version_per_model.value)
-    return dialog.exec_()
+    return dialog.exec()
 
 
 def init_closet_button(buttons, models):

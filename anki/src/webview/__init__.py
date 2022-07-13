@@ -9,6 +9,7 @@ from aqt.gui_hooks import (
 )
 from aqt.utils import showInfo
 
+from ..editor.__init__ import on_cloze
 from ..utils import (
     closet_enabled,
     closet_version_per_model,
@@ -31,11 +32,7 @@ def include_closet_code(webcontent, context) -> None:
         return
 
     webcontent.css.append(f"/_addons/{addon_package}/web/editor.css")
-
     webcontent.js.append(f"/_addons/{addon_package}/web/editor.js")
-    webcontent.head += (
-        f"<script>EditorCloset.setMaxHeightPercent({max_height.value})</script>"
-    )
 
 
 def process_occlusion_index_text(index_text: str) -> List[int]:
@@ -87,6 +84,10 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
             _, mode = message.split(":", 1)
             editor.closet_mode = int(mode)
 
+            return (True, None)
+
+        elif message.startswith("closetCloze"):
+            on_cloze(editor)
             return (True, None)
 
     return handled

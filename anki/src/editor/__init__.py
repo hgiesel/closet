@@ -47,7 +47,7 @@ def get_max_code_field(editor) -> int:
 
 
 def toggle_occlusion_mode(editor):
-    model = editor.note.model()
+    model = editor.note.note_type()
 
     closet_enabled.model = model
     closet_version_per_model.model = model
@@ -83,7 +83,6 @@ def add_occlusion_button(buttons, editor):
         f"Put all fields into occlusion mode ({shortcut_as_text})",
         id="closetOcclude",
         disables=False,
-        toggleable=True,
     )
 
     editor._links["occlude"] = toggle_occlusion_mode
@@ -176,7 +175,7 @@ def turn_of_occlusion_editor_if_in_field(editor, _field):
         editor.web.eval("EditorCloset.clearOcclusionMode()")
 
 
-def on_cloze(editor, _old) -> None:
+def on_cloze(editor) -> None:
     model = editor.note.model()
 
     # This will not overwrite standard clozes
@@ -206,46 +205,12 @@ def on_cloze(editor, _old) -> None:
     editor.web.eval(f'wrap("{prefix}", "{suffix}");')
 
 
-per_field_css = """
-img {
-  max-width: 100% !important;
-  max-height: var(--closet-max-height);
-}
-
-.closet-rect__rect {
-  fill: moccasin;
-  stroke: olive;
-}
-
-.is-active .closet-rect__rect {
-  fill: salmon;
-  stroke: yellow;
-}
-
-.closet-rect__ellipsis {
-  fill: transparent;
-  stroke: transparent;
-}
-
-.closet-rect__label {
-  stroke: black;
-  stroke-width: 0.5;
-}
-"""
-
-
-def load_closet_css(editor) -> None:
-    editor.web.eval(f"EditorCloset.loadOcclusionCss(`{per_field_css}`); ")
-
-
 def init_editor():
     editor_did_init_buttons.append(add_buttons)
     editor_did_init_shortcuts.append(add_occlusion_shortcut)
-    editor_did_load_note.append(load_closet_css)
 
     editor_will_munge_html.append(remove_occlusion_code)
 
     Editor._onHtmlEdit = wrap(
         Editor._onHtmlEdit, turn_of_occlusion_editor_if_in_field, "before"
     )
-    Editor.onCloze = wrap(Editor.onCloze, on_cloze, "around")

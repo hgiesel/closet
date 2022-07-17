@@ -69,22 +69,24 @@ document.addEventListener("keydown", (evt) => {
     }
 });
 
-EditorField.lifecycle.onMount(async (field) => {
-    const fieldElement = await field.element;
+EditorField.lifecycle.onMount((field) => {
+    (async() => {
+        const fieldElement = await field.element;
 
-    if (!fieldElement.hasAttribute("has-occlusion-style")) {
-        const style = document.createElement("style");
-        style.id = "closet-occlusion-style"
-        style.rel = "stylesheet";
-        style.textContent = occlusionCss;
-        const richTextEditable = await get(field.editingArea.editingInputs)
-            .find((input) => input.name === "rich-text")
-            .element;
-        richTextEditable.getRootNode().prepend(style);
-
-        fieldElement.setAttribute("has-occlusion-style", "");
-    }
-})
+        if (!fieldElement.hasAttribute("has-occlusion-style")) {
+            const style = document.createElement("style");
+            style.id = "closet-occlusion-style"
+            style.rel = "stylesheet";
+            style.textContent = occlusionCss;
+            const richTextEditable = await get(field.editingArea.editingInputs)
+                .find((input) => input.name === "rich-text")
+                .element;
+            richTextEditable.getRootNode().prepend(style);
+    
+            fieldElement.setAttribute("has-occlusion-style", "");
+        }
+    })();
+});
 
 var EditorCloset = {
     imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,

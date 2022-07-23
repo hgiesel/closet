@@ -1,7 +1,10 @@
-from aqt import QDialog, QLayout, QKeySequence
-
+from aqt import QDialog, QLayout, QKeySequence, qtmajor
 from ..src.version import version
-from .forms.settings_ui import Ui_Settings
+
+if qtmajor < 6:
+    from .forms.qt5.settings_ui import Ui_Settings
+else:
+    from .forms.qt6.settings_ui import Ui_Settings
 
 
 behaviors = ["autopaste", "copy"]

@@ -4,7 +4,6 @@ import re
 from pathlib import Path
 from os.path import dirname, realpath
 
-from anki.hooks import wrap
 from anki.consts import MODEL_STD, MODEL_CLOZE
 
 from aqt import mw
@@ -170,11 +169,6 @@ def remove_occlusion_code(txt: str, _editor) -> str:
     return txt
 
 
-def turn_of_occlusion_editor_if_in_field(editor, _field):
-    if editor.occlusion_editor_active:
-        editor.web.eval("EditorCloset.clearOcclusionMode()")
-
-
 def on_cloze(editor) -> None:
     model = editor.note.model()
 
@@ -210,7 +204,3 @@ def init_editor():
     editor_did_init_shortcuts.append(add_occlusion_shortcut)
 
     editor_will_munge_html.append(remove_occlusion_code)
-
-    Editor._onHtmlEdit = wrap(
-        Editor._onHtmlEdit, turn_of_occlusion_editor_if_in_field, "before"
-    )

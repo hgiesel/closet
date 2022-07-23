@@ -13,6 +13,7 @@ from aqt.gui_hooks import (
     editor_did_init_buttons,
     editor_did_init_shortcuts,
     editor_did_load_note,
+    editor_will_load_note,
     editor_will_munge_html,
 )
 from aqt.utils import shortcut, showInfo
@@ -199,8 +200,19 @@ def on_cloze(editor) -> None:
     editor.web.eval(f'wrap("{prefix}", "{suffix}");')
 
 
+def clear_occlusion_mode(js, note, editor):
+    return f"EditorCloset.clearOcclusionMode().then(() => {{ {js} }}); "
+
+
+def refocus(editor):
+    editor.web.setFocus()
+    editor.web.eval("EditorCloset.refocusField(); ")
+
+
 def init_editor():
     editor_did_init_buttons.append(add_buttons)
     editor_did_init_shortcuts.append(add_occlusion_shortcut)
+    editor_will_load_note.append(clear_occlusion_mode)
+    editor_did_load_note.append(refocus)
 
     editor_will_munge_html.append(remove_occlusion_code)

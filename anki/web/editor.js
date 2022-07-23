@@ -8,6 +8,15 @@ var escapeJSText = (text) => {
     return text.replace("\\", "\\\\").replace('"', '\\"').replace("'", "\\'");
 }
 
+var getFocusedFieldIndex = () => {
+    if (document.activeElement.classList.contains("rich-text-editable")) {
+        return [...document.querySelector(".fields").children]
+        .indexOf(
+            document.activeElement.closest(".editor-field").parentNode
+        )
+    }
+    else return 0;
+}
 
 var replaceOrPrefixOldOcclusionText = (oldHTML, newText) => {
     const occlusionBlockRegex = /\[#!occlusions.*?#\]/;
@@ -33,7 +42,7 @@ var replaceOrPrefixOldOcclusionText = (oldHTML, newText) => {
     } 
 }
 
-
+const NoteEditor = require("anki/NoteEditor");
 const EditorField = require("anki/EditorField");
 const { get } = require("svelte/store");
 
@@ -92,7 +101,9 @@ EditorField.lifecycle.onMount((field) => {
 var EditorCloset = {
     imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,
 
+    focusIndex: 0,
     occlusionMode: false,
+    occlusionField: null,
     occlusionEditorTarget: null,
     getOcclusionButton: () => document.getElementById("closetOcclude"),
 
@@ -121,23 +132,32 @@ var EditorCloset = {
     },
 
     getRichTextEditable: async (index) => {
-        return await get(EditorField.instances[index].editingArea.editingInputs)
+        return await get(NoteEditor.instances[0].fields[index].editingArea.editingInputs)
         .find((input) => input.name === "rich-text")
         .element;
     },
 
     setupOcclusionEditor: async (closet, maxOcclusions) => {
-        const fieldElements = [];
-        const subscriptionCallbacks = [];
+        const elements = ["[[makeOcclusions]]"];
 
-        for (const field of EditorField.instances) {
+        for (const field of NoteEditor.instances[0].fields) {
             const richTextInputAPI = get(field.editingArea.editingInputs)
                 .find((input) => input.name === "rich-text");
-            subscriptionCallbacks.push(richTextInputAPI.preventResubscription());
-            fieldElements.push(await richTextInputAPI.element);
+            
+            const richTextEditable = await richTextInputAPI.element;
+            if (
+                richTextEditable.querySelector("img")
+                && !EditorCloset.occlusionField
+            ) {
+                EditorCloset.occlusionField = {
+                    editingArea: field.editingArea,
+                    callback: richTextInputAPI.preventResubscription(),
+                };
+                field.editingArea.refocus();
+            }
+            elements.push(richTextEditable);
         }
 
-        const elements = ["[[makeOcclusions]]"].concat(...fieldElements);
 
         const acceptHandler = (_entry, internals) => (shapes, draw) => {
             const imageSrc = draw.image.src.match(
@@ -167,7 +187,6 @@ var EditorCloset = {
 
             bridgeCommand(`occlusionText:${shapeText}`);
 
-            subscriptionCallbacks.forEach((resubscribe) => resubscribe());
             EditorCloset.clearOcclusionMode();
         };
 
@@ -232,32 +251,23 @@ var EditorCloset = {
     },
 
     clearOcclusionMode: async () => {
-        const editingAreas = [];
+        if (EditorCloset.occlusionMode) {
 
-        for (const field of EditorField.instances) {
-            const editingArea = field.editingArea;
-            const richTextEditable = await get(field.editingArea.editingInputs).find((input) => input.name === "rich-text").element;
+            EditorCloset.occlusionEditorTarget.dispatchEvent(new Event("reject"));
 
-            if (
-                richTextEditable.innerHTML.includes(
-                    '<div class="closet-occlusion-container">',
-                )
-            ) {
-                editingAreas.push(editingArea);
-            }
+            EditorCloset.occlusionField.callback.call();
+            EditorCloset.focusIndex = getFocusedFieldIndex();
+
+            EditorCloset.hadOcclusionEditor = true;
+            EditorCloset.setInactive();
         }
+    },
 
-        EditorCloset.occlusionEditorTarget.dispatchEvent(new Event("reject"));
-
-        editingAreas.forEach((field) => {
-            field.content.update(v => v);
-            // console.log('fieldd', field);
-            // bridgeCommand(
-            //     `key:${index}:${getNoteId()}:${get(field.content)}`,
-            // );
-        });
-
-        EditorCloset.setInactive();
+    refocusField: () => {
+        if (EditorCloset.hadOcclusionEditor) {
+            EditorCloset.occlusionField.editingArea.refocus();
+            EditorCloset.hadOcclusionEditor = false;
+        }
     },
 
     // is what is called from the UI

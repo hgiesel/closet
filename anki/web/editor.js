@@ -4,31 +4,32 @@ var rushInOut = (x) => {
 };
 
 /** Python functions moved to JS for async operations **/
-var escape_js_text = (text) => {
+var escapeJSText = (text) => {
     return text.replace("\\", "\\\\").replace('"', '\\"').replace("'", "\\'");
 }
 
-var replace_or_prefix_old_occlusion_text = (old_html, new_text) => {
-    const occlusion_block_regex = /\[#!occlusions.*?#\]/;
 
-    const new_html = new_text.split(/\r?\n/).join("<br>");
-    replacement = `[#!occlusions ${new_html} #]`;
+var replaceOrPrefixOldOcclusionText = (oldHTML, newText) => {
+    const occlusionBlockRegex = /\[#!occlusions.*?#\]/;
+
+    const newHTML = newText.split(/\r?\n/).join("<br>");
+    replacement = `[#!occlusions ${newHTML} #]`;
 
     /** imitate re.subn **/
-    [subbed, number_of_subs] = ((count = 0) => {
-        const subbed = old_html.replace(occlusion_block_regex, () => {
+    [subbed, numberOfSubs] = ((count = 0) => {
+        const subbed = oldHTML.replace(occlusionBlockRegex, () => {
             ++count;
             return replacement;
         })
         return [subbed, count];
     })();
     
-    if (number_of_subs > 0) {
+    if (numberOfSubs > 0) {
         return subbed;
-    } else if (["", "<br>"].includes(old_html)) {
+    } else if (["", "<br>"].includes(oldHTML)) {
         return replacement;
     } else {
-        return `${replacement}<br>${old_html}`;
+        return `${replacement}<br>${oldHTML}`;
     } 
 }
 
@@ -275,11 +276,11 @@ var EditorCloset = {
         }
     },
 
-    insertIntoZeroIndexed: async (new_text, index) => {
-        const old_html = await EditorCloset.getFieldHTML(index);
-        const text = replace_or_prefix_old_occlusion_text(old_html, new_text);
+    insertIntoZeroIndexed: async (newText, index) => {
+        const oldHTML = await EditorCloset.getFieldHTML(index);
+        const text = replaceOrPrefixOldOcclusionText(oldHTML, newText);
 
-        const escaped = escape_js_text(text);
+        const escaped = escapeJSText(text);
 
         pycmd(`key:${index}:${getNoteId()}:${escaped}`);
         EditorCloset.setFieldHTML(index, escaped);

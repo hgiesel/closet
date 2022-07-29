@@ -139,21 +139,30 @@ var EditorCloset = {
 
     setupOcclusionEditor: async (closet, maxOcclusions) => {
         const elements = ["[[makeOcclusions]]"];
+        let fieldFound = false;
 
         for (const field of NoteEditor.instances[0].fields) {
-            const richTextInputAPI = get(field.editingArea.editingInputs)
-                .find((input) => input.name === "rich-text");
-            
+            const richTextInputAPI = get(field.editingArea.editingInputs).find(
+                (input) => input.name === "rich-text"
+            );
+
             const richTextEditable = await richTextInputAPI.element;
-            if (
-                richTextEditable.querySelector("img")
-                && !EditorCloset.occlusionField
-            ) {
-                EditorCloset.occlusionField = {
-                    editingArea: field.editingArea,
-                    callback: richTextInputAPI.preventResubscription(),
-                };
-                field.editingArea.refocus();
+
+            if (!fieldFound) {
+                let images = richTextEditable.querySelectorAll("img");
+
+                if (images.length && !fieldFound) {
+                    if (images.length > 1) {
+                        bridgeCommand("closetMultipleImages");
+                        return;
+                    }
+                    EditorCloset.occlusionField = {
+                        editingArea: field.editingArea,
+                        callback: richTextInputAPI.preventResubscription(),
+                    };
+                    fieldFound = true;
+                    field.editingArea.refocus();
+                }
             }
             elements.push(richTextEditable);
         }

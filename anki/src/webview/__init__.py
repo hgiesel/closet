@@ -94,6 +94,12 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
             refocus(editor)
             return (True, None)
 
+        elif message.startswith("closetMultipleImages"):
+            showInfo(
+                "Cannot start occlusion editor if field contains multiple images."
+            )
+            return (True, None)
+
     return handled
 
 

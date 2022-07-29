@@ -66,6 +66,9 @@ def toggle_occlusion_mode(editor):
     escaped_version = escape_js_text(closet_version_per_model.value)
     max_code_fields = get_max_code_field(editor)
 
+    if not mw.focusWidget() is editor:
+        refocus(editor)
+
     editor.web.eval(
         f'EditorCloset.toggleOcclusionMode("{escaped_version}", {max_code_fields})'
     )
@@ -206,13 +209,16 @@ def clear_occlusion_mode(js, note, editor):
 
 def refocus(editor):
     editor.web.setFocus()
-    editor.web.eval("EditorCloset.refocusField(); ")
+    editor.web.eval("EditorCloset.refocus(); ")
+
+
+def maybe_refocus(editor):
+    editor.web.eval("EditorCloset.maybeRefocus(); ")
 
 
 def init_editor():
     editor_did_init_buttons.append(add_buttons)
     editor_did_init_shortcuts.append(add_occlusion_shortcut)
     editor_will_load_note.append(clear_occlusion_mode)
-    editor_did_load_note.append(refocus)
-
+    editor_did_load_note.append(maybe_refocus)
     editor_will_munge_html.append(remove_occlusion_code)

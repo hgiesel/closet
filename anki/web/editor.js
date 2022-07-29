@@ -263,10 +263,16 @@ var EditorCloset = {
         }
     },
 
-    refocusField: () => {
+    maybeRefocus: () => {
         if (EditorCloset.hadOcclusionEditor) {
-            EditorCloset.occlusionField.editingArea.refocus();
+            bridgeCommand("closetRefocus");
             EditorCloset.hadOcclusionEditor = false;
+        }
+    },
+
+    refocus: () => {
+        if (EditorCloset.occlusionField) {
+            EditorCloset.occlusionField.editingArea.refocus();
         }
     },
 

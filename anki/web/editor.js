@@ -6,17 +6,15 @@ var rushInOut = (x) => {
 /** Python functions moved to JS for async operations **/
 var escapeJSText = (text) => {
     return text.replace("\\", "\\\\").replace('"', '\\"').replace("'", "\\'");
-}
+};
 
 var getFocusedFieldIndex = () => {
     if (document.activeElement.classList.contains("rich-text-editable")) {
-        return [...document.querySelector(".fields").children]
-        .indexOf(
+        return [...document.querySelector(".fields").children].indexOf(
             document.activeElement.closest(".editor-field").parentNode
-        )
-    }
-    else return 0;
-}
+        );
+    } else return 0;
+};
 
 var replaceOrPrefixOldOcclusionText = (oldHTML, newText) => {
     const occlusionBlockRegex = /\[#!occlusions.*?#\]/;
@@ -29,18 +27,18 @@ var replaceOrPrefixOldOcclusionText = (oldHTML, newText) => {
         const subbed = oldHTML.replace(occlusionBlockRegex, () => {
             ++count;
             return replacement;
-        })
+        });
         return [subbed, count];
     })();
-    
+
     if (numberOfSubs > 0) {
         return subbed;
     } else if (["", "<br>"].includes(oldHTML)) {
         return replacement;
     } else {
         return `${replacement}<br>${oldHTML}`;
-    } 
-}
+    }
+};
 
 const NoteEditor = require("anki/NoteEditor");
 const EditorField = require("anki/EditorField");
@@ -70,7 +68,7 @@ img {
 .closet-rect__label {
   stroke: black;
   stroke-width: 0.5;
-}`
+}`;
 
 /** Cloze support for non-cloze notetypes on 2.1.50+ **/
 document.addEventListener("keydown", (evt) => {
@@ -80,19 +78,19 @@ document.addEventListener("keydown", (evt) => {
 });
 
 EditorField.lifecycle.onMount((field) => {
-    (async() => {
+    (async () => {
         const fieldElement = await field.element;
 
         if (!fieldElement.hasAttribute("has-occlusion-style")) {
             const style = document.createElement("style");
-            style.id = "closet-occlusion-style"
+            style.id = "closet-occlusion-style";
             style.rel = "stylesheet";
             style.textContent = occlusionCss;
-            const richTextEditable = await get(field.editingArea.editingInputs)
-                .find((input) => input.name === "rich-text")
-                .element;
+            const richTextEditable = await get(
+                field.editingArea.editingInputs
+            ).find((input) => input.name === "rich-text").element;
             richTextEditable.getRootNode().prepend(style);
-    
+
             fieldElement.setAttribute("has-occlusion-style", "");
         }
     })();
@@ -122,7 +120,7 @@ var EditorCloset = {
     },
 
     getFieldHTML: async (index) => {
-        const richTextEditable = await EditorCloset.getRichTextEditable(index)
+        const richTextEditable = await EditorCloset.getRichTextEditable(index);
         return richTextEditable.innerHTML;
     },
 
@@ -132,9 +130,9 @@ var EditorCloset = {
     },
 
     getRichTextEditable: async (index) => {
-        return await get(NoteEditor.instances[0].fields[index].editingArea.editingInputs)
-        .find((input) => input.name === "rich-text")
-        .element;
+        return await get(
+            NoteEditor.instances[0].fields[index].editingArea.editingInputs
+        ).find((input) => input.name === "rich-text").element;
     },
 
     setupOcclusionEditor: async (closet, maxOcclusions) => {
@@ -167,10 +165,9 @@ var EditorCloset = {
             elements.push(richTextEditable);
         }
 
-
         const acceptHandler = (_entry, internals) => (shapes, draw) => {
             const imageSrc = draw.image.src.match(
-                EditorCloset.imageSrcPattern,
+                EditorCloset.imageSrcPattern
             )[1];
 
             const newIndices = [
@@ -178,11 +175,11 @@ var EditorCloset = {
                     shapes
                         .map((shape) => shape.labelText)
                         .map((label) =>
-                            label.match(closet.patterns.keySeparation),
+                            label.match(closet.patterns.keySeparation)
                         )
                         .filter((match) => match)
                         .map((match) => Number(match[2]))
-                        .filter((maybeNumber) => !Number.isNaN(maybeNumber)),
+                        .filter((maybeNumber) => !Number.isNaN(maybeNumber))
                 ),
             ];
 
@@ -190,7 +187,7 @@ var EditorCloset = {
 
             const shapeText = shapes
                 .map((shape) =>
-                    shape.toText(internals.template.parser.delimiters),
+                    shape.toText(internals.template.parser.delimiters)
                 )
                 .join("\n");
 
@@ -220,16 +217,16 @@ var EditorCloset = {
                     shapeDefs
                         .map((shape) => shape[2])
                         .map((label) =>
-                            label.match(closet.patterns.keySeparation),
+                            label.match(closet.patterns.keySeparation)
                         )
                         .filter((match) => match)
                         .map((match) => Number(match[2]))
-                        .filter((maybeNumber) => !Number.isNaN(maybeNumber)),
+                        .filter((maybeNumber) => !Number.isNaN(maybeNumber))
                 ),
             ];
 
             const imageSrc = draw.image.src.match(
-                EditorCloset.imageSrcPattern,
+                EditorCloset.imageSrcPattern
             )[1];
             bridgeCommand(`oldOcclusions:${imageSrc}:${indices.join(",")}`);
 
@@ -248,12 +245,12 @@ var EditorCloset = {
 
         filterManager.install(
             ...["rect", "recth", "rectr"].map((tagname) =>
-                closet.browser.recipes.rect.hide({ tagname }),
-            ),
+                closet.browser.recipes.rect.hide({ tagname })
+            )
         );
 
         closet.template.BrowserTemplate.makeFromNodes(elements).render(
-            filterManager,
+            filterManager
         );
 
         EditorCloset.setActive(target);
@@ -261,8 +258,9 @@ var EditorCloset = {
 
     clearOcclusionMode: async () => {
         if (EditorCloset.occlusionMode) {
-
-            EditorCloset.occlusionEditorTarget.dispatchEvent(new Event("reject"));
+            EditorCloset.occlusionEditorTarget.dispatchEvent(
+                new Event("reject")
+            );
 
             EditorCloset.occlusionField.callback.call();
             EditorCloset.focusIndex = getFocusedFieldIndex();
@@ -294,9 +292,9 @@ var EditorCloset = {
                 (closet) =>
                     EditorCloset.setupOcclusionEditor(
                         closet.closet,
-                        maxOcclusions,
+                        maxOcclusions
                     ),
-                (error) => console.log("Could not load Closet:", error),
+                (error) => console.log("Could not load Closet:", error)
             );
         }
     },
@@ -333,7 +331,7 @@ var EditorCloset = {
     setMaxHeight: (value /* > 0 */) => {
         document.documentElement.style.setProperty(
             "--closet-max-height",
-            `${value}px`,
+            `${value}px`
         );
     },
 };

@@ -160,7 +160,8 @@ def add_occlusion_shortcut(cuts, editor):
 
 
 occlusion_container_pattern = re.compile(
-    r'<div class="closet-occlusion-container">(<img.*?>).*?</div>'
+    # remove trailing <br> to prevent accumulation
+    r'<div class="closet-occlusion-container">.*?(<img.*?>).*?</div>(<br>)*'
 )
 
 

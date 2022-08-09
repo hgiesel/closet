@@ -9,7 +9,7 @@ from aqt.gui_hooks import (
 )
 from aqt.utils import showInfo
 
-from ..editor.__init__ import on_cloze
+from ..editor.__init__ import on_cloze, refocus
 from ..utils import (
     closet_enabled,
     closet_version_per_model,
@@ -88,6 +88,16 @@ def add_occlusion_messages(handled: bool, message: str, context) -> Tuple[bool, 
 
         elif message.startswith("closetCloze"):
             on_cloze(editor)
+            return (True, None)
+
+        elif message.startswith("closetRefocus"):
+            refocus(editor)
+            return (True, None)
+
+        elif message.startswith("closetMultipleImages"):
+            showInfo(
+                "Cannot start occlusion editor if field contains multiple images."
+            )
             return (True, None)
 
     return handled

@@ -4,35 +4,43 @@ var rushInOut = (x) => {
 };
 
 /** Python functions moved to JS for async operations **/
-var escape_js_text = (text) => {
+var escapeJSText = (text) => {
     return text.replace("\\", "\\\\").replace('"', '\\"').replace("'", "\\'");
-}
+};
 
-var replace_or_prefix_old_occlusion_text = (old_html, new_text) => {
-    const occlusion_block_regex = /\[#!occlusions.*?#\]/;
+var getFocusedFieldIndex = () => {
+    if (document.activeElement.classList.contains("rich-text-editable")) {
+        return [...document.querySelector(".fields").children].indexOf(
+            document.activeElement.closest(".editor-field").parentNode
+        );
+    } else return 0;
+};
 
-    const new_html = new_text.split(/\r?\n/).join("<br>");
-    replacement = `[#!occlusions ${new_html} #]`;
+var replaceOrPrefixOldOcclusionText = (oldHTML, newText) => {
+    const occlusionBlockRegex = /\[#!occlusions.*?#\]/;
+
+    const newHTML = newText.split(/\r?\n/).join("<br>");
+    replacement = `[#!occlusions ${newHTML} #]`;
 
     /** imitate re.subn **/
-    [subbed, number_of_subs] = ((count = 0) => {
-        const subbed = old_html.replace(occlusion_block_regex, () => {
+    [subbed, numberOfSubs] = ((count = 0) => {
+        const subbed = oldHTML.replace(occlusionBlockRegex, () => {
             ++count;
             return replacement;
-        })
+        });
         return [subbed, count];
     })();
-    
-    if (number_of_subs > 0) {
+
+    if (numberOfSubs > 0) {
         return subbed;
-    } else if (["", "<br>"].includes(old_html)) {
+    } else if (["", "<br>"].includes(oldHTML)) {
         return replacement;
     } else {
-        return `${replacement}<br>${old_html}`;
-    } 
-}
+        return `${replacement}<br>${oldHTML}`;
+    }
+};
 
-
+const NoteEditor = require("anki/NoteEditor");
 const EditorField = require("anki/EditorField");
 const { get } = require("svelte/store");
 
@@ -60,7 +68,7 @@ img {
 .closet-rect__label {
   stroke: black;
   stroke-width: 0.5;
-}`
+}`;
 
 /** Cloze support for non-cloze notetypes on 2.1.50+ **/
 document.addEventListener("keydown", (evt) => {
@@ -69,27 +77,31 @@ document.addEventListener("keydown", (evt) => {
     }
 });
 
-EditorField.lifecycle.onMount(async (field) => {
-    const fieldElement = await field.element;
+EditorField.lifecycle.onMount((field) => {
+    (async () => {
+        const fieldElement = await field.element;
 
-    if (!fieldElement.hasAttribute("has-occlusion-style")) {
-        const style = document.createElement("style");
-        style.id = "closet-occlusion-style"
-        style.rel = "stylesheet";
-        style.textContent = occlusionCss;
-        const richTextEditable = await get(field.editingArea.editingInputs)
-            .find((input) => input.name === "rich-text")
-            .element;
-        richTextEditable.getRootNode().prepend(style);
+        if (!fieldElement.hasAttribute("has-occlusion-style")) {
+            const style = document.createElement("style");
+            style.id = "closet-occlusion-style";
+            style.rel = "stylesheet";
+            style.textContent = occlusionCss;
+            const richTextEditable = await get(
+                field.editingArea.editingInputs
+            ).find((input) => input.name === "rich-text").element;
+            richTextEditable.getRootNode().prepend(style);
 
-        fieldElement.setAttribute("has-occlusion-style", "");
-    }
-})
+            fieldElement.setAttribute("has-occlusion-style", "");
+        }
+    })();
+});
 
 var EditorCloset = {
     imageSrcPattern: /^https?:\/\/(?:localhost|127.0.0.1):\d+\/(.*)$/u,
 
+    focusIndex: 0,
     occlusionMode: false,
+    occlusionField: null,
     occlusionEditorTarget: null,
     getOcclusionButton: () => document.getElementById("closetOcclude"),
 
@@ -108,7 +120,7 @@ var EditorCloset = {
     },
 
     getFieldHTML: async (index) => {
-        const richTextEditable = await EditorCloset.getRichTextEditable(index)
+        const richTextEditable = await EditorCloset.getRichTextEditable(index);
         return richTextEditable.innerHTML;
     },
 
@@ -118,27 +130,44 @@ var EditorCloset = {
     },
 
     getRichTextEditable: async (index) => {
-        return await get(EditorField.instances[index].editingArea.editingInputs)
-        .find((input) => input.name === "rich-text")
-        .element;
+        return await get(
+            NoteEditor.instances[0].fields[index].editingArea.editingInputs
+        ).find((input) => input.name === "rich-text").element;
     },
 
     setupOcclusionEditor: async (closet, maxOcclusions) => {
-        const fieldElements = [];
-        const subscriptionCallbacks = [];
+        const elements = ["[[makeOcclusions]]"];
+        let fieldFound = false;
 
-        for (const field of EditorField.instances) {
-            const richTextInputAPI = get(field.editingArea.editingInputs)
-                .find((input) => input.name === "rich-text");
-            subscriptionCallbacks.push(richTextInputAPI.preventResubscription());
-            fieldElements.push(await richTextInputAPI.element);
+        for (const field of NoteEditor.instances[0].fields) {
+            const richTextInputAPI = get(field.editingArea.editingInputs).find(
+                (input) => input.name === "rich-text"
+            );
+
+            const richTextEditable = await richTextInputAPI.element;
+
+            if (!fieldFound) {
+                let images = richTextEditable.querySelectorAll("img");
+
+                if (images.length && !fieldFound) {
+                    if (images.length > 1) {
+                        bridgeCommand("closetMultipleImages");
+                        return;
+                    }
+                    EditorCloset.occlusionField = {
+                        editingArea: field.editingArea,
+                        callback: richTextInputAPI.preventResubscription(),
+                    };
+                    fieldFound = true;
+                    field.editingArea.refocus();
+                }
+            }
+            elements.push(richTextEditable);
         }
-
-        const elements = ["[[makeOcclusions]]"].concat(...fieldElements);
 
         const acceptHandler = (_entry, internals) => (shapes, draw) => {
             const imageSrc = draw.image.src.match(
-                EditorCloset.imageSrcPattern,
+                EditorCloset.imageSrcPattern
             )[1];
 
             const newIndices = [
@@ -146,11 +175,11 @@ var EditorCloset = {
                     shapes
                         .map((shape) => shape.labelText)
                         .map((label) =>
-                            label.match(closet.patterns.keySeparation),
+                            label.match(closet.patterns.keySeparation)
                         )
                         .filter((match) => match)
                         .map((match) => Number(match[2]))
-                        .filter((maybeNumber) => !Number.isNaN(maybeNumber)),
+                        .filter((maybeNumber) => !Number.isNaN(maybeNumber))
                 ),
             ];
 
@@ -158,13 +187,12 @@ var EditorCloset = {
 
             const shapeText = shapes
                 .map((shape) =>
-                    shape.toText(internals.template.parser.delimiters),
+                    shape.toText(internals.template.parser.delimiters)
                 )
                 .join("\n");
 
             bridgeCommand(`occlusionText:${shapeText}`);
 
-            subscriptionCallbacks.forEach((resubscribe) => resubscribe());
             EditorCloset.clearOcclusionMode();
         };
 
@@ -189,16 +217,16 @@ var EditorCloset = {
                     shapeDefs
                         .map((shape) => shape[2])
                         .map((label) =>
-                            label.match(closet.patterns.keySeparation),
+                            label.match(closet.patterns.keySeparation)
                         )
                         .filter((match) => match)
                         .map((match) => Number(match[2]))
-                        .filter((maybeNumber) => !Number.isNaN(maybeNumber)),
+                        .filter((maybeNumber) => !Number.isNaN(maybeNumber))
                 ),
             ];
 
             const imageSrc = draw.image.src.match(
-                EditorCloset.imageSrcPattern,
+                EditorCloset.imageSrcPattern
             )[1];
             bridgeCommand(`oldOcclusions:${imageSrc}:${indices.join(",")}`);
 
@@ -217,44 +245,42 @@ var EditorCloset = {
 
         filterManager.install(
             ...["rect", "recth", "rectr"].map((tagname) =>
-                closet.browser.recipes.rect.hide({ tagname }),
-            ),
+                closet.browser.recipes.rect.hide({ tagname })
+            )
         );
 
         closet.template.BrowserTemplate.makeFromNodes(elements).render(
-            filterManager,
+            filterManager
         );
 
         EditorCloset.setActive(target);
     },
 
     clearOcclusionMode: async () => {
-        const editingAreas = [];
+        if (EditorCloset.occlusionMode) {
+            EditorCloset.occlusionEditorTarget.dispatchEvent(
+                new Event("reject")
+            );
 
-        for (const field of EditorField.instances) {
-            const editingArea = field.editingArea;
-            const richTextEditable = await get(field.editingArea.editingInputs).find((input) => input.name === "rich-text").element;
+            EditorCloset.occlusionField.callback.call();
+            EditorCloset.focusIndex = getFocusedFieldIndex();
 
-            if (
-                richTextEditable.innerHTML.includes(
-                    '<div class="closet-occlusion-container">',
-                )
-            ) {
-                editingAreas.push(editingArea);
-            }
+            EditorCloset.hadOcclusionEditor = true;
+            EditorCloset.setInactive();
         }
+    },
 
-        EditorCloset.occlusionEditorTarget.dispatchEvent(new Event("reject"));
+    maybeRefocus: () => {
+        if (EditorCloset.hadOcclusionEditor) {
+            bridgeCommand("closetRefocus");
+            EditorCloset.hadOcclusionEditor = false;
+        }
+    },
 
-        editingAreas.forEach((field) => {
-            field.content.update(v => v);
-            // console.log('fieldd', field);
-            // bridgeCommand(
-            //     `key:${index}:${getNoteId()}:${get(field.content)}`,
-            // );
-        });
-
-        EditorCloset.setInactive();
+    refocus: () => {
+        if (EditorCloset.occlusionField) {
+            EditorCloset.occlusionField.editingArea.refocus();
+        }
     },
 
     // is what is called from the UI
@@ -266,18 +292,18 @@ var EditorCloset = {
                 (closet) =>
                     EditorCloset.setupOcclusionEditor(
                         closet.closet,
-                        maxOcclusions,
+                        maxOcclusions
                     ),
-                (error) => console.log("Could not load Closet:", error),
+                (error) => console.log("Could not load Closet:", error)
             );
         }
     },
 
-    insertIntoZeroIndexed: async (new_text, index) => {
-        const old_html = await EditorCloset.getFieldHTML(index);
-        const text = replace_or_prefix_old_occlusion_text(old_html, new_text);
+    insertIntoZeroIndexed: async (newText, index) => {
+        const oldHTML = await EditorCloset.getFieldHTML(index);
+        const text = replaceOrPrefixOldOcclusionText(oldHTML, newText);
 
-        const escaped = escape_js_text(text);
+        const escaped = escapeJSText(text);
 
         pycmd(`key:${index}:${getNoteId()}:${escaped}`);
         EditorCloset.setFieldHTML(index, escaped);
@@ -305,7 +331,7 @@ var EditorCloset = {
     setMaxHeight: (value /* > 0 */) => {
         document.documentElement.style.setProperty(
             "--closet-max-height",
-            `${value}px`,
+            `${value}px`
         );
     },
 };

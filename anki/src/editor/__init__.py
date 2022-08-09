@@ -4,7 +4,6 @@ import re
 from pathlib import Path
 from os.path import dirname, realpath
 
-from anki.hooks import wrap
 from anki.consts import MODEL_STD, MODEL_CLOZE
 
 from aqt import mw
@@ -14,6 +13,7 @@ from aqt.gui_hooks import (
     editor_did_init_buttons,
     editor_did_init_shortcuts,
     editor_did_load_note,
+    editor_will_load_note,
     editor_will_munge_html,
 )
 from aqt.utils import shortcut, showInfo
@@ -65,6 +65,9 @@ def toggle_occlusion_mode(editor):
 
     escaped_version = escape_js_text(closet_version_per_model.value)
     max_code_fields = get_max_code_field(editor)
+
+    if not mw.focusWidget() is editor:
+        refocus(editor)
 
     editor.web.eval(
         f'EditorCloset.toggleOcclusionMode("{escaped_version}", {max_code_fields})'
@@ -157,7 +160,8 @@ def add_occlusion_shortcut(cuts, editor):
 
 
 occlusion_container_pattern = re.compile(
-    r'<div class="closet-occlusion-container">(<img.*?>).*?</div>'
+    # remove trailing <br> to prevent accumulation
+    r'<div class="closet-occlusion-container">.*?(<img.*?>).*?</div>(<br>)*'
 )
 
 
@@ -168,11 +172,6 @@ def remove_occlusion_code(txt: str, _editor) -> str:
         return re.sub(occlusion_container_pattern, rawImage, txt)
 
     return txt
-
-
-def turn_of_occlusion_editor_if_in_field(editor, _field):
-    if editor.occlusion_editor_active:
-        editor.web.eval("EditorCloset.clearOcclusionMode()")
 
 
 def on_cloze(editor) -> None:
@@ -205,12 +204,22 @@ def on_cloze(editor) -> None:
     editor.web.eval(f'wrap("{prefix}", "{suffix}");')
 
 
+def clear_occlusion_mode(js, note, editor):
+    return f"EditorCloset.clearOcclusionMode().then(() => {{ {js} }}); "
+
+
+def refocus(editor):
+    editor.web.setFocus()
+    editor.web.eval("EditorCloset.refocus(); ")
+
+
+def maybe_refocus(editor):
+    editor.web.eval("EditorCloset.maybeRefocus(); ")
+
+
 def init_editor():
     editor_did_init_buttons.append(add_buttons)
     editor_did_init_shortcuts.append(add_occlusion_shortcut)
-
+    editor_will_load_note.append(clear_occlusion_mode)
+    editor_did_load_note.append(maybe_refocus)
     editor_will_munge_html.append(remove_occlusion_code)
-
-    Editor._onHtmlEdit = wrap(
-        Editor._onHtmlEdit, turn_of_occlusion_editor_if_in_field, "before"
-    )

@@ -13,7 +13,8 @@ zip -r "$DIR/build/$addon_id.ankiaddon" \
   *".py" \
   "manifest.json" \
   "gui/"*".py" \
-  "gui/forms/"*".py" \
+  "gui/forms/qt5/"*".py" \
+  "gui/forms/qt6/"*".py" \
   "icons/"*".png" \
   "src/"*".py" \
   "src/editor/"*".py" \

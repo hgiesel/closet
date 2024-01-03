@@ -265,7 +265,9 @@ export class ChildNodeSpan {
             this.parentElement.childNodes[this._fromIndex],
         );
         for (const node of this.span()) {
-            this.parentElement.removeChild(node);
+            if(node.parentElement === this.parentElement) {
+                this.parentElement.removeChild(node);
+            }
         }
 
         // might turn the original div into multiple nodes including text nodes

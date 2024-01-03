@@ -265,7 +265,7 @@ export class ChildNodeSpan {
             this.parentElement.childNodes[this._fromIndex],
         );
         for (const node of this.span()) {
-            if(node.parentElement === this.parentElement) {
+            if (node.parentElement === this.parentElement) {
                 this.parentElement.removeChild(node);
             }
         }

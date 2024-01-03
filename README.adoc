@@ -6,8 +6,6 @@ image:https://github.com/hgiesel/closet/workflows/Deploy%20to%20GitHub%20Pages/b
 
 Closet is a powerful templating engine for use in flashcards, especially link:https://apps.ankiweb.net/[Anki] flashcards.
 
-For more info on Closet, see its link:https://closetengine.com[website].
-
 image::https://github.com/hgiesel/closet/blob/master/images/textlogo.png[ClosetLogo,width=100%,align="center",link="https://closetengine.com"]
 
 == How to Build for Anki
